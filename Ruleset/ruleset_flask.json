@@ -1,0 +1,1768 @@
+[
+    {
+    "rule_id": "REQUEST-ARGS-GET-003",
+    "type": "taint",
+    "vulnerabilities": ["CRYF"],
+    "description": "Sanificazione XSS tramite regex naive (strip <script> via re.sub): pattern bypassabile con tag annidati, case alternato, o handler on-event fuori dal tag script",
+    "sources": ["request.args.get"],
+    "sanitizers": [],
+    "safe_contexts": [
+        {
+        "type": "condition_matches_xpath",
+        "scope": "enclosing",
+        "xpath": ".//src:operator[text()='not']"
+      }
+    ],
+    "sinks": [
+        {
+        "type": "call_with_var_arg",
+        "call": ["re.sub", "sub"],
+        "literal_contains": ["<script"]
+        }
+    ]
+  },
+  {
+  "rule_id": "REQUEST-ARGS_GET-004",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "structural",
+  "vulnerabilities": ["INJC", "BRAC"],
+  "description": "request.args.get[...] usato direttamente (senza variabile intermedia) in un confronto di uguaglianza, senza sanificazione",
+  "source_comparisons": [
+    {
+      "source": "request.args.get",
+      "source_form": "subscript"
+    }
+  ],
+  "sanitizers": ["escape", "escape_filter_chars", "escape_rdn"],
+  "safe_contexts": [
+    "match",
+    "obj_match"
+  ]
+},
+  {
+  "rule_id": "REQUEST-ARGS_GET-005",
+  "type": "taint",
+  "vulnerabilities": ["BRAC"],
+  "description": "Input non validato da request.args/form/headers/ecc. concatenato o interpolato in una stringa",
+  "source_form": "call",
+  "sources": [
+    "request.args", "request.args.get", "request.GET", "request.POST", 
+    "request.files", "request.form", "request.data", "request.headers", 
+    "request.params", "request.base_url", "request.authorization", 
+    "request.cookies", "request.endpoint", "request.host", "request.host_url", 
+    "request.module", "request.path", "request.query_strings", "request.url", 
+    "request.values", "request.view_args"
+  ],
+  "sinks": [
+    "concat",
+    "fstring",
+    "assign_rhs"
+  ],
+  "sanitizers": [
+    "escape",
+    "escape_filter_chars",
+    "escape_rdn"
+  ],
+  "safe_contexts": [
+    "match",
+    "obj_match",
+    "isdir",
+    "isfile",
+    {"type": "try_after_source"},
+    {
+      "type": "current_call_matches_ast",
+      "call": [
+        "args.send_static_file",
+        "json.loads"
+      ]
+    },
+{"type":"var_truthiness_check"},
+    {
+      "type": "call_has_kwargs",
+      "call": ["subprocess.run"],
+      "kwargs": {"check": "True"}
+    },
+    {
+      "type": "receiver_of_method",
+      "method": "replace"
+    },
+    {
+      "type": "matches_xpath",
+      "xpath": "ancestor::src:call[.//src:name[text()='join'] and (.//src:name[text()='isalnum'] or .//src:name[text()='isspace'])]"
+    }
+  ]
+},
+  {
+      "rule_id": "REQUEST-ARGS_GET-006",
+      "type": "taint",
+      "vulnerabilities": ["BRAC"],
+      "description": "Uso di request.* (Flask) come chiave di dict o slice senza validazione (Broken Access Control / Path Traversal)",
+      "source_form": "call",
+      "sources": [
+        "request.args", "request.GET", "request.POST", "request.files",
+        "request.form", "request.data", "request.headers", "request.params",
+        "request.base_url", "request.authorization", "request.cookies",
+        "request.endpoint", "request.host", "request.host_url", "request.module",
+        "request.path", "request.query_strings", "request.url", "request.values",
+        "request.view_args"
+      ],
+      "sinks": [
+    "colon_suffix"
+  ],
+  "sanitizers": [
+    "escape", 
+    "escape_filter_chars", 
+    "escape_rdn"
+  ],
+  "safe_contexts": [
+    "match",
+    "obj_match",
+    "isfile",
+    {"type": "try_after_source"},
+{"type":"var_truthiness_check"},
+    {
+      "type": "current_call_matches_ast",
+      "call": [
+        "args.send_static_file",
+        "repr"
+      ]
+    },
+    {
+      "type": "call_has_kwargs",
+      "call": ["subprocess.run"],
+      "kwargs": {"check": "True"}
+    },
+    {
+      "type": "membership_check",
+      "scope": "enclosing",
+      "require_var_right": true,
+      "left_exact": [
+        "\"/\"", "'/'",
+        "\"\\\\\"", "'\\\\'",
+        "\"..\"", "'..'"
+      ]
+    },
+    {
+      "type": "receiver_of_method",
+      "method": "replace"
+    }
+  ]
+},
+  {
+    "rule_id": "REQUEST-ARGS_GET-007",
+    "type": "taint",
+    "vulnerabilities": ["BRAC"],
+    "description": "Input proveniente da dizionario request.* di Flask (es. request.args[...]) utilizzato come chiave/slice o all'interno di re.search senza adeguata validazione",
+    "source_form": "subscript",
+    "sources": [
+      "request.args", "request.GET", "request.POST", "request.files",
+      "request.form", "request.data", "request.headers", "request.params",
+      "request.base_url", "request.authorization", "request.cookies",
+      "request.endpoint", "request.host", "request.host_url", "request.module",
+      "request.path", "request.query_strings", "request.url", "request.values",
+      "request.view_args"
+    ],
+    "sanitizers": [
+      "escape", "escape_filter_chars", "escape_rdn"
+    ],
+    "safe_contexts": [
+      "match", 
+      "obj_match", 
+      "isfile", 
+      {"type": "try_after_source"},
+      {
+      "type": "current_call_matches_ast",
+      "call": ["args.send_static_file"]
+    },
+{"type":"var_truthiness_check"},
+      { "type": "call_with_kwarg", "call": ["subprocess.run"], "kwargs": { "check": "True" } }
+    ],
+    "sinks": [
+      "colon_suffix",
+      {
+        "type": "call_with_var_arg",
+        "call": ["re.search", "search"]
+      }
+    ]
+  },
+  {
+  "rule_id": "REQUEST-ARGS_GET-008",
+  "type": "taint",
+  "vulnerabilities": ["BRAC"],
+  "description": "Request args vulnerability",
+  "source_form": "call",
+  "sources": [
+    "request.args", "request.args.get", "request.GET", "request.POST",
+    "request.files", "request.form", "request.form.get", "request.data",
+    "request.headers", "request.params", "request.base_url",
+    "request.authorization", "request.cookies", "request.endpoint",
+    "request.host", "request.host_url", "request.module", "request.path",
+    "request.query_strings", "request.url", "request.values", "request.view_args",
+    "flask.request.args", "flask.request.args.get", "flask.request.GET",
+    "flask.request.POST", "flask.request.files", "flask.request.form",
+    "flask.request.form.get"
+  ],
+  "sinks": [
+    "call_arg",
+    "method_chain"
+  ],
+  "sanitizers": [
+    "escape",
+    "escape_filter_chars",
+    "escape_rdn"
+  ],
+  "safe_contexts": [
+    "match",
+    "obj_match",
+    "check_code",
+    "check_action",
+    "is_safe_url",
+    "isfile",
+{"type":"var_truthiness_check"},
+    {
+      "type": "parametrized_query"
+    },
+    {
+      "type": "call_has_kwargs",
+      "call": ["subprocess.run"],
+      "kwargs": {"check": "True"}
+    },
+    {
+      "type": "url_validation",
+      "require": "any"
+    },
+    {
+      "type": "receiver_of_method",
+      "method": "replace"
+    },
+    {
+      "type": "receiver_of_method",
+      "method": "startswith"
+    },
+    {
+      "type": "receiver_of_method_with_arg",
+      "method": "endswith",
+      "arg_value": ".png"
+    },
+    {
+      "type": "current_call_matches_ast",
+      "call": [
+        "json.load", "json.loads", "yaml.safe_load", "base64.decodebytes",
+        "decodebytes", "base64.b64decode", "os.path.abspath", "os.path.isfile",
+        "re.sub", "urlparse", "importlib.import_module", "repr",
+        "etree.fromstring", "fromstring", "re.fullmatch", "ast.literal_eval",
+        "args.send_static_file", "process_config_value", "_validate_redirect_url",
+        "make_url", "fromhex"
+      ]
+    },
+    {
+      "type": "membership_check",
+      "require_any_call": true
+    },
+    {
+      "type": "binary_comparison",
+      "operators": ["!="],
+      "right_exact": ["'admin'", "\"admin\""]
+    },
+    {
+      "type": "matches_xpath",
+      "xpath": ".//src:call[src:name/text()='isinstance']/src:argument_list/src:argument[1]/src:expr/src:name[text()='$VAR']"
+    },
+    {
+      "type": "matches_xpath",
+      "xpath": "ancestor::src:call[.//src:name[text()='join'] and .//src:name[text()='isalnum']]"
+    },
+    {
+  "type": "matches_xpath",
+  "xpath": ".//src:if_stmt[.//src:call[.//src:name[text()='startswith']][.//src:argument_list[contains(., 'ls')]]] and .//src:try[.//src:call[.//src:name[text()='subprocess.run' or (following-sibling::src:name='run')]][.//src:argument_list[contains(., 'check=True') or contains(., 'check=true')]]][.//src:catch or .//src:except]"
+}
+  ]
+},
+  {
+    "rule_id": "REQUEST-ARGS_GET-009",
+    "type": "taint",
+    "vulnerabilities": ["BRAC"],
+    "source_form": "subscript",
+    "sources": [
+      "request.args", "request.GET", "request.POST", "request.files",
+      "request.form", "request.data", "request.headers", "request.params",
+      "request.base_url", "request.authorization", "request.cookies",
+      "request.endpoint", "request.host", "request.host_url", "request.module",
+      "request.path", "request.query_strings", "request.url", "request.values",
+      "request.view_args"
+    ],
+    "sinks": [
+    "any_use"
+  ],
+  "sanitizers": [
+    "escape",
+    "escape_filter_chars",
+    "escape_rdn"
+  ],
+  "safe_contexts": [
+    "match",
+    "obj_match",
+    "isfile",
+{"type":"var_truthiness_check"},
+    {
+      "type": "parametrized_query"
+    },
+    {
+      "type": "call_has_kwargs",
+      "call": ["subprocess.run"],
+      "kwargs": {"check": "True"}
+    },
+    {
+      "type": "url_validation",
+      "require": "any"
+    },
+    {
+      "type": "receiver_of_method",
+      "method": "encode"
+    },
+    {
+      "type": "receiver_of_method_with_arg",
+      "method": "endswith",
+      "arg_value": ".png"
+    },
+    {
+      "type": "current_call_matches_ast",
+      "call": [
+        "args.send_static_file", "json.load", "base64.decodebytes", 
+        "decodebytes", "secure_filename", "ast.literal_eval", 
+        "defusedetree.fromstring", "url_for", "app.logger.warning", 
+        "allowed_file"
+      ]
+    },
+    {
+      "type": "matches_xpath",
+      "xpath": "ancestor::src:try[.//src:call[.//src:name[text()='subprocess.run'] and .//src:argument[.//src:name[text()='check'] and .//src:literal[text()='True']]]] and ancestor::src:if_stmt[.//src:call[.//src:name[text()='startswith'] and .//src:argument[.//src:literal[text()=\"'ls'\"]]]]"
+    }
+  ]
+},
+  {
+  "rule_id": "REQUEST-ARGS_GET-010",
+  "type": "taint",
+  "vulnerabilities": ["BRAC"],
+  "description": "Request args vulnerability - Variabile restituita direttamente o usata come receiver di un metodo",
+  "source_form": "call",
+  "sources": [
+    "request.args", "request.args.get", "request.GET", "request.POST", 
+    "request.files", "request.form", "request.data", "request.headers", 
+    "request.params", "request.base_url", "request.authorization", 
+    "request.cookies", "request.endpoint", "request.host", "request.host_url", 
+    "request.module", "request.path", "request.query_strings", "request.url", 
+    "request.values", "request.view_args"
+  ],
+  "sanitizers": [
+    "escape", "escape_filter_chars", "escape_rdn", "repr"
+  ],
+  "safe_contexts": [
+    {"type": "try_after_source"},
+    "match",
+    "obj_match",
+    "isfile",
+    {
+      "type": "current_call_matches_ast",
+      "call": [
+        "args.send_static_file",
+        "repr"
+      ]
+    },
+    {
+      "type": "call_with_kwarg",
+      "call": ["subprocess.run"],
+      "kwargs": {
+        "check": "True"
+      }
+    },
+{"type":"var_truthiness_check"}
+  ],
+  "sinks": [
+    "return",
+    "method_chain"
+  ]
+},
+  {
+    "rule_id": "DEBUG-TRUE-001",
+    "type": "structural",
+    "vulnerabilities": ["SECM"],
+    "bad_assignments": {
+      "debug": "True"
+    },
+    "bad_calls": {
+      "run": {
+        "debug": "True"
+      }
+    }
+  },
+  {
+  "rule_id": "SEND-FILE-001",
+  "type": "structural",
+  "vulnerabilities": ["CRYF"],
+  "description": "set foile vulnerability",
+  "forbidden_functions": [
+    "send_file"
+  ],
+  "safe_contexts": [
+    {
+      "type": "function_has_call_matching_ast",
+      "call": [
+        "startswith",
+        "isfile"
+      ]
+    }
+  ]
+},
+{
+  "rule_id": "SESSION-001",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "taint",
+  "vulnerabilities": ["INJC"],
+  "description": "Valore letto da session[...] usato direttamente (senza variabile intermedia) in un'assegnazione/concatenazione, senza sanificazione",
+  "direct_taint_names": ["session"],
+  "sanitizers": ["escape", "escape_filter_chars", "escape_rdn"],
+  "safe_contexts": [
+    "match",
+    "obj_match",
+    "isfile",
+    "send_static_file",
+    {"type": "try_after_source"},
+    {
+      "type": "call_with_kwarg",
+      "call": ["isfile","send_static_file"]
+    },
+{"type":"var_truthiness_check"},
+    {
+      "type": "call_with_kwarg",
+      "call": ["subprocess.run"],
+      "kwargs": { "check": "True" }
+    }
+  ],
+  "sinks": [
+    { "type": "subscript_assign_or_concat" }
+  ]
+},
+{
+  "rule_id": "SESSION-002",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "taint",
+  "vulnerabilities": ["INJC"],
+  "description": "Valore letto da session[...] usato direttamente (senza variabile intermedia) seguito da ':' (dict literal/slice/formattazione), senza sanificazione",
+  "direct_taint_names": ["session"],
+  "sanitizers": ["escape", "escape_filter_chars", "escape_rdn"],
+  "safe_contexts": [
+    "match",
+    "obj_match",
+    "isfile",
+    "send_static_file",
+    {"type": "try_after_source"},
+    {
+      "type": "call_with_kwarg",
+      "call": ["isfile"]
+    },
+{"type":"var_truthiness_check"},
+    {
+      "type": "call_with_kwarg",
+      "call": ["subprocess.run"],
+      "kwargs": { "check": "True" }
+    }
+  ],
+  "sinks": [
+    { "type": "subscript_colon_suffix" }
+  ]
+},
+{
+  "rule_id": "SESSION-003",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "taint",
+  "vulnerabilities": ["INJC"],
+  "description": "Valore letto da session[...] usato direttamente (senza variabile intermedia) come argomento di chiamata o come ultimo elemento prima di ']'/')' , senza sanificazione",
+  "direct_taint_names": ["session"],
+  "sanitizers": ["escape", "escape_filter_chars", "escape_rdn"],
+  "safe_contexts": [
+    "match",
+    "obj_match",
+    "isfile",
+    {"type": "try_after_source"},
+    {
+      "type": "call_with_kwarg",
+      "call": ["send_static_file"]
+    },
+{"type":"var_truthiness_check"},
+    {
+      "type": "call_with_kwarg",
+      "call": ["subprocess.run"],
+      "kwargs": { "check": "True" }
+    }
+  ],
+  "sinks": [
+    {
+      "type": "matches_xpath",
+      "xpath": "./src:index and (ancestor::src:argument or ancestor::src:index)"
+    }
+  ]
+},
+{
+  "rule_id": "SESSION-004",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "taint",
+  "vulnerabilities": ["INJC"],
+  "description": "Valore letto da session[...] usato direttamente (senza variabile intermedia) come return diretto o come receiver di una chiamata di metodo, senza sanificazione",
+  "direct_taint_names": ["session"],
+  "sanitizers": ["escape", "escape_filter_chars", "escape_rdn"],
+  "safe_contexts": [
+    "match",
+    "obj_match",
+    "isfile",
+    {"type": "try_after_source"},
+    {
+      "type": "call_with_kwarg",
+      "call": ["send_static_file"]
+    },
+{"type":"var_truthiness_check"},
+    {
+      "type": "call_with_kwarg",
+      "call": ["subprocess.run"],
+      "kwargs": { "check": "True" }
+    }
+  ],
+  "sinks": [
+    { "type": "subscript_return" },
+    { "type": "subscript_method_call" }
+  ]
+},
+{
+  "rule_id": "REQUEST-ARGS_GET-011",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "taint",
+  "description": "Request args vulnerability",
+  "vulnerabilities": ["BRAC"],
+  "source_form": "subscript",
+  "sources": [
+    "request.args", "request.args.get", "request.GET", "request.POST", 
+    "request.files", "request.form", "request.data", "request.headers", 
+    "request.params", "request.base_url", "request.authorization", 
+    "request.cookies", "request.endpoint", "request.host", "request.host_url", 
+    "request.module", "request.path", "request.query_strings", "request.url", 
+    "request.values", "request.view_args"
+  ],
+  "sinks": [
+    {
+      "type": "call_with_var_arg",
+      "call": ["re.search"]
+    }
+  ],
+  "safe_contexts": [
+{"type":"var_truthiness_check"}
+  ]
+},
+{
+  "rule_id": "REQUEST-ARGS_GET-012",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "taint",
+  "description": "Request args vulnerability",
+  "vulnerabilities": ["BRAC"],
+  "source_form": "subscript",
+  "sources": [
+    "request.args", "request.args.get", "request.GET", "request.POST", 
+    "request.files", "request.form", "request.data", "request.headers", 
+    "request.params", "request.base_url", "request.authorization", 
+    "request.cookies", "request.endpoint", "request.host", "request.host_url", 
+    "request.module", "request.path", "request.query_strings", "request.url", 
+    "request.values", "request.view_args"
+  ],
+  "sinks": [
+    {
+      "type": "call_with_var_arg",
+      "call": ["re.search"]
+    }
+  ]
+},
+{
+  "rule_id": "REQUEST-ARGS_GET-013",
+  "type": "taint",
+  "description": "Request args vulnerability - Input utente non sanificato assegnato come valore di una chiave dict/list letterale (es. data['key'] = request.args...)",
+  "vulnerabilities": ["BRAC"],
+  "source_form": "subscript",
+  "sources": [
+    "request.args", "request.args.get", "request.GET", "request.POST",
+    "request.files", "request.form", "request.data", "request.headers",
+    "request.params", "request.base_url", "request.authorization",
+    "request.cookies", "request.endpoint", "request.host", "request.host_url",
+    "request.module", "request.path", "request.query_strings", "request.url",
+    "request.values", "request.view_args"
+  ],
+  "sanitizers": [
+    "escape",
+    "escape_filter_chars",
+    "escape_rdn"
+  ],
+  "sinks": [
+    { "type": "subscript_key_assign_rhs" }
+  ]
+},
+{
+  "rule_id": "REQUEST-ARGS-GET-002",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "taint",
+  "description": "Request args get vulnerability",
+  "vulnerabilities": ["CRYF"],
+  "source_form": "call",
+  "sources": [
+    "request.args.get"
+  ],
+  "sinks": [
+    {
+      "type": "method_call",
+      "method": "endswith",
+      "arg_contains": [
+        "\".com/\""
+      ]
+    }
+  ],
+  "safe_contexts": [
+    "isinstance",
+    "startswith"
+  ]
+},
+{
+  "rule_id": "REQUEST-ARGS-GET-004",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "structural",
+  "description": "Request args get vulnerability",
+  "vulnerabilities": ["CRYF"],
+  "inline_source_as_arg": [
+    "request.args.get"
+  ],
+  "safe_contexts": [
+    {
+      "type": "call_with_kwarg",
+      "call": [
+        "request.args.get"
+      ],
+      "kwargs": {
+        "type": "int"
+      }
+    }
+  ]
+},
+{
+  "rule_id": "REQUEST-ARGS-001-subscript",
+  "type": "taint",
+  "description": "Request args vulnerability - Uso non sanificato di request.args[...] (subscript)",
+  "vulnerabilities": ["INJC"],
+  "source_form": "subscript",
+  "sources": ["request.args"],
+  "sanitizers": ["escape", "escape_filter_chars", "literal_eval"],
+  "sinks": ["any_use"]
+},
+{
+  "rule_id": "REQUEST-ARGS-001-call",
+  "type": "taint",
+  "description": "Request args vulnerability - Uso non sanificato di request.get_data(...) (call)",
+  "vulnerabilities": ["INJC"],
+  "source_form": "call",
+  "sources": ["request.get_data"],
+  "sanitizers": ["escape", "escape_filter_chars", "literal_eval"],
+  "sinks": ["any_use"]
+},
+{
+  "rule_id": "REQUEST-ARGS-002",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "structural",
+  "description": "Request args vulnerability",
+  "vulnerabilities": [
+    "INJC"
+  ],
+  "forbidden_functions": [
+    {
+      "type": "call_matches_ast", 
+      "call": ["search", "compile", "re.search", "re.compile"], 
+      "args_text_contains": ["request.args[", "request.get_data("]
+    }
+  ],
+  "safe_contexts": [
+    {
+      "type": "args_contain_call_with_literal_arg",
+      "call": "escape"
+    }
+  ]
+},
+{
+  "rule_id": "REQUEST-ARGS-GET-001",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "structural",
+  "description": "Request args vulnerability",
+  "vulnerabilities": ["INJC"],
+  "source_concats": [
+    {
+      "source": "request.args.get",
+      "source_form": "call"
+    }
+  ],
+  "sanitizers": [
+    "escape"
+  ]
+},
+{
+  "rule_id": "REQUEST-ARGS_GET-002",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "structural",
+  "description": "Request args vulnerability",
+  "vulnerabilities": ["BRAC"],
+  "source_concats": [
+    {
+      "source": "request.args",
+      "source_form": "subscript"
+    }
+  ],
+  "sanitizers": [
+    "escape"
+  ],
+  "safe_contexts": [
+    "match",
+    "obj_match",
+    "isfile",
+    "send_static_file",
+    {
+      "type": "matches_xpath",
+      "xpath": ".//src:call[src:name[not(src:name)][text()='isfile'] or src:name/src:name[last()][text()='isfile']]"
+    }
+  ]
+},
+{
+  "rule_id": "REQUEST-ARGS_GET-003",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "structural",
+  "description": "Request args vulnerability",
+  "vulnerabilities": ["INJC"],
+  "source_percent_formats": [
+    {
+      "source": "request.POST.get",
+      "source_form": "call"
+    }
+  ],
+  "safe_contexts": []
+},
+{
+  "rule_id": "REQUEST-ARGS-GET-008",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "structural",
+  "vulnerabilities": ["SECM"],
+  "description": "Request args vulnerability - Ritorno diretto di parametri HTTP di richiesta non sanificati (possibile Reflected XSS)",
+  "forbidden_functions": [
+    "request.args.get","request.POST.get","request.GET.get","request.files.get",
+    "request.form.get","request.data.get","request.headers.get","request.params.get",
+    "request.base_url.get","request.authorization.get","request.cookies.get","request.endpoint.get",
+    "request.host.get","request.host_url.get","request.module.get","request.path.get",
+    "request.query_strings.get","request.url.get","request.values.get","request.view_args.get"
+  ],
+  "safe_contexts": [
+    {
+      "type": "node_matches_xpath",
+      "xpath": "count(ancestor::src:return) = 0"
+    },
+    {
+      "type": "node_matches_xpath",
+      "xpath": "ancestor::src:call[1][src:name[text()='escape' or text()='escape_filter_chars' or text()='escape_rdn']]"
+    },
+    {
+      "type": "condition_matches_xpath",
+      "scope": "function",
+      "xpath": ".//src:call[.//src:operator[text()='.']/following-sibling::src:name[1][text()='match']]"
+    }
+  ]
+},
+{
+  "rule_id": "REQUEST-ARGS-GET-009",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "structural",
+  "vulnerabilities": ["SECM"],
+  "description": "Request args vulnerability - Ritorno diretto di parametri HTTP estratti via parentesi quadre (es. request.args['param']) senza sanificazione (possibile Reflected XSS)",
+  "forbidden_subscripts": [
+    "request.args","request.POST","request.GET","request.files",
+    "request.form","request.data","request.headers","request.params",
+    "request.base_url","request.authorization","request.cookies","request.endpoint",
+    "request.host","request.host_url","request.module","request.path",
+    "request.query_strings","request.url","request.values","request.view_args"
+  ],
+  "safe_contexts": [
+    {
+      "type": "node_matches_xpath",
+      "xpath": "count(ancestor::src:return) = 0"
+    },
+    {
+      "type": "node_matches_xpath",
+      "xpath": "ancestor::src:call[1][src:name[text()='escape' or text()='escape_filter_chars' or text()='escape_rdn']]"
+    },
+    {
+      "type": "condition_matches_xpath",
+      "scope": "function",
+      "xpath": ".//src:call[.//src:operator[text()='.']/following-sibling::src:name[1][text()='match']]"
+    }
+  ]
+},
+{
+  "rule_id": "REQUEST-ARGS-GET-017",
+  "type": "taint",
+  "SI_POTREBBE AGGIUNGERE_required_imports": [
+    "flask"
+  ],
+  "description": "Request args vulnerability - Valore letto da request (es. get_json, get_data) passato come argomento a una funzione (inclusi log f-string) senza sanificazione",
+  "vulnerabilities": ["BRAC"],
+  "source_form": "call",
+  "sources": [
+    "request.get",
+    "request.urlopen",
+    "request.read",
+    "request.get_data",
+    "request.get_json",
+    "request.from_values"
+  ],
+  "sinks": [
+    "call_arg"
+  ],
+  "sanitizers": [
+    "escape",
+    "escape_filter_chars",
+    "escape_rdn"
+  ],
+  "safe_contexts": [
+    "match",
+    "obj_match",
+    "isfile",
+    "os.path.isfile",
+    {"type": "try_after_source"},
+        {
+      "type": "current_call_matches_ast",
+      "call": ["args.send_static_file"]
+    },
+{"type":"var_truthiness_check"},
+    {
+      "type": "call_with_kwarg",
+      "call": ["subprocess.run"],
+      "kwargs": {
+        "check": "True"
+      }
+    }
+  ]
+},
+{
+  "rule_id": "FLASK-REDIRECT-001",
+  "type": "structural",
+  "description": "Open Redirect Vulnerability",
+  "vulnerabilities": ["SECM"],
+  "forbidden_functions": [
+    "redirect"
+  ],
+  "safe_contexts": [
+    {
+      "type": "url_validation",
+      "require": "netloc_in"
+    },
+    {
+      "type": "node_matches_xpath",
+      "xpath": "./src:argument_list/src:argument//src:literal[@type='string']"
+    },
+    {
+      "type": "node_matches_xpath",
+      "xpath": "./src:argument_list//src:call[.//src:name[text()='escape' or text()='html.escape']]"
+    },
+    {
+      "type": "condition_matches_xpath",
+      "scope": "function",
+      "xpath": ".//src:call[.//src:name[last()][text()='startswith']]"
+    },
+    {
+      "type": "matches_xpath",
+      "xpath": ".//src:if_stmt[.//src:condition[.//src:name[text()='session'] and .//src:operator[text()='is'] and .//src:name[text()='None']]]"
+    }
+  ]
+},
+{
+  "rule_id": "REQUEST-ARGS-GET-020",
+  "type": "structural",
+  "description": "Request args vulnerability - Uso diretto di request.*.get in concatenazione non sanificata",
+  "vulnerabilities": ["SECM"],
+  "source_form": "call",
+  "source_concats": [
+    {"source": "request.args.get"},
+    {"source": "request.POST.get"},
+    {"source": "request.GET.get"},
+    {"source": "request.files.get"},
+    {"source": "request.form.get"},
+    {"source": "request.data.get"},
+    {"source": "request.headers.get"},
+    {"source": "request.params.get"},
+    {"source": "request.base_url.get"},
+    {"source": "request.authorization.get"},
+    {"source": "request.cookies.get"},
+    {"source": "request.endpoint.get"},
+    {"source": "request.host.get"},
+    {"source": "request.host_url.get"},
+    {"source": "request.module.get"},
+    {"source": "request.path.get"},
+    {"source": "request.query_strings.get"},
+    {"source": "request.url.get"},
+    {"source": "request.values.get"},
+    {"source": "request.view_args.get"}
+  ],
+  "sanitizers": [
+    "escape",
+    "escape_filter_chars",
+    "escape_rdn"
+  ]
+},
+{
+  "rule_id": "SET-COOKIE-001-flask",
+  "type": "structural",
+  "description": "Param set cookie",
+  "vulnerabilities": ["CRYF"],
+  "forbidden_functions": [
+    "set_cookie"
+  ],
+  "excluded_functions": [
+    "cj.set_cookie"
+  ],
+  "safe_contexts": [
+      {
+      "type": "call_has_kwargs",
+      "call": [
+        "set_cookie"
+      ],
+      "require": "all",
+      "kwargs": {
+        "samesite": "True",
+        "secure": "True",
+        "httponly": "True",
+        "max_age": ""
+      }
+    }
+  ]
+},
+{
+  "rule_id": "FLASK-CONFIG-001",
+  "type": "taint",
+  "vulnerabilities": ["SECM"],
+  "description": "app config hardcoded",
+  "source_form": "call",
+  "sources": [
+    "Flask"
+  ],
+  "sinks": [
+    {
+      "type": "matches_xpath",
+      "xpath": "following-sibling::src:operator[1][text()='.'] and following-sibling::src:name[1][text()='config'] and following-sibling::src:index"
+    }
+  ],
+  "safe_contexts": [
+    {
+      "type": "rhs_call",
+      "call": [
+        "os.getenv", 
+        "getenv", 
+        "os.environ.get", 
+        "environ.get"
+      ]
+    }
+  ]
+},
+{
+    "rule_id": "REQUEST-HEADER-GET-001",
+    "type": "taint",
+    "description": "Request header get vulnerability",
+    "vulnerabilities": ["BRAC"],
+    "sources": [
+        "request.headers.get"
+    ],
+    "source_form": "call",
+    "sinks": [
+        "any_use"
+    ],
+    "safe_contexts": [
+        {
+            "type": "membership_check",
+            "scope": "enclosing",
+            "operators": ["in", "not in"],
+            "require_var_left": true
+        },
+        {
+            "type": "condition_matches_xpath",
+            "scope": "enclosing",
+            "xpath": ".//src:call[src:name[text()='any'] and .//src:argument_list//src:call[.//src:name[text()='$VAR'] and .//src:operator[text()='.']/following-sibling::src:name[1][text()='startswith']]]"
+        },
+        {
+            "type": "receiver_of_method",
+            "method": "strip"
+        },
+        {
+            "type": "node_matches_xpath",
+            "xpath": "following-sibling::src:name[text()='split'] and parent::src:name/following-sibling::src:argument_list[contains(., ',')] and parent::src:name/parent::src:call/following-sibling::src:index[.//src:literal[@type='number'][text()='0']] and parent::src:name/parent::src:call/parent::src:name/following-sibling::src:name[text()='strip']"
+        }
+    ]
+},
+{
+    "rule_id": "REQUEST-ARGS-GET-010",
+    "type": "taint",
+    "vulnerabilities": ["INSD"],
+    "sources": [
+        "request.args", "request.args.get", "request.files", "request.form",
+        "request.GET", "request.POST", "request.data", "request.headers",
+        "request.params", "request.base_url", "request.authorization",
+        "request.cookies", "request.endpoint", "request.host", "request.host_url",
+        "request.module", "request.path", "request.query_strings", "request.url",
+        "request.values", "request.view_args"
+    ],
+    "source_form": "call",
+    "sinks": ["concat", "assign_rhs"],
+    "sanitizers": ["escape", "escape_filter_chars", "escape_rdn"],
+    "safe_contexts": [
+        {
+            "type": "matches_xpath",
+            "xpath": ".//src:if_stmt//src:call[contains(string(src:name[last()]),'match') or string(src:name)='obj_match' or contains(string(src:name),'isfile') or contains(string(src:name),'send_static_file')]"
+        },
+        {
+            "type": "matches_xpath",
+            "xpath": ".//src:call[contains(string(src:name),'subprocess.run')][contains(.,'$VAR')][contains(translate(string(./src:argument_list),' ',''),'check=True') or contains(translate(string(./src:argument_list),' ',''),'check=true')]"
+        },
+        {
+            "type": "matches_xpath",
+            "xpath": ".//src:call[contains(string(src:name),'isfile')][contains(.,'$VAR')]"
+        },
+        { "type": "try_after_source" },
+        { "type": "var_truthiness_check", "scope": "enclosing" }
+    ]
+},
+{
+    "rule_id": "REQUEST-ARGS-GET-011",
+    "type": "taint",
+    "vulnerabilities": ["INSD"],
+    "sources": [
+        "request.args", "request.args.get", "request.files", "request.form",
+        "request.GET", "request.POST", "request.data", "request.headers",
+        "request.params", "request.base_url", "request.authorization",
+        "request.cookies", "request.endpoint", "request.host", "request.host_url",
+        "request.module", "request.path", "request.query_strings", "request.url",
+        "request.values", "request.view_args"
+    ],
+    "source_form": "subscript",
+    "sinks": ["concat", "assign_rhs"],
+    "sanitizers": ["escape", "escape_filter_chars", "escape_rdn"],
+    "safe_contexts": [
+        {
+            "type": "matches_xpath",
+            "xpath": ".//src:if_stmt//src:call[contains(string(src:name[last()]),'match') or string(src:name)='obj_match' or contains(string(src:name),'isfile') or contains(string(src:name),'send_static_file')]"
+        },
+        {
+            "type": "matches_xpath",
+            "xpath": ".//src:call[contains(string(src:name),'subprocess.run')][contains(.,'$VAR')][contains(translate(string(./src:argument_list),' ',''),'check=True') or contains(translate(string(./src:argument_list),' ',''),'check=true')]"
+        },
+        {
+            "type": "matches_xpath",
+            "xpath": ".//src:call[contains(string(src:name),'isfile')][contains(.,'$VAR')]"
+        },
+        { "type": "try_after_source" },
+        { "type": "var_truthiness_check", "scope": "enclosing" }
+    ]
+},
+{
+    "rule_id": "REQUEST-ARGS-GET-014",
+    "type": "structural",
+    "description": "Request args vulnerability - Restituzione diretta di input da request non sanificato",
+    "vulnerabilities": [
+      "SECM"
+    ],
+    "bad_returns": [
+      "request.get(",
+      "request.urlopen(",
+      "request.read(",
+      "request.get_data(",
+      "request.get_json(",
+      "request.from_values(",
+      "flask.request.get(",
+      "flask.request.urlopen(",
+      "flask.request.read(",
+      "flask.request.get_data(",
+      "flask.request.get_json(",
+      "flask.request.from_values("
+    ],
+    "safe_contexts": [
+      {
+        "type": "node_matches_xpath",
+        "xpath": ".//src:call[src:name[text()='escape' or text()='escape_filter_chars' or text()='escape_rdn']]"
+      }
+    ]
+},
+{
+    "rule_id": "REQUEST-ARGS-GET-015",
+    "type": "taint",
+    "vulnerabilities": ["BRAC"],
+    "sources": [
+        "request.get", "request.urlopen", "request.read",
+        "request.get_data", "request.get_json", "request.from_values"
+    ],
+    "source_form": "call",
+    "sinks": ["concat", "assign_rhs"],
+    "sanitizers": ["escape", "escape_filter_chars", "escape_rdn"],
+    "safe_contexts": [
+        {
+            "type": "matches_xpath",
+            "xpath": ".//src:if_stmt//src:call[contains(string(src:name[last()]),'match') or string(src:name)='obj_match' or contains(string(src:name),'isfile') or contains(string(src:name),'send_static_file')]"
+        },
+        {
+            "type": "matches_xpath",
+            "xpath": ".//src:call[contains(string(src:name),'subprocess.run')][contains(.,'$VAR')][contains(translate(string(./src:argument_list),' ',''),'check=True')]"
+        },
+        {
+            "type": "matches_xpath",
+            "xpath": ".//src:call[contains(string(src:name),'isfile')][contains(.,'$VAR')]"
+        },
+        { "type": "try_after_source" },
+        { "type": "var_truthiness_check", "scope": "enclosing" }
+    ]
+},
+{
+    "rule_id": "REQUEST-ARGS-GET-016",
+    "type": "taint",
+    "description": "Request args vulnerability",
+    "vulnerabilities": [
+        "BRAC"
+    ],
+    "sources": [
+        "request.get",
+        "request.urlopen",
+        "request.read",
+        "request.get_data",
+        "request.get_json",
+        "request.from_values",
+        "flask.request.get",
+        "flask.request.urlopen",
+        "flask.request.read",
+        "flask.request.get_data",
+        "flask.request.get_json",
+        "flask.request.from_values"
+    ],
+    "source_form": "call",
+    "sinks": [
+        "colon_suffix"
+    ],
+    "sanitizers": [
+        "escape",
+        "escape_filter_chars",
+        "escape_rdn"
+    ],
+    "safe_contexts": [
+        "isfile",
+        "obj_match",
+        {
+            "type": "condition_matches_xpath",
+            "scope": "function",
+            "xpath": ".//src:call[.//src:name[last()][text()='match']]"
+        },
+        {
+            "type": "matches_xpath",
+            "xpath": ".//src:call[.//src:name[last()][text()='send_static_file']]"
+        },
+        {
+            "type": "call_has_kwargs",
+            "call": [
+                "subprocess.run",
+                "run"
+            ],
+            "kwargs": {
+                "check": "True"
+            }
+        },
+        {
+            "type": "function_has_call_with_var_arg",
+            "call": [
+                "os.path.isfile",
+                "isfile"
+            ]
+        },
+        {
+            "type": "try_after_source"
+        },
+        {
+            "type": "var_truthiness_check",
+            "scope": "enclosing"
+        }
+    ]
+},
+{
+  "rule_id": "REQUEST-ARGS-GET-018",
+  "type": "taint",
+  "description": "Request args vulnerability - Valore letto da request restituito direttamente o usato come receiver di un metodo, senza sanificazione",
+  "vulnerabilities": ["BRAC"],
+  "source_form": "call",
+  "sources": [
+    "request.get",
+    "request.urlopen",
+    "request.read",
+    "request.get_data",
+    "request.get_json",
+    "request.from_values"
+  ],
+  "sinks": [
+    "return",
+    {
+      "type": "matches_xpath",
+      "xpath": "boolean(following-sibling::src:operator[1][text()='.'] and parent::src:name/parent::src:call)"
+    }
+  ],
+  "sanitizers": [
+    "escape",
+    "escape_filter_chars",
+    "escape_rdn"
+  ],
+  "safe_contexts": [
+    "match",
+    "obj_match",
+    "isfile",
+    "os.path.isfile",
+    { "type": "try_after_source" },
+    {
+      "type": "current_call_matches_ast",
+      "call": ["args.send_static_file"]
+    },
+    { "type": "var_truthiness_check" },
+    {
+      "type": "call_with_kwarg",
+      "call": ["subprocess.run"],
+      "kwargs": { "check": "True" }
+    }
+  ]
+},
+{
+    "rule_id": "REQUEST-ARGS-GET-019",
+    "type": "structural",
+    "description": "Request args vulnerability",
+    "vulnerabilities": [
+        "SECM"
+    ],
+    "source_form": "subscript",
+    "sanitizers": [
+        "escape",
+        "escape_filter_chars",
+        "escape_rdn"
+    ],
+    "source_concats": [
+        {"source": "request.args"},
+        {"source": "request.args.get"},
+        {"source": "request.POST"},
+        {"source": "request.GET"},
+        {"source": "request.files"},
+        {"source": "request.form"},
+        {"source": "request.data"},
+        {"source": "request.headers"},
+        {"source": "request.params"},
+        {"source": "request.base_url"},
+        {"source": "request.authorization"},
+        {"source": "request.cookies"},
+        {"source": "request.endpoint"},
+        {"source": "request.host"},
+        {"source": "request.host_url"},
+        {"source": "request.module"},
+        {"source": "request.path"},
+        {"source": "request.query_strings"},
+        {"source": "request.url"},
+        {"source": "request.values"},
+        {"source": "request.view_args"},
+        {"source": "flask.request.args"},
+        {"source": "flask.request.args.get"},
+        {"source": "flask.request.POST"},
+        {"source": "flask.request.GET"},
+        {"source": "flask.request.files"},
+        {"source": "flask.request.form"},
+        {"source": "flask.request.data"},
+        {"source": "flask.request.headers"},
+        {"source": "flask.request.params"},
+        {"source": "flask.request.base_url"},
+        {"source": "flask.request.authorization"},
+        {"source": "flask.request.cookies"},
+        {"source": "flask.request.endpoint"},
+        {"source": "flask.request.host"},
+        {"source": "flask.request.host_url"},
+        {"source": "flask.request.module"},
+        {"source": "flask.request.path"},
+        {"source": "flask.request.query_strings"},
+        {"source": "flask.request.url"},
+        {"source": "flask.request.values"},
+        {"source": "flask.request.view_args"}
+    ]
+},
+{
+  "rule_id": "REQUEST-ARGS-GET-021",
+  "type": "taint",
+  "required_imports": ["flask"],
+  "description": "Request args vulnerability - valore da request.X[...] usato dentro '{}'.format(...) e poi concatenato/riassegnato senza sanificazione",
+  "vulnerabilities": ["INSD"],
+  "source_form": "subscript",
+  "sources": [
+    "request.args", "request.POST", "request.GET", "request.files",
+    "request.form", "request.data", "request.headers", "request.params",
+    "request.base_url", "request.authorization", "request.cookies",
+    "request.endpoint", "request.host", "request.host_url", "request.module",
+    "request.path", "request.query_strings", "request.url", "request.values",
+    "request.view_args"
+  ],
+  "sinks": ["concat", "assign_rhs"],
+  "sanitizers": ["escape", "escape_filter_chars", "escape_rdn"],
+  "safe_contexts": [
+    "match",
+    "obj_match",
+    "isfile",
+    "os.path.isfile",
+    { "type": "try_after_source" },
+    { "type": "current_call_matches_ast", "call": ["args.send_static_file"] },
+    { "type": "var_truthiness_check" },
+    {
+      "type": "call_with_kwarg",
+      "call": ["subprocess.run"],
+      "kwargs": { "check": "True" }
+    }
+  ]
+},
+{
+  "rule_id": "REQUEST-ARGS-GET-022",
+  "type": "taint",
+  "required_imports": ["flask"],
+  "description": "Request args vulnerability - valore da request.X[...] usato come chiave/annotazione (VAR:) senza sanificazione",
+  "vulnerabilities": ["INSD", "INJC"],
+  "source_form": "subscript",
+  "sources": [
+    "request.args", "request.POST", "request.GET", "request.files",
+    "request.form", "request.data", "request.headers", "request.params",
+    "request.base_url", "request.authorization", "request.cookies",
+    "request.endpoint", "request.host", "request.host_url", "request.module",
+    "request.path", "request.query_strings", "request.url", "request.values",
+    "request.view_args"
+  ],
+  "sinks": ["colon_suffix"],
+  "sanitizers": ["escape", "escape_filter_chars", "escape_rdn"],
+  "safe_contexts": [
+    "match",
+    "obj_match",
+    "isfile",
+    "os.path.isfile",
+    { "type": "try_after_source" },
+    { "type": "current_call_matches_ast", "call": ["args.send_static_file"] },
+    { "type": "var_truthiness_check" },
+    {
+      "type": "call_with_kwarg",
+      "call": ["subprocess.run"],
+      "kwargs": { "check": "True" }
+    }
+  ]
+},
+{
+  "rule_id": "REQUEST-ARGS-GET-023",
+  "type": "taint",
+  "required_imports": ["flask"],
+  "description": "Request args vulnerability - valore da request.X[...] passato come argomento a una chiamata, senza sanificazione",
+  "vulnerabilities": ["INSD", "INJC"],
+  "source_form": "subscript",
+  "sources": [
+    "request.args", "request.POST", "request.GET", "request.files",
+    "request.form", "request.data", "request.headers", "request.params",
+    "request.base_url", "request.authorization", "request.cookies",
+    "request.endpoint", "request.host", "request.host_url", "request.module",
+    "request.path", "request.query_strings", "request.url", "request.values",
+    "request.view_args"
+  ],
+  "sinks": ["call_arg"],
+  "sanitizers": ["escape", "escape_filter_chars", "escape_rdn"],
+  "safe_contexts": [
+    "match",
+    "obj_match",
+    "isfile",
+    "os.path.isfile",
+    { "type": "try_after_source" },
+    { "type": "current_call_matches_ast", "call": ["args.send_static_file"] },
+    { "type": "var_truthiness_check" },
+    {
+      "type": "call_with_kwarg",
+      "call": ["subprocess.run"],
+      "kwargs": { "check": "True" }
+    }
+  ]
+},
+{
+  "rule_id": "REQUEST-ARGS-GET-024",
+  "type": "taint",
+  "description": "Request args vulnerability - valore da request.X[...] restituito direttamente o usato come receiver di un metodo, senza sanificazione",
+  "vulnerabilities": ["INSD", "INJC"],
+  "source_form": "subscript",
+  "sources": [
+    "request.args", "request.POST", "request.GET", "request.files",
+    "request.form", "request.data", "request.headers", "request.params",
+    "request.base_url", "request.authorization", "request.cookies",
+    "request.endpoint", "request.host", "request.host_url", "request.module",
+    "request.path", "request.query_strings", "request.url", "request.values",
+    "request.view_args"
+  ],
+  "sinks": [
+    "return",
+    {
+      "type": "matches_xpath",
+      "xpath": "boolean(following-sibling::src:operator[1][text()='.'] and parent::src:name/parent::src:call)"
+    }
+  ],
+  "sanitizers": ["escape", "escape_filter_chars", "escape_rdn"],
+  "safe_contexts": [
+    "match",
+    "obj_match",
+    "isfile",
+    "os.path.isfile",
+    { "type": "try_after_source" },
+    { "type": "current_call_matches_ast", "call": ["args.send_static_file"] },
+    { "type": "var_truthiness_check" },
+    {
+      "type": "call_with_kwarg",
+      "call": ["subprocess.run"],
+      "kwargs": { "check": "True" }
+    }
+  ]
+},
+{
+    "rule_id": "REQUEST-ARGS-GET-025",
+    "type": "structural",
+    "required_imports": [
+        "flask"
+    ],
+    "description": "Request args vulnerability - chiamata a request.X(...) preceduta da parentesi, senza sanificazione",
+    "vulnerabilities": [
+        "SECM"
+    ],
+    "forbidden_expressions": [
+        "(request.args(","(request.args.get(","(request.POST(","(request.GET(",
+        "(request.files(","(request.formdata(","(request.headers(","(request.params(",
+        "(request.base_url(","(request.authorization(","(request.cookies(","(request.endpoint(",
+        "(request.host(","(request.host_url(","(request.module(","(request.path(",
+        "(request.query_strings(","(request.url(","(request.values(","(request.view_args(",
+        "(flask.request.args(","(flask.request.args.get(","(flask.request.POST(","(flask.request.GET(",
+        "(flask.request.files(","(flask.request.formdata(","(flask.request.headers(","(flask.request.params(",
+        "(flask.request.base_url(","(flask.request.authorization(","(flask.request.cookies(","(flask.request.endpoint(",
+        "(flask.request.host(","(flask.request.host_url(","(flask.request.module(","(flask.request.path(",
+        "(flask.request.query_strings(","(flask.request.url(","(flask.request.values(","(flask.request.view_args("
+    ],
+    "safe_contexts": [
+        {
+            "type": "node_matches_xpath",
+            "xpath": "ancestor::src:call[1][src:name[text()='escape' or text()='escape_filter_chars' or text()='escape_rdn']]"
+        }
+    ]
+},
+{
+  "rule_id": "REQUEST-ARGS-GET-026",
+  "type": "structural",
+  "required_imports": [
+    "flask"
+  ],
+  "description": "Request args vulnerability - chiamata a request.X(...) preceduta da operatore % (percent-format), senza sanificazione",
+  "vulnerabilities": [
+    "SECM"
+  ],
+  "forbidden_expressions": [
+    "%request.args(","%request.args.get(","%request.POST(","%request.GET(",
+    "%request.files(","%request.formdata(","%request.headers(","%request.params(",
+    "%request.base_url(","%request.authorization(","%request.cookies(","%request.endpoint(",
+    "%request.host(","%request.host_url(","%request.module(","%request.path(",
+    "%request.query_strings(","%request.url(","%request.values(","%request.view_args(",
+    "%flask.request.args(","%flask.request.args.get(","%flask.request.POST(","%flask.request.GET(",
+    "%flask.request.files(","%flask.request.formdata(","%flask.request.headers(","%flask.request.params(",
+    "%flask.request.base_url(","%flask.request.authorization(","%flask.request.cookies(","%flask.request.endpoint(",
+    "%flask.request.host(","%flask.request.host_url(","%flask.request.module(","%flask.request.path(",
+    "%flask.request.query_strings(","%flask.request.url(","%flask.request.values(","%flask.request.view_args("
+  ],
+  "safe_contexts": [
+    {
+      "type": "node_matches_xpath",
+      "xpath": "ancestor::src:call[1][src:name[text()='escape' or text()='escape_filter_chars' or text()='escape_rdn']]"
+    }
+  ]
+},
+{
+    "rule_id": "FLASK-ROUTE-001",
+    "type": "structural",
+    "required_imports": [
+        "flask"
+    ],
+    "description": "app route hardcoded",
+    "vulnerabilities": [
+        "SDIF"
+    ],
+    "forbidden_functions": [
+        {
+            "type": "call_matches_ast",
+            "call": "route",
+            "args_text_contains": [
+                "'/measurement'"
+            ]
+        }
+    ],
+    "safe_contexts": [
+        {
+            "type": "matches_xpath",
+            "xpath": ".//src:if_stmt//src:condition[contains(., 'request.remote_addr') and contains(., '!=') and contains(., '127.0.0.1')]"
+        }
+    ]
+},
+{
+  "rule_id": "FLASK-SOCKETIO-001",
+  "type": "structural",
+  "vulnerabilities": ["SDIF"],
+  "forbidden_imports": ["flask_socketio.SocketIO"],
+  "safe_contexts": [
+    {
+      "type": "matches_xpath",
+      "xpath": ".//src:decorator[contains(., 'before_request')]"
+    }
+  ]
+},
+{
+    "rule_id": "REQUEST-JSON-001",
+    "type": "taint",
+    "required_imports": [
+        "flask"
+    ],
+    "description": "Request args json vulnerability",
+    "vulnerabilities": [
+        "BRAC"
+    ],
+    "sources": [
+        "request.json",
+        "flask.request.json"
+    ],
+    "sinks": [
+        "concat",
+        "assign_rhs"
+    ],
+    "sanitizers": [
+        "escape",
+        "escape_filter_chars",
+        "escape_rdn"
+    ],
+    "safe_contexts": [
+        "isfile",
+        "obj_match",
+        {
+            "type": "condition_matches_xpath",
+            "scope": "function",
+            "xpath": ".//src:call[.//src:name[last()][text()='match']]"
+        },
+        {
+            "type": "matches_xpath",
+            "xpath": ".//src:call[.//src:name[last()][text()='send_static_file']]"
+        },
+        {
+            "type": "call_has_kwargs",
+            "call": [
+                "subprocess.run",
+                "run"
+            ],
+            "kwargs": {
+                "check": "True"
+            }
+        },
+        {
+            "type": "function_has_call_with_var_arg",
+            "call": [
+                "os.path.isfile",
+                "isfile"
+            ]
+        },
+        {
+            "type": "try_after_source"
+        },
+        {
+            "type": "var_truthiness_check",
+            "scope": "enclosing"
+        }
+    ]
+},
+{
+    "rule_id": "REQUEST-JSON-002",
+    "type": "taint",
+    "required_imports": [
+        "flask"
+    ],
+    "description": "Request args json vulnerability",
+    "vulnerabilities": [
+        "BRAC"
+    ],
+    "sources": [
+        "request.json",
+        "flask.request.json"
+    ],
+    "sinks": [
+        "colon_suffix"
+    ],
+    "sanitizers": [
+        "escape",
+        "escape_filter_chars",
+        "escape_rdn"
+    ],
+    "safe_contexts": [
+        "isfile",
+        "obj_match",
+        {
+            "type": "condition_matches_xpath",
+            "scope": "function",
+            "xpath": ".//src:call[.//src:name[last()][text()='match']]"
+        },
+        {
+            "type": "matches_xpath",
+            "xpath": ".//src:call[.//src:name[last()][text()='send_static_file']]"
+        },
+        {
+            "type": "call_has_kwargs",
+            "call": [
+                "subprocess.run",
+                "run"
+            ],
+            "kwargs": {
+                "check": "True"
+            }
+        },
+        {
+            "type": "function_has_call_with_var_arg",
+            "call": [
+                "os.path.isfile",
+                "isfile"
+            ]
+        },
+        {
+            "type": "try_after_source"
+        },
+        {
+            "type": "var_truthiness_check",
+            "scope": "enclosing"
+        }
+    ]
+},
+{
+    "rule_id": "REQUEST-JSON-003",
+    "type": "taint",
+    "required_imports": [
+        "flask"
+    ],
+    "description": "Request args json vulnerability",
+    "vulnerabilities": [
+        "BRAC"
+    ],
+    "sources": [
+        "request.json",
+        "flask.request.json"
+    ],
+    "sinks": [
+        "call_arg"
+    ],
+    "sanitizers": [
+        "escape",
+        "escape_filter_chars",
+        "escape_rdn"
+    ],
+    "safe_contexts": [
+        "isfile",
+        "obj_match",
+        {
+            "type": "condition_matches_xpath",
+            "scope": "function",
+            "xpath": ".//src:call[.//src:name[last()][text()='match']]"
+        },
+        {
+            "type": "matches_xpath",
+            "xpath": ".//src:call[.//src:name[last()][text()='send_static_file']]"
+        },
+        {
+            "type": "call_has_kwargs",
+            "call": [
+                "subprocess.run",
+                "run"
+            ],
+            "kwargs": {
+                "check": "True"
+            }
+        },
+        {
+            "type": "function_has_call_with_var_arg",
+            "call": [
+                "os.path.isfile",
+                "isfile"
+            ]
+        },
+        {
+            "type": "try_after_source"
+        },
+        {
+            "type": "var_truthiness_check",
+            "scope": "enclosing"
+        }
+    ]
+},
+{
+    "rule_id": "REQUEST-JSON-004",
+    "type": "taint",
+    "description": "Request args json vulnerability",
+    "vulnerabilities": [
+        "BRAC"
+    ],
+    "sources": [
+        "request.json",
+        "flask.request.json"
+    ],
+    "sinks": [
+        "return",
+        {
+    "type": "matches_xpath",
+    "xpath": "boolean(following-sibling::src:operator[1][text()='.'] and parent::src:name/parent::src:call)"
+  }
+    ],
+    "sanitizers": [
+        "escape",
+        "escape_filter_chars",
+        "escape_rdn"
+    ],
+    "safe_contexts": [
+        "isfile",
+        "obj_match",
+        {
+            "type": "condition_matches_xpath",
+            "scope": "function",
+            "xpath": ".//src:call[.//src:name[last()][text()='match']]"
+        },
+        {
+            "type": "matches_xpath",
+            "xpath": ".//src:call[.//src:name[last()][text()='send_static_file']]"
+        },
+        {
+            "type": "call_has_kwargs",
+            "call": [
+                "subprocess.run",
+                "run"
+            ],
+            "kwargs": {
+                "check": "True"
+            }
+        },
+        {
+            "type": "function_has_call_with_var_arg",
+            "call": [
+                "os.path.isfile",
+                "isfile"
+            ]
+        },
+        {
+            "type": "try_after_source"
+        },
+        {
+            "type": "var_truthiness_check",
+            "scope": "enclosing"
+        }
+    ]
+}
+
+
+]

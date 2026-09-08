@@ -1,0 +1,53 @@
+[
+{
+  "rule_id": "HTML-INJC-001",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "structural",
+  "vulnerabilities": ["INJC"],
+  "description": "html injection vulnerability - Template HTML/MJML vulnerabile a iniezione tramite interpolazione non sanificata",
+  "forbidden_string_patterns": [
+    "<mj-text>\\s*\\{\\s*\\w+\\s*\\}\\s*</mj-text>"
+  ],
+  "safe_contexts": [
+    {
+      "type": "function_has_call_matching_ast",
+      "call": ["html.escape"]
+    }
+  ]
+},
+{
+  "rule_id": "HTML-PARSER-001",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "structural",
+  "vulnerabilities": ["SDIF"],
+  "description": "HTML parser vulnerability - Inizializzazione di HTMLParser senza tutti i parametri di restrizione necessari (tree, namespaceHTMLElements, strict)",
+  "forbidden_functions": [
+    "HTMLParser"
+  ],
+  "safe_contexts": [
+    {
+      "type": "call_has_kwargs",
+      "call": [
+        "HTMLParser"
+      ],
+      "require": "all",
+      "kwargs": {
+        "tree": "treebuilders.getTreeBuilder(\"dom\")",
+        "namespaceHTMLElements": "False",
+        "strict": "True"
+      }
+    }
+  ]
+},
+{
+  "rule_id": "XLML-HTML-CLEAN-001",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "structural",
+  "vulnerabilities": ["SDIF"],
+  "description": "HTML parser vulnerability - Uso della funzione html.clean.clean_html()",
+  "forbidden_functions": [
+    "html.clean.clean_html"
+  ]
+}
+
+]

@@ -1,0 +1,69 @@
+[
+{
+  "rule_id": "JWT-DECODE-001",
+  "type": "structural",
+  "description": "Decode vulnerability - Decodifica JWT insicura con verifica della firma disabilitata (verify=False)",
+  "vulnerabilities": ["CRYF"],
+  "bad_calls": {
+    "jwt.decode": {
+      "verify": "False"
+    }
+  }
+},
+ {
+  "rule_id": "JWT-DECODE-002",
+  "type": "structural",
+  "description": "Decode vulnerability - Chiamata a jwt.decode con un solo argomento nudo, priva dei parametri di sicurezza obbligatori (es. algorithms)",
+  "vulnerabilities": ["CRYF"],
+  "forbidden_functions": [
+    {
+      "type": "call_matches_ast", 
+      "call": ["jwt.decode"], 
+      "require_bare_arg": true
+    }
+  ]
+},
+{
+  "rule_id": "JWT-PROCESS-FUNCTION-001",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "structural",
+  "description": "JWT vulnerability",
+  "vulnerabilities": [
+    "CRYF"
+  ],
+  "forbidden_functions": [
+    {
+      "type": "call_matches_ast", 
+      "call": ["jwt.process_jwt"], 
+      "exact_args_count": 1,
+      "no_commas_in_args": true
+    }
+  ],
+  "safe_contexts": [
+    {
+      "type": "function_has_call_matching_ast",
+      "call": [
+        "verify_jwt"
+      ]
+    }
+  ]
+},
+{
+  "rule_id": "KEY-SIZE-001",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "structural",
+  "description": "Parser vulnerability - Insufficient key size (< 2048 bits)",
+  "vulnerabilities": [
+    "CRYF"
+  ],
+  "weak_key_sizes": [
+    {
+      "type": "key_size_lt",
+      "name": "key_size",
+      "max_value": 2048
+    }
+  ]
+}
+
+
+]

@@ -1,0 +1,139 @@
+[
+{
+  "rule_id": "IMG-001",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "taint",
+  "vulnerabilities": ["SDIF"],
+  "description": "img load vulnerability - Chiamata al metodo .load() su un'immagine aperta con Image.open() senza la protezione di un blocco try-except",
+  "source_form": "call",
+  "sources": [
+    "Image.open"
+  ],
+  "sinks": [
+    {
+      "type": "method_call",
+      "method": "load"
+    }
+  ],
+  "safe_contexts": [
+    "try"
+  ]
+},
+{
+  "rule_id": "IMG-OPEN-001",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "structural",
+  "vulnerabilities": ["SDIF"],
+  "description": "img load vulnerability - Uso di Image.open() senza blocco try-except o senza impostare un parametro 'limit='",
+  "forbidden_functions": [
+    "Image.open"
+  ],
+  "safe_contexts": [
+    "try",
+    {
+      "type": "current_call_matches_ast",
+      "args_text_contains": ["limit="]
+    }
+  ]
+},
+{
+  "rule_id": "BYTE-IMG-001",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "structural",
+  "vulnerabilities": ["SDIF"],
+  "description": "byte img vulnerability - Inizializzazione di un bytearray non validato per image_buffer_size",
+  "bad_assignments": {
+    "image_buffer": "bytearray(image_buffer_size)"
+  },
+  "safe_contexts": [
+    {
+      "type": "binary_comparison",
+      "operators": ["<"],
+      "left_exact": ["image_buffer_size"],
+      "right_exact": ["0"]
+    },
+    {
+      "type": "binary_comparison",
+      "operators": [">"],
+      "left_exact": ["image_buffer_size"]
+    }
+  ]
+},
+{
+  "rule_id": "PROCESS-IMG-001",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "structural",
+  "vulnerabilities": ["SDIF"],
+  "description": "process img vulnerability - Slicing di image_data con zsize senza validazione preventiva dei limiti (<= 0 o > len(image_data))",
+  "bad_assignments": {
+    "processed_image": "image_data[:zsize]"
+  },
+  "safe_contexts": [
+    {
+      "type": "binary_comparison",
+      "operators": ["<="],
+      "left_exact": ["zsize"],
+      "right_exact": ["0"]
+    },
+    {
+      "type": "binary_comparison",
+      "operators": [">"],
+      "left_exact": ["zsize"],
+      "right_exact": ["len(image_data)"]
+    }
+  ]
+},
+{
+  "rule_id": "IMAGEOP-001",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "structural",
+  "vulnerabilities": ["SDIF"],
+  "description": "imageop vulnerability - Uso di imageop.some_image_operation(image_data) senza preventiva validazione dei limiti di dimensione (len <= 0 o > MAX_IMAGE_SIZE)",
+  "forbidden_functions": [
+    {
+      "type": "call_matches_ast",
+      "call": ["imageop.some_image_operation"],
+      "exact_args_count": 1,
+      "contains_names": ["image_data"]
+    }
+  ],
+  "safe_contexts": [
+    {
+      "type": "binary_comparison",
+      "operators": ["<="],
+      "left_exact": ["len(image_data)"],
+      "right_exact": ["0"]
+    },
+    {
+      "type": "binary_comparison",
+      "operators": [">"],
+      "left_exact": ["len(image_data)"],
+      "right_exact": ["MAX_IMAGE_SIZE"]
+    }
+  ]
+},
+{
+  "rule_id": "IMAGEOP-002",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "structural",
+  "vulnerabilities": ["SDIF"],
+  "description": "imageop vulnerability - Uso di imageop.tovideo() senza preventiva validazione della tupla args tramite isinstance o controllo sulla lunghezza (< 3)",
+  "forbidden_functions": [
+    "imageop.tovideo"
+  ],
+  "safe_contexts": [
+    {
+      "type": "condition_matches_xpath",
+      "scope": "function",
+      "xpath": ".//src:operator[text()='not']/following-sibling::src:call[.//src:name[text()='isinstance']]"
+    },
+    {
+      "type": "binary_comparison",
+      "operators": ["<"],
+      "left_exact": ["len(args)"],
+      "right_exact": ["3"]
+    }
+  ]
+}
+
+]

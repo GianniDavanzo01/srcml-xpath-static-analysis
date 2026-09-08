@@ -1,0 +1,27 @@
+[
+{
+  "rule_id": "TOKEN-DIM-001",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "taint",
+  "vulnerabilities": ["SDIF"],
+  "description": "token dimension vulnerability - Variabile generata da jwe.decode() invocata con .encode() senza controllarne la lunghezza in una condizione if",
+  "source_form": "call",
+  "sources": [
+    "jwe.decode"
+  ],
+  "sinks": [
+    {
+      "type": "method_call",
+      "method": "encode"
+    }
+  ],
+  "safe_contexts": [
+    {
+      "type": "condition_matches_xpath",
+      "scope": "function",
+      "xpath": ".//src:call[src:name[text()='len'] and .//src:name[text()='$VAR'] and .//src:name[text()='encode']]"
+    }
+  ]
+}
+
+]

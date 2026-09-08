@@ -1,0 +1,205 @@
+[
+    {
+  "rule_id": "PYTHON-001",
+  "type": "structural",
+  "description": "python version vulnerability - Import di moduli considerati vulnerabili senza un controllo esplicito sulla versione di Python",
+  "vulnerabilities": [
+    "SDIF"
+  ],
+  "forbidden_imports": [
+    "http.server",
+    "wave",
+    "xml.parsers.expat",
+    "urllib3"
+  ],
+  "safe_contexts": [
+  {
+    "type": "matches_xpath",
+    "xpath": "ancestor-or-self::src:unit[1][contains(translate(., concat(' ', '&#10;', '&#13;'), ''), 'sys.version.split()[0]')]"
+  },
+  {
+    "type": "matches_xpath",
+    "xpath": "ancestor-or-self::src:unit[1][contains(translate(., concat(' ', '&#10;', '&#13;'), ''), 'sys.version_info')]"
+  }
+  ]
+},
+{
+    "rule_id": "PIL-VERSION-001",
+    "type": "structural",
+    "description": "pill version vulnerability",
+    "vulnerabilities": [
+        "SDIF"
+    ],
+    "forbidden_imports": [
+        "PIL"
+    ],
+    "safe_contexts": [
+        {
+            "type": "matches_xpath",
+            "xpath": ".//src:call[.//src:name[text()='version'] and .//src:literal[contains(text(), 'Pillow')]]"
+        }
+    ]
+},
+{
+  "rule_id": "APENPYXL-VERSION-001",
+  "type": "structural",
+  "vulnerabilities": ["SDIF"],
+  "forbidden_imports": ["openpyxl"],
+  "safe_contexts": [
+    { "type": "matches_xpath", "xpath": ".//src:call[.//src:name[text()='version']][.//src:literal[@type='string'][contains(text(),'openpyxl')]]" }
+  ]
+},
+{
+  "rule_id": "HYPER-VERSION-001",
+  "type": "structural",
+  "vulnerabilities": ["SDIF"],
+  "forbidden_imports": ["hyper"],
+  "safe_contexts": [
+    { "type": "matches_xpath", "xpath": ".//src:call[.//src:name[text()='version']][.//src:literal[@type='string'][contains(text(),'hyper')]]" }
+  ]
+},
+{
+    "rule_id": "TARFILE-VERSION-001",
+    "type": "structural",
+    "description": "tarfile version vulnerability",
+    "vulnerabilities": [
+        "SDIF"
+    ],
+    "forbidden_imports": [
+        "tarfile"
+    ],
+    "safe_contexts": [
+        {
+            "type": "binary_comparison",
+            "operators": [
+                "<",
+                ">",
+                "<=",
+                ">="
+            ],
+            "left_contains": [
+                "sys.version_info",
+                "version_info"
+            ]
+        },
+        {
+            "type": "matches_xpath",
+            "xpath": ".//src:call[.//src:name[text()='version'] and .//src:literal[contains(text(), 'tarfile')]]"
+        }
+    ]
+},
+{
+    "rule_id": "PYBLUMONDAY-VERSION-001",
+    "type": "structural",
+    "description": "pybluemonday version vulnerability",
+    "vulnerabilities": [
+        "SDIF"
+    ],
+    "forbidden_imports": [
+        "pybluemonday"
+    ],
+    "safe_contexts": [
+        {
+            "type": "matches_xpath",
+            "xpath": ".//src:call[.//src:name[text()='version'] and .//src:literal[contains(text(), 'pybluemonday')]]"
+        }
+    ]
+},
+{
+  "rule_id": "IPADDRESS-VERSION-001",
+  "type": "structural",
+  "vulnerabilities": ["SDIF"],
+  "forbidden_imports": ["ipaddress"],
+  "safe_contexts": [
+    { "type": "matches_xpath", "xpath": ".//src:operator[text()='.']/following-sibling::src:name[1][text()='version']" },
+    { "type": "matches_xpath", "xpath": ".//src:call[.//src:name[last()][text()='version']]" }
+  ]
+},
+{
+    "rule_id": "URLLIB3-VERSION-001",
+    "type": "structural",
+    "description": "urllib3 version vulnerability",
+    "vulnerabilities": [
+        "SDIF"
+    ],
+    "forbidden_imports": [
+        "urllib3"
+    ],
+    "safe_contexts": [
+        {
+            "type": "matches_xpath",
+            "xpath": ".//src:call[.//src:name[text()='version'] and .//src:literal[contains(text(), 'urllib3')]]"
+        }
+    ]
+},
+{
+  "rule_id": "TENSORFLOW-VERSION-001",
+  "type": "structural",
+  "vulnerabilities": ["SDIF"],
+  "forbidden_imports": ["tensorflow"],
+  "safe_contexts": [
+    { "type": "matches_xpath", "xpath": ".//src:name[text()='__version__']" }
+  ]
+},
+{
+    "rule_id": "SHA3-VERSION-001",
+    "type": "structural",
+    "description": "SHA3 version vulnerability",
+    "vulnerabilities": [
+        "SDIF"
+    ],
+    "forbidden_imports": [
+        "_sha3"
+    ],
+    "safe_contexts": [
+        {
+            "type": "matches_xpath",
+            "xpath": ".//src:call[.//src:name[text()='get_distribution'] and .//src:literal[contains(text(), 'pysha3')]]"
+        }
+    ]
+},
+{
+  "rule_id": "MARCADOR-VERSION-001",
+  "type": "structural",
+  "vulnerabilities": ["SDIF"],
+  "forbidden_imports": ["marcador"],
+  "safe_contexts": [
+    {
+      "type": "matches_xpath",
+      "xpath": ".//src:call[.//src:name[last()][text()='get_distribution']][.//src:literal[@type='string'][contains(text(),'marcador')]]/parent::src:name/following-sibling::src:operator[1][text()='.']/following-sibling::src:name[1][text()='version']"
+    }
+  ]
+},
+{
+  "rule_id": "SETUP_TOOLS-001",
+  "type": "structural",
+  "vulnerabilities": ["SDIF"],
+  "forbidden_imports": ["setuptools"],
+  "safe_contexts": [
+    {
+      "type": "matches_xpath",
+      "xpath": ".//src:call[.//src:name[last()][text()='get_distribution']][.//src:literal[@type='string'][contains(text(),'setuptools')]]"
+    }
+  ]
+},
+{
+    "rule_id": "TKVIDEOPLAYER-VERSION-001",
+    "type": "structural",
+    "description": "tkvideoplayer version vulnerability",
+    "vulnerabilities": [
+        "SDIF"
+    ],
+    "forbidden_functions": [
+        {
+            "type": "node_matches_xpath",
+            "xpath": ".//src:import[.//src:name[text()='tkvideoplayer'] and .//src:name[text()='TkinterVideo']]"
+        }
+    ],
+    "safe_contexts": [
+        {
+            "type": "matches_xpath",
+            "xpath": ".//src:call[.//src:name[text()='get_distribution'] and .//src:literal[contains(text(), 'tkvideoplayer')]]"
+        }
+    ]
+}
+]

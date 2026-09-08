@@ -1,0 +1,143 @@
+[
+{
+  "rule_id": "SQL-001-call",
+  "type": "taint",
+  "vulnerabilities": ["INJC"],
+  "source_form": "call",
+  "sources": [
+    "input",
+    "request.args.get"
+  ],
+  "sinks": [
+    { "type": "concat", "requires_text_any": ["SELECT", "DELETE", "UPDATE", "INSERT"] },
+    { "type": "fstring", "requires_text_any": ["SELECT", "DELETE", "UPDATE", "INSERT"] },
+    { "type": "call_arg", "requires_text_any": ["SELECT", "DELETE", "UPDATE", "INSERT"] }
+  ],
+  "safe_contexts": [
+    { "type": "call_has_kwargs", "call": ["cur.execute", "cursor.execute", "execute"], "kwargs": {} }
+  ]
+},
+{
+  "rule_id": "SQL-001-subscript",
+  "type": "taint",
+  "vulnerabilities": ["INJC"],
+  "source_form": "subscript",
+  "sources": [
+    "request.args", "request.POST", "request.GET", "request.files",
+    "request.form", "request.data", "request.headers", "request.params",
+    "request.base_url", "request.authorization", "request.cookies",
+    "request.endpoint", "request.host", "request.host_url", "request.module",
+    "request.path", "request.query_strings", "request.url", "request.values",
+    "request.view_args"
+  ],
+  "sinks": [
+    { "type": "concat", "requires_text_any": ["SELECT", "DELETE", "UPDATE", "INSERT"] },
+    { "type": "fstring", "requires_text_any": ["SELECT", "DELETE", "UPDATE", "INSERT"] },
+    { "type": "call_arg", "requires_text_any": ["SELECT", "DELETE", "UPDATE", "INSERT"] }
+  ],
+  "safe_contexts": [
+    { "type": "call_has_kwargs", "call": ["cur.execute", "cursor.execute", "execute"], "kwargs": {} }
+  ]
+},
+{
+    "rule_id": "SQL-002",
+    "type": "structural",
+    "description": "sql vulnerability",
+    "vulnerabilities": [
+        "INJC"
+    ],
+    "forbidden_functions": [
+        "sql.parse"
+    ],
+    "safe_contexts": [
+        {
+            "type": "node_matches_xpath",
+            "xpath": "ancestor::src:call[.//src:name[text()='re.sub' or text()='escape']]"
+        }
+    ]
+},
+{
+    "rule_id": "SQL-PARAMETRIZED-QUERY-002",
+    "type": "structural",
+    "description": "sql vulnerability - query SQL eseguita senza parametrizzazione",
+    "vulnerabilities": [
+        "INJC"
+    ],
+    "forbidden_functions": [
+        {
+            "type": "call_matches_ast",
+            "call": "execute",
+            "args_text_contains": [
+                "SELECT",
+                "DELETE",
+                "UPDATE",
+                "INSERT"
+            ]
+        }
+    ],
+    "safe_contexts": [
+        {
+            "type": "parametrized_query"
+        },
+        {
+            "type": "node_matches_xpath",
+            "xpath": "ancestor::src:call[.//src:name[text()='escape' or text()='replace']]"
+        }
+    ]
+},
+{
+    "rule_id": "SQL-PARSE-FORMAT-002",
+    "type": "structural",
+    "description": "sql parse vulnerability",
+    "vulnerabilities": [
+        "INJC"
+    ],
+    "forbidden_functions": [
+        "sqlparse.format"
+    ],
+    "safe_contexts": [
+        {
+            "type": "call_has_kwargs",
+            "call": [
+                "sqlparse.format",
+                "format"
+            ],
+            "kwargs": {
+                "strip_comments": "False"
+            }
+        }
+    ]
+},
+{
+  "rule_id": "MYSQL-DB-003",
+  "type": "structural",
+  "vulnerabilities": ["SDIF"],
+  "forbidden_functions": ["MySQLdb.connect"],
+  "safe_contexts": [
+    { "type": "matches_xpath", "xpath": ".//src:call[.//src:name[last()][text()='getenv']]" }
+  ]
+},
+{
+    "rule_id": "SQL-CONNECTOR-003",
+    "type": "structural",
+    "description": "sql connector vulnerability",
+    "vulnerabilities": [
+        "SDIF"
+    ],
+    "forbidden_functions": [
+        "mysql.connector.connect"
+    ],
+    "safe_contexts": [
+        {
+            "type": "call_has_kwargs",
+            "call": [
+                "mysql.connector.connect",
+                "connect"
+            ],
+            "kwargs": {
+                "ssl_disabled": "False"
+            }
+        }
+    ]
+}
+]

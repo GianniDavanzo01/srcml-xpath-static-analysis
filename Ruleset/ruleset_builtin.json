@@ -1,0 +1,986 @@
+[
+ {
+    "rule_id": "SUBPROCESS-002",
+    "type": "structural",
+    "vulnerabilities": ["INJC"],
+    "description": "Uso di subprocess.Popen non protetto, rischio di OS Command Injection",
+    "COMMENTO": "Ho scelto di lasciare solo 'subprocess.Popen' per confrontare con DeVAIC, però non copre casi in cui from subprocess import Popen Popen(['ping', url]). Se invece aggiungessi nelle funzioni forbidden anche 'Popen', allora li coprirebbe",
+    "forbidden_functions": ["subprocess.Popen"],  
+    "safe_contexts": [
+        {
+        "type": "args_contain_call_with_literal_arg",
+        "call": "shlex.quote"
+        }
+    ]
+ },
+ {
+    "rule_id": "INPUT-001",
+    "type": "taint",
+    "description": "Uso non sanificato di input() utente in concatenazione o assegnazione RHS",
+    "vulnerabilities": ["INJC", "SLMF"],
+    "source_form": "call",
+    "sources": [
+        "input"
+    ],
+    "sinks": [
+        "concat",
+        "assign_rhs"
+    ],
+    "sanitizers": [
+        "escape", 
+        "escape_filter_chars", 
+        "escape_rdn"
+    ],
+    "safe_contexts": [
+        "match", 
+        "obj_match", 
+        "isfile", 
+        "os.path.isfile",
+        "send_static_file",
+        "args.send_static_file",
+        {
+            "type": "receiver_of_method",
+            "method": "encode"
+        }
+    ]
+},
+ {
+    "rule_id": "INPUT-002",
+    "type": "taint",
+    "description": "Uso non sanificato di input() utente seguito da due punti (es. dictionary key, slicing)",
+    "vulnerabilities": ["INJC", "SLMF"],
+    "source_form": "call",
+    "sources": [
+        "input"
+    ],
+    "sinks": [
+        "colon_suffix"
+    ],
+    "sanitizers": [
+        "escape", 
+        "escape_filter_chars", 
+        "escape_rdn"
+    ],
+    "safe_contexts": [
+        "match", 
+        "obj_match", 
+        "isfile", 
+        "os.path.isfile",
+        "send_static_file",
+        "args.send_static_file"
+    ]
+},
+ {
+  "rule_id": "INPUT-003",
+  "type": "taint",
+  "vulnerabilities": ["INJC", "SLMF"],
+  "description": "input vulnerability",
+  "source_form": "call",
+  "sources": ["input"],
+  "sanitizers": [
+    "escape","escape_filter_chars","escape_rdn",
+    "parsestr","urlparse","realpath",
+    "literal_eval","function","render_template",
+    "execute_command","send_static_file"
+  ],
+  "safe_contexts": [
+    "match","obj_match","isfile","check_url",
+    {
+      "type": "call_with_kwarg",
+      "call": ["subprocess.call"],
+      "kwargs": {
+        "shell": "False"
+      }
+    },
+    {
+      "type": "whitelist_membership_then_run",
+      "call": ["subprocess.run"]
+    },
+    {
+      "type": "membership_check",
+      "scope": "enclosing",
+      "require_var_left": true,
+      "right_is_bare_identifier": true
+    },
+    {
+      "type": "receiver_of_method",
+      "method": "encode"
+    }
+  ],
+"sinks": [
+    {
+      "type": "flat_call_arg"
+    }
+  ]
+ },
+ {
+  "rule_id": "INPUT-004",
+  "type": "taint",
+  "vulnerabilities": ["INJC", "SLMF"],
+  "description": "input vulnerability",
+  "source_form": "call",
+  "sources": ["input"],
+  "sanitizers": [
+    "escape",
+    "escape_filter_chars",
+    "escape_rdn"
+  ],
+  "safe_contexts": [
+    "match",
+    "obj_match",
+    "isfile",
+    "send_static_file",
+    "try",
+    {
+      "type": "lower_ne_literal"
+    }
+  ],
+  "sinks": [
+    "return",
+    "method_chain"
+  ]
+},
+ {
+  "rule_id": "INPUT-005",
+  "type": "structural",
+  "description": "Uso inline vulnerabile di input() all'interno di keyword arguments o parametri (Bypass Taint Tracking)",
+  "vulnerabilities": ["INJC"],
+  "forbidden_functions": [
+    "input"
+  ],
+  "safe_contexts": [
+    {
+      "type": "matches_xpath",
+      "xpath": "not(ancestor::src:argument_list[.//src:operator[text()='=' or text()='==']] or ancestor::src:parameter_list[.//src:operator[text()='=' or text()='==']])"
+    }
+  ]
+},
+ {
+    "rule_id": "EVAL-001",
+    "type": "structural",
+    "vulnerabilities": ["INJC"],
+    "description": "Uso della funzione eval() nativa, rischio di Code Injection",
+    "forbidden_functions": ["eval"],
+    "excluded_functions": ["context.eval"]
+ },
+ {
+  "rule_id": "RETURN-001",
+  "type": "structural",
+  "vulnerabilities": ["SDIF"],
+  "description": "return vulnerability",
+  "forbidden_returns": [
+    {
+      "type": "fstring"
+    }
+  ],
+  "safe_contexts": [
+    {
+      "type": "function_has_call_matching_ast",
+      "call": [
+        "html.escape",
+        "escape"
+      ]
+    }
+  ]
+ },
+ {
+  "rule_id": "XML-SAX-MAKE-PARSER-001",
+  "type": "structural",
+  "description": "xml sax make parser vulnerability - Rischio XXE se non vengono disabilitate le external entities",
+  "vulnerabilities": ["SECM"],
+  "forbidden_functions": [
+    "xml.sax.make_parser"
+  ],
+  "forbidden_name_prefixes": [
+    "xml.sax."
+  ],
+  "safe_contexts": [
+    {
+      "type": "function_has_method_call",
+      "method": "setFeature",
+      "args_contain": [
+        "feature_external_ges",
+        "False"
+      ]
+    }
+  ]
+},
+{
+  "rule_id": "HTTP-SERVER-003",
+  "type": "structural",
+  "description": "http server vulnerability - Importazione di HTTPServer senza implementare le mitigazioni per HTTP Request Smuggling",
+  "vulnerabilities": ["SDIF"],
+  "forbidden_imports": [
+    "http.server.HTTPServer"
+  ],
+  "safe_contexts": [
+    {
+      "type": "file_has_header_check"
+    }
+  ]
+},
+{
+  "rule_id": "HTTP-SERVER-001",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "structural",
+  "description": "http server vulnerability - Utilizzo di BaseHTTPServer.HTTPServer senza implementare un limite di sicurezza sulla lunghezza di raw_requestline (prevenzione DoS)",
+  "vulnerabilities": ["INSD"],
+  "forbidden_functions": [
+    "BaseHTTPServer.HTTPServer"
+  ],
+  "safe_contexts": [
+    {
+      "type": "binary_comparison",
+      "operators": [">"],
+      "left_exact": ["len(self.raw_requestline)"],
+      "right_exact": ["65536"]
+    }
+  ]
+},
+{
+  "rule_id": "HTTP-SERVER-002",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "structural",
+  "description": "http server vulnerability - Utilizzo di CGIHTTPServer.CGIHTTPRequestHandler senza implementare un limite di sicurezza sulla lunghezza di raw_requestline (prevenzione DoS)",
+  "vulnerabilities": ["INSD"],
+  "forbidden_names": [
+    "CGIHTTPServer.CGIHTTPRequestHandler",
+    "CGIHTTPRequestHandler"
+  ],
+  "safe_contexts": [
+    {
+      "type": "binary_comparison",
+      "operators": [">"],
+      "left_exact": ["len(self.raw_requestline)"],
+      "right_exact": ["65536"]
+    }
+  ]
+},
+{
+  "rule_id": "EXEC-001",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "structural",
+  "description": "exec vulnerability - Uso di exec(), execv() o execl() potenzialmente vulnerabile a Code Injection",
+  "vulnerabilities": ["INJC"],
+  "forbidden_functions": [
+    "exec",
+    "execv",
+    "execl"
+  ],
+  "safe_contexts": [
+    {
+      "type": "function_has_call_matching_ast",
+      "call": ["re.search"]
+    },
+    {
+      "type": "condition_matches_xpath",
+      "scope": "function",
+      "xpath": ".//src:operator[text()='not']/following-sibling::src:call[.//src:name[text()='check_code']]"
+    },
+    {
+      "type": "condition_matches_xpath",
+      "scope": "function",
+      "xpath": ".//src:call[src:name='any']"
+    },
+    {
+      "type": "membership_check",
+      "require_collection_assignment": true
+    },
+    {
+      "type": "current_call_matches_ast", 
+      "contains_names": ["restricted_globals"]
+    },
+    {
+      "type": "current_call_matches_ast", 
+      "contains_names": ["code", "exec_globals"]
+    },
+    {
+      "type": "current_call_matches_ast", 
+      "contains_names": ["allowed_globals", "local_vars"]
+    }
+  ]
+},
+{
+  "rule_id": "VSN-PRINTF-001",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "structural",
+  "description": "vsn printf vulnerability - Uso di vsnprintf senza controlli di lunghezza sicuri",
+  "vulnerabilities": ["INJC"],
+  "forbidden_functions": [
+    "vsnprintf"
+  ],
+  "safe_contexts": [
+    {
+      "type": "binary_comparison",
+      "operators": [">"],
+      "left_exact": ["len(formatted_string)"],
+      "right_exact": ["MAX_LENGTH"]
+    }
+  ]
+},
+{
+  "rule_id": "NUMPY-LOAD-001",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "structural",
+  "description": "numpy load vulnerability - Deserializzazione insicura tramite np.load con allow_pickle=True",
+  "vulnerabilities": ["INJC"],
+  "bad_calls": {
+    "np.load": {
+      "allow_pickle": "True"
+    },
+    "numpy.load": {
+      "allow_pickle": "True"
+    }
+  }
+},
+{
+  "rule_id": "DATA-DATABASE-001",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "taint",
+  "description": "get data from database vulnerability - Uso non sanificato di dati prelevati dal database",
+  "vulnerabilities": ["INJC"],
+  "sources": [
+    "get_data_from_database("
+  ],
+  "sinks": [
+    "any_use"
+  ],
+  "sanitizers": [
+    "escape"
+  ]
+},
+{
+  "rule_id": "CHECK-PASSWORD-001",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "structural",
+  "description": "check password vulnerability - Assegnazione in chiaro della password a self.password senza hashing",
+  "vulnerabilities": ["SDIF"],
+  "bad_assignments": {
+    "self.password": "password"
+  }
+},
+{
+  "rule_id": "BLEACH-CLEAN-001",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "structural",
+  "description": "bleach clean vulnerability - Uso di bleach.clean() senza previa validazione dei dati tramite check di appartenenza a una collezione (in / not in)",
+  "vulnerabilities": ["SDIF"],
+  "forbidden_functions": [
+    "bleach.clean"
+  ],
+  "safe_contexts": [
+  {
+    "type": "membership_check",
+    "require_collection_assignment": true
+  }
+  ]
+},
+{
+  "rule_id": "INTEGER-ADDICTION-001",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "structural",
+  "description": "integer addiction vulnerability - Assenza di controlli anti-overflow (MAX_INT) per l'addizione",
+  "vulnerabilities": ["SDIF"],
+  "forbidden_functions": [
+    "integer_addition"
+  ],
+  "safe_contexts": [
+      {
+        "type": "function_has_overflow_check",
+        "operator": "-"
+      }
+    ]
+},
+{
+  "rule_id": "INTEGER-MOLTIPLICATION-001",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "structural",
+  "description": "integer moltiplication vulnerability - Assenza di controlli anti-overflow (MAX_INT) per la moltiplicazione",
+  "vulnerabilities": ["SDIF"],
+  "forbidden_functions": [
+    "integer_moltiplication"
+  ],
+  "safe_contexts": [
+      {
+        "type": "function_has_overflow_check",
+        "operator": "//"
+      }
+    ]
+},
+{
+  "rule_id": "MAKE-RESPONSE-001",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "structural",
+  "description": "make response vulnerability - Open Redirect tramite make_response(redirect(...)) senza guardia is_safe_url",
+  "vulnerabilities": ["SDIF"],
+  "forbidden_functions": [
+    "make_response"
+  ],
+  "safe_contexts": [
+    {
+      "type": "args_do_not_contain_call",
+      "call": "redirect"
+    },
+    {
+      "type": "condition_matches_xpath",
+      "scope": "enclosing",
+      "xpath": "boolean(.//src:operator[text()='not']) and boolean(.//src:call//src:name[text()='is_safe_url'])"
+    }
+  ]
+},
+{
+  "rule_id": "DATA-001",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "structural",
+  "description": "return data vulnerability - Ritorno di self.data senza validazione dei limiti dell'indice",
+  "vulnerabilities": ["SDIF"],
+  "bad_returns": [
+    "self.data[",
+    "self.data("
+  ],
+  "safe_contexts": [
+    {
+      "type": "binary_comparison",
+      "operators": ["<"],
+      "right_exact": ["0"]
+    },
+    {
+      "type": "binary_comparison",
+      "operators": [">="],
+      "right_exact": ["len(self.data)"]
+    }
+  ]
+},
+{
+  "rule_id": "REGEX-001",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "structural",
+  "description": "regex vulnerability - Assegnazione di un'espressione regolare vulnerabile a ReDoS (Catastrophic Backtracking)",
+  "vulnerabilities": ["SDIF"],
+  "bad_assignments": {
+    "regex": "r'^.*|.*'"
+  }
+},
+{
+  "rule_id": "SENDRY-SDK-001",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "structural",
+  "description": "sentry sdk vulnerability - Inizializzazione di sentry_sdk senza l'hook di sanitizzazione before_send",
+  "vulnerabilities": ["SDIF"],
+  "forbidden_functions": [
+    "sentry_sdk.init"
+  ],
+  "safe_contexts": [
+    {
+      "type": "current_call_matches_ast", 
+      "contains_names": ["before_send"]
+    }
+  ]
+},
+{
+  "rule_id": "MECHANIZE-BROWSER-001",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "taint",
+  "description": "mechanize browser vulnerability - Uso di mechanize.Browser() senza impostare un timeout di sicurezza",
+  "vulnerabilities": ["SDIF"],
+  "sources": [
+    "mechanize.Browser("
+  ],
+  "sinks": [
+    "any_use"
+  ],
+  "safe_contexts": [
+    {
+      "type": "function_calls_method_on_var",
+      "method": "set_handle_timeout"
+    }
+  ]
+},
+{
+  "rule_id": "CLEANER-001",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "structural",
+  "description": "cleaner vulnerability - Configurazione insicura di lxml Cleaner o invocazione di clean_html con un singolo argomento nudo",
+  "vulnerabilities": ["SDIF"],
+  "bad_calls": {
+    "Cleaner": {
+      "safe_attrs_only": "False"
+    }
+  },
+  "forbidden_functions": [
+    {
+      "type": "call_matches_ast",
+      "call": ["html.clean.clean_html", "clean_html"],
+      "require_bare_arg": true
+    }
+  ]
+},
+{
+  "rule_id": "MESSAGE-TEMPLATE-001",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "structural",
+  "description": "message template vulnerability - Uso di MessageTemplate(...).render(...) senza sanificare preventivamente gli underscore",
+  "vulnerabilities": ["SDIF"],
+  "forbidden_functions": [
+    {
+      "type": "message_template_render"
+    }
+  ],
+  "safe_contexts": [
+    {
+      "type": "function_has_method_call",
+      "method": "replace",
+      "args_contain": ["'_'", "\"_\""]
+    }
+  ]
+},
+{
+  "rule_id": "STRING-FROM-SIZE-001",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "structural",
+  "description": "string from size vulnerability - Definizione di string_from_size senza validazione sui valori negativi (size < 0)",
+  "vulnerabilities": ["SDIF"],
+  "forbidden_function_defs": [
+    "string_from_size"
+  ],
+  "safe_contexts": [
+    {
+      "type": "binary_comparison",
+      "operators": ["<"],
+      "left_exact": ["size"],
+      "right_exact": ["0"]
+    }
+  ]
+},
+{
+  "rule_id": "PATTERN-001",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "structural",
+  "description": "pattern vulnerability - Assegnazione di un'espressione regolare vulnerabile a ReDoS (Catastrophic Backtracking) all'interno di encode_structured_data",
+  "vulnerabilities": ["SDIF"],
+  "bad_assignments": {
+    "pattern": "r'^(a|aa|aaa|aaaa|aaaaa|aaaaaa|aaaaaaa|aaaaaaaa|aaaaaaaaa|aaaaaaaaaa)+$'"
+  },
+  "safe_contexts": [
+    {
+      "type": "function_is_not",
+      "name": "encode_structured_data"
+    }
+  ]
+},
+{
+  "rule_id": "DNS-RECORD-PARSE-002",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "structural",
+  "vulnerabilities": ["SDIF"],
+  "description": "subprocess vulnerability - Parsing di record DNS con dnslib.DNSRecord.parse() senza l'invocazione di verify_dns_reply()",
+  "forbidden_functions": [
+    "dnslib.DNSRecord.parse"
+  ],
+  "safe_contexts": [
+    {
+      "type": "function_has_call_matching_ast",
+      "call": ["verify_dns_reply"]
+    }
+  ]
+},
+{
+  "rule_id": "MKSTEMP-001",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "structural",
+  "vulnerabilities": ["BRAC"],
+  "description": "mkstemp vulnerability - Uso della funzione mkstemp() per la creazione di file temporanei potenzialmente insicuri",
+  "forbidden_functions": [
+    "mkstemp"
+  ]
+},
+{
+  "rule_id": "THREADING-LOCK-001",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "taint",
+  "vulnerabilities": ["SLMF"],
+  "description": "threading lock vulnerability - Uso insicuro di .locked() su un oggetto Lock all'interno di un costrutto if, che può causare race condition (TOCTOU)",
+  "source_form": "call",
+  "sources": [
+    "Lock"
+  ],
+  "sinks": [
+    {
+      "type": "method_call_in_if",
+      "method": "locked"
+    }
+  ]
+},
+{
+  "rule_id": "STDERR-001",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "structural",
+  "vulnerabilities": ["SLMF"],
+  "description": "Scrittura su sys.stderr senza sanificare l'output con cgi.escape (potenziale rischio di Log Injection o XSS in console)",
+  "forbidden_functions": [
+    "sys.stderr.write"
+  ],
+  "safe_contexts": [
+    {
+      "type": "args_contain_call_with_literal_arg",
+      "call": "cgi.escape"
+    }
+  ]
+},
+{
+  "rule_id": "ENVIRONMENT-001",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "taint",
+  "vulnerabilities": ["SECM"],
+  "description": "environment vulnerability - Passaggio di un dizionario con __builtins__ = None come argomento 'env' (possibile sandbox escape / misconfiguration)",
+  "source_form": "expression",
+  "sources": [
+    "{\"__builtins__\": None}"
+  ],
+  "sinks": [
+    {
+      "type": "keyword_argument",
+      "keyword": "env"
+    }
+  ]
+},
+{
+  "rule_id": "INT-INPUT-002",
+  "type": "taint",
+  "vulnerabilities": ["INJC", "SLMF"],
+  "description": "input vulnerability",
+  "source_form": "regex",
+  "sources": [
+    "int\\s*\\(\\s*input\\s*\\("
+  ],
+  "sinks": [
+    "colon_suffix"
+  ],
+  "sanitizers": [
+    "escape",
+    "escape_filter_chars",
+    "escape_rdn"
+  ],
+  "safe_contexts": [
+    "match",
+    "obj_match",
+    "isfile",
+    "send_static_file"
+  ]
+},
+{
+    "rule_id": "INT-INPUT-004",
+    "type": "taint",
+    "description": "input vulnerability",
+    "vulnerabilities": ["INJC", "SLMF"],
+    "sources": [
+        "int\\s*\\(\\s*input\\s*\\("
+    ],
+    "source_form": "regex",
+    "sinks": [
+        "return",
+        "method_chain"
+    ],
+    "sanitizers": [
+        "escape",
+        "escape_filter_chars",
+        "escape_rdn"
+    ],
+    "safe_contexts": [
+        "obj_match",
+        "isfile",
+        {
+            "type": "condition_matches_xpath",
+            "scope": "enclosing",
+            "xpath": ".//src:call[.//src:operator[text()='.']/following-sibling::src:name[1][text()='match']]"
+        },
+        {
+            "type": "matches_xpath",
+            "xpath": ".//src:call[.//src:operator[text()='.']/following-sibling::src:name[1][text()='send_static_file']]"
+        }
+    ]
+},
+{
+  "rule_id": "INT-INPUT-001",
+  "type": "taint",
+  "vulnerabilities": [
+    "INJC",
+    "SLMF"
+  ],
+  "sources": [
+    "int\\(input\\("
+  ],
+  "source_form": "regex",
+  "sinks": [
+    "concat",
+    "assign_rhs"
+  ],
+  "sanitizers": [
+    "escape",
+    "escape_filter_chars",
+    "escape_rdn"
+  ],
+  "safe_contexts": [
+    "match",
+    "obj_match",
+    "isfile",
+    {
+      "type": "matches_xpath",
+      "xpath": ".//src:call[.//src:name[last()][text()='send_static_file']]"
+    }
+  ]
+},
+{
+  "rule_id": "INT-INPUT-003",
+  "type": "taint",
+  "vulnerabilities": [
+    "INJC",
+    "SLMF"
+  ],
+  "sources": [
+    "int\\(input\\("
+  ],
+  "source_form": "regex",
+  "sinks": [
+    "call_arg"
+  ],
+  "sanitizers": [
+    "escape",
+    "escape_filter_chars",
+    "escape_rdn"
+  ],
+  "safe_contexts": [
+    "match",
+    "obj_match",
+    "isfile",
+    {
+      "type": "matches_xpath",
+      "xpath": ".//src:call[.//src:name[last()][text()='send_static_file']]"
+    }
+  ]
+},
+{
+  "rule_id": "RUN-GIT-001",
+  "type": "structural",
+  "vulnerabilities": [
+    "SDIF"
+  ],
+  "forbidden_functions": [
+    {
+      "type": "call_matches_ast",
+      "call": "subprocess.run",
+      "exact_list_element": "git"
+    }
+  ]
+},
+{
+  "rule_id": "EXECUTE-SCRIPT-002",
+  "type": "structural",
+  "vulnerabilities": [
+    "INSD"
+  ],
+  "forbidden_functions": [
+    "execute_script"
+  ],
+  "safe_contexts": [
+    {
+      "type": "condition_matches_xpath",
+      "xpath": ".//src:operator[text()='.']/following-sibling::*[1][self::src:name[text()='has_scripting_permissions']]"
+    }
+  ]
+},
+{
+  "rule_id": "LOCK-001",
+  "type": "taint",
+  "vulnerabilities": [
+    "SDIF"
+  ],
+  "sources": [
+    "Lock"
+  ],
+  "source_form": "call",
+  "sinks": [
+    {
+      "type": "method_call",
+      "method": "acquire"
+    }
+  ],
+  "safe_contexts": [
+    {
+      "type": "condition_matches_xpath",
+      "xpath": ".//src:name[text()='$VAR']/following-sibling::src:operator[text()='.']/following-sibling::src:name[1][text()='locked']"
+    }
+  ]
+},
+{
+  "rule_id": "UINT256-001",
+  "type": "structural",
+  "vulnerabilities": [
+    "SDIF"
+  ],
+  "forbidden_names": [
+    "uint256"
+  ],
+  "safe_contexts": [
+    {
+      "type": "matches_xpath",
+      "xpath": ".//src:assert[.//src:operator[text()='<=']]"
+    }
+  ]
+},
+{
+  "rule_id": "SIGNING-KEY-001",
+  "type": "structural",
+  "vulnerabilities": [
+    "SDIF"
+  ],
+  "forbidden_functions": [
+    "SigningKey.generate"
+  ],
+  "safe_contexts": [
+  {
+    "type": "matches_xpath",
+    "xpath": ".//src:call[.//src:name[last()][text()='verify_signature']]"
+  }
+  ]
+},
+{
+  "rule_id": "SECRET-KEY-001",
+  "type": "taint",
+  "vulnerabilities": [
+    "SDIF"
+  ],
+  "sources": [
+    "Flask"
+  ],
+  "source_form": "call",
+  "sinks": [
+    {
+      "type": "matches_xpath",
+      "xpath": "parent::src:name[./src:name[last()][text()='secret_key']]/following-sibling::src:operator[1][text()='=']"
+    }
+  ],
+  "safe_contexts": [
+    {
+      "type": "function_has_call_with_var_arg",
+      "call": [
+        "CSRFProtect"
+      ]
+    }
+  ]
+},
+{
+  "rule_id": "GENERATE-UUID-001",
+  "type": "structural",
+  "vulnerabilities": [
+    "SDIF"
+  ],
+  "forbidden_functions": [
+    {
+      "type": "call_matches_ast",
+      "call": "requests.get",
+      "args_text_contains": [
+        "uuid"
+      ]
+    }
+  ]
+},
+{
+  "rule_id": "PARSE-STRING-001",
+  "type": "structural",
+  "vulnerabilities": [
+    "SDIF"
+  ],
+  "forbidden_functions": [
+    "ParseFromString"
+  ],
+  "safe_contexts": [
+    "try"
+  ]
+},
+{
+    "rule_id": "STRING-001",
+    "type": "structural",
+    "description": "python string vulnerability",
+    "vulnerabilities": [
+        "SDIF"
+    ],
+    "forbidden_functions": [
+        "int"
+    ],
+    "safe_contexts": [
+        {
+            "type": "matches_xpath",
+            "xpath": ".//src:call[.//src:name[text()='split'] and .//src:name[text()='version']]"
+        }
+    ]
+},
+{
+  "rule_id": "CAPTCHA-001",
+  "type": "taint",
+  "vulnerabilities": [
+    "SDIF"
+  ],
+  "sources": [
+    "tgcaptcha2.TGCaptchaController"
+  ],
+  "source_form": "call",
+  "sinks": [
+    {
+      "type": "method_call_in_if",
+      "method": "validate"
+    }
+  ]
+},
+{
+  "rule_id": "H2-CONNECTION-001",
+  "type": "structural",
+  "vulnerabilities": [
+    "SDIF"
+  ],
+  "forbidden_functions": [
+    "h2.connection.H2Connection"
+  ]
+},
+{
+    "rule_id": "HTTP-HRADER-001",
+    "type": "structural",
+    "vulnerabilities": ["SDIF"],
+    "forbidden_functions": ["putheader"],
+    "safe_contexts": [
+        {
+            "type": "membership_check",
+            "scope": "function",
+            "operators": ["in"],
+            "right_exact": ["header"]
+        },
+        {
+            "type": "membership_check",
+            "scope": "function",
+            "operators": ["in"],
+            "right_exact": ["value"]
+        }
+    ]
+},
+{
+    "rule_id": "SUBPROCESS-001",
+    "type": "structural",
+    "vulnerabilities": ["INJC"],
+    "forbidden_functions": ["subprocess.run"],
+    "safe_contexts": [
+        { "type": "whitelist_membership_then_run", "call": ["subprocess.run"] },
+        { "type": "call_in_try_with_kwarg", "kwarg": "check", "values": ["True", "true"] },
+        { "type": "membership_check", "scope": "function", "operators": ["in"], "require_any_call": true },
+        "match",
+        { "type": "current_call_matches_ast", "args_text_contains": ["'pip'", "'install'"], "contains_names": [] },
+        { "type": "current_call_matches_ast", "args_text_contains": ["'sudo'", "'passwd'", "'--stdin'"] },
+        { "type": "current_call_matches_ast", "args_text_contains": ["'echo'"] },
+        { "type": "current_call_matches_ast", "args_text_contains": ["'git'", "'clone'"] },
+        { "type": "args_contain_call_with_literal_arg", "call": "shlex.quote" },
+        { "type": "membership_check", "scope": "function", "require_collection_assignment": true, "operators": ["in", "not in"] },
+        { "type": "node_matches_xpath", "xpath": "./src:argument_list//src:argument[./src:name[1][text()='env'] and ./src:operator[1][text()='=']]" },
+        { "type": "current_call_matches_ast", "args_text_contains": ["'cp'"] }
+    ]
+}
+
+]

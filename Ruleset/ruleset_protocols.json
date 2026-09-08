@@ -1,0 +1,1269 @@
+[
+{
+  "rule_id": "WITH-OPEN-001",
+  "type": "structural",
+  "description": "with open vulnerability - Uso di open() senza controlli di Path Traversal",
+  "vulnerabilities": ["BRAC"],
+  "forbidden_functions": [
+    {
+      "type": "exact_name",
+      "name": "open"
+    }
+  ],
+  "safe_contexts": [
+    {
+      "type": "membership_check",
+      "require_collection_assignment": true
+    },
+    {
+      "type": "node_matches_xpath",
+      "xpath": "count(./src:argument_list//src:name) = 0"
+    },
+    {
+      "type": "function_has_call_matching_ast",
+      "call": [
+        "secure_filename",
+        "join",
+        "os.path.join",
+        "commonpath",
+        "os.path.commonpath",
+        "exists",
+        "os.path.exists",
+        "isfile",
+        "os.path.isfile"
+      ]
+    },
+    {
+      "type": "unit_has_os_path_abspath_and_commonpath"
+    },
+    {
+      "type": "unit_has_os_path_abspath_and_startswith"
+    }
+  ]
+},
+ {
+  "rule_id": "ELEMENTTREE-CONFIGURATION-001",
+  "type": "structural",
+  "vulnerabilities": ["SECM"],
+  "description": "Misconfiguration",
+  "forbidden_imports": [
+    "xml.etree.ElementTree"
+  ],
+  "excluded_imports": [
+    "defusedxml.ElementTree",
+    "defusedxm"
+  ]
+ },
+ {
+  "rule_id": "URLLIB-URLPARSEQS-001",
+  "type": "structural",
+  "vulnerabilities": ["SECM"],
+  "description": "urllib url parseqs vulnerability",
+  "forbidden_functions": ["parse_qs"],
+  "safe_contexts": [
+    {
+      "type": "function_has_method_call",
+      "method": "replace",
+      "args_contain": ["';'", "'&'"]
+    }
+  ]
+ },
+ {
+  "rule_id": "BOTO3-CLIENT-003",
+  "type": "taint",
+  "vulnerabilities": ["SDIF"],
+  "description": "boto3 client scan vulnerability",
+  "source_form": "call",
+  "sources": [
+    "boto3.client"
+  ],
+  "sanitizers": [],
+  "safe_contexts": [],
+  "sinks": [
+    {
+      "type": "method_call",
+      "method": "scan"
+    }
+  ]
+ },
+  {
+    "rule_id": "FOO-001",
+    "type": "structural",
+    "vulnerabilities": ["SDIF"],
+    "description": "foo vulnerability",
+    "forbidden_functions": [
+      "foo"
+    ],
+    "safe_contexts": [
+      {
+        "type": "function_has_call_matching_ast",
+        "call": [
+          "os.path.isdir",
+          "isdir",
+          "isinstance"
+        ]
+      },
+      {
+        "type": "unit_has_function_def",
+        "name": "foo"
+      }
+    ]
+  },
+ {
+  "rule_id": "LDAP-SERVER-001",
+  "type": "structural",
+  "description": "Variable validation - Uso di ldap3.Server() potenzialmente vulnerabile a LDAP Injection",
+  "vulnerabilities": ["INJC"],
+  "forbidden_functions": [
+    "ldap3.Server"
+  ],
+  "safe_contexts": [
+    {
+      "type": "function_has_call_matching_ast",
+      "call": [
+        "escape",
+        "escape_rdn",
+        "escape_filter_chars"
+      ]
+    }
+  ]
+},
+{
+  "rule_id": "SMTP-001",
+  "type": "structural",
+  "description": "Version verfication - Uso di connessione SMTP in chiaro (smtplib.SMTP) senza garanzia di crittografia",
+  "vulnerabilities": ["CRYF"],
+  "forbidden_functions": [
+    "smtplib.SMTP"
+  ]
+},
+{
+  "rule_id": "JWT-DECODE-001-protocols",
+  "type": "structural",
+  "description": "Misconfiguration - Decodifica JWT con disabilitazione esplicita della verifica della firma (verify_signature=False)",
+  "vulnerabilities": ["CRYF"],
+  "forbidden_functions": [
+    {
+      "type": "call_matches_ast",
+      "call": ["jwt.decode"],
+      "args_text_contains": ["\"verify_signature\":False"]
+    }
+  ]
+},
+{
+  "rule_id": "JWT-DECODE-002-protocols",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "structural",
+  "description": "Misconfiguration - Decodifica JWT senza verifica esplicita della firma o algoritmi sicuri definiti (HS256/HS512)",
+  "vulnerabilities": ["CRYF"],
+  "forbidden_functions": [
+    "jwt.decode"
+  ],
+  "safe_contexts": [
+    {
+      "type": "call_with_dict_kwarg",
+      "call": ["jwt.decode"],
+      "kwarg": "options",
+      "dict_key": "verify_signature",
+      "dict_value": "True"
+    },
+    {
+      "type": "call_with_kwarg_exact_list",
+      "call": ["jwt.decode"],
+      "kwarg": "algorithms",
+      "allowed_values": ["HS256", "HS512"]
+    }
+  ]
+},
+{
+  "rule_id": "FTP-001",
+  "type": "structural",
+  "description": "Version verification - Uso di ftplib.FTP potenzialmente vulnerabile senza disabilitare trust_server_pasv_ipv4",
+  "vulnerabilities": ["CRYF"],
+  "forbidden_functions": [
+    "ftplib.FTP"
+  ],
+  "safe_contexts": [
+      {
+        "type": "matches_xpath",
+        "xpath": ".//src:expr_stmt[.//src:operator[text()='='] and .//src:name[text()='ftp'] and .//src:name[text()='trust_server_pasv_ipv4'] and (.//src:literal[text()='False'] or .//src:name[text()='False'])]"
+      }
+    ]
+},
+{
+  "rule_id": "FTPLIB-FTP-001",
+  "type": "taint",
+  "description": "ftplib ftp vulnerability - Mancata disabilitazione di trust_server_pasv_ipv4 per l'istanza FTP",
+  "vulnerabilities": [
+    "SDIF"
+  ],
+  "source_form": "call",
+  "sources": [
+    "ftplib.FTP"
+  ],
+  "sinks": [
+    "any_use"
+  ],
+  "safe_contexts": [
+    {
+      "type": "matches_xpath",
+      "xpath": ".//src:expr_stmt[.//src:operator[text()='='] and .//src:name[text()='$VAR'] and .//src:name[text()='trust_server_pasv_ipv4'] and (.//src:literal[text()='False'] or .//src:name[text()='False'])]"
+    }
+  ]
+},
+{
+  "rule_id": "ONNX-LOAD-MODEL-001",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "structural",
+  "description": "Misconfiguration - Caricamento di un modello ONNX senza validazione del percorso (rischio Path Traversal / caricamento modelli non attendibili)",
+  "vulnerabilities": ["SECM"],
+  "forbidden_functions": [
+    "onnx.load"
+  ],
+  "safe_contexts": [
+    {
+      "type": "function_has_method_call",
+      "method": "startswith"
+    }
+  ]
+},
+{
+  "rule_id": "LLAMA-LOAD-MODEL-001",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "structural",
+  "description": "Misconfiguration - Caricamento di un modello Llama senza validazione del percorso tramite estensione (rischio di caricamento modelli non attendibili)",
+  "vulnerabilities": ["SECM"],
+  "forbidden_functions": [
+    "llama_cpp_python.load_model",
+    "load_model"
+  ],
+  "safe_contexts": [
+    {
+      "type": "function_has_method_call",
+      "method": "endswith"
+    }
+  ]
+},
+{
+  "rule_id": "KERBEROS-001",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "structural",
+  "description": "Misconfiguration - Importazione di HTTPKerberosAuth con potenziale configurazione insicura",
+  "vulnerabilities": ["SECM"],
+  "forbidden_imports": [
+    "requests_kerberos.HTTPKerberosAuth"
+  ],
+  "required_safe_calls": [
+    {
+      "call": ["HTTPKerberosAuth"],
+      "kwargs": {
+        "mutual_authentication": "OPTIONAL"
+      }
+    }
+  ]
+},
+{
+  "rule_id": "KERBEROS-002",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "structural",
+  "description": "kerberos vulnerability - Inizializzazione authGSSClientInit senza la successiva verifica dello step di autenticazione (!= AUTH_GSS_COMPLETE)",
+  "vulnerabilities": ["SDIF"],
+  "forbidden_functions": [
+    "kerberos.authGSSClientInit",
+    "authGSSClientInit"
+  ],
+  "safe_contexts": [
+    {
+      "type": "condition_matches_xpath",
+      "scope": "function",
+      "xpath": ".//src:expr[.//src:call[.//src:name[text()='authGSSClientStep']] and .//src:operator[text()='!='] and .//src:name[text()='AUTH_GSS_COMPLETE']]"
+    }
+  ]
+},
+{
+  "rule_id": "GET-OPTION-001",
+  "type": "structural",
+  "description": "get option vulnerability - Definizione della funzione _get_option senza l'utilizzo di html.escape per sanificare l'output",
+  "vulnerabilities": ["INJC"],
+  "forbidden_function_defs": [
+    "_get_option"
+  ],
+  "safe_contexts": [
+    {
+      "type": "function_has_call_matching_ast",
+      "call": ["html.escape"]
+    }
+  ]
+},
+{
+  "rule_id": "NMAP-001",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "structural",
+  "description": "nmap args vulnerability - Invocazione di NmapProcess senza validazione degli argomenti (manca una guardia if any(... not in ...))",
+  "vulnerabilities": ["SDIF"],
+  "forbidden_functions": [
+    "NmapProcess"
+  ],
+  "safe_contexts": [
+    {
+      "type": "membership_check",
+      "scope": "function",
+      "operators": ["not in"],
+      "require_any_call": true
+    }
+  ]
+},
+{
+  "rule_id": "SMTP-002",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "structural",
+  "description": "smtp vulnerability - Chiamata a self.docmd() senza la corretta verifica del codice di risposta (es. response[0] != 220)",
+  "vulnerabilities": ["SDIF"],
+  "forbidden_functions": [
+    "self.docmd"
+  ],
+  "safe_contexts": [
+    {
+      "type": "condition_matches_xpath",
+      "scope": "function",
+      "xpath": ".//src:expr[.//src:name[contains(., 'response')] and .//src:literal[text()='0'] and .//src:operator[text()='!='] and .//src:literal[text()='220']]"
+    }
+  ]
+},
+{
+  "rule_id": "REQUESTS-GET-VALIDATION-001",
+  "type": "taint",
+  "description": "Variable validation - L'output di requests.get non viene validato prima di essere assegnato o concatenato",
+  "vulnerabilities": ["IDAF", "SSRF"],
+  "source_form": "call",
+  "sources": [
+    "requests.get"
+  ],
+  "sinks": [
+    "concat",
+    "assign_rhs"
+  ],
+  "sanitizers": [
+    "escape",
+    "escape_filter_chars",
+    "escape_rdn"
+  ],
+  "safe_contexts": [
+    "match",
+    "obj_match",
+    "isfile",
+    "os.path.isfile",
+    "send_static_file",
+    "try",
+    {
+      "type": "call_with_kwarg",
+      "call": ["subprocess.run"],
+      "kwargs": {
+        "check": "True"
+      }
+    },
+    {
+      "type": "var_truthiness_check"
+    },
+    {
+      "type": "var_has_attribute",
+      "attribute": "text"
+    }
+  ],
+  "remediation_non_aggiunto_alla_logica": [
+    {
+      "source": "(\\+|=)[ ]*\\bVAR_PLACEHOLDER\\b",
+      "replacement": "\\1 escape\\(VAR_PLACEHOLDER\\)",
+      "imports": "from flask import escape",
+      "comment": "escape the variable and validate contents before using it"
+    }
+  ]
+},
+{
+  "rule_id": "REQUESTS-GET-VALIDATION-002",
+  "type": "taint",
+  "description": "Variable validation - L'oggetto response di requests.get o il suo contenuto viene passato a funzioni senza preventiva validazione dello status code o parsing sicuro",
+  "vulnerabilities": ["IDAF", "SSRF"],
+  "source_form": "call",
+  "sources": [
+    "requests.get"
+  ],
+  "sinks": [
+    "call_arg"
+  ],
+  "sanitizers": [
+    "escape",
+    "escape_filter_chars",
+    "escape_rdn"
+  ],
+  "safe_contexts": [
+    "match",
+    "obj_match",
+    "isfile",
+    "os.path.isfile",
+    "try",
+    "args.send_static_file",
+    "allowed_file",
+    "parseString",
+    "io.BytesIO",
+    "BytesIO",
+    {
+      "type": "call_with_kwarg",
+      "call": ["subprocess.run"],
+      "kwargs": {
+        "check": "True"
+      }
+    },
+    {
+      "type": "var_truthiness_check"
+    },
+    {
+      "type": "url_validation",
+      "require": "netloc_in"
+    },
+    {
+      "type": "receiver_of_method",
+      "method": "json"
+    },
+    {
+      "type": "receiver_of_method",
+      "method": "raise_for_status"
+    },
+    {
+      "type": "var_has_attribute",
+      "attribute": "text"
+    },
+    {
+      "type": "var_has_attribute",
+      "attribute": "content"
+    },
+    {
+      "type": "node_matches_xpath",
+      "xpath": "ancestor::src:if_stmt[.//src:condition[.//src:name[text()='status_code'] and .//src:literal[text()='200']]]"
+    }
+  ],
+  "remediation_non_aggiunto_alla_logica": [
+    {
+      "source": "(\\+|=)[ ]*\\bVAR_PLACEHOLDER\\b",
+      "replacement": "\\1 escape\\(VAR_PLACEHOLDER\\)",
+      "imports": "from flask import escape",
+      "comment": "escape the variable and validate contents before using it"
+    },
+    {
+      "source": "\\([ ]*\\bVAR_PLACEHOLDER\\b[ ]*",
+      "replacement": "\\(escape\\(VAR_PLACEHOLDER\\)",
+      "imports": "from flask import escape",
+      "comment": "escape the variable and validate contents before using it"
+    }
+  ]
+},
+{
+  "rule_id": "REQUESTS-GET-VALIDATION-004",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "taint",
+  "description": "Variable validation - L'output di requests.get viene ritornato o subisce chiamate a metodo senza validazione/parsing sicuro",
+  "vulnerabilities": ["IDAF", "SSRF"],
+  "source_form": "call",
+  "sources": [
+    "requests.get"
+  ],
+  "sinks": [
+    "return",
+    {
+      "type": "matches_xpath",
+      "xpath": "boolean(following-sibling::src:operator[1][text()='.'] and parent::src:name/parent::src:call)"
+    }
+  ],
+  "sanitizers": [
+    "escape",
+    "escape_filter_chars",
+    "escape_rdn"
+  ],
+  "safe_contexts": [
+    "match",
+    "obj_match",
+    "isfile",
+    "os.path.isfile",
+    "try",
+    {
+      "type": "call_with_kwarg",
+      "call": ["subprocess.run"],
+      "kwargs": {
+        "check": "True"
+      }
+    },
+    {
+      "type": "var_truthiness_check"
+    },
+    {
+      "type": "url_validation",
+      "require": "netloc_in"
+    },
+    {
+      "type": "receiver_of_method",
+      "method": "json"
+    },
+    {
+      "type": "var_has_attribute",
+      "attribute": "text"
+    },
+    {
+      "type": "var_has_attribute",
+      "attribute": "content"
+    }
+  ]
+},
+{
+  "rule_id": "REQUESTS-005",
+  "type": "structural",
+  "description": "request validation - Invocazione di requests.get o requests.post con verifica del certificato SSL disabilitata (verify=False)",
+  "vulnerabilities": ["IDAF", "SSRF"],
+  "bad_calls": {
+    "requests.get": {
+      "verify": "False"
+    },
+    "requests.post": {
+      "verify": "False"
+    }
+  }
+},
+{
+    "rule_id": "URLLIB-OPEN-001",
+    "type": "structural",
+    "description": "urllib open vulnerability",
+    "vulnerabilities": ["SDIF"],
+    "forbidden_functions": [
+        "urllib.request.urlopen"
+    ],
+    "safe_contexts": [
+      {
+        "type": "node_matches_xpath",
+        "xpath": ".//src:argument_list//src:call[string(src:name)='urllib.parse.quote']"
+      }
+    ]
+},
+{
+  "rule_id": "LDAP-SERVER-VALIDATION-001",
+  "type": "taint",
+  "vulnerabilities": ["INJC"],
+  "source_form": "call",
+  "sources": ["ldap3.Server"],
+  "sanitizers": ["escape", "escape_filter_chars", "escape_rdn"],
+  "safe_contexts": ["match", "isfile", "send_static_file"],
+  "sinks": ["concat", "assign_rhs"]
+},
+{
+  "rule_id": "LDAP-SERVER-VALIDATION-002",
+  "type": "taint",
+  "vulnerabilities": ["INJC"],
+  "source_form": "call",
+  "sources": ["ldap3.Server"],
+  "sanitizers": ["escape", "escape_filter_chars", "escape_rdn"],
+  "safe_contexts": ["match", "isfile", "send_static_file"],
+  "sinks": ["colon_suffix"]
+},
+{
+  "rule_id": "LDAP-SERVER-VALIDATION-003",
+  "type": "taint",
+  "vulnerabilities": ["INJC"],
+  "source_form": "call",
+  "sources": ["ldap3.Server"],
+  "sanitizers": ["escape", "escape_filter_chars", "escape_rdn"],
+  "safe_contexts": ["match", "isfile", "send_static_file"],
+  "sinks": ["any_use"]
+},
+{
+  "rule_id": "LDAP-SERVER-VALIDATION-004",
+  "type": "taint",
+  "vulnerabilities": ["INJC"],
+  "source_form": "call",
+  "sources": ["ldap3.Server"],
+  "sanitizers": ["escape", "escape_filter_chars", "escape_rdn"],
+  "safe_contexts": ["match", "isfile", "send_static_file"],
+  "sinks": ["return", "method_chain"]
+},
+{
+  "rule_id": "LDAP-CONNECTION-VALIDATION-001",
+  "type": "taint",
+  "vulnerabilities": ["INJC"],
+  "source_form": "call",
+  "sources": ["ldap_connection.search_s"],
+  "sanitizers": ["escape", "escape_filter_chars", "escape_rdn"],
+  "safe_contexts": ["match", "isfile", "send_static_file"],
+  "sinks": ["concat", "assign_rhs"]
+},
+{
+  "rule_id": "LDAP-CONNECTION-VALIDATION-002",
+  "type": "taint",
+  "vulnerabilities": ["INJC"],
+  "source_form": "call",
+  "sources": ["ldap_connection.search_s"],
+  "sanitizers": ["escape", "escape_filter_chars", "escape_rdn"],
+  "safe_contexts": ["match", "isfile", "send_static_file"],
+  "sinks": ["colon_suffix"]
+},
+{
+  "rule_id": "LDAP-CONNECTION-VALIDATION-003",
+  "type": "taint",
+  "vulnerabilities": ["INJC"],
+  "source_form": "call",
+  "sources": ["ldap_connection.search_s"],
+  "sanitizers": ["escape", "escape_filter_chars", "escape_rdn"],
+  "safe_contexts": ["match", "isfile", "send_static_file"],
+  "sinks": ["call_arg"]
+},
+{
+  "rule_id": "LDAP-CONNECTION-VALIDATION-004",
+  "type": "taint",
+  "vulnerabilities": ["INJC"],
+  "source_form": "call",
+  "sources": ["ldap_connection.search_s"],
+  "sanitizers": ["escape", "escape_filter_chars", "escape_rdn"],
+  "safe_contexts": [
+    "match", "isfile", "send_static_file",
+    { "type": "var_truthiness_check", "scope": "enclosing" }
+  ],
+  "sinks": ["return", "method_chain"]
+},
+{
+  "rule_id": "LDAP-CONNECTION-VALIDATION-005",
+  "type": "structural",
+  "vulnerabilities": ["INJC"],
+  "forbidden_functions": ["ldap_connection.search_s"],
+  "safe_contexts": [
+    { "type": "function_has_call_matching_ast", "call": ["replace"] },
+    { "type": "function_has_call_matching_ast", "call": ["escape_rdn"] },
+    { "type": "function_has_call_matching_ast", "call": ["escape_filter_chars"] }
+  ]
+},
+{
+  "rule_id": "DJANGO-002",
+  "type": "structural",
+  "vulnerabilities": ["SDIF"],
+  "forbidden_imports": ["django.core.validators.URLValidator"],
+  "safe_contexts": [
+    { "type": "function_has_call_matching_ast", "call": ["urlparse"] },
+    { "type": "function_has_call_matching_ast", "call": ["re.compile"] }
+  ]
+},
+{
+  "rule_id": "DIFFLIB-001",
+  "type": "structural",
+  "vulnerabilities": ["SECM"],
+  "forbidden_functions": ["IS_LINE_JUNK"],
+  "safe_contexts": [
+    { "type": "function_has_call_matching_ast", "call": ["endswith"] }
+  ]
+},
+{
+  "rule_id": "SERVE-WAITRESS-001",
+  "type": "structural",
+  "vulnerabilities": ["SECM"],
+  "forbidden_imports": ["waitress.serve"],
+  "safe_contexts": [
+    {
+      "type": "call_has_kwargs",
+      "call": ["serve"],
+      "kwargs": { "channel_request_lookahead": "1" }
+    }
+  ]
+},
+{
+  "rule_id": "MEMCACHE-001",
+  "type": "structural",
+  "vulnerabilities": ["SECM"],
+  "forbidden_imports": ["keystoneclient.middleware.memcache"],
+  "safe_contexts": [
+    { "type": "function_has_call_matching_ast", "call": ["fernet.encrypt"] }
+  ]
+},
+{
+  "rule_id": "BOTTLE-REQUEST-001-import",
+  "type": "structural",
+  "vulnerabilities": ["SDIF"],
+  "forbidden_imports": ["bottle.Bottle", "bottle.request", "bottle.response"]
+},
+{
+  "rule_id": "BOTTLE-REQUEST-001-taint",
+  "type": "taint",
+  "vulnerabilities": ["SDIF"],
+  "source_form": "call",
+  "sources": ["request.query.get"],
+  "sinks": ["any_use"],
+  "safe_contexts": [
+    {
+      "type": "condition_matches_xpath",
+      "scope": "enclosing",
+      "xpath": ".//src:name[text()='$VAR']/following-sibling::src:operator[1][text()='is' or text()='is not']"
+    }
+  ]
+},
+{
+  "rule_id": "CRACKLIB-FASCISTCHECK-001",
+  "type": "structural",
+  "vulnerabilities": ["SDIF"],
+  "forbidden_functions": ["cracklib.FascistCheck"]
+},
+{
+  "rule_id": "URLLIB-REQUEST-001",
+  "type": "structural",
+  "vulnerabilities": ["SDIF"],
+  "forbidden_functions": ["urllib.request.AbstractBasicAuthHandler"]
+},
+{
+  "rule_id": "AUDIOOP-001",
+  "type": "structural",
+  "vulnerabilities": ["SDIF"],
+  "forbidden_functions": ["audioop.reverse"],
+  "safe_contexts": [
+    {
+      "type": "matches_xpath",
+      "xpath": ".//src:if_stmt//src:condition[.//src:operator[1][text()='not']][.//src:call[.//src:name[text()='isinstance']][.//src:name[text()='bytes']]]"
+    }
+  ]
+},
+{
+  "rule_id": "AUDIOOP-002",
+  "type": "structural",
+  "vulnerabilities": ["SDIF"],
+  "forbidden_functions": ["audioop.lin2lin"],
+  "safe_contexts": [
+    { "type": "binary_comparison", "operators": [">"], "left_contains": ["len(data)"], "right_exact": ["max_size"] }
+  ]
+},
+{
+  "rule_id": "GET-RESPONSE-001",
+  "type": "structural",
+  "vulnerabilities": ["SDIF"],
+  "bad_assignments": {
+    "get_response": "get_response"
+  },
+  "safe_contexts": [
+    {
+      "type": "matches_xpath",
+      "xpath": ".//src:array//src:comprehension//src:condition[.//src:operator[text()='in']][.//src:name[text()='TRUSTED_PROXIES']]"
+    }
+  ]
+},
+{
+  "rule_id": "MECHANICALSOUP-STATEFUL-BROWSER-001",
+  "type": "structural",
+  "vulnerabilities": ["SDIF"],
+  "forbidden_functions": ["mechanicalsoup.StatefulBrowser"],
+  "safe_contexts": [
+    { "type": "function_has_call_matching_ast", "call": ["os.path.abspath"] },
+    { "type": "function_has_call_matching_ast", "call": ["startswith"] }
+  ]
+},
+{
+  "rule_id": "EXPAND-ROW-001",
+  "type": "structural",
+  "vulnerabilities": ["SDIF"],
+  "forbidden_function_defs": [
+    { "name": "expand_row" }
+  ],
+  "safe_contexts": [
+    { "type": "binary_comparison", "operators": [">", "<"], "left_contains": ["len(row_data)"] }
+  ]
+},
+{
+  "rule_id": "URLLIB-REQUEST-002",
+  "type": "taint",
+  "vulnerabilities": ["SDIF"],
+  "source_form": "call",
+  "sources": ["request.urlopen", "urllib.request.urlopen"],
+  "sanitizers": ["escape"],
+  "sinks": ["flat_call_arg", "method_chain"],
+  "safe_contexts": [
+    { "type": "function_has_call_matching_ast", "call": ["request.urlopen"], "args_text_contains": ["timeout"] },
+    { "type": "matches_xpath", "xpath": ".//src:if_stmt//src:condition[.//src:operator[text()='!='] and .//src:name[text()='scheme'] and .//src:literal[contains(text(),'https')]]" },
+    { "type": "matches_xpath", "xpath": ".//src:if_stmt//src:condition[.//src:operator[text()='in'] and .//src:name[text()='netloc']]" }
+  ]
+},
+{
+  "rule_id": "URLLIB-003",
+  "type": "structural",
+  "vulnerabilities": ["SDIF"],
+  "forbidden_functions": [
+    {
+      "type": "call_matches_ast",
+      "call": ["urllib.urlopen"],
+      "args_text_contains": [
+        "'http://example.com/%0D%0AHost:%20example.com'",
+        "'local_file:///etc/passwd'"
+      ]
+    }
+  ]
+},
+{
+  "rule_id": "IMPORTLIB-MODULE-001",
+  "type": "structural",
+  "vulnerabilities": ["SDIF"],
+  "forbidden_functions": ["importlib.import_module"],
+  "safe_contexts": [
+    { "type": "membership_check", "scope": "function", "operators": ["in", "not in"], "require_collection_assignment": true }
+  ]
+},
+{
+  "rule_id": "DJANGO-REVERSE-001",
+  "type": "structural",
+  "vulnerabilities": ["SDIF"],
+  "forbidden_function_defs": [
+    { "name": "reverse", "max_params": 1 }
+  ],
+  "safe_contexts": [
+    { "type": "membership_check", "scope": "function", "operators": ["in"], "left_exact": ["'.'", "\".\""] }
+  ]
+},
+{
+  "rule_id": "URLLIB2-URLOPEN-001",
+  "type": "structural",
+  "vulnerabilities": ["SECM"],
+  "forbidden_functions": ["urllib2.urlopen"],
+  "safe_contexts": [
+    { "type": "function_has_call_matching_ast", "call": ["ssl.create_default_context"] },
+    { "type": "matches_xpath", "xpath": ".//src:name[text()='check_hostname']" },
+    {
+      "type": "matches_xpath",
+      "xpath": ".//src:expr_stmt[.//src:name[text()='verify_mode'] and .//src:operator[text()='='] and contains(., 'ssl.CERT_REQUIRED')]"
+    }
+  ]
+},
+{
+  "rule_id": "URLLIB3-POOLMANAGER-001",
+  "type": "taint",
+  "vulnerabilities": ["SECM"],
+  "source_form": "call",
+  "sources": ["urllib3.PoolManager"],
+  "sinks": [
+    { "type": "method_call", "method": "request" }
+  ],
+  "safe_contexts": [
+    { "type": "call_has_kwargs", "call": ["request"], "kwargs": { "redirect": "False" } }
+  ]
+},
+{
+  "rule_id": "URLLIB3-POOLMANAGER-002",
+  "type": "structural",
+  "vulnerabilities": ["SECM"],
+  "forbidden_functions": ["urllib3.ProxyManager"],
+  "safe_contexts": [
+    {
+      "type": "call_has_kwargs",
+      "call": ["urllib3.ProxyManager"],
+      "kwargs": { "proxy_url": "" }
+    }
+  ]
+},
+{
+  "rule_id": "JINJA2-ENV-001",
+  "type": "structural",
+  "vulnerabilities": ["SDIF"],
+  "forbidden_imports": ["jinja2.Environment"],
+  "safe_contexts": [
+    { "type": "function_has_call_matching_ast", "call": ["select_autoescape"], "args_text_contains": ["enable_async=True"] },
+    { "type": "call_has_kwargs", "call": ["Environment"], "kwargs": { "autoescape": "True" } },
+    { "type": "function_has_call_matching_ast", "call": ["Environment"], "args_text_contains": ["autoescape=select_autoescape(['html','xml'])"] }
+  ]
+},
+{
+  "rule_id": "UNTANGLE-PARSE-001",
+  "type": "structural",
+  "vulnerabilities": ["SDIF"],
+  "forbidden_functions": ["untangle.parse"],
+  "safe_contexts": [
+  { "type": "function_has_call_matching_ast", "call": ["untangle.parse"], "args_text_contains": ["NoExternalEntityResolver("] }
+  ]
+},
+{
+  "rule_id": "MQTT-CLIENT-001",
+  "type": "taint",
+  "vulnerabilities": ["SDIF"],
+  "source_form": "call",
+  "sources": ["mqtt.Client"],
+  "sinks": [
+    { "type": "method_call", "method": "tls_insecure_set", "arg_contains": ["True"] }
+  ]
+},
+{
+  "rule_id": "TLS-CONNECTION-001",
+  "type": "taint",
+  "vulnerabilities": ["SDIF"],
+  "source_form": "call",
+  "sources": ["tlslite.TLSConnection"],
+  "sinks": [
+    { "type": "method_call", "method": "handshake" },
+    { "type": "method_call", "method": "send" }
+  ],
+  "safe_contexts": ["try"]
+},
+{
+  "rule_id": "CTYPES-CDLL-001",
+  "type": "structural",
+  "vulnerabilities": ["SDIF"],
+  "forbidden_functions": ["ctypes.CDLL"],
+  "safe_contexts": [
+    { "type": "function_has_call_matching_ast", "call": ["startswith"] }
+  ]
+},
+{
+  "rule_id": "OPENAI-001",
+  "type": "structural",
+  "vulnerabilities": ["SDIF"],
+  "required_imports": ["openai"],
+  "sensitive_var_patterns": ["key"],
+  "safe_contexts": [
+    { "type": "function_has_call_matching_ast", "call": ["os.getenv"] }
+  ]
+},
+{
+  "rule_id": "BINASCII-001",
+  "type": "taint",
+  "vulnerabilities": ["SDIF"],
+  "source_form": "call",
+  "sources": ["binascii.unhexlify"],
+  "sinks": ["any_use"],
+  "safe_contexts": [
+    {
+      "type": "condition_matches_xpath",
+      "scope": "enclosing",
+      "xpath": ".//src:operator[text()='<'][preceding-sibling::*[1][.//src:call[.//src:name[last()][text()='len']][.//src:name[text()='$VAR']]]][following-sibling::*[1][.//src:literal[text()='128']]]"
+    }
+  ]
+},
+{
+  "rule_id": "CTYPES-CDLL-002",
+  "type": "taint",
+  "vulnerabilities": ["SDIF"],
+  "source_form": "call",
+  "sources": ["CDLL"],
+  "sinks": ["any_use"],
+  "safe_contexts": [
+    { "type": "receiver_of_method", "method": "pam_start" }
+  ]
+},
+{
+  "rule_id": "MAILCAP-001",
+  "type": "taint",
+  "vulnerabilities": ["SDIF"],
+  "source_form": "call",
+  "sources": ["mailcap.findmatch"],
+  "sinks": ["any_use"],
+  "safe_contexts": [
+    { "type": "function_has_call_with_var_arg", "call": ["shlex.quote"] }
+  ]
+},
+{
+  "rule_id": "CTYPES-WINDLL-001",
+  "type": "structural",
+  "vulnerabilities": ["SDIF"],
+  "forbidden_functions": ["ctypes.WinDLL"],
+  "safe_contexts": [
+    { "type": "function_has_call_matching_ast", "call": ["os.path.isfile"] },
+    { "type": "function_has_call_matching_ast", "call": ["os.path.commonpath"] }
+  ]
+},
+{
+  "rule_id": "CTYPES-FROM-PARAM-001",
+  "type": "structural",
+  "vulnerabilities": ["SDIF"],
+  "forbidden_functions": ["ctypes.c_double.from_param"],
+  "safe_contexts": [
+    { "type": "function_has_call_matching_ast", "call": ["isinstance"] }
+  ]
+},
+{
+  "rule_id": "SETAFFINITY-001",
+  "type": "structural",
+  "vulnerabilities": ["SDIF"],
+  "forbidden_functions": ["libc.xc_vcpu_setaffinity"],
+  "safe_contexts": [
+    { "type": "function_has_call_matching_ast", "call": ["match"] }
+  ]
+},
+{
+  "rule_id": "CODE-INTERACT-001",
+  "type": "structural",
+  "vulnerabilities": ["SDIF"],
+  "forbidden_functions": [
+    {
+      "type": "call_matches_ast",
+      "call": ["code.interact"],
+      "args_text_contains": ["local=globals()"]
+    }
+  ],
+  "safe_contexts": [
+    { "type": "function_has_call_matching_ast", "call": ["match"] }
+  ]
+},
+{
+  "rule_id": "TWEEPY-OAUTHHANDLER-001",
+  "type": "taint",
+  "vulnerabilities": ["SECM"],
+  "source_form": "call",
+  "sources": ["tweepy.OAuthHandler"],
+  "sinks": ["any_use"],
+  "safe_contexts": [
+    {
+      "type": "matches_xpath",
+      "xpath": ".//src:name[text()='$VAR']/following-sibling::src:operator[1][text()='.']/following-sibling::src:name[1][text()='secure']/following-sibling::src:operator[1][text()='=']/following-sibling::src:literal[1][text()='True']"
+    }
+  ]
+},
+{
+  "rule_id": "CANVAS-001",
+  "type": "structural",
+  "vulnerabilities": ["SDIF"],
+  "forbidden_functions": ["Canvas"],
+  "safe_contexts": [
+    { "type": "function_has_call_matching_ast", "call": ["os.getenv"] }
+  ]
+},
+{
+  "rule_id": "CANVAS-DRAWIMAGE-001",
+  "type": "structural",
+  "vulnerabilities": ["SDIF"],
+  "forbidden_functions": ["drawImage"],
+  "safe_contexts": [
+    { "type": "function_has_call_matching_ast", "call": ["os.path.isfile"] }
+  ]
+},
+{
+  "rule_id": "RRDTOOL-GRAPH-001",
+  "type": "structural",
+  "vulnerabilities": ["INJC"],
+  "forbidden_functions": ["rrdtool.graph"],
+  "safe_contexts": [
+    { "type": "function_has_call_matching_ast", "call": ["startswith"] }
+  ]
+},
+{
+  "rule_id": "S3TOKEN-S3TOKEN-001",
+  "type": "structural",
+  "vulnerabilities": ["INJC"],
+  "forbidden_functions": ["s3_token.S3Token"],
+  "safe_contexts": [
+    { "type": "matches_xpath", "xpath": ".//src:dictionary[.//src:literal[text()=\"'certifi'\"]][.//src:literal[text()='True']]" }
+  ]
+},
+{
+  "rule_id": "GRPC-SERVER-001",
+  "type": "structural",
+  "vulnerabilities": ["SECM"],
+  "forbidden_functions": ["grpc.server"],
+  "safe_contexts": [
+    { "type": "function_has_call_matching_ast", "call": ["ssl_channel_credentials"] }
+  ]
+},
+{
+  "rule_id": "JSONPICKLE-DECODE-001",
+  "type": "structural",
+  "vulnerabilities": ["SECM"],
+  "forbidden_functions": ["jsonpickle.decode"],
+  "safe_contexts": [
+    { "type": "call_has_kwargs", "call": ["jsonpickle.decode"], "kwargs": { "classes": "" } }
+  ]
+},
+{
+  "rule_id": "LOOKATME-001",
+  "type": "structural",
+  "vulnerabilities": ["INJC"],
+  "forbidden_functions": ["lookatme.render"],
+  "safe_contexts": [
+    {
+      "type": "node_matches_xpath",
+      "xpath": "./src:argument_list//src:argument[./src:name[1][text()='extensions'] and .//src:array[not(*)]]"
+    }
+  ]
+},
+{
+  "rule_id": "AIOHTTP-WEB-001",
+  "type": "structural",
+  "vulnerabilities": ["SECM"],
+  "forbidden_imports": ["aiohttp.web"],
+  "safe_contexts": [
+    {
+      "type": "matches_xpath",
+      "xpath": ".//src:expr_stmt[.//src:name[./src:index//src:literal[text()=\"'AIOHTTP_NO_EXTENSIONS'\"]] and .//src:operator[text()='='] and .//src:literal[text()=\"'1'\"]]"
+    }
+  ]
+},
+{
+  "rule_id": "AWK-ENCRYPTION-DECRYPTION-SDK-001",
+  "type": "structural",
+  "vulnerabilities": ["SDIF"],
+  "forbidden_imports": ["aws_encryption_sdk.encrypt"],
+  "safe_contexts": [
+    { "type": "call_has_kwargs", "call": ["encrypt"], "kwargs": { "encryption_context": "encryption_context" } },
+    { "type": "call_has_kwargs", "call": ["decrypt"], "kwargs": { "encryption_context": "encryption_context" } }
+  ]
+},
+{
+  "rule_id": "RESTFRAMEWORK-SERIALIZERS-001",
+  "type": "structural",
+  "vulnerabilities": ["SDIF"],
+  "forbidden_names": ["serializers.ModelSerializer"],
+  "safe_contexts": [
+    {
+      "type": "matches_xpath",
+      "xpath": ".//src:call[contains(translate(./src:name,' ',''),'request.query_params.get')][./src:argument_list[.//src:literal[text()=\"'depth'\"]][.//src:literal[text()='None']]]"
+    }
+  ]
+},
+{
+  "rule_id": "SAML2-ENTITY-001",
+  "type": "structural",
+  "vulnerabilities": ["SDIF"],
+  "forbidden_imports": ["saml2.saml"],
+  "safe_contexts": [
+    { "type": "function_has_call_matching_ast", "call": ["saml.SAML2Entity"] }
+  ]
+},
+{
+  "rule_id": "PAGETAMPLATEFILE-001",
+  "type": "structural",
+  "vulnerabilities": ["SDIF"],
+  "forbidden_imports": ["Products.PageTemplates.PageTemplateFile.PageTemplateFile"],
+  "safe_contexts": [
+    { "type": "function_has_call_matching_ast", "call": ["startswith"] }
+  ]
+},
+{
+  "rule_id": "ASYNCIO-002",
+  "type": "structural",
+  "vulnerabilities": ["SDIF"],
+  "forbidden_functions": ["asyncio._asyncio._swap_current_task"]
+},
+{
+  "rule_id": "PLISTLIB-LOAD-001",
+  "type": "structural",
+  "vulnerabilities": ["SDIF"],
+  "forbidden_functions": ["plistlib.load"]
+},
+{
+  "rule_id": "HEAPQ-001",
+  "type": "structural",
+  "vulnerabilities": ["SDIF"],
+  "forbidden_functions": ["heapq.heapify", "heapq.heappop", "heapq.heappush", "heapq.heappushpop"],
+  "safe_contexts": [
+    { "type": "function_has_call_matching_ast", "call": ["isinstance"] }
+  ]
+},
+{
+  "rule_id": "EMAIL-UTILS-001",
+  "type": "structural",
+  "vulnerabilities": ["SDIF"],
+  "forbidden_functions": ["email.utils.parseaddr"],
+  "safe_contexts": [
+    {
+    "type": "condition_matches_xpath",
+    "scope": "function",
+    "xpath": ".//src:operator[text()='!='][preceding-sibling::*[1][.//src:call[.//src:name[last()][text()='count']][.//src:literal[text()=\"'@'\"]]]][following-sibling::*[1][self::src:literal[text()='1']]]"
+    } 
+  ]
+},
+{
+  "rule_id": "BZ2-DECOMPRESS-001",
+  "type": "structural",
+  "vulnerabilities": ["SDIF"],
+  "forbidden_functions": ["bz2.decompress"],
+  "safe_contexts": [
+    { "type": "function_has_call_matching_ast", "call": ["bz2.BZ2Decompressor"] }
+  ]
+},
+{
+  "rule_id": "PYDOC-SERVE-001",
+  "type": "structural",
+  "vulnerabilities": ["SDIF"],
+  "forbidden_functions": ["pydoc.serve"],
+  "safe_contexts": [
+    {
+      "type": "node_matches_xpath",
+      "xpath": "./src:argument_list[.//src:argument[./src:expr[1]/src:name[1][text()='ready']]][contains(translate(.,' ',''),'no_getfile=True')]"
+    }
+  ]
+},
+{
+  "rule_id": "NOVAJOIN-001",
+  "type": "structural",
+  "vulnerabilities": ["SDIF"],
+  "forbidden_functions": ["Novajoin"],
+  "safe_contexts": [
+    { "type": "call_has_kwargs", "call": ["Novajoin"], "kwargs": { "ssl_context": "" } }
+  ]
+},
+{
+  "rule_id": "PYPISERVER-001",
+  "type": "structural",
+  "vulnerabilities": ["SDIF"],
+  "forbidden_functions": [
+    {
+      "type": "call_matches_ast",
+      "call": ["pypiserver.app"],
+      "exact_args_count": 0
+    }
+  ]
+},
+{
+  "rule_id": "OPENAI-API-001",
+  "type": "structural",
+  "vulnerabilities": ["SDIF"],
+  "forbidden_names": ["openai.api_key"],
+  "safe_contexts": [
+    {
+      "type": "condition_matches_xpath",
+      "scope": "enclosing",
+      "xpath": ".//src:operator[1][text()='not'] and .//src:name[contains(translate(.,' ',''),'openai.api_key')]"
+    }
+  ]
+},
+{
+  "rule_id": "DJANGO-003",
+  "type": "structural",
+  "vulnerabilities": ["SDIF"],
+  "forbidden_string_patterns": ["django\\.db\\.backends\\.postgresql"],
+  "safe_contexts": [
+    { "type": "function_has_call_matching_ast", "call": ["os.getenv"] }
+  ]
+},
+{
+  "rule_id": "TRACEBACK-FORMAT-EXC-001",
+  "type": "structural",
+  "vulnerabilities": ["BRAC"],
+  "forbidden_functions": ["traceback.format_exc"],
+  "safe_contexts": [
+    { "type": "node_matches_xpath", "xpath": "ancestor::src:call[.//src:name[last()][text()='log']]" }
+  ]
+},
+{
+  "rule_id": "EOFERROR-001",
+  "type": "structural",
+  "vulnerabilities": ["BRAC"],
+  "forbidden_functions": [
+    {
+      "type": "call_matches_ast",
+      "call": ["EOFError"],
+      "args_text_contains": ["read_bytes"]
+    }
+  ]
+},
+{
+  "rule_id": "RE-SEARCH-PATTERN-001",
+  "type": "structural",
+  "vulnerabilities": ["BRAC"],
+  "forbidden_conditions": ["re.search(pattern,string)"],
+  "safe_contexts": [
+    {
+      "type": "matches_xpath",
+      "xpath": ".//src:if_stmt//src:condition[.//src:call[.//src:name[text()='isinstance']][.//src:name[1][text()='string']][.//src:name[text()='str']]][.//src:call[.//src:name[last()][text()='startswith']][.//src:literal[text()=\"'www.'\"]][.//src:literal[text()=\"'beta.'\"]]]"
+    }
+  ]
+},
+{
+  "rule_id": "HTTP-CLIENT-001",
+  "type": "structural",
+  "vulnerabilities": ["BRAC"],
+  "forbidden_string_patterns": ["GET.*X-Header:\\s*foo"]
+}
+
+]

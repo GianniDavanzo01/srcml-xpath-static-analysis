@@ -1,0 +1,581 @@
+[
+ {
+    "rule_id": "MKDIR-001",
+    "type": "structural",
+    "vulnerabilities": ["SDIF"],
+    "description": "Creazione di directory con mkdir() senza exist_ok=False esplicito: rischio di race condition / symlink attack (TOCTOU) mascherata da creazione silenziosa",
+    "forbidden_functions": ["mkdir"],
+    "safe_contexts": [
+        { "type": "call_with_kwarg", "call": ["mkdir"], "kwargs": { "exist_ok": "False" } }
+    ]
+ },
+ {
+  "rule_id": "MAKEDIRS-001",
+  "type": "structural",
+  "vulnerabilities": ["SECM"],
+  "description": "makedirs vulnerability",
+  "forbidden_functions": ["os.makedirs"],
+  "safe_contexts": [
+    {
+      "type": "call_with_kwarg",
+      "call": ["os.makedirs"],
+      "kwargs": { "mode": "0o700" }
+    },
+    {
+      "type": "current_call_matches_ast", 
+      "contains_names": ["stat.S_IRUSR"]
+    },
+    {
+      "type": "current_call_matches_ast", 
+      "contains_names": ["stat.S_IWUSR"]
+    }
+  ]
+ },
+ {
+  "rule_id": "OS-CHMOD-001",
+  "type": "structural",
+  "vulnerabilities": ["SECM"],
+  "description": "OS chmod vulnerability",
+  "forbidden_functions": [
+    {
+      "type": "call_matches_ast", 
+      "call": ["os.chmod"], 
+      "contains_numbers": ["0", "0000", "0o000", "755", "0o755", "777", "0o777", "0o400", "128", "664", "0o644"]
+    }
+  ],
+  "safe_contexts": []
+ },
+ {
+  "rule_id": "OS-ENV-GET-001",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "taint",
+  "description": "os environment get vulnerability - Unvalidated environment variable used in concatenation or assignment",
+  "vulnerabilities": [
+    "BRAC"
+  ],
+  "source_form": "call",
+  "sources": [
+    "os.environ.get"
+  ],
+  "sanitizers": [
+    "escape",
+    "escape_filter_chars",
+    "escape_rdn"
+  ],
+  "safe_contexts": [
+    "try",
+    "match",
+    "obj_match",
+    "isfile",
+    "send_static_file",
+    {
+      "type": "call_with_kwarg",
+      "call": [
+        "subprocess.run"
+      ],
+      "kwargs": {
+        "check": "True"
+      }
+    },
+    {
+      "type": "var_truthiness_check"
+    }
+  ],
+  "sinks": [
+    "concat",
+    "assign_rhs"
+  ]
+},
+{
+  "rule_id": "OS-ENV-GET-002",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "taint",
+  "description": "os environment get vulnerability - Tainted environment variable used as a dictionary key or slice",
+  "vulnerabilities": [
+    "BRAC"
+  ],
+  "source_form": "call",
+  "sources": [
+    "os.environ.get"
+  ],
+  "sanitizers": [
+    "escape",
+    "escape_filter_chars",
+    "escape_rdn"
+  ],
+  "safe_contexts": [
+    "try",
+    "match",
+    "obj_match",
+    "isfile",
+    "send_static_file",
+    {
+      "type": "call_with_kwarg",
+      "call": [
+        "subprocess.run"
+      ],
+      "kwargs": {
+        "check": "True"
+      }
+    },
+    {
+      "type": "var_truthiness_check"
+    }
+  ],
+  "sinks": [
+    "colon_suffix"
+  ]
+},
+{
+  "rule_id": "OS-ENV-GET-003",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "taint",
+  "description": "os environment get vulnerability - Tainted environment variable passed as a flat argument",
+  "vulnerabilities": [
+    "BRAC"
+  ],
+  "source_form": "call",
+  "sources": [
+    "os.environ.get"
+  ],
+  "sanitizers": [
+    "escape",
+    "escape_filter_chars",
+    "escape_rdn"
+  ],
+  "safe_contexts": [
+    "try",
+    "match",
+    "obj_match",
+    "isfile",
+    "send_static_file",
+    {
+      "type": "call_with_kwarg",
+      "call": [
+        "subprocess.run"
+      ],
+      "kwargs": {
+        "check": "True"
+      }
+    },
+    {
+      "type": "var_truthiness_check"
+    }
+  ],
+  "sinks": [
+    {
+      "type": "flat_call_arg"
+    }
+  ]
+},
+{
+  "rule_id": "OS-ENV-GET-004",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "taint",
+  "description": "os environment get vulnerability - Tainted environment variable returned directly or used in a method chain",
+  "vulnerabilities": [
+    "BRAC"
+  ],
+  "source_form": "call",
+  "sources": [
+    "os.environ.get"
+  ],
+  "sanitizers": [
+    "escape",
+    "escape_filter_chars",
+    "escape_rdn"
+  ],
+  "safe_contexts": [
+    "try",
+    "match",
+    "obj_match",
+    "isfile",
+    "send_static_file",
+    {
+      "type": "call_with_kwarg",
+      "call": [
+        "subprocess.run"
+      ],
+      "kwargs": {
+        "check": "True"
+      }
+    },
+    {
+      "type": "var_truthiness_check"
+    }
+  ],
+  "sinks": [
+    "return",
+    "method_chain"
+  ]
+},
+{
+  "rule_id": "OS-ENV-GET-005",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "taint",
+  "description": "os environment get vulnerability - Tainted environment variable used in string concatenation",
+  "vulnerabilities": [
+    "BRAC"
+  ],
+  "source_form": "call",
+  "sources": [
+    "os.environ.get"
+  ],
+  "sanitizers": [],
+  "safe_contexts": [
+    {
+        "type": "matches_xpath",
+        "xpath": ".//src:call[.//src:name[text()='split'] and .//src:argument[.//src:name[text()='pathsep']]]"
+    }
+  ],
+  "sinks": [
+    "concat"
+  ]
+},
+{
+  "rule_id": "SUBPROCESS-CAPTURE-001",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "structural",
+  "description": "subprocess capture vulnerability - Unsafe use of subprocess.capture_output() leading to potential Command Injection",
+  "vulnerabilities": [
+    "INJC"
+  ],
+  "forbidden_functions": [
+    "subprocess.capture_output"
+  ],
+  "safe_contexts": []
+},
+{
+  "rule_id": "SUBPROCESS-SHELL-001",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "structural",
+  "description": "subprocess shell vulnerability - Unsafe use of subprocess with shell=True",
+  "vulnerabilities": [
+    "INJC"
+  ],
+  "forbidden_calls_with_kwargs": [
+    {
+      "call_prefix": "subprocess.",
+      "kwargs": {
+        "shell": "True"
+      }
+    }
+  ],
+  "safe_contexts": [
+    {
+      "type": "matches_xpath",
+      "xpath": "ancestor-or-self::src:unit[1][contains(translate(., concat(' ', '&#10;', '&#13;'), ''), 'shlex.quote(')]"
+    },
+    {
+      "type": "membership_check",
+      "require_any_call": true
+    },
+    {
+      "type": "membership_check",
+      "require_collection_assignment": true
+    },
+    {
+      "type": "matches_xpath",
+      "xpath": ".//src:call[contains(translate(., concat(' ', '&#10;', '&#13;', '&#34;', '&#39;'), ''), 'subprocess.run([ping,-c,4,link],stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)')]"
+    }
+  ]
+},
+{
+  "rule_id": "MKTEMP-001",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "structural",
+  "description": "mktemp vulnerability - Use of deprecated and insecure tempfile.mktemp() function",
+  "vulnerabilities": [
+    "BRAC"
+  ],
+  "forbidden_functions": [
+    "mktemp",
+    "tempfile.mktemp"
+  ],
+  "safe_contexts": []
+},
+{
+  "rule_id": "OS-SYSTEM-001",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "structural",
+  "description": "os system vulnerability - Execution of .bin files via os.system()",
+  "vulnerabilities": [
+    "SECM"
+  ],
+  "forbidden_calls_with_arg_pattern": [
+    {
+      "call": "os.system",
+      "arg_contains": ".bin"
+    }
+  ],
+  "safe_contexts": []
+},
+{
+  "rule_id": "OS-SYSTEM-002",
+  "type": "structural",
+  "description": "os system vulnerability - Unsafe usage of os.system()",
+  "vulnerabilities": [
+    "SECM"
+  ],
+  "forbidden_functions": [
+    "os.system"
+  ],
+  "safe_contexts": [
+    {
+      "type": "membership_check",
+      "require_collection_assignment": true
+    },
+    {
+      "type": "call_argument_contains",
+      "text": "escape("
+    },
+    {
+      "type": "call_argument_contains",
+      "text": "\"python\""
+    },
+    {
+      "type": "node_matches_xpath",
+      "xpath": "ancestor::src:call[src:name[text()='eval' or text()='exec']]"
+    },
+    {
+      "type": "matches_xpath",
+      "xpath": "ancestor-or-self::src:unit[1][contains(translate(., concat(' ', '&#10;', '&#13;'), ''), 'requests.get(url)')]"
+    },
+    {
+      "type": "matches_xpath",
+      "xpath": "ancestor-or-self::src:unit[1][contains(translate(., concat(' ', '&#10;', '&#13;'), ''), 'os.path.dirname(sys.executable)')]"
+    }
+  ]
+},
+{
+  "rule_id": "REQUESTS-VERIFY-001",
+  "type": "structural",
+  "description": "Rileva chiamate alla libreria requests in cui viene disabilitata la verifica del certificato SSL (verify=False)",
+  "vulnerabilities": [
+    "IDAF"
+  ],
+  "forbidden_calls_with_kwargs": [
+    {
+      "call_prefix": "requests.",
+      "kwargs": {
+        "verify": "False"
+      }
+    }
+  ]
+},
+{
+  "rule_id": "ELEMENT-TREE-001",
+  "type": "structural",
+  "description": "Rileva configurazioni insicure di XSLTAccessControl con accesso di lettura o scrittura di rete abilitato.",
+  "vulnerabilities": [
+    "SECM"
+  ],
+  "bad_calls": {
+    "XSLTAccessControl": {
+      "read_network": "True",
+      "write_network": "True"
+    }
+  }
+},
+{
+  "rule_id": "IMPORT-MODULE-001",
+  "type": "structural",
+  "description": "Rileva l'uso della funzione built-in __import__, potenzialmente vulnerabile a caricamento arbitrario di moduli.",
+  "vulnerabilities": [
+    "SDIF"
+  ],
+  "forbidden_functions": [
+    "__import__"
+  ],
+  "safe_contexts": [
+    {
+      "type": "matches_xpath",
+      "xpath": ".//src:name[text()='sys']/following-sibling::src:operator[text()='.']/following-sibling::src:name[text()='path']"
+    },
+    {
+      "type": "matches_xpath",
+      "xpath": ".//src:call[.//src:name[last()][text()='abspath']]"
+    },
+    {
+      "type": "membership_check",
+      "scope": "enclosing",
+      "require_collection_assignment": true
+    }
+  ]
+},
+{
+  "rule_id": "OS-ENVIRON-PYTHON-PATH-001",
+  "type": "structural",
+  "description": "Rileva l'accesso diretto alla variabile d'ambiente PYTHONPATH, potenziale vettore per attacchi di module hijacking.",
+  "vulnerabilities": [
+    "SDIF"
+  ],
+  "forbidden_expressions": [
+    "os.environ['PYTHONPATH']",
+    "os.environ[\"PYTHONPATH\"]"
+  ],
+  "safe_contexts": [
+    {
+      "type": "function_has_call_matching_ast",
+      "call": "os.pathsep.join"
+    }
+  ]
+},
+{
+  "rule_id": "PATH-001",
+  "type": "structural",
+  "vulnerabilities": ["SDIF"],
+  "forbidden_functions": ["path.normpath"],
+  "safe_contexts": [
+    {
+      "type": "membership_check",
+      "scope": "function",
+      "operators": ["in"],
+      "left_exact": ["'\\0'", "\"\\0\""]
+    }
+  ]
+},
+{
+  "rule_id": "OS-REALPATH-001",
+  "type": "taint",
+  "description": "Rileva l'uso non validato di percorsi risolti tramite os.path.realpath, con rischio di path traversal o simlink attack se la lunghezza non è limitata.",
+  "vulnerabilities": [
+    "SDIF"
+  ],
+  "sources": [
+    "os.path.realpath"
+  ],
+  "source_form": "call",
+  "sinks": [
+    "any_use"
+  ],
+  "safe_contexts": [
+    {
+      "type": "binary_comparison",
+      "operators": [
+        ">"
+      ],
+      "left_contains": [
+        "len("
+      ],
+      "right_exact": [
+        "4096"
+      ]
+    }
+  ]
+},
+{
+  "rule_id": "OA-PATH-TRAVERSAL-001",
+  "type": "structural",
+  "vulnerabilities": ["SDIF"],
+  "forbidden_calls_with_arg_pattern": [
+    { "call": "os.path.join", "arg_contains": "filename" }
+  ],
+  "safe_contexts": [
+    { "type": "matches_xpath", "xpath": ".//src:call[.//src:name[last()][text()='isalnum']]" }
+  ]
+},
+{
+  "rule_id": "SYMLINK-001",
+  "type": "structural",
+  "description": "Rileva la creazione di link simbolici tramite os.symlink, a rischio se i percorsi non sono limitati in lunghezza o se non se ne verifica la preesistenza.",
+  "vulnerabilities": [
+    "SDIF"
+  ],
+  "forbidden_functions": [
+    "os.symlink"
+  ],
+  "safe_contexts": [
+    {
+      "type": "condition_matches_xpath",
+      "xpath": ".//src:call[.//src:name[text()='len']]"
+    },
+    {
+      "type": "function_has_call_matching_ast",
+      "call": [
+        "os.path.exists"
+      ]
+    }
+  ]
+},
+{
+  "rule_id": "OS-PSUTIL-KILL-001",
+  "type": "structural",
+  "vulnerabilities": ["SDIF"],
+  "forbidden_functions": ["kill"],
+  "safe_contexts": [
+    { "type": "matches_xpath", "xpath": ".//src:if_stmt//src:condition//src:call[.//src:name[last()][text()='getpid']]" }
+  ]
+},
+{
+  "rule_id": "OS-REMOVE-001",
+  "type": "structural",
+  "description": "Rileva chiamate a os.remove potenzialmente vulnerabili a path traversal o cancellazione non autorizzata di file[cite: 5].",
+  "vulnerabilities": [
+    "SDIF"
+  ],
+  "forbidden_functions": [
+    "os.remove"
+  ],
+  "safe_contexts": [
+    {
+      "type": "function_has_call_matching_ast",
+      "call": [
+        "os.path.exists",
+        "os.path.isfile"
+      ]
+    },
+    {
+      "type": "unit_has_os_path_join_and_commonprefix"
+    }
+  ]
+},
+{
+  "rule_id": "OS-REMOVE-002",
+  "type": "structural",
+  "description": "Rileva l'uso di os.remove quando è presente un controllo parziale con os.path.exists ma manca os.path.isfile, esponendo a vulnerabilità TOCTOU o cancellazione accidentale di directory.",
+  "vulnerabilities": [
+    "SDIF"
+  ],
+  "forbidden_functions": [
+    "os.remove"
+  ],
+  "safe_contexts": [
+    {
+      "type": "function_has_call_matching_ast",
+      "call": [
+        "os.path.isfile"
+      ]
+    },
+    {
+      "type": "node_matches_xpath",
+      "xpath": "not(ancestor::src:if_stmt//src:call[.//src:name[text()='exists']])"
+    }
+  ]
+},
+{
+  "rule_id": "CHMOD-001",
+  "type": "structural",
+  "description": "Rileva l'uso di tempfile.mkdtemp senza un'impostazione sicura dei permessi tramite os.chmod e stat.S_IRWXU.",
+  "vulnerabilities": [
+    "SECM"
+  ],
+  "forbidden_functions": [
+    "tempfile.mkdtemp"
+  ],
+  "safe_contexts": [
+    {
+      "type": "function_has_call_matching_ast",
+      "call": [
+        "os.chmod",
+        "chmod"
+      ],
+      "contains_names": [
+        "stat.S_IRWXU"
+      ]
+    }
+  ]
+}
+
+
+]

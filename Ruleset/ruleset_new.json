@@ -1,0 +1,77 @@
+[
+{
+  "rule_id": "LOGGING-ERROR-001",
+  "type": "structural",
+  "description": "Rileva la potenziale esposizione di query nel log (CWE-200). Utilizzare messaggi di log statici ed evitare di includere le variabili sql o query, anche tramite f-string.",
+  "vulnerabilities": [
+    "BRAC"
+  ],
+  "forbidden_functions": [
+    "logging.error"
+  ],
+  "safe_contexts": [
+   {
+      "type": "matches_xpath",
+      "xpath": "not(.//src:argument_list//src:name) and not(.//src:argument_list//src:literal[@type='string' and starts-with(translate(text(), 'F', 'f'), 'f')])"
+    }
+  ]
+},
+{
+  "rule_id": "CWE-595-REF-COMPARISON",
+  "type": "structural",
+  "description": "Rileva l'uso degli operatori 'is' o 'is not' per confrontare oggetti (CWE-595). In Python questi operatori verificano l'identità in memoria e non l'uguaglianza dei valori. Utilizzare '==' o '!='. I confronti idiomatici con None, True e False sono consentiti.",
+  "vulnerabilities": [
+    "CWE-595"
+  ],
+  "reference_comparisons": true,
+  "safe_contexts": []
+},
+{
+  "rule_id": "MISSING-WHILE-INCREMENT",
+  "type": "structural",
+  "vulnerabilities": [
+    "SLMF"
+  ],
+  "missing_while_increments": [{}]
+},
+{
+  "rule_id": "OFF-BY-ONE-WHILE-001",
+  "type": "structural",
+  "description": "Rileva un potenziale errore off-by-one (CWE-193) nei cicli while con '<=' e len().",
+  "vulnerabilities": [
+    "CWE-193"
+  ],
+  "xpath_rules": [
+    ".//src:while[./src:condition//src:operator[text()='<='] and ./src:condition//src:call[./src:name[text()='len']]]"
+  ],
+  "safe_contexts": []
+},
+{
+  "rule_id": "CWE-116-REGEX-STRIP-001",
+  "type": "structural",
+  "description": "Rileva la sanitizzazione di tag HTML o script basata su espressioni regolari applicate in un ciclo 'fixed-point' (while old != new: ... re.sub(...)) (CWE-116). Questo approccio è fragile e soggetto a bypass tramite tag annidati/sovrapposti.",
+  "vulnerabilities": ["CWE-116"],
+  "xpath_rules": [
+    ".//src:while[src:condition//src:operator[text()='!='] and .//src:call[.//src:name[last()][text()='sub']]]"
+  ],
+  "safe_contexts": []
+},
+{
+  "rule_id": "CWE-462-ALIST-DUPLICATE",
+  "type": "structural",
+  "vulnerabilities": ["CWE-462"],
+  "xpath_rules": [
+    ".//*[self::src:while or self::src:for][.//src:call[.//src:name[text()='append'] and .//src:argument_list//src:tuple] and not(.//src:operator[text()='in' or text()='not in'])]"
+  ],
+  "safe_contexts": []
+},
+{
+  "rule_id": "TOCTOU-FILE-001",
+  "type": "structural",
+  "vulnerabilities": ["CWE-367"],
+  "xpath_rules": [
+    ".//src:if_stmt[ ./src:if/src:condition//src:call[string(src:name)='os.path.exists' or string(src:name)='os.path.isfile'] and ./src:if/src:block//src:with//src:call[src:name/text()='open'] and ./src:if/src:condition//src:call[string(src:name)='os.path.exists' or string(src:name)='os.path.isfile']/src:argument_list/src:argument[1] = ./src:if/src:block//src:with//src:call[src:name/text()='open']/src:argument_list/src:argument[1] ]"
+  ]
+}
+
+]

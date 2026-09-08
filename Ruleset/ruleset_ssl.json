@@ -1,0 +1,137 @@
+[
+{
+  "rule_id": "CREATE-DEFAULT-CONTEXT-001",
+  "type": "structural",
+  "vulnerabilities": ["IDAF"],
+  "description": "Default context vulnerability",
+  "forbidden_functions": [
+    {
+      "type": "call_matches_ast",
+      "call": [
+        "ssl.create_default_context",
+        "SSL.create_default_context"
+      ],
+      "exact_args_count": 0
+    }
+  ],
+  "safe_contexts": []
+},
+{
+  "rule_id": "CERT-001",
+  "type": "structural",
+  "vulnerabilities": ["IDAF"],
+  "description": "Cert vulnerability",
+  "bad_assignments": {
+    "verify_mode": "ssl.CERT_NONE"
+  },
+  "safe_contexts": []
+ },
+ {
+  "rule_id": "SET-COOKIE-001-ssl",
+  "type": "structural",
+  "description": "Set cookie vulnerability - Rischio di cookie insicuri se non configurati con flag di sicurezza",
+  "vulnerabilities": ["SECM"],
+  "forbidden_functions": [
+    "set_cookie"
+  ],
+  "safe_contexts": [
+    {
+      "type": "call_with_kwarg",
+      "call": [
+        "set_cookie"
+      ],
+      "kwargs": {
+        "expires": "",
+        "max_age": "",
+        "httponly": "",
+        "secure": "",
+        "samesite": ""
+      }
+    },
+    {
+      "type": "node_matches_xpath",
+      "xpath": "boolean(count(.//src:argument_list/src:argument) < 2)"
+    }
+  ]
+},
+{
+  "rule_id": "CHECK-HOSTNAME-001",
+  "type": "structural",
+  "description": "Check hostname vulnerability - Disabilitazione della verifica del nome host (check_hostname = False)",
+  "vulnerabilities": ["IDAF"],
+  "bad_assignments": {
+    "check_hostname": "False"
+  }
+},
+{
+  "rule_id": "SSL-WRAP-SOCKET-001",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "structural",
+  "vulnerabilities": ["CRYF"],
+  "description": "Wrap socket vulnerability - Uso deprecato e potenzialmente insicuro di ssl.wrap_socket()",
+  "forbidden_functions": [
+    "ssl.wrap_socket"
+  ]
+},
+{
+  "rule_id": "CREATE-UNVERIFIED-CONTEXT-001",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "structural",
+  "vulnerabilities": ["IDAF"],
+  "description": "Unverified context vulnerability - Creazione esplicita di un contesto SSL non verificato o disabilitazione della verifica sul contesto",
+  "forbidden_functions": [
+    {
+      "type": "call_matches_ast",
+      "call": ["ssl._create_unverified_context"],
+      "exact_args_count": 0
+    }
+  ],
+  "bad_assignments": {
+    "ctx._create_unverified_context": "True"
+  }
+},
+{
+  "rule_id": "CREATE-STDLIB-CONTEXT-001",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "structural",
+  "vulnerabilities": ["IDAF"],
+  "description": "Stdlib context vulnerability - Uso esplicito di ssl._create_stdlib_context()",
+  "forbidden_functions": [
+    {
+      "type": "call_matches_ast",
+      "call": ["ssl._create_stdlib_context"],
+      "exact_args_count": 0
+    }
+  ]
+},
+{
+  "rule_id": "CONTEXT-001",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "structural",
+  "vulnerabilities": ["IDAF"],
+  "description": "Cert vulnerability - Inizializzazione di SSLContext o Context potenzialmente non sicura o con protocolli TLS obsoleti",
+  "forbidden_functions": [
+    "ssl.SSLContext",
+    "SSL.SSLContext",
+    "ssl.Context",
+    "SSL.Context"
+  ],
+  "safe_contexts": [
+    {
+      "type": "current_call_matches_ast",
+      "args_text_contains": ["'tlsv1_2'"]
+    },
+    {
+      "type": "current_call_matches_ast",
+      "args_text_contains": ["ssl.PROTOCOL_TLS"]
+    },
+    {
+      "type": "function_has_call_matching_ast",
+      "call": ["set_verify"],
+      "contains_names": ["SSL.verify_peer"],
+      "contains_numbers": ["1"]
+    }
+  ]
+}
+
+]

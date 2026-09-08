@@ -1,0 +1,65 @@
+[
+{
+  "rule_id": "GIT-CLONE-001",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "structural",
+  "vulnerabilities": ["SDIF"],
+  "description": "git clone vulnerability - Chiamata a Repo.clone_from con **kwargs senza validare l'argomento 'depth'",
+  "forbidden_functions": [
+    {
+      "type": "call_matches_ast",
+      "call": ["Repo.clone_from"],
+      "args_text_contains": ["kwargs"]
+    }
+  ],
+  "safe_contexts": [
+    {
+      "type": "binary_comparison",
+      "operators": ["!="],
+      "left_contains": [
+        "kwargs['depth']", 
+        "kwargs[\"depth\"]"
+      ],
+      "right_exact": ["1"]
+    }
+  ]
+},
+{
+  "rule_id": "GIT-CLONE-002",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "structural",
+  "vulnerabilities": ["SDIF"],
+  "description": "git clone vulnerability - Chiamata a git.Repo.clone_from() senza previa validazione o parsing dell'URL tramite urllib.parse.urlparse",
+  "forbidden_functions": [
+    "git.Repo.clone_from"
+  ],
+  "safe_contexts": [
+    {
+      "type": "function_has_call_matching_ast",
+      "call": ["urllib.parse.urlparse"]
+    }
+  ]
+},
+{
+  "rule_id": "INSTALL-PACKAGE-GITHUB-001",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "structural",
+  "vulnerabilities": ["SDIF"],
+  "description": "install package github vulnerability - Definizione di install_package senza la presenza di una funzione sanitize_git_reference per validare gli input",
+  "bad_function_defs": [
+    {
+      "name": "install_package",
+      "param": "git_url,reference",
+      "return_expr": ""
+    }
+  ],
+  "safe_contexts": [
+    {
+      "type": "unit_has_function_def",
+      "name": "sanitize_git_reference",
+      "param_contains": "reference"
+    }
+  ]
+}
+
+]

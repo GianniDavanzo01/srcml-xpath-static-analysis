@@ -1,0 +1,57 @@
+[
+ {
+  "rule_id": "SOCKET-001",
+  "type": "structural",
+  "vulnerabilities": ["SDIF"],
+  "description": "socket vulnerability",
+  "forbidden_functions": [
+    "socket.socket","socket.connect","socket.bind",
+    "socket.listen","socket.accept","socket.send",
+    "socket.recv","socket.sendto","socket.recvfrom",
+    "socket.sendmsg","socket.recvmsg","socket.setsockopt",
+    "socket.getsockopt","socket.getsockname","socket.getpeername",
+    "socket.shutdown"
+  ],
+  "safe_contexts": [
+    "try"
+  ]
+ },
+ {
+  "rule_id": "PARSE-UDP-001",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "structural",
+  "vulnerabilities": ["BRAC"],
+  "description": "parse udp packet vulnerability - Implementazione vuota (stub) della funzione parseUDPpacket.",
+  "forbidden_function_defs": [
+    {
+      "name": "parseUDPpacket",
+      "max_params": 1,
+      "exact_body": "pass"
+    }
+  ]
+},
+{
+  "rule_id": "SOCKET-GET-ADDRESS-INFO-001",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "structural",
+  "vulnerabilities": ["BRAC"],
+  "description": "get address info vulnerability - Uso di socket.getaddrinfo(host, port) senza preventiva validazione della lunghezza dell'host (len > 255)",
+  "forbidden_functions": [
+    {
+      "type": "call_matches_ast",
+      "call": ["socket.getaddrinfo"],
+      "exact_args_count": 2,
+      "contains_names": ["host", "port"]
+    }
+  ],
+  "safe_contexts": [
+    {
+      "type": "binary_comparison",
+      "operators": [">"],
+      "left_exact": ["len(host)"],
+      "right_exact": ["255"]
+    }
+  ]
+}
+ 
+]

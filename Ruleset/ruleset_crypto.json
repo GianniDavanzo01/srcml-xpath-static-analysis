@@ -1,0 +1,424 @@
+[
+  {
+  "rule_id": "MD5-001",
+  "type": "structural",
+  "vulnerabilities": ["CRYF"],
+  "forbidden_functions": ["md5"]
+  },
+  {
+  "rule_id": "HASHLIB-SHA256-001",
+  "type": "structural",
+  "vulnerabilities": ["CRYF"],
+  "description": "hashlib sha256 vulnerability",
+  "forbidden_functions": ["sha256"],
+  "safe_contexts": []
+ },
+ {
+  "rule_id": "SSL-METHOD-001",
+  "type": "structural",
+  "vulnerabilities": ["IDAF"],
+  "description": "ssl method vulnerability",
+  "forbidden_name_prefixes": [
+    "ssl.SSLv2_METHOD", "ssl.SSLv3_METHOD", "ssl.SSLv23_METHOD", "ssl.TLSv1_METHOD", "ssl.TLSv1_1_METHOD",
+    "SSL.SSLv2_METHOD", "SSL.SSLv3_METHOD", "SSL.SSLv23_METHOD", "SSL.TLSv1_METHOD", "SSL.TLSv1_1_METHOD",
+    "ssl.PROTOCOL_SSLv2", "ssl.PROTOCOL_SSLv3", "ssl.PROTOCOL_TLSv1"
+  ],
+  "safe_contexts": [],
+  "_open_questions": {
+    "unanchored_regex_replicated": "La regex originale ssl\\.PROTOCOL_(SSLv2|SSLv3|TLSv1(_1)?) non e' ancorata a destra: matcha per sottostringa, quindi anche 'ssl.PROTOCOL_TLSv1_2', 'ssl.PROTOCOL_TLSv1_9' o costanti future non ancora esistenti che iniziano con lo stesso prefisso, oltre a 'ssl.PROTOCOL_SSLv23' (matchata via prefisso 'SSLv2', pur essendo semanticamente una costante diversa: auto-negoziazione, non SSLv2 puro). Tradotto qui con forbidden_name_prefixes per fedelta' comportamentale 1:1 (bug incluso), non con forbidden_names a match esatto come nella prima versione — quella prima versione era piu' restrittiva del tool originale, quindi non era una vera conversione 1:1.",
+    "TLSv1_1_entry_ridondante": "'ssl.PROTOCOL_TLSv1_1' e 'SSL.TLSv1_1_METHOD' restano nella lista solo per tracciabilita' con l'alternanza originale, ma sotto matching a prefisso sono gia' coperte da 'ssl.PROTOCOL_TLSv1' e 'ssl.TLSv1_METHOD' rispettivamente — lasciate esplicite per chiarezza documentale, non perche' necessarie al matching."
+  }
+},
+{
+  "rule_id": "RANDOM-CHOICE-001",
+  "type": "structural",
+  "vulnerabilities": ["CRYF"],
+  "description": "random choice vulnerability",
+  "forbidden_functions": ["choice", "random.choices"],
+  "excluded_functions": ["secrets.choice"],
+  "safe_contexts": []
+ },
+ {
+  "rule_id": "RANDOM-001",
+  "type": "structural",
+  "vulnerabilities": ["CRYF"],
+  "description": "random vulnerabiltiy",
+  "forbidden_functions": [
+    "random.randint",
+    "random.randrange",
+    "random.random",
+    "random.uniform",
+    "random.getrandbits",
+    "random.sample",
+    "random.shuffle",
+    "random.seed"
+  ],
+  "excluded_functions": [],
+  "safe_contexts": []
+ },
+ {
+  "rule_id": "CBC-MODE-001",
+  "type": "structural",
+  "vulnerabilities": ["CRYF"],
+  "description": "cbc mode vulnerability",
+  "forbidden_functions": [
+    "modes.CBC"
+  ],
+  "forbidden_names": [
+    "AES.MODE_CBC"
+  ],
+  "safe_contexts": [
+    {
+      "type": "function_has_call_matching_ast", 
+      "call": ["get_random_bytes"], 
+      "contains_names": ["AES.block_size"]
+    }
+  ]
+},
+{
+  "rule_id": "CIPHER-001",
+  "type": "structural",
+  "vulnerabilities": ["CRYF"],
+  "description": "cryptography hazmat primitives ciphers cipher vulnerability",
+  "forbidden_functions": [
+    "Cipher"
+  ],
+  "safe_contexts": [
+    {
+      "type": "function_calls_and_call_has_kwarg",
+      "function_call": "default_backend",
+      "kwarg": "backend"
+    }
+  ]
+ },
+ {
+  "rule_id": "URANDOM-001",
+  "type": "structural",
+  "vulnerabilities": ["CRYF"],
+  "description": "urandom vulnerability",
+  "forbidden_functions": [
+    {
+      "type": "call_matches_ast", 
+      "call": ["urandom"], 
+      "contains_numbers": ["0", "1", "2", "4", "8", "16", "32"]
+    }
+  ],
+  "safe_contexts": []
+},
+{
+  "rule_id": "EBC-MODE-001",
+  "type": "structural",
+  "vulnerabilities": ["CRYF"],
+  "description": "ebc mode vulnerability",
+  "forbidden_functions": [
+    "modes.ECB"
+  ],
+  "forbidden_names": [
+    "AES.MODE_ECB"
+  ],
+  "safe_contexts": []
+},
+{
+  "rule_id": "AES-CIPHER-001",
+  "type": "structural",
+  "description": "Uso di crittografia AES potenzialmente insicuro (mancanza di padding corretto o controlli di lunghezza)",
+  "vulnerabilities": ["CRYF"],
+  "forbidden_functions": [
+    "encrypt",
+    "decrypt"
+  ],
+  "excluded_functions": [
+    "rsa.decrypt"
+  ],
+  "safe_contexts": [
+    {
+      "type": "function_has_call_matching_ast",
+      "call": ["pad", "padding.OAEP", "OAEP"]
+    },
+    {
+      "type": "matches_xpath",
+      "xpath": "ancestor-or-self::src:unit[1]//src:import//src:name[text()='Fernet']"
+    },
+    {
+      "type": "binary_comparison",
+      "operators": ["<"],
+      "left_contains": ["len("],
+      "right_exact": ["16", "AES.block_size"]
+    },
+    {
+      "type": "matches_xpath",
+      "xpath": "ancestor-or-self::src:unit[1]//src:import//src:name[text()='Fernet']"
+    }
+  ]
+},
+{
+  "rule_id": "AES-CIPHER-002",
+  "type": "structural",
+  "description": "aes cipher vulnerability - Manca gestione eccezioni o contesto sicuro per encrypt/decrypt",
+  "vulnerabilities": ["CRYF"],
+  "forbidden_functions": [
+    "encrypt",
+    "decrypt"
+  ],
+  "safe_contexts": [
+    "try",
+    {
+      "type": "in_function_name",
+      "name": "encrypt"
+    },
+    {
+      "type": "in_function_name",
+      "name": "decrypt"
+    },
+    {
+      "type": "in_function_name",
+      "name": "is_valid_pkcs1v15_padding"
+    },
+    {
+      "type": "matches_xpath",
+      "xpath": "ancestor-or-self::src:unit[1]//src:import//src:name[text()='Fernet']"
+    }
+  ]
+},
+{
+  "rule_id": "DES-001",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "structural",
+  "description": "des vulnerability",
+  "vulnerabilities": ["CRYF"],
+  "forbidden_functions": [
+    "DES.new"
+  ],
+  "safe_contexts": [
+    {
+      "type": "function_has_call_matching_ast",
+      "call": [
+        "DSA.construct"
+      ]
+    }
+  ]
+},
+{
+  "rule_id": "SHA1-001",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "structural",
+  "description": "sha1 vulnerability",
+  "vulnerabilities": ["CRYF"],
+  "forbidden_functions": [
+    "sha1"
+  ]
+},
+{
+  "rule_id": "CIPHERTEXT-NULL-001",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "structural",
+  "description": "ciphertext vulnerability",
+  "vulnerabilities": ["CRYF"],
+  "forbidden_functions": [
+    "rsa.decrypt"
+  ],
+  "safe_contexts": [
+    {
+      "type": "function_has_call_matching_ast",
+      "call": [
+        "startswith"
+      ]
+    }
+  ]
+},
+{
+  "rule_id": "PUBLICKEY-VERIFY-001",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "structural",
+  "description": "public ket verify vulnerability",
+  "vulnerabilities": ["CRYF"],
+  "forbidden_functions": [
+    "public_key.verify"
+  ],
+  "safe_contexts": [
+    {
+      "type": "function_has_call_matching_ast",
+      "call": [
+        "der_decode"
+      ]
+    }
+  ]
+},
+{
+  "rule_id": "RSA-KEY-001",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "structural",
+  "description": "rsa key vulnerability",
+  "vulnerabilities": ["CRYF"],
+  "forbidden_functions": [
+    "RSA.generate"
+  ],
+  "safe_contexts": [
+    {
+      "type": "function_has_call_matching_ast", 
+      "call": ["RSA.generate"], 
+      "args_text_contains": ["2048"]
+    }
+  ]
+},
+{
+  "rule_id": "HMAC-NEW-001",
+  "type": "structural",
+  "description": "rsa key vulnerability",
+  "vulnerabilities": ["CRYF"],
+  "forbidden_functions": ["hmac.new"],
+  "safe_contexts": [
+    {"type": "matches_xpath", "xpath": ".//src:call[string(src:name)='os.getenv']"},
+    {"type": "function_has_hmac_sha512_digest"}
+  ]
+},
+{
+  "rule_id": "HASHLIB-002",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "structural",
+  "description": "hashlib md5 vulnerability",
+  "vulnerabilities": ["CRYF"],
+  "forbidden_functions": [
+    {
+      "type": "call_matches_ast",
+      "call": ["hashlib.new"],
+      "args_text_contains": ["md5"]
+    }
+  ],
+  "safe_contexts": [
+    {
+      "type": "function_has_call_matching_ast", 
+      "call": ["hashlib.new"],
+      "args_text_contains": ["sha512"]
+    }
+  ]
+},
+{
+  "rule_id": "PBKDF2-HMAC-001",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "structural",
+  "description": "algorithm vulnerability",
+  "vulnerabilities": ["CRYF"],
+  "forbidden_functions": [
+    {
+      "type": "call_matches_ast",
+      "call": ["pbkdf2_hmac"],
+      "args_text_contains": ["sha256"]
+    }
+  ],
+  "safe_contexts": [
+    {
+      "type": "function_has_call_matching_ast", 
+      "call": ["pbkdf2_hmac"],
+      "args_text_contains": ["sha512"]
+    }
+  ]
+},
+{
+  "rule_id": "DSA-001",
+  "type": "structural",
+  "vulnerabilities": ["CRYF"],
+  "description": "dsa vulnerability - Generazione di chiavi DSA con dimensioni deboli note passate come unico argomento letterale (da 2 a 1024 bit)",
+  "forbidden_functions": [
+    {
+      "type": "call_matches_ast",
+      "call": ["DSA.generate"],
+      "exact_args_count": 1,
+      "contains_numbers": ["2", "4", "8", "16", "32", "64", "128", "256", "512", "1024"]
+    }
+  ]
+},
+{
+  "rule_id": "SIGNATURE-001",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "structural",
+  "vulnerabilities": ["CRYF"],
+  "description": "signature vulnerability - Uso di VerifyingKey.from_string() o vk.verify() per la verifica di firme senza un costrutto try-except per gestire eventuali errori crittografici",
+  "forbidden_functions": [
+    "VerifyingKey.from_string",
+    "vk.verify"
+  ],
+  "safe_contexts": [
+    "try"
+  ]
+},
+{
+  "rule_id": "SIGNATURE-002",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "structural",
+  "vulnerabilities": ["CRYF"],
+  "description": "signature vulnerability - Implementazione di un metodo sign(self, payload) custom privo di una generazione HMAC sicura tramite hmac.new().hexdigest()",
+  "bad_function_defs": [
+    {
+      "name": "sign",
+      "exact_args_count": 2,
+      "args_contain": ["self"]
+    }
+  ],
+  "safe_contexts": [
+    {
+      "type": "matches_xpath",
+      "xpath": ".//src:call[.//src:name[text()='hmac'] and .//src:name[text()='new'] and .//src:name[text()='hexdigest']]"
+    }
+  ]
+},
+{
+  "rule_id": "CJSON-001",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "structural",
+  "vulnerabilities": ["CRYF"],
+  "description": "cjson vulnerability - Uso di cjson.encode() senza sanificazione preventiva dei caratteri '/' (potenziale rischio XSS se l'output è inserito in blocchi <script> HTML)",
+  "forbidden_functions": [
+    "cjson.encode"
+  ],
+  "safe_contexts": [
+    {
+      "type": "function_has_method_call",
+      "method": "replace",
+      "args_contain": [
+        "'/'",
+        "'\\\\/'"
+      ]
+    }
+  ]
+},
+{
+  "rule_id": "PADDING-001",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "structural",
+  "vulnerabilities": ["CRYF"],
+  "description": "add padding vulnerability - Uso del padding PKCS1v15, noto per essere crittograficamente debole (vulnerabile ad attacchi di tipo padding oracle)",
+  "forbidden_functions": [
+    "padding.PKCS1v15"
+  ]
+},
+{
+  "rule_id": "OPENSSL-CRYPTO-001",
+  "type": "structural",
+  "vulnerabilities": ["CRYF"],
+  "forbidden_functions": ["crypto.load_pkcs12"],
+  "safe_contexts": [
+    {
+      "type": "matches_xpath",
+      "xpath": ".//src:call[.//src:name[last()][text()='X509Store']]"
+    }
+  ]
+},
+{
+  "rule_id": "HASHLIB-001",
+  "type": "structural",
+  "vulnerabilities": [
+    "CRYF"
+  ],
+  "forbidden_functions": [
+    "hashlib.new"
+  ],
+  "safe_contexts": [
+    {
+      "type": "node_matches_xpath",
+      "xpath": "ancestor-or-self::src:call[1]/src:argument_list[count(src:argument) > 1]"
+    }
+  ]
+}
+
+]

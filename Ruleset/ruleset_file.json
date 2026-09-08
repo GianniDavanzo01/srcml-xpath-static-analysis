@@ -1,0 +1,178 @@
+[
+{
+  "rule_id": "TEMPORARYFILE-MOD-001",
+  "type": "structural",
+  "vulnerabilities": ["SDIF"],
+  "description": "temporary file mode vulnerability",
+  "forbidden_functions": ["tempfile.NamedTemporaryFile"],
+  "safe_contexts": [
+    {
+      "type": "function_has_call_matching_ast",
+      "call": ["os.chmod"],
+      "contains_names": ["stat.S_IRUSR"]
+    },
+    {
+      "type": "function_has_call_matching_ast",
+      "call": ["os.chmod"],
+      "contains_names": ["stat.S_IWUSR"]
+    },
+    {
+      "type": "function_has_call_matching_ast",
+      "call": ["os.chmod"],
+      "contains_numbers": ["0o600"]
+    },
+    {
+    "type": "call_has_kwargs",
+    "call": ["tempfile.NamedTemporaryFile"],
+    "require": "all",
+    "kwargs": {
+      "mode": "\"w+\"",
+      "encoding": "\"utf-8\"",
+      "delete": "False"
+    }
+  }
+  ]
+},
+ {
+  "rule_id": "TEMPORARYFILE-001",
+  "type": "structural",
+  "vulnerabilities": ["SDIF"],
+  "description": "temporary file vulnerability",
+  "forbidden_functions": ["temp_file.write"],
+  "safe_contexts": [
+    {
+      "type": "args_contain_call_with_literal_arg",
+      "call": "encode",
+      "literal": "utf-8"
+    },
+    {
+      "type": "args_contain_string_literal"
+    }
+  ]
+},
+{
+  "rule_id": "FILE-DIM-001",
+  "type": "structural",
+  "description": "file dimentions vulnerability",
+  "vulnerabilities": ["SDIF"],
+  "forbidden_functions": [
+    "extract"
+  ],
+  "safe_contexts": [
+    {
+      "type": "function_has_file_size_check"
+    }
+  ]
+},
+{
+  "rule_id": "FILE-RESPONSE-001",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "structural",
+  "description": "path traversal vulnerability",
+  "vulnerabilities": ["SDIF"],
+  "forbidden_functions": [
+    "FileResponse"
+  ],
+  "safe_contexts": [
+    {
+      "type": "function_has_call_matching_ast",
+      "call": [
+        "os.path.commonpath"
+      ]
+    }
+  ]
+},
+{
+  "rule_id": "ZIP-EXTRACT-001",
+  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
+  "type": "structural",
+  "description": "zipfile extract all vulnerability",
+  "vulnerabilities": ["SDIF"],
+  "forbidden_functions": [
+    "extractall"
+  ],
+  "safe_contexts": [
+    {
+      "type": "function_has_call_matching_ast",
+      "call": [
+        "os.path.join"
+      ]
+    }
+  ]
+},
+{
+  "rule_id": "ZIPLIB-COMPRESS-001",
+  "type": "structural",
+  "vulnerabilities": [
+    "SDIF"
+  ],
+  "forbidden_functions": [
+    "zlib.compress",
+    "zlib.decompress"
+  ],
+  "safe_contexts": [
+    {
+      "type": "matches_xpath",
+      "xpath": ".//src:if_stmt[.//src:condition//src:call[.//src:name[text()='len']]]"
+    }
+  ]
+},
+{
+  "rule_id": "SHUTIL-MOVE-001",
+  "type": "structural",
+  "vulnerabilities": [
+    "SDIF"
+  ],
+  "forbidden_functions": [
+    "shutil.move"
+  ],
+  "safe_contexts": [
+    {
+      "type": "matches_xpath",
+      "xpath": ".//src:call[.//src:name[last()][text()='commonprefix' or text()='abspath']]"
+    }
+  ]
+},
+{
+  "rule_id": "ZIP-DIM-001",
+  "type": "structural",
+  "vulnerabilities": [
+    "SDIF"
+  ],
+  "forbidden_functions": [
+    "zipfile.ZipFile"
+  ],
+  "safe_contexts": [
+    {
+      "type": "matches_xpath",
+      "xpath": ".//src:if_stmt[.//src:name[text()='file_size' or text()='size'][preceding-sibling::src:operator[1][text()='.']]]"
+    }
+  ]
+},
+{
+    "rule_id": "ZIP-IMPORT-MODULE-001",
+    "type": "structural",
+    "vulnerabilities": ["SDIF"],
+    "forbidden_functions": ["zip_importer.exec_module"],
+    "safe_contexts": [
+        {
+            "type": "membership_check",
+            "scope": "function",
+            "operators": ["in", "not in"]
+        }
+    ]
+},
+{
+  "rule_id": "PYPDF-EXTRACT-TEXT-001",
+  "type": "structural",
+  "vulnerabilities": [
+    "SDIF"
+  ],
+  "forbidden_functions": [
+    "extract_text"
+  ],
+  "safe_contexts": [
+    "try"
+  ]
+}
+]
