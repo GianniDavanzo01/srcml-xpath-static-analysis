@@ -35,7 +35,6 @@
 },
 {
   "rule_id": "TABLIB-DATABOOK-LOAD-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "vulnerabilities": ["SDIF"],
   "description": "Failures - Deserializzazione non sicura tramite tablib.Databook().load() senza l'uso di yaml.SafeLoader",
@@ -51,7 +50,6 @@
 },
 {
   "rule_id": "XML-PARSER-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "vulnerabilities": ["SECM"],
   "description": "Parser vulnerability - Inizializzazione di etree.XMLParser() potenzialmente vulnerabile a XXE (XML External Entity)",
@@ -71,7 +69,6 @@
 },
 {
   "rule_id": "LXML-CLEANER-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "vulnerabilities": ["SECM"],
   "description": "lxml cleaner vulnerability - Importazione di Cleaner da lxml.html.clean senza la messa in sicurezza obbligatoria (scripts=True e javascript=True)",

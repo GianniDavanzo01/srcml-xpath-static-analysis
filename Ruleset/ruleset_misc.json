@@ -118,7 +118,6 @@
 },
 {
   "rule_id": "PROXY-URL-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "description": "proxy url vulnerability - Hardcoded proxy URL with credentials",
   "vulnerabilities": [
@@ -136,7 +135,6 @@
 },
 {
   "rule_id": "RE-MATCH-BOOL-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "taint",
   "description": "return re match vulnerability - Returning a raw regex match object instead of a boolean",
   "vulnerabilities": [
@@ -159,7 +157,6 @@
 },
 {
   "rule_id": "QUERY-STRING-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "description": "query string vulnerability",
   "vulnerabilities": [
@@ -178,7 +175,6 @@
 },
 {
   "rule_id": "COMMAND-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "description": "command vulnerability - Fragile command validation instead of strict list membership",
   "vulnerabilities": [
@@ -201,7 +197,6 @@
 },
 {
   "rule_id": "JSON-LOADS-002",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "taint",
   "description": "Json loads vulnerability - Tainted JSON data used as a dictionary key or slice",
   "vulnerabilities": [
@@ -244,7 +239,6 @@
 },
 {
   "rule_id": "JSON-LOADS-003",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "taint",
   "description": "Json loads vulnerability - Tainted JSON passed as a flat argument",
   "vulnerabilities": [
@@ -290,7 +284,6 @@
 },
 {
   "rule_id": "JSON-LOADS-004",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "taint",
   "description": "Json loads vulnerability - Tainted JSON returned directly or used in a method chain",
   "vulnerabilities": [
@@ -338,7 +331,6 @@
 },
 {
   "rule_id": "MARKUP-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "description": "Markup unescape - Direct use of Markup() or Markup.unescape() which can bypass HTML escaping and lead to Injection/XSS",
   "vulnerabilities": [
@@ -353,7 +345,6 @@
 },
 {
   "rule_id": "EMAIL-REGEX-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "description": "email regex vulnerability - Catastrophic backtracking in email validation regex",
   "vulnerabilities": [
@@ -366,7 +357,6 @@
 },
 {
   "rule_id": "CSV-WRITER-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "description": "Csv writer vulnerability - Potential CSV Injection (Formula Injection) or Path Traversal when writing CSV files",
   "vulnerabilities": [
@@ -395,7 +385,6 @@
 },
 {
   "rule_id": "DIVISION-ZERO-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "description": "division by zero - Potential ZeroDivisionError on total_score / total_count",
   "vulnerabilities": [
@@ -415,7 +404,6 @@
 },
 {
   "rule_id": "YAML-DUMP-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "description": "Yaml load vulnerability - Insecure YAML serialization using yaml.dump() instead of yaml.safe_dump()",
   "vulnerabilities": [
@@ -434,7 +422,6 @@
 },
 {
   "rule_id": "TRACEBACK-FORMAT-EXEC-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "taint",
   "description": "traceback format_exc vulnerability - Leaking sensitive traceback information via print",
   "vulnerabilities": [
@@ -457,7 +444,6 @@
 },
 {
   "rule_id": "TIME-CLOCK-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "description": "Time clock vulnerability - Use of deprecated and potentially insecure time.clock() function",
   "vulnerabilities": [
@@ -471,7 +457,6 @@
 },
 {
   "rule_id": "FUNCTION-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "description": "function vulnerability - Unsafe simple math function without strict type checking on parameter x",
   "vulnerabilities": [
@@ -494,7 +479,6 @@
 },
 {
   "rule_id": "URL-PARSE-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "taint",
   "description": "Url parse vulnerability - Unvalidated parsed URL used in concatenation or assignment",
   "vulnerabilities": [
@@ -535,7 +519,6 @@
 },
 {
   "rule_id": "URL-PARSE-002",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "taint",
   "description": "Url parse vulnerability - Tainted URL parsed object used as a dictionary key or slice",
   "vulnerabilities": [
@@ -575,7 +558,6 @@
 },
 {
   "rule_id": "URL-PARSE-003",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "taint",
   "description": "Url parse vulnerability - Tainted URL parsed object passed as a flat argument",
   "vulnerabilities": [
@@ -617,7 +599,6 @@
 },
 {
   "rule_id": "URL-PARSE-004",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "taint",
   "description": "Url parse vulnerability - Tainted URL parsed object returned directly or used in a method chain",
   "vulnerabilities": [
@@ -662,7 +643,6 @@
 },
 {
   "rule_id": "URL-PARSE-005",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "taint",
   "description": "Url parse vulnerability - Inline attribute access or method chain on urlparse result",
   "vulnerabilities": [
@@ -702,7 +682,6 @@
 },
 {
   "rule_id": "URL-PARSE-006",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "taint",
   "description": "Url parse vulnerability - Direct return of unvalidated urlparse result",
   "vulnerabilities": [
@@ -742,7 +721,6 @@
 },
 {
   "rule_id": "ARG-TYPE-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "description": "argument type vulnerability - Type hint used without runtime isinstance validation",
   "vulnerabilities": [
@@ -760,7 +738,6 @@
 },
 {
   "rule_id": "ARGPARSE-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "taint",
   "description": "load user parameter vulnerability - Unsafe required=True in argparse argument",
   "vulnerabilities": [

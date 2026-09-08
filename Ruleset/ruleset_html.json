@@ -1,7 +1,6 @@
 [
 {
   "rule_id": "HTML-INJC-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "vulnerabilities": ["INJC"],
   "description": "html injection vulnerability - Template HTML/MJML vulnerabile a iniezione tramite interpolazione non sanificata",
@@ -17,7 +16,6 @@
 },
 {
   "rule_id": "HTML-PARSER-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "vulnerabilities": ["SDIF"],
   "description": "HTML parser vulnerability - Inizializzazione di HTMLParser senza tutti i parametri di restrizione necessari (tree, namespaceHTMLElements, strict)",
@@ -41,7 +39,6 @@
 },
 {
   "rule_id": "XLML-HTML-CLEAN-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "vulnerabilities": ["SDIF"],
   "description": "HTML parser vulnerability - Uso della funzione html.clean.clean_html()",

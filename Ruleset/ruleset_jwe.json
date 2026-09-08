@@ -1,7 +1,6 @@
 [
 {
   "rule_id": "TOKEN-DIM-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "taint",
   "vulnerabilities": ["SDIF"],
   "description": "token dimension vulnerability - Variabile generata da jwe.decode() invocata con .encode() senza controllarne la lunghezza in una condizione if",

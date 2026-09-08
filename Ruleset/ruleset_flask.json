@@ -23,7 +23,6 @@
   },
   {
   "rule_id": "REQUEST-ARGS_GET-004",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "vulnerabilities": ["INJC", "BRAC"],
   "description": "request.args.get[...] usato direttamente (senza variabile intermedia) in un confronto di uguaglianza, senza sanificazione",
@@ -416,7 +415,6 @@
 },
 {
   "rule_id": "SESSION-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "taint",
   "vulnerabilities": ["INJC"],
   "description": "Valore letto da session[...] usato direttamente (senza variabile intermedia) in un'assegnazione/concatenazione, senza sanificazione",
@@ -445,7 +443,6 @@
 },
 {
   "rule_id": "SESSION-002",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "taint",
   "vulnerabilities": ["INJC"],
   "description": "Valore letto da session[...] usato direttamente (senza variabile intermedia) seguito da ':' (dict literal/slice/formattazione), senza sanificazione",
@@ -474,7 +471,6 @@
 },
 {
   "rule_id": "SESSION-003",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "taint",
   "vulnerabilities": ["INJC"],
   "description": "Valore letto da session[...] usato direttamente (senza variabile intermedia) come argomento di chiamata o come ultimo elemento prima di ']'/')' , senza sanificazione",
@@ -505,7 +501,6 @@
 },
 {
   "rule_id": "SESSION-004",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "taint",
   "vulnerabilities": ["INJC"],
   "description": "Valore letto da session[...] usato direttamente (senza variabile intermedia) come return diretto o come receiver di una chiamata di metodo, senza sanificazione",
@@ -534,7 +529,6 @@
 },
 {
   "rule_id": "REQUEST-ARGS_GET-011",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "taint",
   "description": "Request args vulnerability",
   "vulnerabilities": ["BRAC"],
@@ -559,7 +553,6 @@
 },
 {
   "rule_id": "REQUEST-ARGS_GET-012",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "taint",
   "description": "Request args vulnerability",
   "vulnerabilities": ["BRAC"],
@@ -604,7 +597,6 @@
 },
 {
   "rule_id": "REQUEST-ARGS-GET-002",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "taint",
   "description": "Request args get vulnerability",
   "vulnerabilities": ["CRYF"],
@@ -628,7 +620,6 @@
 },
 {
   "rule_id": "REQUEST-ARGS-GET-004",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "description": "Request args get vulnerability",
   "vulnerabilities": ["CRYF"],
@@ -669,7 +660,6 @@
 },
 {
   "rule_id": "REQUEST-ARGS-002",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "description": "Request args vulnerability",
   "vulnerabilities": [
@@ -691,7 +681,6 @@
 },
 {
   "rule_id": "REQUEST-ARGS-GET-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "description": "Request args vulnerability",
   "vulnerabilities": ["INJC"],
@@ -707,7 +696,6 @@
 },
 {
   "rule_id": "REQUEST-ARGS_GET-002",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "description": "Request args vulnerability",
   "vulnerabilities": ["BRAC"],
@@ -733,7 +721,6 @@
 },
 {
   "rule_id": "REQUEST-ARGS_GET-003",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "description": "Request args vulnerability",
   "vulnerabilities": ["INJC"],
@@ -747,7 +734,6 @@
 },
 {
   "rule_id": "REQUEST-ARGS-GET-008",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "vulnerabilities": ["SECM"],
   "description": "Request args vulnerability - Ritorno diretto di parametri HTTP di richiesta non sanificati (possibile Reflected XSS)",
@@ -776,7 +762,6 @@
 },
 {
   "rule_id": "REQUEST-ARGS-GET-009",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "vulnerabilities": ["SECM"],
   "description": "Request args vulnerability - Ritorno diretto di parametri HTTP estratti via parentesi quadre (es. request.args['param']) senza sanificazione (possibile Reflected XSS)",

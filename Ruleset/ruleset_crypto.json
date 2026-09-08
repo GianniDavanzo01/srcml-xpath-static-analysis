@@ -182,7 +182,6 @@
 },
 {
   "rule_id": "DES-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "description": "des vulnerability",
   "vulnerabilities": ["CRYF"],
@@ -200,7 +199,6 @@
 },
 {
   "rule_id": "SHA1-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "description": "sha1 vulnerability",
   "vulnerabilities": ["CRYF"],
@@ -210,7 +208,6 @@
 },
 {
   "rule_id": "CIPHERTEXT-NULL-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "description": "ciphertext vulnerability",
   "vulnerabilities": ["CRYF"],
@@ -228,7 +225,6 @@
 },
 {
   "rule_id": "PUBLICKEY-VERIFY-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "description": "public ket verify vulnerability",
   "vulnerabilities": ["CRYF"],
@@ -246,7 +242,6 @@
 },
 {
   "rule_id": "RSA-KEY-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "description": "rsa key vulnerability",
   "vulnerabilities": ["CRYF"],
@@ -274,7 +269,6 @@
 },
 {
   "rule_id": "HASHLIB-002",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "description": "hashlib md5 vulnerability",
   "vulnerabilities": ["CRYF"],
@@ -295,7 +289,6 @@
 },
 {
   "rule_id": "PBKDF2-HMAC-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "description": "algorithm vulnerability",
   "vulnerabilities": ["CRYF"],
@@ -330,7 +323,6 @@
 },
 {
   "rule_id": "SIGNATURE-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "vulnerabilities": ["CRYF"],
   "description": "signature vulnerability - Uso di VerifyingKey.from_string() o vk.verify() per la verifica di firme senza un costrutto try-except per gestire eventuali errori crittografici",
@@ -344,7 +336,6 @@
 },
 {
   "rule_id": "SIGNATURE-002",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "vulnerabilities": ["CRYF"],
   "description": "signature vulnerability - Implementazione di un metodo sign(self, payload) custom privo di una generazione HMAC sicura tramite hmac.new().hexdigest()",
@@ -364,7 +355,6 @@
 },
 {
   "rule_id": "CJSON-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "vulnerabilities": ["CRYF"],
   "description": "cjson vulnerability - Uso di cjson.encode() senza sanificazione preventiva dei caratteri '/' (potenziale rischio XSS se l'output è inserito in blocchi <script> HTML)",
@@ -384,7 +374,6 @@
 },
 {
   "rule_id": "PADDING-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "vulnerabilities": ["CRYF"],
   "description": "add padding vulnerability - Uso del padding PKCS1v15, noto per essere crittograficamente debole (vulnerabile ad attacchi di tipo padding oracle)",

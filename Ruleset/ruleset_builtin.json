@@ -221,7 +221,6 @@
 },
 {
   "rule_id": "HTTP-SERVER-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "description": "http server vulnerability - Utilizzo di BaseHTTPServer.HTTPServer senza implementare un limite di sicurezza sulla lunghezza di raw_requestline (prevenzione DoS)",
   "vulnerabilities": ["INSD"],
@@ -239,7 +238,6 @@
 },
 {
   "rule_id": "HTTP-SERVER-002",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "description": "http server vulnerability - Utilizzo di CGIHTTPServer.CGIHTTPRequestHandler senza implementare un limite di sicurezza sulla lunghezza di raw_requestline (prevenzione DoS)",
   "vulnerabilities": ["INSD"],
@@ -258,7 +256,6 @@
 },
 {
   "rule_id": "EXEC-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "description": "exec vulnerability - Uso di exec(), execv() o execl() potenzialmente vulnerabile a Code Injection",
   "vulnerabilities": ["INJC"],
@@ -302,7 +299,6 @@
 },
 {
   "rule_id": "VSN-PRINTF-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "description": "vsn printf vulnerability - Uso di vsnprintf senza controlli di lunghezza sicuri",
   "vulnerabilities": ["INJC"],
@@ -320,7 +316,6 @@
 },
 {
   "rule_id": "NUMPY-LOAD-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "description": "numpy load vulnerability - Deserializzazione insicura tramite np.load con allow_pickle=True",
   "vulnerabilities": ["INJC"],
@@ -335,7 +330,6 @@
 },
 {
   "rule_id": "DATA-DATABASE-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "taint",
   "description": "get data from database vulnerability - Uso non sanificato di dati prelevati dal database",
   "vulnerabilities": ["INJC"],
@@ -351,7 +345,6 @@
 },
 {
   "rule_id": "CHECK-PASSWORD-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "description": "check password vulnerability - Assegnazione in chiaro della password a self.password senza hashing",
   "vulnerabilities": ["SDIF"],
@@ -361,7 +354,6 @@
 },
 {
   "rule_id": "BLEACH-CLEAN-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "description": "bleach clean vulnerability - Uso di bleach.clean() senza previa validazione dei dati tramite check di appartenenza a una collezione (in / not in)",
   "vulnerabilities": ["SDIF"],
@@ -377,7 +369,6 @@
 },
 {
   "rule_id": "INTEGER-ADDICTION-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "description": "integer addiction vulnerability - Assenza di controlli anti-overflow (MAX_INT) per l'addizione",
   "vulnerabilities": ["SDIF"],
@@ -393,7 +384,6 @@
 },
 {
   "rule_id": "INTEGER-MOLTIPLICATION-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "description": "integer moltiplication vulnerability - Assenza di controlli anti-overflow (MAX_INT) per la moltiplicazione",
   "vulnerabilities": ["SDIF"],
@@ -409,7 +399,6 @@
 },
 {
   "rule_id": "MAKE-RESPONSE-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "description": "make response vulnerability - Open Redirect tramite make_response(redirect(...)) senza guardia is_safe_url",
   "vulnerabilities": ["SDIF"],
@@ -430,7 +419,6 @@
 },
 {
   "rule_id": "DATA-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "description": "return data vulnerability - Ritorno di self.data senza validazione dei limiti dell'indice",
   "vulnerabilities": ["SDIF"],
@@ -453,7 +441,6 @@
 },
 {
   "rule_id": "REGEX-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "description": "regex vulnerability - Assegnazione di un'espressione regolare vulnerabile a ReDoS (Catastrophic Backtracking)",
   "vulnerabilities": ["SDIF"],
@@ -463,7 +450,6 @@
 },
 {
   "rule_id": "SENDRY-SDK-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "description": "sentry sdk vulnerability - Inizializzazione di sentry_sdk senza l'hook di sanitizzazione before_send",
   "vulnerabilities": ["SDIF"],
@@ -479,7 +465,6 @@
 },
 {
   "rule_id": "MECHANIZE-BROWSER-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "taint",
   "description": "mechanize browser vulnerability - Uso di mechanize.Browser() senza impostare un timeout di sicurezza",
   "vulnerabilities": ["SDIF"],
@@ -498,7 +483,6 @@
 },
 {
   "rule_id": "CLEANER-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "description": "cleaner vulnerability - Configurazione insicura di lxml Cleaner o invocazione di clean_html con un singolo argomento nudo",
   "vulnerabilities": ["SDIF"],
@@ -517,7 +501,6 @@
 },
 {
   "rule_id": "MESSAGE-TEMPLATE-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "description": "message template vulnerability - Uso di MessageTemplate(...).render(...) senza sanificare preventivamente gli underscore",
   "vulnerabilities": ["SDIF"],
@@ -536,7 +519,6 @@
 },
 {
   "rule_id": "STRING-FROM-SIZE-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "description": "string from size vulnerability - Definizione di string_from_size senza validazione sui valori negativi (size < 0)",
   "vulnerabilities": ["SDIF"],
@@ -554,7 +536,6 @@
 },
 {
   "rule_id": "PATTERN-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "description": "pattern vulnerability - Assegnazione di un'espressione regolare vulnerabile a ReDoS (Catastrophic Backtracking) all'interno di encode_structured_data",
   "vulnerabilities": ["SDIF"],
@@ -570,7 +551,6 @@
 },
 {
   "rule_id": "DNS-RECORD-PARSE-002",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "vulnerabilities": ["SDIF"],
   "description": "subprocess vulnerability - Parsing di record DNS con dnslib.DNSRecord.parse() senza l'invocazione di verify_dns_reply()",
@@ -586,7 +566,6 @@
 },
 {
   "rule_id": "MKSTEMP-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "vulnerabilities": ["BRAC"],
   "description": "mkstemp vulnerability - Uso della funzione mkstemp() per la creazione di file temporanei potenzialmente insicuri",
@@ -596,7 +575,6 @@
 },
 {
   "rule_id": "THREADING-LOCK-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "taint",
   "vulnerabilities": ["SLMF"],
   "description": "threading lock vulnerability - Uso insicuro di .locked() su un oggetto Lock all'interno di un costrutto if, che può causare race condition (TOCTOU)",
@@ -613,7 +591,6 @@
 },
 {
   "rule_id": "STDERR-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "vulnerabilities": ["SLMF"],
   "description": "Scrittura su sys.stderr senza sanificare l'output con cgi.escape (potenziale rischio di Log Injection o XSS in console)",
@@ -629,7 +606,6 @@
 },
 {
   "rule_id": "ENVIRONMENT-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "taint",
   "vulnerabilities": ["SECM"],
   "description": "environment vulnerability - Passaggio di un dizionario con __builtins__ = None come argomento 'env' (possibile sandbox escape / misconfiguration)",

@@ -25,7 +25,6 @@
 },
 {
   "rule_id": "JWT-PROCESS-FUNCTION-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "description": "JWT vulnerability",
   "vulnerabilities": [
@@ -50,7 +49,6 @@
 },
 {
   "rule_id": "KEY-SIZE-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "description": "Parser vulnerability - Insufficient key size (< 2048 bits)",
   "vulnerabilities": [

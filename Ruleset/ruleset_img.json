@@ -1,7 +1,6 @@
 [
 {
   "rule_id": "IMG-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "taint",
   "vulnerabilities": ["SDIF"],
   "description": "img load vulnerability - Chiamata al metodo .load() su un'immagine aperta con Image.open() senza la protezione di un blocco try-except",
@@ -21,7 +20,6 @@
 },
 {
   "rule_id": "IMG-OPEN-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "vulnerabilities": ["SDIF"],
   "description": "img load vulnerability - Uso di Image.open() senza blocco try-except o senza impostare un parametro 'limit='",
@@ -38,7 +36,6 @@
 },
 {
   "rule_id": "BYTE-IMG-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "vulnerabilities": ["SDIF"],
   "description": "byte img vulnerability - Inizializzazione di un bytearray non validato per image_buffer_size",
@@ -61,7 +58,6 @@
 },
 {
   "rule_id": "PROCESS-IMG-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "vulnerabilities": ["SDIF"],
   "description": "process img vulnerability - Slicing di image_data con zsize senza validazione preventiva dei limiti (<= 0 o > len(image_data))",
@@ -85,7 +81,6 @@
 },
 {
   "rule_id": "IMAGEOP-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "vulnerabilities": ["SDIF"],
   "description": "imageop vulnerability - Uso di imageop.some_image_operation(image_data) senza preventiva validazione dei limiti di dimensione (len <= 0 o > MAX_IMAGE_SIZE)",
@@ -114,7 +109,6 @@
 },
 {
   "rule_id": "IMAGEOP-002",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "vulnerabilities": ["SDIF"],
   "description": "imageop vulnerability - Uso di imageop.tovideo() senza preventiva validazione della tupla args tramite isinstance o controllo sulla lunghezza (< 3)",

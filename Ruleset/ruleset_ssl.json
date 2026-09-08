@@ -65,7 +65,6 @@
 },
 {
   "rule_id": "SSL-WRAP-SOCKET-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "vulnerabilities": ["CRYF"],
   "description": "Wrap socket vulnerability - Uso deprecato e potenzialmente insicuro di ssl.wrap_socket()",
@@ -75,7 +74,6 @@
 },
 {
   "rule_id": "CREATE-UNVERIFIED-CONTEXT-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "vulnerabilities": ["IDAF"],
   "description": "Unverified context vulnerability - Creazione esplicita di un contesto SSL non verificato o disabilitazione della verifica sul contesto",
@@ -92,7 +90,6 @@
 },
 {
   "rule_id": "CREATE-STDLIB-CONTEXT-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "vulnerabilities": ["IDAF"],
   "description": "Stdlib context vulnerability - Uso esplicito di ssl._create_stdlib_context()",
@@ -106,7 +103,6 @@
 },
 {
   "rule_id": "CONTEXT-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "vulnerabilities": ["IDAF"],
   "description": "Cert vulnerability - Inizializzazione di SSLContext o Context potenzialmente non sicura o con protocolli TLS obsoleti",

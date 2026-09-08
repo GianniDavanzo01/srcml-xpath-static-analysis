@@ -16,7 +16,6 @@
  },
 {
   "rule_id": "LOGORU-LOGGER-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "description": "loguru logger vulnerability - Uso di loguru senza configurazione esplicita del livello INFO",
   "vulnerabilities": [
@@ -33,7 +32,6 @@
 },
 {
   "rule_id": "LOGGING-PASSWORD-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "description": "logging password vulnerability",
   "vulnerabilities": [
@@ -52,7 +50,6 @@
 },
 {
   "rule_id": "LOGGING-WARNING-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "description": "logging warning vulnerability",
   "vulnerabilities": [
@@ -68,7 +65,6 @@
 },
 {
   "rule_id": "LOGGING-REQUEST-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "description": "logging request vulnerability - Unfiltered async log_requests function",
   "vulnerabilities": [

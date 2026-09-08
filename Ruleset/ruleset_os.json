@@ -47,7 +47,6 @@
  },
  {
   "rule_id": "OS-ENV-GET-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "taint",
   "description": "os environment get vulnerability - Unvalidated environment variable used in concatenation or assignment",
   "vulnerabilities": [
@@ -88,7 +87,6 @@
 },
 {
   "rule_id": "OS-ENV-GET-002",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "taint",
   "description": "os environment get vulnerability - Tainted environment variable used as a dictionary key or slice",
   "vulnerabilities": [
@@ -128,7 +126,6 @@
 },
 {
   "rule_id": "OS-ENV-GET-003",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "taint",
   "description": "os environment get vulnerability - Tainted environment variable passed as a flat argument",
   "vulnerabilities": [
@@ -170,7 +167,6 @@
 },
 {
   "rule_id": "OS-ENV-GET-004",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "taint",
   "description": "os environment get vulnerability - Tainted environment variable returned directly or used in a method chain",
   "vulnerabilities": [
@@ -211,7 +207,6 @@
 },
 {
   "rule_id": "OS-ENV-GET-005",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "taint",
   "description": "os environment get vulnerability - Tainted environment variable used in string concatenation",
   "vulnerabilities": [
@@ -234,7 +229,6 @@
 },
 {
   "rule_id": "SUBPROCESS-CAPTURE-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "description": "subprocess capture vulnerability - Unsafe use of subprocess.capture_output() leading to potential Command Injection",
   "vulnerabilities": [
@@ -247,7 +241,6 @@
 },
 {
   "rule_id": "SUBPROCESS-SHELL-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "description": "subprocess shell vulnerability - Unsafe use of subprocess with shell=True",
   "vulnerabilities": [
@@ -282,7 +275,6 @@
 },
 {
   "rule_id": "MKTEMP-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "description": "mktemp vulnerability - Use of deprecated and insecure tempfile.mktemp() function",
   "vulnerabilities": [
@@ -296,7 +288,6 @@
 },
 {
   "rule_id": "OS-SYSTEM-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "description": "os system vulnerability - Execution of .bin files via os.system()",
   "vulnerabilities": [

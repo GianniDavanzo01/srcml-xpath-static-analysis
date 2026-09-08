@@ -18,7 +18,6 @@
  },
  {
   "rule_id": "PARSE-UDP-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "vulnerabilities": ["BRAC"],
   "description": "parse udp packet vulnerability - Implementazione vuota (stub) della funzione parseUDPpacket.",
@@ -32,7 +31,6 @@
 },
 {
   "rule_id": "SOCKET-GET-ADDRESS-INFO-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "vulnerabilities": ["BRAC"],
   "description": "get address info vulnerability - Uso di socket.getaddrinfo(host, port) senza preventiva validazione della lunghezza dell'host (len > 255)",

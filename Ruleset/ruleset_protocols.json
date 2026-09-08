@@ -152,7 +152,6 @@
 },
 {
   "rule_id": "JWT-DECODE-002-protocols",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "description": "Misconfiguration - Decodifica JWT senza verifica esplicita della firma o algoritmi sicuri definiti (HS256/HS512)",
   "vulnerabilities": ["CRYF"],
@@ -213,7 +212,6 @@
 },
 {
   "rule_id": "ONNX-LOAD-MODEL-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "description": "Misconfiguration - Caricamento di un modello ONNX senza validazione del percorso (rischio Path Traversal / caricamento modelli non attendibili)",
   "vulnerabilities": ["SECM"],
@@ -229,7 +227,6 @@
 },
 {
   "rule_id": "LLAMA-LOAD-MODEL-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "description": "Misconfiguration - Caricamento di un modello Llama senza validazione del percorso tramite estensione (rischio di caricamento modelli non attendibili)",
   "vulnerabilities": ["SECM"],
@@ -246,7 +243,6 @@
 },
 {
   "rule_id": "KERBEROS-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "description": "Misconfiguration - Importazione di HTTPKerberosAuth con potenziale configurazione insicura",
   "vulnerabilities": ["SECM"],
@@ -264,7 +260,6 @@
 },
 {
   "rule_id": "KERBEROS-002",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "description": "kerberos vulnerability - Inizializzazione authGSSClientInit senza la successiva verifica dello step di autenticazione (!= AUTH_GSS_COMPLETE)",
   "vulnerabilities": ["SDIF"],
@@ -297,7 +292,6 @@
 },
 {
   "rule_id": "NMAP-001",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "description": "nmap args vulnerability - Invocazione di NmapProcess senza validazione degli argomenti (manca una guardia if any(... not in ...))",
   "vulnerabilities": ["SDIF"],
@@ -315,7 +309,6 @@
 },
 {
   "rule_id": "SMTP-002",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "structural",
   "description": "smtp vulnerability - Chiamata a self.docmd() senza la corretta verifica del codice di risposta (es. response[0] != 220)",
   "vulnerabilities": ["SDIF"],
@@ -459,7 +452,6 @@
 },
 {
   "rule_id": "REQUESTS-GET-VALIDATION-004",
-  "IMPORTANTE": "QUESTA REGOLA è STATA GENERATA SENZA POTER VALIDARLA CON DEVAIC",
   "type": "taint",
   "description": "Variable validation - L'output di requests.get viene ritornato o subisce chiamate a metodo senza validazione/parsing sicuro",
   "vulnerabilities": ["IDAF", "SSRF"],
