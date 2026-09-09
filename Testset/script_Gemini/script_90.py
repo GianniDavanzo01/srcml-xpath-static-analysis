@@ -1,0 +1,1 @@
+os.chmod('file_name', 0o644)
