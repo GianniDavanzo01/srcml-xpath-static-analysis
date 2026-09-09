@@ -1,0 +1,3038 @@
+{
+  "summary": {
+    "total_files_analyzed": 123,
+    "vulnerable_files": 82,
+    "total_findings": 150,
+    "categories_count": {
+      "BRAC": 23,
+      "INSD": 5,
+      "INJC": 31,
+      "SDIF": 29,
+      "SLMF": 13,
+      "SECM": 27,
+      "IDAF": 10,
+      "CRYF": 26,
+      "CWE-367": 1
+    }
+  },
+  "details": [
+    {
+      "source_file": "script_estratti/script_1.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS-GET-010",
+        "REQUEST-ARGS_GET-005",
+        "REQUEST-ARGS_GET-008",
+        "WITH-OPEN-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "INSD"
+      ],
+      "findings_count": 4,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-005",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_estratti/script_1.py",
+          "line": "4:14",
+          "snippet": "'names/' + name",
+          "tainted_variable": "name"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_estratti/script_1.py",
+          "line": "4:14",
+          "snippet": "'names/' + name",
+          "tainted_variable": "name"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-010",
+          "vulnerabilities": [
+            "INSD"
+          ],
+          "source_file": "script_estratti/script_1.py",
+          "line": "4:14",
+          "snippet": "'names/' + name",
+          "tainted_variable": "name"
+        },
+        {
+          "rule_id": "WITH-OPEN-001",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_estratti/script_1.py",
+          "line": "4:9",
+          "snippet": "open('names/' + name, 'r')"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_10.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "LDAP-CONNECTION-VALIDATION-003",
+        "LDAP-CONNECTION-VALIDATION-005"
+      ],
+      "vulnerabilities_summary": [
+        "INJC"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "LDAP-CONNECTION-VALIDATION-003",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "script_estratti/script_10.py",
+          "line": "29:7",
+          "snippet": "result[0][1]['uid'][0]",
+          "tainted_variable": "result"
+        },
+        {
+          "rule_id": "LDAP-CONNECTION-VALIDATION-005",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "script_estratti/script_10.py",
+          "line": "26:10",
+          "snippet": "ldap_connection.search_s(base_dn, search_scope, search_filter % input_parameter, retrieve_attributes)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_100.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_estratti/script_101.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_estratti/script_102.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "ARG-TYPE-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "ARG-TYPE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_estratti/script_102.py",
+          "line": "1:42",
+          "snippet": "num_buckets: int"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_103.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_estratti/script_104.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_estratti/script_105.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_estratti/script_106.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_estratti/script_107.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "INPUT-003",
+        "URL-AUTENTICATION-001"
+      ],
+      "vulnerabilities_summary": [
+        "INJC",
+        "SDIF",
+        "SLMF"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "INPUT-003",
+          "vulnerabilities": [
+            "INJC",
+            "SLMF"
+          ],
+          "source_file": "script_estratti/script_107.py",
+          "line": "19:17",
+          "snippet": "username",
+          "tainted_variable": "username"
+        },
+        {
+          "rule_id": "INPUT-003",
+          "vulnerabilities": [
+            "INJC",
+            "SLMF"
+          ],
+          "source_file": "script_estratti/script_107.py",
+          "line": "19:27",
+          "snippet": "password",
+          "tainted_variable": "password"
+        },
+        {
+          "rule_id": "URL-AUTENTICATION-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_estratti/script_107.py",
+          "line": "9:1",
+          "snippet": "def authenticate(username, password): if username in users and users[username] == password: return True else: return False"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_108.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_estratti/script_109.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "RETURN-001",
+        "VALIDATE-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "RETURN-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_estratti/script_109.py",
+          "line": "11:13",
+          "snippet": "return f\"Error: {param} is a mandatory parameter\""
+        },
+        {
+          "rule_id": "VALIDATE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_estratti/script_109.py",
+          "line": "5:1",
+          "snippet": "@app.route('/validate', methods=['POST']) def validate(): mandatory_params = ['param1', 'param2', 'param3'] data = request.get_json() for pa…"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_11.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "LDAP-SERVER-001",
+        "LDAP-SERVER-VALIDATION-003"
+      ],
+      "vulnerabilities_summary": [
+        "INJC"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "LDAP-SERVER-001",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "script_estratti/script_11.py",
+          "line": "4:10",
+          "snippet": "ldap3.Server('localhost')"
+        },
+        {
+          "rule_id": "LDAP-SERVER-VALIDATION-003",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "script_estratti/script_11.py",
+          "line": "5:25",
+          "snippet": "server",
+          "tainted_variable": "server"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_110.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "INPUT-004"
+      ],
+      "vulnerabilities_summary": [
+        "INJC",
+        "SLMF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "INPUT-004",
+          "vulnerabilities": [
+            "INJC",
+            "SLMF"
+          ],
+          "source_file": "script_estratti/script_110.py",
+          "line": "3:12",
+          "snippet": "username",
+          "tainted_variable": "username"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_111.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "DEBUG-TRUE-001",
+        "FLASK-CONFIG-001",
+        "REQUEST-ARGS_GET-005",
+        "REQUEST-ARGS_GET-008",
+        "REQUEST-ARGS_GET-010",
+        "RETURN-001",
+        "SQL-001-call"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "INJC",
+        "SDIF",
+        "SECM"
+      ],
+      "findings_count": 8,
+      "findings": [
+        {
+          "rule_id": "RETURN-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_estratti/script_111.py",
+          "line": "17:5",
+          "snippet": "return f\"Ingredient with ID {ingredient_id} has been deleted successfully.\""
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-005",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_estratti/script_111.py",
+          "line": "17:12",
+          "snippet": "f\"Ingredient with ID {ingredient_id} has been deleted successfully.\"",
+          "tainted_variable": "ingredient_id"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_estratti/script_111.py",
+          "line": "15:35",
+          "snippet": "ingredient_id",
+          "tainted_variable": "ingredient_id"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-010",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_estratti/script_111.py",
+          "line": "17:12",
+          "snippet": "f\"Ingredient with ID {ingredient_id} has been deleted successfully.\"",
+          "tainted_variable": "ingredient_id"
+        },
+        {
+          "rule_id": "DEBUG-TRUE-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_estratti/script_111.py",
+          "line": "20:5",
+          "snippet": "app.run(debug=True)"
+        },
+        {
+          "rule_id": "FLASK-CONFIG-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_estratti/script_111.py",
+          "line": "5:1",
+          "snippet": "app.config['SQLALCHEMY_DATABASE_URI']",
+          "tainted_variable": "app"
+        },
+        {
+          "rule_id": "SQL-001-call",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "script_estratti/script_111.py",
+          "line": "15:35",
+          "snippet": "ingredient_id",
+          "tainted_variable": "ingredient_id"
+        },
+        {
+          "rule_id": "SQL-001-call",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "script_estratti/script_111.py",
+          "line": "17:12",
+          "snippet": "f\"Ingredient with ID {ingredient_id} has been deleted successfully.\"",
+          "tainted_variable": "ingredient_id"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_112.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_estratti/script_113.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CERT-001",
+        "CHECK-HOSTNAME-001",
+        "CREATE-DEFAULT-CONTEXT-001"
+      ],
+      "vulnerabilities_summary": [
+        "IDAF"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "CREATE-DEFAULT-CONTEXT-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_estratti/script_113.py",
+          "line": "3:11",
+          "snippet": "ssl.create_default_context()"
+        },
+        {
+          "rule_id": "CERT-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_estratti/script_113.py",
+          "line": "5:1",
+          "snippet": "context.verify_mode = ssl.CERT_NONE"
+        },
+        {
+          "rule_id": "CHECK-HOSTNAME-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_estratti/script_113.py",
+          "line": "4:1",
+          "snippet": "context.check_hostname = False"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_114.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "PICKLE-FAILURE-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "PICKLE-FAILURE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_estratti/script_114.py",
+          "line": "11:13",
+          "snippet": "pickle.dumps(obj)"
+        },
+        {
+          "rule_id": "PICKLE-FAILURE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_estratti/script_114.py",
+          "line": "14:11",
+          "snippet": "pickle.loads(bytes_obj)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_115.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "COOKIE-LOAD-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "COOKIE-LOAD-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_estratti/script_115.py",
+          "line": "11:9",
+          "snippet": "cookie_jar.load",
+          "tainted_variable": "cookie_jar"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_116.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_estratti/script_117.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "MAKEDIRS-001",
+        "WITH-OPEN-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "SECM"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "MAKEDIRS-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_estratti/script_117.py",
+          "line": "5:5",
+          "snippet": "os.makedirs(os.path.dirname(filename), exist_ok=True)"
+        },
+        {
+          "rule_id": "WITH-OPEN-001",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_estratti/script_117.py",
+          "line": "8:5",
+          "snippet": "open(filename, 'a')"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_118.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_estratti/script_119.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_estratti/script_12.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "EVAL-001",
+        "INPUT-003"
+      ],
+      "vulnerabilities_summary": [
+        "INJC",
+        "SLMF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "INPUT-003",
+          "vulnerabilities": [
+            "INJC",
+            "SLMF"
+          ],
+          "source_file": "script_estratti/script_12.py",
+          "line": "4:24",
+          "snippet": "user_input",
+          "tainted_variable": "user_input"
+        },
+        {
+          "rule_id": "EVAL-001",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "script_estratti/script_12.py",
+          "line": "4:19",
+          "snippet": "eval(user_input)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_120.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "URANDOM-001"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "URANDOM-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_estratti/script_120.py",
+          "line": "4:7",
+          "snippet": "os.urandom(32)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_121.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_estratti/script_122.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_estratti/script_123.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_estratti/script_124.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_estratti/script_125.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "OS-SYSTEM-002"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "OS-SYSTEM-002",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_estratti/script_125.py",
+          "line": "5:5",
+          "snippet": "os.system(\"loginctl terminate-user $USER\")"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_13.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "EXEC-001",
+        "REQUEST-ARGS-GET-015",
+        "REQUEST-ARGS-GET-017"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "INJC"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "EXEC-001",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "script_estratti/script_13.py",
+          "line": "4:1",
+          "snippet": "exec('import urllib.' + version)"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-017",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_estratti/script_13.py",
+          "line": "4:6",
+          "snippet": "'import urllib.' + version",
+          "tainted_variable": "version"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-015",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_estratti/script_13.py",
+          "line": "4:6",
+          "snippet": "'import urllib.' + version",
+          "tainted_variable": "version"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_14.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_estratti/script_15.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "LOGGING-INFO-001"
+      ],
+      "vulnerabilities_summary": [
+        "SLMF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "LOGGING-INFO-001",
+          "vulnerabilities": [
+            "SLMF"
+          ],
+          "source_file": "script_estratti/script_15.py",
+          "line": "3:1",
+          "snippet": "logging.info(\"User {} has been retrieved from the request\".format(user))"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_16.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "LOGGING-ERROR-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "LOGGING-ERROR-001",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_estratti/script_16.py",
+          "line": "10:4",
+          "snippet": "logging.error('Error getting data from request: %s', e)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_17.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "OS-CHMOD-001",
+        "REQUEST-ARGS-GET-023",
+        "REQUEST-ARGS_GET-009"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "INJC",
+        "INSD",
+        "SECM"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-009",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_estratti/script_17.py",
+          "line": "11:32",
+          "snippet": "user_id",
+          "tainted_variable": "user_id"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-023",
+          "vulnerabilities": [
+            "INSD",
+            "INJC"
+          ],
+          "source_file": "script_estratti/script_17.py",
+          "line": "11:32",
+          "snippet": "user_id",
+          "tainted_variable": "user_id"
+        },
+        {
+          "rule_id": "OS-CHMOD-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_estratti/script_17.py",
+          "line": "8:1",
+          "snippet": "os.chmod('/path/to/directory', 0o777)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_18.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "MKDIR-001",
+        "OS-CHMOD-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF",
+        "SECM"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "MKDIR-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_estratti/script_18.py",
+          "line": "4:1",
+          "snippet": "os.mkdir('/home/')"
+        },
+        {
+          "rule_id": "OS-CHMOD-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_estratti/script_18.py",
+          "line": "7:1",
+          "snippet": "os.chmod('/home/', 0o755)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_19.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_estratti/script_2.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "OA-PATH-TRAVERSAL-001",
+        "STDERR-001",
+        "TOCTOU-FILE-001"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-367",
+        "SDIF",
+        "SLMF"
+      ],
+      "findings_count": 4,
+      "findings": [
+        {
+          "rule_id": "STDERR-001",
+          "vulnerabilities": [
+            "SLMF"
+          ],
+          "source_file": "script_estratti/script_2.py",
+          "line": "14:4",
+          "snippet": "sys.stderr.write('Error: File does not exist')"
+        },
+        {
+          "rule_id": "TOCTOU-FILE-001",
+          "vulnerabilities": [
+            "CWE-367"
+          ],
+          "source_file": "script_estratti/script_2.py",
+          "line": "8:1",
+          "snippet": "if os.path.exists(os.path.join('names', filename)): # Send the file to the browser with open(os.path.join('names', filename), 'rb') as f: sy…"
+        },
+        {
+          "rule_id": "OA-PATH-TRAVERSAL-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_estratti/script_2.py",
+          "line": "8:19",
+          "snippet": "os.path.join('names', filename)"
+        },
+        {
+          "rule_id": "OA-PATH-TRAVERSAL-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_estratti/script_2.py",
+          "line": "10:14",
+          "snippet": "os.path.join('names', filename)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_20.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS_GET-008",
+        "WITH-OPEN-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_estratti/script_20.py",
+          "line": "3:14",
+          "snippet": "filename",
+          "tainted_variable": "filename"
+        },
+        {
+          "rule_id": "WITH-OPEN-001",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_estratti/script_20.py",
+          "line": "3:9",
+          "snippet": "open(filename, 'rb')"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_21.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "ENCODE-DECODE-001",
+        "HASHLIB-SHA256-001",
+        "REQUEST-ARGS-GET-023",
+        "REQUEST-ARGS-GET-024"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF",
+        "INJC",
+        "INSD",
+        "SDIF"
+      ],
+      "findings_count": 4,
+      "findings": [
+        {
+          "rule_id": "HASHLIB-SHA256-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_estratti/script_21.py",
+          "line": "7:22",
+          "snippet": "hashlib.sha256(password.encode('utf-8'))"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-023",
+          "vulnerabilities": [
+            "INSD",
+            "INJC"
+          ],
+          "source_file": "script_estratti/script_21.py",
+          "line": "7:37",
+          "snippet": "password.encode",
+          "tainted_variable": "password"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-024",
+          "vulnerabilities": [
+            "INSD",
+            "INJC"
+          ],
+          "source_file": "script_estratti/script_21.py",
+          "line": "7:37",
+          "snippet": "password.encode",
+          "tainted_variable": "password"
+        },
+        {
+          "rule_id": "ENCODE-DECODE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_estratti/script_21.py",
+          "line": "7:37",
+          "snippet": "password.encode('utf-8')"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_22.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "FLASK-REDIRECT-001",
+        "REQUEST-001",
+        "REQUEST-ARGS_GET-008"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "SECM"
+      ],
+      "findings_count": 4,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_estratti/script_22.py",
+          "line": "4:24",
+          "snippet": "mark_url",
+          "tainted_variable": "mark_url"
+        },
+        {
+          "rule_id": "FLASK-REDIRECT-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_estratti/script_22.py",
+          "line": "4:15",
+          "snippet": "redirect(mark_url)"
+        },
+        {
+          "rule_id": "REQUEST-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_estratti/script_22.py",
+          "line": "3:7",
+          "snippet": "mark_url",
+          "tainted_variable": "mark_url"
+        },
+        {
+          "rule_id": "REQUEST-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_estratti/script_22.py",
+          "line": "4:24",
+          "snippet": "mark_url",
+          "tainted_variable": "mark_url"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_23.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_estratti/script_24.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "INPUT-004",
+        "INT-INPUT-004",
+        "STRING-001"
+      ],
+      "vulnerabilities_summary": [
+        "INJC",
+        "SDIF",
+        "SLMF"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "INPUT-004",
+          "vulnerabilities": [
+            "INJC",
+            "SLMF"
+          ],
+          "source_file": "script_estratti/script_24.py",
+          "line": "8:11",
+          "snippet": "user_input",
+          "tainted_variable": "user_input"
+        },
+        {
+          "rule_id": "INT-INPUT-004",
+          "vulnerabilities": [
+            "INJC",
+            "SLMF"
+          ],
+          "source_file": "script_estratti/script_24.py",
+          "line": "8:11",
+          "snippet": "user_input",
+          "tainted_variable": "user_input"
+        },
+        {
+          "rule_id": "STRING-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_estratti/script_24.py",
+          "line": "4:25",
+          "snippet": "int(input(\"Please enter an integer: \"))"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_25.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "INPUT-004",
+        "INT-INPUT-004",
+        "STRING-001"
+      ],
+      "vulnerabilities_summary": [
+        "INJC",
+        "SDIF",
+        "SLMF"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "INPUT-004",
+          "vulnerabilities": [
+            "INJC",
+            "SLMF"
+          ],
+          "source_file": "script_estratti/script_25.py",
+          "line": "11:12",
+          "snippet": "num",
+          "tainted_variable": "num"
+        },
+        {
+          "rule_id": "INT-INPUT-004",
+          "vulnerabilities": [
+            "INJC",
+            "SLMF"
+          ],
+          "source_file": "script_estratti/script_25.py",
+          "line": "11:12",
+          "snippet": "num",
+          "tainted_variable": "num"
+        },
+        {
+          "rule_id": "STRING-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_estratti/script_25.py",
+          "line": "4:18",
+          "snippet": "int(input('Enter a number: '))"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_26.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "ELEMENTTREE-CONFIGURATION-001"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "ELEMENTTREE-CONFIGURATION-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_estratti/script_26.py",
+          "line": "2:1",
+          "snippet": "import xml.etree.ElementTree as ET"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_27.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "DEBUG-TRUE-001"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "DEBUG-TRUE-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_estratti/script_27.py",
+          "line": "11:4",
+          "snippet": "app.run(debug=True)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_28.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "INPUT-001"
+      ],
+      "vulnerabilities_summary": [
+        "INJC",
+        "SLMF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "INPUT-001",
+          "vulnerabilities": [
+            "INJC",
+            "SLMF"
+          ],
+          "source_file": "script_estratti/script_28.py",
+          "line": "4:1",
+          "snippet": "complete_url = url + user_number",
+          "tainted_variable": "user_number"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_29.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "URLLIB-OPEN-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "URLLIB-OPEN-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_estratti/script_29.py",
+          "line": "5:6",
+          "snippet": "urllib.request.urlopen(url)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_3.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_estratti/script_31.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS_GET-008"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_estratti/script_31.py",
+          "line": "5:31",
+          "snippet": "id",
+          "tainted_variable": "id"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_32.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS_GET-008"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_estratti/script_32.py",
+          "line": "2:34",
+          "snippet": "passw",
+          "tainted_variable": "passw"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_33.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_estratti/script_34.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "INPUT-002",
+        "INT-INPUT-002",
+        "STRING-001"
+      ],
+      "vulnerabilities_summary": [
+        "INJC",
+        "SDIF",
+        "SLMF"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "INPUT-002",
+          "vulnerabilities": [
+            "INJC",
+            "SLMF"
+          ],
+          "source_file": "script_estratti/script_34.py",
+          "line": "3:12",
+          "snippet": "number",
+          "tainted_variable": "number"
+        },
+        {
+          "rule_id": "INT-INPUT-002",
+          "vulnerabilities": [
+            "INJC",
+            "SLMF"
+          ],
+          "source_file": "script_estratti/script_34.py",
+          "line": "3:12",
+          "snippet": "number",
+          "tainted_variable": "number"
+        },
+        {
+          "rule_id": "STRING-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_estratti/script_34.py",
+          "line": "1:10",
+          "snippet": "int(input(\"Please enter a number: \"))"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_35.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "PICKLE-FAILURE-001",
+        "WITH-OPEN-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "SDIF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "WITH-OPEN-001",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_estratti/script_35.py",
+          "line": "4:9",
+          "snippet": "open(file_name, 'rb')"
+        },
+        {
+          "rule_id": "PICKLE-FAILURE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_estratti/script_35.py",
+          "line": "5:15",
+          "snippet": "pickle.load(f)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_36.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "AES-CIPHER-001",
+        "AES-CIPHER-002",
+        "CBC-MODE-001"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "CBC-MODE-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_estratti/script_36.py",
+          "line": "7:39",
+          "snippet": "AES.MODE_CBC"
+        },
+        {
+          "rule_id": "AES-CIPHER-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_estratti/script_36.py",
+          "line": "10:20",
+          "snippet": "cipher.encrypt(static_vector)"
+        },
+        {
+          "rule_id": "AES-CIPHER-002",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_estratti/script_36.py",
+          "line": "10:20",
+          "snippet": "cipher.encrypt(static_vector)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_37.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "SMTP-001"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "SMTP-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_estratti/script_37.py",
+          "line": "3:8",
+          "snippet": "smtplib.SMTP('smtp.example.com', 587)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_38.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "FTP-001",
+        "FTPLIB-FTP-001"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF",
+        "SDIF"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "FTP-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_estratti/script_38.py",
+          "line": "3:7",
+          "snippet": "ftplib.FTP('ftp.example.com')"
+        },
+        {
+          "rule_id": "FTPLIB-FTP-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_estratti/script_38.py",
+          "line": "4:1",
+          "snippet": "ftp.login",
+          "tainted_variable": "ftp"
+        },
+        {
+          "rule_id": "FTPLIB-FTP-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_estratti/script_38.py",
+          "line": "6:8",
+          "snippet": "ftp",
+          "tainted_variable": "ftp"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_39.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CREDENTIALS-001"
+      ],
+      "vulnerabilities_summary": [
+        "IDAF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CREDENTIALS-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_estratti/script_39.py",
+          "line": "2:5",
+          "snippet": "password == 'correctpassword'"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_4.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "YAML-LOAD-001"
+      ],
+      "vulnerabilities_summary": [
+        "INJC",
+        "SDIF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "YAML-LOAD-001",
+          "vulnerabilities": [
+            "INJC",
+            "SDIF"
+          ],
+          "source_file": "script_estratti/script_4.py",
+          "line": "4:18",
+          "snippet": "yaml.load(yaml_payload)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_40.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_estratti/script_41.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "OS-SYSTEM-002"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "OS-SYSTEM-002",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_estratti/script_41.py",
+          "line": "4:11",
+          "snippet": "os.system(mine)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_42.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "PICKLE-FAILURE-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "PICKLE-FAILURE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_estratti/script_42.py",
+          "line": "3:22",
+          "snippet": "pickle.dumps(content)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_43.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "PICKLE-FAILURE-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "PICKLE-FAILURE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_estratti/script_43.py",
+          "line": "4:11",
+          "snippet": "pickle.loads(pickled_data)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_44.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "PICKLE-FAILURE-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "PICKLE-FAILURE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_estratti/script_44.py",
+          "line": "7:19",
+          "snippet": "cPickle.loads(decoded_token)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_45.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_estratti/script_46.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "ELEMENTTREE-CONFIGURATION-001"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "ELEMENTTREE-CONFIGURATION-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_estratti/script_46.py",
+          "line": "1:1",
+          "snippet": "import xml.etree.ElementTree as ET"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_47.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_estratti/script_48.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "ELEMENTTREE-CONFIGURATION-001"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "ELEMENTTREE-CONFIGURATION-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_estratti/script_48.py",
+          "line": "1:1",
+          "snippet": "import xml.etree.ElementTree as ET"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_49.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "ENCODE-DECODE-001",
+        "HASHLIB-SHA256-001"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF",
+        "SDIF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "HASHLIB-SHA256-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_estratti/script_49.py",
+          "line": "2:22",
+          "snippet": "hashlib.sha256(password.encode())"
+        },
+        {
+          "rule_id": "ENCODE-DECODE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_estratti/script_49.py",
+          "line": "2:37",
+          "snippet": "password.encode()"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_5.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "OS-SYSTEM-002",
+        "REQUEST-ARGS-GET-001",
+        "REQUEST-ARGS-GET-004",
+        "REQUEST-ARGS-GET-020",
+        "REQUEST-ARGS_GET-010"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "CRYF",
+        "INJC",
+        "SECM"
+      ],
+      "findings_count": 7,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-010",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_estratti/script_5.py",
+          "line": "7:11",
+          "snippet": "exec_ping",
+          "tainted_variable": "exec_ping"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-004",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_estratti/script_5.py",
+          "line": "6:41",
+          "snippet": "request.args.get('url')"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-001",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "script_estratti/script_5.py",
+          "line": "6:4",
+          "snippet": "exec_ping = os.system(\"ping -c 1 \" + request.args.get('url'))"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-001",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "script_estratti/script_5.py",
+          "line": "6:26",
+          "snippet": "\"ping -c 1 \" + request.args.get('url')"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-020",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_estratti/script_5.py",
+          "line": "6:4",
+          "snippet": "exec_ping = os.system(\"ping -c 1 \" + request.args.get('url'))"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-020",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_estratti/script_5.py",
+          "line": "6:26",
+          "snippet": "\"ping -c 1 \" + request.args.get('url')"
+        },
+        {
+          "rule_id": "OS-SYSTEM-002",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_estratti/script_5.py",
+          "line": "6:16",
+          "snippet": "os.system(\"ping -c 1 \" + request.args.get('url'))"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_50.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "HASHLIB-SHA256-001"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "HASHLIB-SHA256-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_estratti/script_50.py",
+          "line": "3:11",
+          "snippet": "hashlib.sha256(password + salt)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_51.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "URANDOM-001"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "URANDOM-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_estratti/script_51.py",
+          "line": "4:15",
+          "snippet": "os.urandom(32)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_52.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CSV-WRITER-001",
+        "WITH-OPEN-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "INJC"
+      ],
+      "findings_count": 4,
+      "findings": [
+        {
+          "rule_id": "CSV-WRITER-001",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "script_estratti/script_52.py",
+          "line": "9:17",
+          "snippet": "csv.writer(csvfile)"
+        },
+        {
+          "rule_id": "CSV-WRITER-001",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "script_estratti/script_52.py",
+          "line": "9:17",
+          "snippet": "csv.writer(csvfile)"
+        },
+        {
+          "rule_id": "CSV-WRITER-001",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "script_estratti/script_52.py",
+          "line": "1:1",
+          "snippet": "import csv"
+        },
+        {
+          "rule_id": "WITH-OPEN-001",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_estratti/script_52.py",
+          "line": "8:9",
+          "snippet": "open('temp_file.csv', 'w', newline='')"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_53.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_estratti/script_54.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "RANDOM-CHOICE-001"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "RANDOM-CHOICE-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_estratti/script_54.py",
+          "line": "5:17",
+          "snippet": "random.choice(letters)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_55.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "JWT-DECODE-002-protocols"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "JWT-DECODE-002-protocols",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_estratti/script_55.py",
+          "line": "4:18",
+          "snippet": "jwt.decode(token, SECRET_KEY)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_56.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_estratti/script_57.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "WITH-OPEN-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "WITH-OPEN-001",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_estratti/script_57.py",
+          "line": "2:9",
+          "snippet": "open(filename, 'w')"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_59.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "TIME-CLOCK-001"
+      ],
+      "vulnerabilities_summary": [
+        "INJC"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "TIME-CLOCK-001",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "script_estratti/script_59.py",
+          "line": "4:11",
+          "snippet": "time.clock()"
+        },
+        {
+          "rule_id": "TIME-CLOCK-001",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "script_estratti/script_59.py",
+          "line": "4:11",
+          "snippet": "time.clock()"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_6.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_estratti/script_60.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CREDENTIALS-001"
+      ],
+      "vulnerabilities_summary": [
+        "IDAF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CREDENTIALS-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_estratti/script_60.py",
+          "line": "2:5",
+          "snippet": "password == 'password'"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_61.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "DSA-001"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "DSA-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_estratti/script_61.py",
+          "line": "4:10",
+          "snippet": "DSA.generate(1024)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_62.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "OS-SYSTEM-002"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "OS-SYSTEM-002",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_estratti/script_62.py",
+          "line": "4:11",
+          "snippet": "os.system(command)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_63.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "PICKLE-FAILURE-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "PICKLE-FAILURE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_estratti/script_63.py",
+          "line": "3:14",
+          "snippet": "pickle.loads(payload)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_64.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "PICKLE-FAILURE-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "PICKLE-FAILURE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_estratti/script_64.py",
+          "line": "2:11",
+          "snippet": "pickle.loads(pickled_data)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_65.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "PICKLE-FAILURE-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "PICKLE-FAILURE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_estratti/script_65.py",
+          "line": "11:16",
+          "snippet": "cPickle.loads(decoded_token)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_66.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_estratti/script_67.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_estratti/script_68.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "OS-CHMOD-001"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "OS-CHMOD-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_estratti/script_68.py",
+          "line": "3:4",
+          "snippet": "os.chmod(file, 0o400)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_69.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "OS-CHMOD-001"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "OS-CHMOD-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_estratti/script_69.py",
+          "line": "5:1",
+          "snippet": "os.chmod(filename, 0o400)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_7.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS-GET-017",
+        "SQL-PARAMETRIZED-QUERY-002"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "INJC"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS-GET-017",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_estratti/script_7.py",
+          "line": "10:64",
+          "snippet": "channel",
+          "tainted_variable": "channel"
+        },
+        {
+          "rule_id": "SQL-PARAMETRIZED-QUERY-002",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "script_estratti/script_7.py",
+          "line": "10:1",
+          "snippet": "cursor.execute('DELETE FROM subscriptions WHERE channel = ?', (channel,))"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_70.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "OS-CHMOD-001"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "OS-CHMOD-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_estratti/script_70.py",
+          "line": "8:1",
+          "snippet": "os.chmod(\"temp.txt\", 0o755)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_71.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_estratti/script_72.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CREATE-DEFAULT-CONTEXT-001"
+      ],
+      "vulnerabilities_summary": [
+        "IDAF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CREATE-DEFAULT-CONTEXT-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_estratti/script_72.py",
+          "line": "1:7",
+          "snippet": "ssl.create_default_context()"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_73.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CREATE-UNVERIFIED-CONTEXT-001",
+        "SSL-METHOD-001",
+        "SSL-WRAP-SOCKET-001"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF",
+        "IDAF"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "SSL-METHOD-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_estratti/script_73.py",
+          "line": "5:37",
+          "snippet": "ssl.PROTOCOL_TLSv1"
+        },
+        {
+          "rule_id": "SSL-WRAP-SOCKET-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_estratti/script_73.py",
+          "line": "5:1",
+          "snippet": "ssl.wrap_socket(socket, ssl_version=ssl.PROTOCOL_TLSv1, ciphers=\"HIGH:!DH:!aNULL\", cert_reqs=ssl.CERT_NONE, ca_certs=None, server_hostname=N…"
+        },
+        {
+          "rule_id": "CREATE-UNVERIFIED-CONTEXT-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_estratti/script_73.py",
+          "line": "3:11",
+          "snippet": "ssl._create_unverified_context()"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_74.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_estratti/script_75.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_estratti/script_76.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_estratti/script_77.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "SET-COOKIE-001-flask",
+        "SET-COOKIE-001-ssl"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF",
+        "SECM"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "SET-COOKIE-001-flask",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_estratti/script_77.py",
+          "line": "6:4",
+          "snippet": "response.set_cookie('name', 'value')"
+        },
+        {
+          "rule_id": "SET-COOKIE-001-ssl",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_estratti/script_77.py",
+          "line": "6:4",
+          "snippet": "response.set_cookie('name', 'value')"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_78.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "RANDOM-001"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "RANDOM-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_estratti/script_78.py",
+          "line": "4:4",
+          "snippet": "random.seed(seed)"
+        },
+        {
+          "rule_id": "RANDOM-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_estratti/script_78.py",
+          "line": "5:11",
+          "snippet": "random.getrandbits(128)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_79.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "JWT-DECODE-001",
+        "JWT-DECODE-002-protocols"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "JWT-DECODE-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_estratti/script_79.py",
+          "line": "5:17",
+          "snippet": "jwt.decode(token, verify=False)"
+        },
+        {
+          "rule_id": "JWT-DECODE-002-protocols",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_estratti/script_79.py",
+          "line": "5:17",
+          "snippet": "jwt.decode(token, verify=False)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_8.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_estratti/script_80.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_estratti/script_81.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "GLOBAL-LOCK-001",
+        "LOCK-001"
+      ],
+      "vulnerabilities_summary": [
+        "INSD",
+        "SDIF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "LOCK-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_estratti/script_81.py",
+          "line": "13:4",
+          "snippet": "lock.acquire",
+          "tainted_variable": "lock"
+        },
+        {
+          "rule_id": "GLOBAL-LOCK-001",
+          "vulnerabilities": [
+            "INSD"
+          ],
+          "source_file": "script_estratti/script_81.py",
+          "line": "13:4",
+          "snippet": "lock.acquire",
+          "tainted_variable": "lock"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_82.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_estratti/script_83.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "SOCKET-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "SOCKET-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_estratti/script_83.py",
+          "line": "3:11",
+          "snippet": "socket.socket(socket.AF_INET, socket.SOCK_STREAM)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_84.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_estratti/script_85.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_estratti/script_86.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "ELEMENTTREE-CONFIGURATION-001"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "ELEMENTTREE-CONFIGURATION-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_estratti/script_86.py",
+          "line": "1:1",
+          "snippet": "import xml.etree.ElementTree as ET"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_87.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "ELEMENTTREE-CONFIGURATION-001"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "ELEMENTTREE-CONFIGURATION-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_estratti/script_87.py",
+          "line": "1:1",
+          "snippet": "import xml.etree.ElementTree as ET"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_88.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "OS-CHMOD-001"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "OS-CHMOD-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_estratti/script_88.py",
+          "line": "3:1",
+          "snippet": "os.chmod('private', 0o400)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_89.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "OS-CHMOD-001"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "OS-CHMOD-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_estratti/script_89.py",
+          "line": "3:1",
+          "snippet": "os.chmod('priv_file', 0o400)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_9.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS_GET-008",
+        "WITH-OPEN-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_estratti/script_9.py",
+          "line": "8:14",
+          "snippet": "file_name",
+          "tainted_variable": "file_name"
+        },
+        {
+          "rule_id": "WITH-OPEN-001",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_estratti/script_9.py",
+          "line": "8:9",
+          "snippet": "open(file_name, 'r')"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_90.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "OS-CHMOD-001"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "OS-CHMOD-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_estratti/script_90.py",
+          "line": "1:1",
+          "snippet": "os.chmod('filename', 0o755)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_91.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CONTEXT-001"
+      ],
+      "vulnerabilities_summary": [
+        "IDAF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CONTEXT-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_estratti/script_91.py",
+          "line": "3:11",
+          "snippet": "ssl.SSLContext()"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_92.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "SSL-METHOD-001"
+      ],
+      "vulnerabilities_summary": [
+        "IDAF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "SSL-METHOD-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_estratti/script_92.py",
+          "line": "4:29",
+          "snippet": "ssl.PROTOCOL_TLSv1_2"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_93.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_estratti/script_94.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "RANDOM-CHOICE-001"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "RANDOM-CHOICE-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_estratti/script_94.py",
+          "line": "4:25",
+          "snippet": "random.choices('0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ', k=32)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_95.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_estratti/script_96.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_estratti/script_97.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_estratti/script_98.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "RANDOM-001",
+        "URANDOM-001"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "RANDOM-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_estratti/script_98.py",
+          "line": "8:1",
+          "snippet": "random.seed(seed)"
+        },
+        {
+          "rule_id": "RANDOM-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_estratti/script_98.py",
+          "line": "9:19",
+          "snippet": "random.getrandbits(128)"
+        },
+        {
+          "rule_id": "URANDOM-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_estratti/script_98.py",
+          "line": "5:8",
+          "snippet": "os.urandom(16)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_estratti/script_99.py",
+      "xml_source": "Git_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "JWT-DECODE-001",
+        "JWT-DECODE-002-protocols"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "JWT-DECODE-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_estratti/script_99.py",
+          "line": "5:17",
+          "snippet": "jwt.decode(token, verify=False)"
+        },
+        {
+          "rule_id": "JWT-DECODE-002-protocols",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_estratti/script_99.py",
+          "line": "5:17",
+          "snippet": "jwt.decode(token, verify=False)"
+        }
+      ]
+    }
+  ]
+}

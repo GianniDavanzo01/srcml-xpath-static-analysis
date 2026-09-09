@@ -1,0 +1,3736 @@
+{
+  "summary": {
+    "total_files_analyzed": 125,
+    "vulnerable_files": 90,
+    "total_findings": 213,
+    "categories_count": {
+      "SDIF": 66,
+      "BRAC": 53,
+      "SECM": 46,
+      "IDAF": 16,
+      "INJC": 17,
+      "CRYF": 13,
+      "SLMF": 8,
+      "INSD": 6,
+      "CWE-462": 1
+    }
+  },
+  "details": [
+    {
+      "source_file": "script_totali_Chatgpt/script_1.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "DEBUG-TRUE-001",
+        "REQUEST-ARGS_GET-008",
+        "RETURN-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "SDIF",
+        "SECM"
+      ],
+      "findings_count": 4,
+      "findings": [
+        {
+          "rule_id": "RETURN-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_1.py",
+          "line": "25:10",
+          "snippet": "return f\"File '{name}' not found\""
+        },
+        {
+          "rule_id": "RETURN-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_1.py",
+          "line": "27:10",
+          "snippet": "return f\"An error occurred: {str(e)}\""
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Chatgpt/script_1.py",
+          "line": "16:40",
+          "snippet": "name",
+          "tainted_variable": "name"
+        },
+        {
+          "rule_id": "DEBUG-TRUE-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Chatgpt/script_1.py",
+          "line": "30:6",
+          "snippet": "app.run(debug=True)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_10.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CREDENTIALS-001",
+        "LDAP-SERVER-001",
+        "LDAP-SERVER-VALIDATION-003"
+      ],
+      "vulnerabilities_summary": [
+        "IDAF",
+        "INJC"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "CREDENTIALS-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_10.py",
+          "line": "6:1",
+          "snippet": "ldap_password = 'admin_password'"
+        },
+        {
+          "rule_id": "LDAP-SERVER-001",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "script_totali_Chatgpt/script_10.py",
+          "line": "13:10",
+          "snippet": "ldap3.Server(ldap_server)"
+        },
+        {
+          "rule_id": "LDAP-SERVER-VALIDATION-003",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "script_totali_Chatgpt/script_10.py",
+          "line": "14:25",
+          "snippet": "server",
+          "tainted_variable": "server"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_100.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "RETURN-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "RETURN-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_100.py",
+          "line": "19:10",
+          "snippet": "return f\"Error decoding token: {e}\""
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_101.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "ENCODE-DECODE-001",
+        "KEY-SIZE-001"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF",
+        "SDIF"
+      ],
+      "findings_count": 4,
+      "findings": [
+        {
+          "rule_id": "KEY-SIZE-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_101.py",
+          "line": "34:40",
+          "snippet": "key_size=max_key_size"
+        },
+        {
+          "rule_id": "ENCODE-DECODE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_101.py",
+          "line": "22:20",
+          "snippet": "token.encode('utf-8')"
+        },
+        {
+          "rule_id": "ENCODE-DECODE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_101.py",
+          "line": "30:42",
+          "snippet": "decode('utf-8')"
+        },
+        {
+          "rule_id": "ENCODE-DECODE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_101.py",
+          "line": "37:57",
+          "snippet": "decode('utf-8')"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_102.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_103.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "DEBUG-TRUE-001",
+        "REQUEST-ARGS_GET-008",
+        "REQUEST-ARGS_GET-010",
+        "REQUEST-HEADER-GET-001",
+        "RETURN-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "SDIF",
+        "SECM"
+      ],
+      "findings_count": 8,
+      "findings": [
+        {
+          "rule_id": "RETURN-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_103.py",
+          "line": "26:10",
+          "snippet": "return f\"Hello, {login_name}! You have access to the protected resource.\""
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Chatgpt/script_103.py",
+          "line": "11:18",
+          "snippet": "authorization_header.split",
+          "tainted_variable": "authorization_header"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-010",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Chatgpt/script_103.py",
+          "line": "9:34",
+          "snippet": "authorization_header.startswith",
+          "tainted_variable": "authorization_header"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-010",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Chatgpt/script_103.py",
+          "line": "11:18",
+          "snippet": "authorization_header.split",
+          "tainted_variable": "authorization_header"
+        },
+        {
+          "rule_id": "DEBUG-TRUE-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Chatgpt/script_103.py",
+          "line": "31:6",
+          "snippet": "app.run(debug=True)"
+        },
+        {
+          "rule_id": "REQUEST-HEADER-GET-001",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Chatgpt/script_103.py",
+          "line": "9:9",
+          "snippet": "authorization_header and authorization_header.startswith('Bearer ')",
+          "tainted_variable": "authorization_header"
+        },
+        {
+          "rule_id": "REQUEST-HEADER-GET-001",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Chatgpt/script_103.py",
+          "line": "9:34",
+          "snippet": "authorization_header.startswith",
+          "tainted_variable": "authorization_header"
+        },
+        {
+          "rule_id": "REQUEST-HEADER-GET-001",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Chatgpt/script_103.py",
+          "line": "11:18",
+          "snippet": "authorization_header.split",
+          "tainted_variable": "authorization_header"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_104.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_105.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "ENCODE-DECODE-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "ENCODE-DECODE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_105.py",
+          "line": "31:27",
+          "snippet": "input_text.encode('utf-8')"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_106.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_107.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_108.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_109.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_11.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CREDENTIALS-001"
+      ],
+      "vulnerabilities_summary": [
+        "IDAF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CREDENTIALS-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_11.py",
+          "line": "6:1",
+          "snippet": "bind_password = 'admin_password'"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_110.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "ENCODE-DECODE-001",
+        "INPUT-003"
+      ],
+      "vulnerabilities_summary": [
+        "INJC",
+        "SDIF",
+        "SLMF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "INPUT-003",
+          "vulnerabilities": [
+            "INJC",
+            "SLMF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_110.py",
+          "line": "30:22",
+          "snippet": "username_to_sign",
+          "tainted_variable": "username_to_sign"
+        },
+        {
+          "rule_id": "ENCODE-DECODE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_110.py",
+          "line": "15:14",
+          "snippet": "jwt.encode(payload, SECRET_KEY, algorithm='HS256')"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_111.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "DEBUG-TRUE-001",
+        "RETURN-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF",
+        "SECM"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "RETURN-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_111.py",
+          "line": "26:10",
+          "snippet": "return jsonify({'message': f'Ingredient with ID {ingredient_id} deleted successfully', 'deleted_ingredient': deleted_ingredient})"
+        },
+        {
+          "rule_id": "RETURN-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_111.py",
+          "line": "28:10",
+          "snippet": "return jsonify({'message': f'Ingredient with ID {ingredient_id} not found'}), 404"
+        },
+        {
+          "rule_id": "DEBUG-TRUE-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Chatgpt/script_111.py",
+          "line": "31:6",
+          "snippet": "app.run(debug=True)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_112.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_113.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "SOCKET-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "SOCKET-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_113.py",
+          "line": "21:22",
+          "snippet": "socket.socket(socket.AF_INET, socket.SOCK_STREAM)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_114.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "PICKLE-FAILURE-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "PICKLE-FAILURE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_114.py",
+          "line": "5:24",
+          "snippet": "pickle.dumps(obj)"
+        },
+        {
+          "rule_id": "PICKLE-FAILURE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_114.py",
+          "line": "10:12",
+          "snippet": "pickle.loads(serialized_data)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_115.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUESTS-SESSION-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "REQUESTS-SESSION-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_115.py",
+          "line": "12:17",
+          "snippet": "session.get",
+          "tainted_variable": "session"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_116.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_117.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "MAKEDIRS-001",
+        "WITH-OPEN-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "SECM"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "MAKEDIRS-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Chatgpt/script_117.py",
+          "line": "5:6",
+          "snippet": "os.makedirs(os.path.dirname(file_path), exist_ok=True)"
+        },
+        {
+          "rule_id": "WITH-OPEN-001",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Chatgpt/script_117.py",
+          "line": "8:11",
+          "snippet": "open(file_path, 'w')"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_118.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "OS-CHMOD-001"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "OS-CHMOD-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Chatgpt/script_118.py",
+          "line": "6:10",
+          "snippet": "os.chmod(file_path, 0o755)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_119.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_12.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "EVAL-001",
+        "REQUEST-ARGS-GET-023",
+        "REQUEST-ARGS_GET-009"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "INJC",
+        "INSD"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "EVAL-001",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "script_totali_Chatgpt/script_12.py",
+          "line": "9:19",
+          "snippet": "eval(user_input)"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-009",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Chatgpt/script_12.py",
+          "line": "9:24",
+          "snippet": "user_input",
+          "tainted_variable": "user_input"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-023",
+          "vulnerabilities": [
+            "INSD",
+            "INJC"
+          ],
+          "source_file": "script_totali_Chatgpt/script_12.py",
+          "line": "9:24",
+          "snippet": "user_input",
+          "tainted_variable": "user_input"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_120.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_121.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_122.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_123.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "ENCODE-DECODE-001",
+        "RETURN-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "RETURN-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_123.py",
+          "line": "10:10",
+          "snippet": "return f\"PacketHeader(version={self.version}, length={self.length}, checksum={self.checksum})\""
+        },
+        {
+          "rule_id": "RETURN-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_123.py",
+          "line": "22:10",
+          "snippet": "return f\"PacketPayload(data={self.data})\""
+        },
+        {
+          "rule_id": "ENCODE-DECODE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_123.py",
+          "line": "28:25",
+          "snippet": "data.decode('utf-8')"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_124.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_125.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_13.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "EXEC-001",
+        "REQUEST-ARGS_GET-009"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "INJC"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "EXEC-001",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "script_totali_Chatgpt/script_13.py",
+          "line": "12:10",
+          "snippet": "exec(f'import {module_name} as custom_module')"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-009",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Chatgpt/script_13.py",
+          "line": "9:10",
+          "snippet": "module_name = f'urllib{component_version.replace(\".\", \"_\")}'",
+          "tainted_variable": "component_version"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_14.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_15.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "LOGGING-INFO-001",
+        "REQUEST-ARGS_GET-005",
+        "REQUEST-ARGS_GET-008"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "SLMF"
+      ],
+      "findings_count": 4,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-005",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Chatgpt/script_15.py",
+          "line": "16:23",
+          "snippet": "f\"User: {user}\"",
+          "tainted_variable": "user"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-005",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Chatgpt/script_15.py",
+          "line": "19:10",
+          "snippet": "response_text = f\"Received user: {user}\"",
+          "tainted_variable": "user"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Chatgpt/script_15.py",
+          "line": "16:23",
+          "snippet": "f\"User: {user}\"",
+          "tainted_variable": "user"
+        },
+        {
+          "rule_id": "LOGGING-INFO-001",
+          "vulnerabilities": [
+            "SLMF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_15.py",
+          "line": "16:10",
+          "snippet": "logging.info(f\"User: {user}\")"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_16.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "LOGGING-ERROR-001",
+        "REQUEST-ARGS_GET-005",
+        "REQUEST-ARGS_GET-008"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-005",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Chatgpt/script_16.py",
+          "line": "16:24",
+          "snippet": "f\"Error: {data}\"",
+          "tainted_variable": "data"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Chatgpt/script_16.py",
+          "line": "16:24",
+          "snippet": "f\"Error: {data}\"",
+          "tainted_variable": "data"
+        },
+        {
+          "rule_id": "LOGGING-ERROR-001",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Chatgpt/script_16.py",
+          "line": "16:10",
+          "snippet": "logging.error(f\"Error: {data}\")"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_17.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "OS-CHMOD-001",
+        "REQUEST-ARGS_GET-005",
+        "REQUEST-ARGS_GET-010",
+        "RETURN-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "SDIF",
+        "SECM"
+      ],
+      "findings_count": 4,
+      "findings": [
+        {
+          "rule_id": "RETURN-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_17.py",
+          "line": "21:10",
+          "snippet": "return f'Directory permissions modified for user {user_id}.'"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-005",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Chatgpt/script_17.py",
+          "line": "21:17",
+          "snippet": "f'Directory permissions modified for user {user_id}.'",
+          "tainted_variable": "user_id"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-010",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Chatgpt/script_17.py",
+          "line": "21:17",
+          "snippet": "f'Directory permissions modified for user {user_id}.'",
+          "tainted_variable": "user_id"
+        },
+        {
+          "rule_id": "OS-CHMOD-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Chatgpt/script_17.py",
+          "line": "19:10",
+          "snippet": "os.chmod(directory_path, 0o777)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_18.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "MAKEDIRS-001",
+        "OS-CHMOD-001"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "MAKEDIRS-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Chatgpt/script_18.py",
+          "line": "9:10",
+          "snippet": "os.makedirs(directory_path)"
+        },
+        {
+          "rule_id": "OS-CHMOD-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Chatgpt/script_18.py",
+          "line": "12:6",
+          "snippet": "os.chmod(directory_path, 0o755)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_19.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "MAKEDIRS-001",
+        "OA-PATH-TRAVERSAL-001",
+        "REQUEST-ARGS-GET-023",
+        "REQUEST-ARGS-GET-024",
+        "REQUEST-ARGS_GET-009"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "INJC",
+        "INSD",
+        "SDIF",
+        "SECM"
+      ],
+      "findings_count": 9,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-009",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Chatgpt/script_19.py",
+          "line": "19:13",
+          "snippet": "pdf_file.filename",
+          "tainted_variable": "pdf_file"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-009",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Chatgpt/script_19.py",
+          "line": "21:17",
+          "snippet": "pdf_file.filename.endswith",
+          "tainted_variable": "pdf_file"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-009",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Chatgpt/script_19.py",
+          "line": "28:10",
+          "snippet": "pdf_file.save",
+          "tainted_variable": "pdf_file"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-009",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Chatgpt/script_19.py",
+          "line": "28:55",
+          "snippet": "pdf_file.filename",
+          "tainted_variable": "pdf_file"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-023",
+          "vulnerabilities": [
+            "INSD",
+            "INJC"
+          ],
+          "source_file": "script_totali_Chatgpt/script_19.py",
+          "line": "28:55",
+          "snippet": "pdf_file.filename",
+          "tainted_variable": "pdf_file"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-024",
+          "vulnerabilities": [
+            "INSD",
+            "INJC"
+          ],
+          "source_file": "script_totali_Chatgpt/script_19.py",
+          "line": "21:17",
+          "snippet": "pdf_file.filename.endswith",
+          "tainted_variable": "pdf_file"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-024",
+          "vulnerabilities": [
+            "INSD",
+            "INJC"
+          ],
+          "source_file": "script_totali_Chatgpt/script_19.py",
+          "line": "28:10",
+          "snippet": "pdf_file.save",
+          "tainted_variable": "pdf_file"
+        },
+        {
+          "rule_id": "MAKEDIRS-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Chatgpt/script_19.py",
+          "line": "25:10",
+          "snippet": "os.makedirs(upload_directory, exist_ok=True)"
+        },
+        {
+          "rule_id": "OA-PATH-TRAVERSAL-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_19.py",
+          "line": "28:24",
+          "snippet": "os.path.join(upload_directory, pdf_file.filename)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_2.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "DEBUG-TRUE-001",
+        "REQUEST-ARGS_GET-008",
+        "RETURN-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "SDIF",
+        "SECM"
+      ],
+      "findings_count": 4,
+      "findings": [
+        {
+          "rule_id": "RETURN-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_2.py",
+          "line": "24:14",
+          "snippet": "return f\"File '{name}' not found\""
+        },
+        {
+          "rule_id": "RETURN-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_2.py",
+          "line": "26:10",
+          "snippet": "return f\"An error occurred: {str(e)}\""
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Chatgpt/script_2.py",
+          "line": "16:40",
+          "snippet": "name",
+          "tainted_variable": "name"
+        },
+        {
+          "rule_id": "DEBUG-TRUE-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Chatgpt/script_2.py",
+          "line": "29:6",
+          "snippet": "app.run(debug=True)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_20.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS-GET-024",
+        "REQUEST-ARGS_GET-009",
+        "RETURN-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "INJC",
+        "INSD",
+        "SDIF"
+      ],
+      "findings_count": 4,
+      "findings": [
+        {
+          "rule_id": "RETURN-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_20.py",
+          "line": "24:10",
+          "snippet": "return f'Image file \"{filename}\" uploaded successfully.'"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-009",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Chatgpt/script_20.py",
+          "line": "15:13",
+          "snippet": "image_file.filename",
+          "tainted_variable": "image_file"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-009",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Chatgpt/script_20.py",
+          "line": "22:10",
+          "snippet": "image_file.save",
+          "tainted_variable": "image_file"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-024",
+          "vulnerabilities": [
+            "INSD",
+            "INJC"
+          ],
+          "source_file": "script_totali_Chatgpt/script_20.py",
+          "line": "22:10",
+          "snippet": "image_file.save",
+          "tainted_variable": "image_file"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_21.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "HASHLIB-SHA256-001",
+        "REQUEST-ARGS_GET-008",
+        "REQUEST-ARGS_GET-010",
+        "RETURN-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "CRYF",
+        "SDIF"
+      ],
+      "findings_count": 4,
+      "findings": [
+        {
+          "rule_id": "RETURN-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_21.py",
+          "line": "21:10",
+          "snippet": "return f'Hashed password: {hashed_password}'"
+        },
+        {
+          "rule_id": "HASHLIB-SHA256-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_21.py",
+          "line": "16:28",
+          "snippet": "hashlib.sha256(password.encode())"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Chatgpt/script_21.py",
+          "line": "16:43",
+          "snippet": "password.encode",
+          "tainted_variable": "password"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-010",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Chatgpt/script_21.py",
+          "line": "16:43",
+          "snippet": "password.encode",
+          "tainted_variable": "password"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_22.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "FLASK-REDIRECT-001",
+        "REQUEST-ARGS_GET-008"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "SECM"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Chatgpt/script_22.py",
+          "line": "15:26",
+          "snippet": "mark_url",
+          "tainted_variable": "mark_url"
+        },
+        {
+          "rule_id": "FLASK-REDIRECT-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Chatgpt/script_22.py",
+          "line": "15:17",
+          "snippet": "redirect(mark_url)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_23.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "ELEMENTTREE-CONFIGURATION-001",
+        "REQUEST-ARGS-GET-024",
+        "REQUEST-ARGS_GET-009",
+        "RETURN-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "INJC",
+        "INSD",
+        "SDIF",
+        "SECM"
+      ],
+      "findings_count": 5,
+      "findings": [
+        {
+          "rule_id": "RETURN-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_23.py",
+          "line": "28:10",
+          "snippet": "return f'XML file parsed successfully. Root tag: {root.tag}'"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-009",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Chatgpt/script_23.py",
+          "line": "16:13",
+          "snippet": "xml_file.filename",
+          "tainted_variable": "xml_file"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-009",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Chatgpt/script_23.py",
+          "line": "20:24",
+          "snippet": "xml_file.read",
+          "tainted_variable": "xml_file"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-024",
+          "vulnerabilities": [
+            "INSD",
+            "INJC"
+          ],
+          "source_file": "script_totali_Chatgpt/script_23.py",
+          "line": "20:24",
+          "snippet": "xml_file.read",
+          "tainted_variable": "xml_file"
+        },
+        {
+          "rule_id": "ELEMENTTREE-CONFIGURATION-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Chatgpt/script_23.py",
+          "line": "2:1",
+          "snippet": "import xml.etree.ElementTree as ET"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_24.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "INPUT-003",
+        "STRING-001"
+      ],
+      "vulnerabilities_summary": [
+        "INJC",
+        "SDIF",
+        "SLMF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "INPUT-003",
+          "vulnerabilities": [
+            "INJC",
+            "SLMF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_24.py",
+          "line": "5:34",
+          "snippet": "user_input",
+          "tainted_variable": "user_input"
+        },
+        {
+          "rule_id": "STRING-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_24.py",
+          "line": "5:30",
+          "snippet": "int(user_input)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_25.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "INT-INPUT-004",
+        "STRING-001"
+      ],
+      "vulnerabilities_summary": [
+        "INJC",
+        "SDIF",
+        "SLMF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "INT-INPUT-004",
+          "vulnerabilities": [
+            "INJC",
+            "SLMF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_25.py",
+          "line": "5:21",
+          "snippet": "user_input",
+          "tainted_variable": "user_input"
+        },
+        {
+          "rule_id": "STRING-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_25.py",
+          "line": "4:27",
+          "snippet": "int(input(\"Enter a number: \"))"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_26.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "ELEMENTTREE-CONFIGURATION-001",
+        "RETURN-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF",
+        "SECM"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "RETURN-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_26.py",
+          "line": "18:10",
+          "snippet": "return f'XML parsed successfully. Root tag: {root.tag}'"
+        },
+        {
+          "rule_id": "ELEMENTTREE-CONFIGURATION-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Chatgpt/script_26.py",
+          "line": "2:1",
+          "snippet": "import xml.etree.ElementTree as ET"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_27.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS_GET-005",
+        "RETURN-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "SDIF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "RETURN-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_27.py",
+          "line": "18:10",
+          "snippet": "return f'Composed URL: {full_url}'"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-005",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Chatgpt/script_27.py",
+          "line": "16:10",
+          "snippet": "full_url = f'{subdomain}.{base_url}'",
+          "tainted_variable": "subdomain"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_28.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS_GET-005",
+        "RETURN-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "SDIF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "RETURN-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_28.py",
+          "line": "17:10",
+          "snippet": "return f'GitHub URL: {github_url}'"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-005",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Chatgpt/script_28.py",
+          "line": "15:10",
+          "snippet": "github_url = f'https://api.github.com/users/{user_number}'",
+          "tainted_variable": "user_number"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_29.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS_GET-005",
+        "REQUEST-ARGS_GET-008",
+        "REQUEST-ARGS_GET-010",
+        "RETURN-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "SDIF"
+      ],
+      "findings_count": 8,
+      "findings": [
+        {
+          "rule_id": "RETURN-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_29.py",
+          "line": "23:10",
+          "snippet": "return f'Content of file \"{file_param}\": {file_content.decode(\"utf-8\")}'"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-005",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Chatgpt/script_29.py",
+          "line": "23:17",
+          "snippet": "f'Content of file \"{file_param}\": {file_content.decode(\"utf-8\")}'",
+          "tainted_variable": "file_param"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-005",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Chatgpt/script_29.py",
+          "line": "23:17",
+          "snippet": "f'Content of file \"{file_param}\": {file_content.decode(\"utf-8\")}'",
+          "tainted_variable": "file"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Chatgpt/script_29.py",
+          "line": "15:35",
+          "snippet": "file_param",
+          "tainted_variable": "file_param"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Chatgpt/script_29.py",
+          "line": "21:25",
+          "snippet": "file.read",
+          "tainted_variable": "file"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-010",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Chatgpt/script_29.py",
+          "line": "23:17",
+          "snippet": "f'Content of file \"{file_param}\": {file_content.decode(\"utf-8\")}'",
+          "tainted_variable": "file_param"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-010",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Chatgpt/script_29.py",
+          "line": "21:25",
+          "snippet": "file.read",
+          "tainted_variable": "file"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-010",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Chatgpt/script_29.py",
+          "line": "23:17",
+          "snippet": "f'Content of file \"{file_param}\": {file_content.decode(\"utf-8\")}'",
+          "tainted_variable": "file"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_3.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "DEBUG-TRUE-001"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "DEBUG-TRUE-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Chatgpt/script_3.py",
+          "line": "14:6",
+          "snippet": "app.run(debug=True)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_30.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS_GET-008"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Chatgpt/script_30.py",
+          "line": "24:30",
+          "snippet": "yaml_str",
+          "tainted_variable": "yaml_str"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_31.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS_GET-008"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Chatgpt/script_31.py",
+          "line": "15:40",
+          "snippet": "id_param",
+          "tainted_variable": "id_param"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_32.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS_GET-008"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Chatgpt/script_32.py",
+          "line": "15:43",
+          "snippet": "passw_param",
+          "tainted_variable": "passw_param"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_33.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CREDENTIALS-001"
+      ],
+      "vulnerabilities_summary": [
+        "IDAF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CREDENTIALS-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_33.py",
+          "line": "6:1",
+          "snippet": "ldap_password = 'your-ldap-password'"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_34.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS_GET-008"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Chatgpt/script_34.py",
+          "line": "15:49",
+          "snippet": "number_param",
+          "tainted_variable": "number_param"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_35.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "PICKLE-FAILURE-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "PICKLE-FAILURE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_35.py",
+          "line": "16:24",
+          "snippet": "pickle.loads(pickled_data)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_36.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "AES-CIPHER-001",
+        "AES-CIPHER-002",
+        "CBC-MODE-001"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "CBC-MODE-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_36.py",
+          "line": "19:27",
+          "snippet": "AES.MODE_CBC"
+        },
+        {
+          "rule_id": "AES-CIPHER-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_36.py",
+          "line": "22:14",
+          "snippet": "cipher.encrypt(plaintext)"
+        },
+        {
+          "rule_id": "AES-CIPHER-002",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_36.py",
+          "line": "22:14",
+          "snippet": "cipher.encrypt(plaintext)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_37.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CREDENTIALS-001",
+        "SMTP-001"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF",
+        "IDAF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CREDENTIALS-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_37.py",
+          "line": "23:1",
+          "snippet": "password = 'your_password'"
+        },
+        {
+          "rule_id": "SMTP-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_37.py",
+          "line": "6:28",
+          "snippet": "smtplib.SMTP(smtp_server, smtp_port)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_38.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CREDENTIALS-001"
+      ],
+      "vulnerabilities_summary": [
+        "IDAF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CREDENTIALS-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_38.py",
+          "line": "19:1",
+          "snippet": "password = 'your_password'"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_39.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CREDENTIALS-001",
+        "INPUT-003"
+      ],
+      "vulnerabilities_summary": [
+        "IDAF",
+        "INJC",
+        "SLMF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "INPUT-003",
+          "vulnerabilities": [
+            "INJC",
+            "SLMF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_39.py",
+          "line": "16:24",
+          "snippet": "user_input",
+          "tainted_variable": "user_input"
+        },
+        {
+          "rule_id": "CREDENTIALS-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_39.py",
+          "line": "12:1",
+          "snippet": "expected_password = \"my_secret_password\""
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_4.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "DEBUG-TRUE-001",
+        "REQUEST-ARGS_GET-008",
+        "RETURN-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "SDIF",
+        "SECM"
+      ],
+      "findings_count": 4,
+      "findings": [
+        {
+          "rule_id": "RETURN-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_4.py",
+          "line": "15:10",
+          "snippet": "return {\"error\": f\"Error loading YAML: {str(e)}\"}"
+        },
+        {
+          "rule_id": "RETURN-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_4.py",
+          "line": "28:10",
+          "snippet": "return {\"error\": f\"An error occurred: {str(e)}\"}"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Chatgpt/script_4.py",
+          "line": "24:37",
+          "snippet": "yaml_data",
+          "tainted_variable": "yaml_data"
+        },
+        {
+          "rule_id": "DEBUG-TRUE-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Chatgpt/script_4.py",
+          "line": "31:6",
+          "snippet": "app.run(debug=True)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_40.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "ENCODE-DECODE-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "ENCODE-DECODE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_40.py",
+          "line": "22:13",
+          "snippet": "public_key_pem.decode('utf-8')"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_41.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "INPUT-003",
+        "OS-SYSTEM-002"
+      ],
+      "vulnerabilities_summary": [
+        "INJC",
+        "SECM",
+        "SLMF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "INPUT-003",
+          "vulnerabilities": [
+            "INJC",
+            "SLMF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_41.py",
+          "line": "14:14",
+          "snippet": "user_input",
+          "tainted_variable": "user_input"
+        },
+        {
+          "rule_id": "OS-SYSTEM-002",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Chatgpt/script_41.py",
+          "line": "10:6",
+          "snippet": "os.system(mine)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_42.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "PICKLE-FAILURE-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "PICKLE-FAILURE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_42.py",
+          "line": "11:25",
+          "snippet": "pickle.dumps(payload)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_43.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "PICKLE-FAILURE-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "PICKLE-FAILURE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_43.py",
+          "line": "11:27",
+          "snippet": "pickle.loads(pickled_data)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_44.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "PICKLE-FAILURE-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "PICKLE-FAILURE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_44.py",
+          "line": "23:29",
+          "snippet": "cPickle.loads(decoded_token)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_45.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "XML-SAX-MAKE-PARSER-001"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "XML-SAX-MAKE-PARSER-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Chatgpt/script_45.py",
+          "line": "4:10",
+          "snippet": "xml.sax.make_parser()"
+        },
+        {
+          "rule_id": "XML-SAX-MAKE-PARSER-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Chatgpt/script_45.py",
+          "line": "4:10",
+          "snippet": "xml.sax.make_parser"
+        },
+        {
+          "rule_id": "XML-SAX-MAKE-PARSER-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Chatgpt/script_45.py",
+          "line": "7:17",
+          "snippet": "xml.sax.ContentHandler"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_46.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "XML-SAX-MAKE-PARSER-001"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 7,
+      "findings": [
+        {
+          "rule_id": "XML-SAX-MAKE-PARSER-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Chatgpt/script_46.py",
+          "line": "4:10",
+          "snippet": "xml.sax.make_parser()"
+        },
+        {
+          "rule_id": "XML-SAX-MAKE-PARSER-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Chatgpt/script_46.py",
+          "line": "4:10",
+          "snippet": "xml.sax.make_parser"
+        },
+        {
+          "rule_id": "XML-SAX-MAKE-PARSER-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Chatgpt/script_46.py",
+          "line": "7:24",
+          "snippet": "xml.sax.handler.feature_handler"
+        },
+        {
+          "rule_id": "XML-SAX-MAKE-PARSER-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Chatgpt/script_46.py",
+          "line": "18:19",
+          "snippet": "xml.sax.handler.feature_namespaces"
+        },
+        {
+          "rule_id": "XML-SAX-MAKE-PARSER-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Chatgpt/script_46.py",
+          "line": "19:19",
+          "snippet": "xml.sax.handler.feature_validation"
+        },
+        {
+          "rule_id": "XML-SAX-MAKE-PARSER-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Chatgpt/script_46.py",
+          "line": "22:59",
+          "snippet": "xml.sax.handler.feature_namespaces"
+        },
+        {
+          "rule_id": "XML-SAX-MAKE-PARSER-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Chatgpt/script_46.py",
+          "line": "23:59",
+          "snippet": "xml.sax.handler.feature_validation"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_47.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "WITH-OPEN-001",
+        "XML-SAX-MAKE-PARSER-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "SECM"
+      ],
+      "findings_count": 4,
+      "findings": [
+        {
+          "rule_id": "XML-SAX-MAKE-PARSER-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Chatgpt/script_47.py",
+          "line": "23:10",
+          "snippet": "xml.sax.make_parser()"
+        },
+        {
+          "rule_id": "XML-SAX-MAKE-PARSER-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Chatgpt/script_47.py",
+          "line": "4:17",
+          "snippet": "xml.sax.ContentHandler"
+        },
+        {
+          "rule_id": "XML-SAX-MAKE-PARSER-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Chatgpt/script_47.py",
+          "line": "23:10",
+          "snippet": "xml.sax.make_parser"
+        },
+        {
+          "rule_id": "WITH-OPEN-001",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Chatgpt/script_47.py",
+          "line": "30:6",
+          "snippet": "open(xml_file, \"r\")"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_48.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "ELEMENTTREE-CONFIGURATION-001"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "ELEMENTTREE-CONFIGURATION-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Chatgpt/script_48.py",
+          "line": "1:1",
+          "snippet": "import xml.etree.ElementTree as ET"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_49.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CREDENTIALS-001",
+        "ENCODE-DECODE-001"
+      ],
+      "vulnerabilities_summary": [
+        "IDAF",
+        "SDIF"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "ENCODE-DECODE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_49.py",
+          "line": "11:38",
+          "snippet": "password.encode('utf-8')"
+        },
+        {
+          "rule_id": "ENCODE-DECODE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_49.py",
+          "line": "19:27",
+          "snippet": "hashed_password.decode('utf-8')"
+        },
+        {
+          "rule_id": "CREDENTIALS-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_49.py",
+          "line": "15:1",
+          "snippet": "plaintext_password = \"my_secure_password\""
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_5.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "DEBUG-TRUE-001",
+        "OS-SYSTEM-002",
+        "RETURN-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF",
+        "SECM"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "RETURN-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_5.py",
+          "line": "28:10",
+          "snippet": "return f\"An error occurred: {str(e)}\""
+        },
+        {
+          "rule_id": "DEBUG-TRUE-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Chatgpt/script_5.py",
+          "line": "31:6",
+          "snippet": "app.run(debug=True)"
+        },
+        {
+          "rule_id": "OS-SYSTEM-002",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Chatgpt/script_5.py",
+          "line": "18:21",
+          "snippet": "os.system(command)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_50.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CREDENTIALS-001",
+        "ENCODE-DECODE-001"
+      ],
+      "vulnerabilities_summary": [
+        "IDAF",
+        "SDIF"
+      ],
+      "findings_count": 4,
+      "findings": [
+        {
+          "rule_id": "ENCODE-DECODE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_50.py",
+          "line": "13:38",
+          "snippet": "password.encode('utf-8')"
+        },
+        {
+          "rule_id": "ENCODE-DECODE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_50.py",
+          "line": "25:16",
+          "snippet": "salt.decode('utf-8')"
+        },
+        {
+          "rule_id": "ENCODE-DECODE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_50.py",
+          "line": "26:27",
+          "snippet": "hashed_password.decode('utf-8')"
+        },
+        {
+          "rule_id": "CREDENTIALS-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_50.py",
+          "line": "17:1",
+          "snippet": "plaintext_password = \"my_secure_password\""
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_51.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_52.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "TEMPORARYFILE-001",
+        "TEMPORARYFILE-MOD-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "TEMPORARYFILE-MOD-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_52.py",
+          "line": "12:15",
+          "snippet": "tempfile.NamedTemporaryFile(mode='w', delete=False)"
+        },
+        {
+          "rule_id": "TEMPORARYFILE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_52.py",
+          "line": "14:14",
+          "snippet": "temp_file.write(f\"User ID: {id_user} \")"
+        },
+        {
+          "rule_id": "TEMPORARYFILE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_52.py",
+          "line": "19:18",
+          "snippet": "temp_file.write(f\"- {result} \")"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_53.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_54.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_55.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_56.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "TEMPORARYFILE-001",
+        "TEMPORARYFILE-MOD-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "TEMPORARYFILE-MOD-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_56.py",
+          "line": "17:22",
+          "snippet": "tempfile.NamedTemporaryFile(mode='w', delete=False)"
+        },
+        {
+          "rule_id": "TEMPORARYFILE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_56.py",
+          "line": "20:10",
+          "snippet": "temp_file.write(str(payload))"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_57.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "TEMPORARYFILE-001",
+        "TEMPORARYFILE-MOD-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "TEMPORARYFILE-MOD-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_57.py",
+          "line": "12:22",
+          "snippet": "tempfile.NamedTemporaryFile(mode='w', delete=False)"
+        },
+        {
+          "rule_id": "TEMPORARYFILE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_57.py",
+          "line": "15:10",
+          "snippet": "temp_file.write(data)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_58.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_59.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_6.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CREDENTIALS-001",
+        "DEBUG-TRUE-001",
+        "RETURN-001"
+      ],
+      "vulnerabilities_summary": [
+        "IDAF",
+        "SDIF",
+        "SECM"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "RETURN-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_6.py",
+          "line": "22:10",
+          "snippet": "return f\"An error occurred: {str(e)}\""
+        },
+        {
+          "rule_id": "DEBUG-TRUE-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Chatgpt/script_6.py",
+          "line": "25:6",
+          "snippet": "app.run(debug=True)"
+        },
+        {
+          "rule_id": "CREDENTIALS-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_6.py",
+          "line": "6:1",
+          "snippet": "EXPECTED_PASS = 'password123'"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_60.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CREDENTIALS-001",
+        "INPUT-003",
+        "INPUT-004"
+      ],
+      "vulnerabilities_summary": [
+        "IDAF",
+        "INJC",
+        "SLMF"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "INPUT-003",
+          "vulnerabilities": [
+            "INJC",
+            "SLMF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_60.py",
+          "line": "16:24",
+          "snippet": "provided_password",
+          "tainted_variable": "provided_password"
+        },
+        {
+          "rule_id": "INPUT-004",
+          "vulnerabilities": [
+            "INJC",
+            "SLMF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_60.py",
+          "line": "9:13",
+          "snippet": "provided_password == expected_password",
+          "tainted_variable": "provided_password"
+        },
+        {
+          "rule_id": "CREDENTIALS-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_60.py",
+          "line": "12:1",
+          "snippet": "expected_password = \"secure_password\""
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_61.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "ENCODE-DECODE-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "ENCODE-DECODE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_61.py",
+          "line": "28:4",
+          "snippet": "dsa_public_key.decode('utf-8')"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_62.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "OS-SYSTEM-002"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "OS-SYSTEM-002",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Chatgpt/script_62.py",
+          "line": "10:13",
+          "snippet": "os.system(command)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_63.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "PICKLE-FAILURE-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "PICKLE-FAILURE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_63.py",
+          "line": "12:25",
+          "snippet": "pickle.dumps(payload)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_64.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "PICKLE-FAILURE-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "PICKLE-FAILURE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_64.py",
+          "line": "12:26",
+          "snippet": "pickle.loads(pickled_data)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_65.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "PICKLE-FAILURE-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "PICKLE-FAILURE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_65.py",
+          "line": "26:25",
+          "snippet": "pickle.loads(decoded_token_bytes)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_66.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_67.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "ELEMENTTREE-CONFIGURATION-001"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "ELEMENTTREE-CONFIGURATION-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Chatgpt/script_67.py",
+          "line": "1:1",
+          "snippet": "import xml.etree.ElementTree as ET"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_68.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "OS-CHMOD-001"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "OS-CHMOD-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Chatgpt/script_68.py",
+          "line": "12:10",
+          "snippet": "os.chmod(file_path, 0o400)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_69.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_7.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "DEBUG-TRUE-001",
+        "REQUEST-ARGS_GET-005",
+        "REQUEST-ARGS_GET-008",
+        "REQUEST-ARGS_GET-010",
+        "RETURN-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "SDIF",
+        "SECM"
+      ],
+      "findings_count": 6,
+      "findings": [
+        {
+          "rule_id": "RETURN-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_7.py",
+          "line": "46:10",
+          "snippet": "return f\"Deleted subscriptions for channel '{channel}'\""
+        },
+        {
+          "rule_id": "RETURN-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_7.py",
+          "line": "48:10",
+          "snippet": "return f\"An error occurred: {str(e)}\""
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-005",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Chatgpt/script_7.py",
+          "line": "46:17",
+          "snippet": "f\"Deleted subscriptions for channel '{channel}'\"",
+          "tainted_variable": "channel"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Chatgpt/script_7.py",
+          "line": "38:52",
+          "snippet": "channel",
+          "tainted_variable": "channel"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-010",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Chatgpt/script_7.py",
+          "line": "46:17",
+          "snippet": "f\"Deleted subscriptions for channel '{channel}'\"",
+          "tainted_variable": "channel"
+        },
+        {
+          "rule_id": "DEBUG-TRUE-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Chatgpt/script_7.py",
+          "line": "51:6",
+          "snippet": "app.run(debug=True)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_70.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "TEMPORARYFILE-MOD-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "TEMPORARYFILE-MOD-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_70.py",
+          "line": "5:6",
+          "snippet": "tempfile.NamedTemporaryFile(delete=False)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_71.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_72.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_73.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CERT-001"
+      ],
+      "vulnerabilities_summary": [
+        "IDAF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CERT-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_73.py",
+          "line": "8:6",
+          "snippet": "ctx.verify_mode = ssl.CERT_NONE"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_74.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_75.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_76.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_77.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "DEBUG-TRUE-001",
+        "SET-COOKIE-001-flask",
+        "SET-COOKIE-001-ssl"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF",
+        "SECM"
+      ],
+      "findings_count": 4,
+      "findings": [
+        {
+          "rule_id": "DEBUG-TRUE-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Chatgpt/script_77.py",
+          "line": "17:6",
+          "snippet": "app.run(debug=True)"
+        },
+        {
+          "rule_id": "SET-COOKIE-001-flask",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_77.py",
+          "line": "11:6",
+          "snippet": "response.set_cookie('username', 'john_doe', max_age=3600)"
+        },
+        {
+          "rule_id": "SET-COOKIE-001-flask",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_77.py",
+          "line": "12:6",
+          "snippet": "response.set_cookie('language', 'en')"
+        },
+        {
+          "rule_id": "SET-COOKIE-001-ssl",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Chatgpt/script_77.py",
+          "line": "12:6",
+          "snippet": "response.set_cookie('language', 'en')"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_78.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "URANDOM-001"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "URANDOM-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_78.py",
+          "line": "5:21",
+          "snippet": "os.urandom(16)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_79.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "JWT-DECODE-001-protocols",
+        "JWT-DECODE-002-protocols"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "JWT-DECODE-001-protocols",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_79.py",
+          "line": "8:16",
+          "snippet": "jwt.decode(jwt_token, options={\"verify_signature\": False})"
+        },
+        {
+          "rule_id": "JWT-DECODE-002-protocols",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_79.py",
+          "line": "8:16",
+          "snippet": "jwt.decode(jwt_token, options={\"verify_signature\": False})"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_8.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "DEBUG-TRUE-001",
+        "REQUEST-ARGS_GET-005",
+        "RETURN-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "SDIF",
+        "SECM"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "RETURN-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_8.py",
+          "line": "21:10",
+          "snippet": "return f\"An error occurred: {str(e)}\""
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-005",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Chatgpt/script_8.py",
+          "line": "16:10",
+          "snippet": "response = f\"ID: {input_id}\"",
+          "tainted_variable": "input_id"
+        },
+        {
+          "rule_id": "DEBUG-TRUE-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Chatgpt/script_8.py",
+          "line": "24:6",
+          "snippet": "app.run(debug=True)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_80.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_81.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_82.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-462-ALIST-DUPLICATE"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-462"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-462-ALIST-DUPLICATE",
+          "vulnerabilities": [
+            "CWE-462"
+          ],
+          "source_file": "script_totali_Chatgpt/script_82.py",
+          "line": "11:6",
+          "snippet": "while True: # Get the next key-value pair from the queue key, value = pair_queue.get() # Add the pair to the sorted list sorted_pairs.append…"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_83.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_84.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "ELEMENTTREE-CONFIGURATION-001"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "ELEMENTTREE-CONFIGURATION-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Chatgpt/script_84.py",
+          "line": "1:1",
+          "snippet": "import xml.etree.ElementTree as ET"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_85.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "ELEMENTTREE-CONFIGURATION-001"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "ELEMENTTREE-CONFIGURATION-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Chatgpt/script_85.py",
+          "line": "1:1",
+          "snippet": "import xml.etree.ElementTree as ET"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_86.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "ELEMENTTREE-CONFIGURATION-001"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "ELEMENTTREE-CONFIGURATION-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Chatgpt/script_86.py",
+          "line": "1:1",
+          "snippet": "import xml.etree.ElementTree as ET"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_87.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "ELEMENTTREE-CONFIGURATION-001",
+        "HTTP-SERVER-003"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF",
+        "SECM"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "HTTP-SERVER-003",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_87.py",
+          "line": "2:1",
+          "snippet": "from http.server import SimpleHTTPRequestHandler, HTTPServer"
+        },
+        {
+          "rule_id": "ELEMENTTREE-CONFIGURATION-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Chatgpt/script_87.py",
+          "line": "1:1",
+          "snippet": "import xml.etree.ElementTree as ET"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_88.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_89.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_9.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "DEBUG-TRUE-001",
+        "REQUEST-ARGS_GET-005",
+        "REQUEST-ARGS_GET-008",
+        "REQUEST-ARGS_GET-010",
+        "RETURN-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "SDIF",
+        "SECM"
+      ],
+      "findings_count": 7,
+      "findings": [
+        {
+          "rule_id": "RETURN-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_9.py",
+          "line": "31:14",
+          "snippet": "return f\"File '{file_name}' not found\""
+        },
+        {
+          "rule_id": "RETURN-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_9.py",
+          "line": "33:10",
+          "snippet": "return f\"An error occurred: {str(e)}\""
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-005",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Chatgpt/script_9.py",
+          "line": "27:14",
+          "snippet": "response.headers['Content-Disposition'] = f'attachment; filename={file_name}'",
+          "tainted_variable": "file_name"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-005",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Chatgpt/script_9.py",
+          "line": "31:21",
+          "snippet": "f\"File '{file_name}' not found\"",
+          "tainted_variable": "file_name"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Chatgpt/script_9.py",
+          "line": "17:44",
+          "snippet": "file_name",
+          "tainted_variable": "file_name"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-010",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Chatgpt/script_9.py",
+          "line": "31:21",
+          "snippet": "f\"File '{file_name}' not found\"",
+          "tainted_variable": "file_name"
+        },
+        {
+          "rule_id": "DEBUG-TRUE-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Chatgpt/script_9.py",
+          "line": "36:6",
+          "snippet": "app.run(debug=True)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_90.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "OS-CHMOD-001"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "OS-CHMOD-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Chatgpt/script_90.py",
+          "line": "3:1",
+          "snippet": "os.chmod('priv_file', 0o400)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_91.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CREATE-DEFAULT-CONTEXT-001"
+      ],
+      "vulnerabilities_summary": [
+        "IDAF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CREATE-DEFAULT-CONTEXT-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_91.py",
+          "line": "5:20",
+          "snippet": "ssl.create_default_context()"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_92.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_93.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CREATE-DEFAULT-CONTEXT-001"
+      ],
+      "vulnerabilities_summary": [
+        "IDAF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CREATE-DEFAULT-CONTEXT-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_93.py",
+          "line": "6:24",
+          "snippet": "ssl.create_default_context()"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_94.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_95.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CREATE-DEFAULT-CONTEXT-001"
+      ],
+      "vulnerabilities_summary": [
+        "IDAF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CREATE-DEFAULT-CONTEXT-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_95.py",
+          "line": "6:24",
+          "snippet": "ssl.create_default_context()"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_96.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CREATE-DEFAULT-CONTEXT-001"
+      ],
+      "vulnerabilities_summary": [
+        "IDAF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CREATE-DEFAULT-CONTEXT-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_96.py",
+          "line": "6:24",
+          "snippet": "ssl.create_default_context()"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_97.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CREDENTIALS-001",
+        "ENCODE-DECODE-001",
+        "HTTP-SERVER-003"
+      ],
+      "vulnerabilities_summary": [
+        "IDAF",
+        "SDIF"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "HTTP-SERVER-003",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_97.py",
+          "line": "1:1",
+          "snippet": "from http.server import BaseHTTPRequestHandler, HTTPServer"
+        },
+        {
+          "rule_id": "ENCODE-DECODE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_97.py",
+          "line": "23:31",
+          "snippet": "response_text.encode()"
+        },
+        {
+          "rule_id": "CREDENTIALS-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_97.py",
+          "line": "5:1",
+          "snippet": "password = \"my_password\""
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_98.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "URANDOM-001"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "URANDOM-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_98.py",
+          "line": "9:24",
+          "snippet": "os.urandom(16)"
+        },
+        {
+          "rule_id": "URANDOM-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_98.py",
+          "line": "17:23",
+          "snippet": "os.urandom(4)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Chatgpt/script_99.py",
+      "xml_source": "Chatgpt_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "RETURN-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "RETURN-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Chatgpt/script_99.py",
+          "line": "13:10",
+          "snippet": "return f\"Error decoding token: {e}\""
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,3707 @@
+{
+  "summary": {
+    "total_files_analyzed": 124,
+    "vulnerable_files": 103,
+    "total_findings": 203,
+    "categories_count": {
+      "BRAC": 32,
+      "INSD": 5,
+      "INJC": 44,
+      "SLMF": 36,
+      "CRYF": 36,
+      "SDIF": 41,
+      "SECM": 29,
+      "IDAF": 16,
+      "CWE-462": 1
+    }
+  },
+  "details": [
+    {
+      "source_file": "script_totali_Gemini/script_1.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS-GET-010",
+        "REQUEST-ARGS_GET-005",
+        "REQUEST-ARGS_GET-008",
+        "WITH-OPEN-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "INSD"
+      ],
+      "findings_count": 4,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-005",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Gemini/script_1.py",
+          "line": "21:24",
+          "snippet": "\"names/\" + name",
+          "tainted_variable": "name"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Gemini/script_1.py",
+          "line": "21:24",
+          "snippet": "\"names/\" + name",
+          "tainted_variable": "name"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-010",
+          "vulnerabilities": [
+            "INSD"
+          ],
+          "source_file": "script_totali_Gemini/script_1.py",
+          "line": "21:24",
+          "snippet": "\"names/\" + name",
+          "tainted_variable": "name"
+        },
+        {
+          "rule_id": "WITH-OPEN-001",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Gemini/script_1.py",
+          "line": "21:19",
+          "snippet": "open(\"names/\" + name, \"r\")"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_10.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "INPUT-003"
+      ],
+      "vulnerabilities_summary": [
+        "INJC",
+        "SLMF"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "INPUT-003",
+          "vulnerabilities": [
+            "INJC",
+            "SLMF"
+          ],
+          "source_file": "script_totali_Gemini/script_10.py",
+          "line": "39:27",
+          "snippet": "base_dn",
+          "tainted_variable": "base_dn"
+        },
+        {
+          "rule_id": "INPUT-003",
+          "vulnerabilities": [
+            "INJC",
+            "SLMF"
+          ],
+          "source_file": "script_totali_Gemini/script_10.py",
+          "line": "39:36",
+          "snippet": "filter",
+          "tainted_variable": "filter"
+        },
+        {
+          "rule_id": "INPUT-003",
+          "vulnerabilities": [
+            "INJC",
+            "SLMF"
+          ],
+          "source_file": "script_totali_Gemini/script_10.py",
+          "line": "39:44",
+          "snippet": "attributes",
+          "tainted_variable": "attributes"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_100.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "JWT-DECODE-002-protocols"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "JWT-DECODE-002-protocols",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_totali_Gemini/script_100.py",
+          "line": "5:17",
+          "snippet": "jwt.decode(token, key, verify=True)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_101.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "URANDOM-001"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "URANDOM-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_totali_Gemini/script_101.py",
+          "line": "5:7",
+          "snippet": "os.urandom(32)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_102.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "HASHLIB-SHA256-001"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "HASHLIB-SHA256-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_totali_Gemini/script_102.py",
+          "line": "14:20",
+          "snippet": "hashlib.sha256(key)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_103.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "JWT-DECODE-001",
+        "JWT-DECODE-002-protocols"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "JWT-DECODE-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_totali_Gemini/script_103.py",
+          "line": "5:20",
+          "snippet": "jwt.decode(token, verify=False)"
+        },
+        {
+          "rule_id": "JWT-DECODE-002-protocols",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_totali_Gemini/script_103.py",
+          "line": "5:20",
+          "snippet": "jwt.decode(token, verify=False)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_104.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Gemini/script_105.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "ENCODE-DECODE-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "ENCODE-DECODE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Gemini/script_105.py",
+          "line": "7:25",
+          "snippet": "input_stream.encode(input_encoding)"
+        },
+        {
+          "rule_id": "ENCODE-DECODE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Gemini/script_105.py",
+          "line": "21:30",
+          "snippet": "match.decode(input_encoding)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_106.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Gemini/script_108.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "ENCODE-DECODE-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "ENCODE-DECODE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Gemini/script_108.py",
+          "line": "18:27",
+          "snippet": "encoder.encode(string)"
+        },
+        {
+          "rule_id": "ENCODE-DECODE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Gemini/script_108.py",
+          "line": "18:50",
+          "snippet": "decode(\"utf-8\")"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_109.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "JSON-LOADS-003"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "JSON-LOADS-003",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Gemini/script_109.py",
+          "line": "15:23",
+          "snippet": "data",
+          "tainted_variable": "data"
+        },
+        {
+          "rule_id": "JSON-LOADS-003",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Gemini/script_109.py",
+          "line": "17:12",
+          "snippet": "f\"Valid request: {data}\"",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_11.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "INPUT-003"
+      ],
+      "vulnerabilities_summary": [
+        "INJC",
+        "SLMF"
+      ],
+      "findings_count": 6,
+      "findings": [
+        {
+          "rule_id": "INPUT-003",
+          "vulnerabilities": [
+            "INJC",
+            "SLMF"
+          ],
+          "source_file": "script_totali_Gemini/script_11.py",
+          "line": "40:34",
+          "snippet": "server",
+          "tainted_variable": "server"
+        },
+        {
+          "rule_id": "INPUT-003",
+          "vulnerabilities": [
+            "INJC",
+            "SLMF"
+          ],
+          "source_file": "script_totali_Gemini/script_11.py",
+          "line": "40:42",
+          "snippet": "port",
+          "tainted_variable": "port"
+        },
+        {
+          "rule_id": "INPUT-003",
+          "vulnerabilities": [
+            "INJC",
+            "SLMF"
+          ],
+          "source_file": "script_totali_Gemini/script_11.py",
+          "line": "40:48",
+          "snippet": "user",
+          "tainted_variable": "user"
+        },
+        {
+          "rule_id": "INPUT-003",
+          "vulnerabilities": [
+            "INJC",
+            "SLMF"
+          ],
+          "source_file": "script_totali_Gemini/script_11.py",
+          "line": "40:54",
+          "snippet": "password",
+          "tainted_variable": "password"
+        },
+        {
+          "rule_id": "INPUT-003",
+          "vulnerabilities": [
+            "INJC",
+            "SLMF"
+          ],
+          "source_file": "script_totali_Gemini/script_11.py",
+          "line": "40:64",
+          "snippet": "auto_bind",
+          "tainted_variable": "auto_bind"
+        },
+        {
+          "rule_id": "INPUT-003",
+          "vulnerabilities": [
+            "INJC",
+            "SLMF"
+          ],
+          "source_file": "script_totali_Gemini/script_11.py",
+          "line": "46:47",
+          "snippet": "filter",
+          "tainted_variable": "filter"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_110.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Gemini/script_111.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "INPUT-001",
+        "INPUT-003",
+        "SQL-001-call"
+      ],
+      "vulnerabilities_summary": [
+        "INJC",
+        "SLMF"
+      ],
+      "findings_count": 5,
+      "findings": [
+        {
+          "rule_id": "INPUT-001",
+          "vulnerabilities": [
+            "INJC",
+            "SLMF"
+          ],
+          "source_file": "script_totali_Gemini/script_111.py",
+          "line": "5:6",
+          "snippet": "url = \"https://api.spoonacular.com/recipes/ingredients/\" + ingredient_id",
+          "tainted_variable": "ingredient_id"
+        },
+        {
+          "rule_id": "INPUT-003",
+          "vulnerabilities": [
+            "INJC",
+            "SLMF"
+          ],
+          "source_file": "script_totali_Gemini/script_111.py",
+          "line": "17:28",
+          "snippet": "ingredient_id",
+          "tainted_variable": "ingredient_id"
+        },
+        {
+          "rule_id": "INPUT-003",
+          "vulnerabilities": [
+            "INJC",
+            "SLMF"
+          ],
+          "source_file": "script_totali_Gemini/script_111.py",
+          "line": "9:16",
+          "snippet": "f\"Ingredient with ID {ingredient_id} deleted successfully.\"",
+          "tainted_variable": "ingredient_id"
+        },
+        {
+          "rule_id": "SQL-001-call",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "script_totali_Gemini/script_111.py",
+          "line": "17:28",
+          "snippet": "ingredient_id",
+          "tainted_variable": "ingredient_id"
+        },
+        {
+          "rule_id": "SQL-001-call",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "script_totali_Gemini/script_111.py",
+          "line": "9:16",
+          "snippet": "f\"Ingredient with ID {ingredient_id} deleted successfully.\"",
+          "tainted_variable": "ingredient_id"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_112.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Gemini/script_113.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Gemini/script_114.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "PICKLE-FAILURE-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "PICKLE-FAILURE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Gemini/script_114.py",
+          "line": "5:32",
+          "snippet": "pickle.load(f)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_115.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "SET-COOKIE-001-flask"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "SET-COOKIE-001-flask",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_totali_Gemini/script_115.py",
+          "line": "26:10",
+          "snippet": "cookies.set_cookie(cookie_object)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_116.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Gemini/script_117.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "INPUT-003",
+        "MAKEDIRS-001"
+      ],
+      "vulnerabilities_summary": [
+        "INJC",
+        "SECM",
+        "SLMF"
+      ],
+      "findings_count": 5,
+      "findings": [
+        {
+          "rule_id": "INPUT-003",
+          "vulnerabilities": [
+            "INJC",
+            "SLMF"
+          ],
+          "source_file": "script_totali_Gemini/script_117.py",
+          "line": "4:44",
+          "snippet": "file_path",
+          "tainted_variable": "file_path"
+        },
+        {
+          "rule_id": "INPUT-003",
+          "vulnerabilities": [
+            "INJC",
+            "SLMF"
+          ],
+          "source_file": "script_totali_Gemini/script_117.py",
+          "line": "5:38",
+          "snippet": "file_path",
+          "tainted_variable": "file_path"
+        },
+        {
+          "rule_id": "INPUT-003",
+          "vulnerabilities": [
+            "INJC",
+            "SLMF"
+          ],
+          "source_file": "script_totali_Gemini/script_117.py",
+          "line": "7:16",
+          "snippet": "file_path",
+          "tainted_variable": "file_path"
+        },
+        {
+          "rule_id": "INPUT-003",
+          "vulnerabilities": [
+            "INJC",
+            "SLMF"
+          ],
+          "source_file": "script_totali_Gemini/script_117.py",
+          "line": "12:18",
+          "snippet": "file_path",
+          "tainted_variable": "file_path"
+        },
+        {
+          "rule_id": "MAKEDIRS-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Gemini/script_117.py",
+          "line": "5:10",
+          "snippet": "os.makedirs(os.path.dirname(file_path), exist_ok=True)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_118.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "INPUT-003",
+        "STRING-001"
+      ],
+      "vulnerabilities_summary": [
+        "INJC",
+        "SDIF",
+        "SLMF"
+      ],
+      "findings_count": 6,
+      "findings": [
+        {
+          "rule_id": "INPUT-003",
+          "vulnerabilities": [
+            "INJC",
+            "SLMF"
+          ],
+          "source_file": "script_totali_Gemini/script_118.py",
+          "line": "6:19",
+          "snippet": "file_path",
+          "tainted_variable": "file_path"
+        },
+        {
+          "rule_id": "INPUT-003",
+          "vulnerabilities": [
+            "INJC",
+            "SLMF"
+          ],
+          "source_file": "script_totali_Gemini/script_118.py",
+          "line": "8:16",
+          "snippet": "f\"Failed to change permission of '{file_path}' to '{permission}'\"",
+          "tainted_variable": "file_path"
+        },
+        {
+          "rule_id": "INPUT-003",
+          "vulnerabilities": [
+            "INJC",
+            "SLMF"
+          ],
+          "source_file": "script_totali_Gemini/script_118.py",
+          "line": "6:30",
+          "snippet": "permission",
+          "tainted_variable": "permission"
+        },
+        {
+          "rule_id": "INPUT-003",
+          "vulnerabilities": [
+            "INJC",
+            "SLMF"
+          ],
+          "source_file": "script_totali_Gemini/script_118.py",
+          "line": "14:39",
+          "snippet": "permission",
+          "tainted_variable": "permission"
+        },
+        {
+          "rule_id": "INPUT-003",
+          "vulnerabilities": [
+            "INJC",
+            "SLMF"
+          ],
+          "source_file": "script_totali_Gemini/script_118.py",
+          "line": "8:16",
+          "snippet": "f\"Failed to change permission of '{file_path}' to '{permission}'\"",
+          "tainted_variable": "permission"
+        },
+        {
+          "rule_id": "STRING-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Gemini/script_118.py",
+          "line": "14:35",
+          "snippet": "int(permission, 8)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_119.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Gemini/script_12.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "DEBUG-TRUE-001",
+        "EVAL-001",
+        "REQUEST-ARGS_GET-008"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "INJC",
+        "SECM"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "EVAL-001",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "script_totali_Gemini/script_12.py",
+          "line": "17:14",
+          "snippet": "eval(user_input)"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Gemini/script_12.py",
+          "line": "17:19",
+          "snippet": "user_input",
+          "tainted_variable": "user_input"
+        },
+        {
+          "rule_id": "DEBUG-TRUE-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Gemini/script_12.py",
+          "line": "33:5",
+          "snippet": "app.run(debug=True)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_120.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CBC-MODE-001",
+        "CIPHER-001"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CBC-MODE-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_totali_Gemini/script_120.py",
+          "line": "8:68",
+          "snippet": "modes.CBC(b'random_iv')"
+        },
+        {
+          "rule_id": "CIPHER-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_totali_Gemini/script_120.py",
+          "line": "8:10",
+          "snippet": "Cipher(algorithms.AES(key.public_key().public_numbers()), modes.CBC(b'random_iv'))"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_121.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Gemini/script_122.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "ENCODE-DECODE-001",
+        "HASHLIB-SHA256-001",
+        "INPUT-003",
+        "INPUT-004",
+        "SQL-001-call"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF",
+        "INJC",
+        "SDIF",
+        "SLMF"
+      ],
+      "findings_count": 6,
+      "findings": [
+        {
+          "rule_id": "INPUT-003",
+          "vulnerabilities": [
+            "INJC",
+            "SLMF"
+          ],
+          "source_file": "script_totali_Gemini/script_122.py",
+          "line": "21:31",
+          "snippet": "char",
+          "tainted_variable": "char"
+        },
+        {
+          "rule_id": "INPUT-003",
+          "vulnerabilities": [
+            "INJC",
+            "SLMF"
+          ],
+          "source_file": "script_totali_Gemini/script_122.py",
+          "line": "22:12",
+          "snippet": "f\"Hashes for '{char}': {hashes}\"",
+          "tainted_variable": "char"
+        },
+        {
+          "rule_id": "INPUT-004",
+          "vulnerabilities": [
+            "INJC",
+            "SLMF"
+          ],
+          "source_file": "script_totali_Gemini/script_122.py",
+          "line": "7:25",
+          "snippet": "char.encode",
+          "tainted_variable": "char"
+        },
+        {
+          "rule_id": "HASHLIB-SHA256-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_totali_Gemini/script_122.py",
+          "line": "6:20",
+          "snippet": "hashlib.sha256()"
+        },
+        {
+          "rule_id": "ENCODE-DECODE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Gemini/script_122.py",
+          "line": "7:25",
+          "snippet": "char.encode('utf8')"
+        },
+        {
+          "rule_id": "SQL-001-call",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "script_totali_Gemini/script_122.py",
+          "line": "7:25",
+          "snippet": "char.encode",
+          "tainted_variable": "char"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_123.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Gemini/script_124.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "BOTO3-CLIENT-003"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "BOTO3-CLIENT-003",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Gemini/script_124.py",
+          "line": "8:17",
+          "snippet": "dynamodb.scan",
+          "tainted_variable": "dynamodb"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_125.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "LOGGING-ERROR-001",
+        "LOGGING-INFO-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "SLMF"
+      ],
+      "findings_count": 5,
+      "findings": [
+        {
+          "rule_id": "LOGGING-INFO-001",
+          "vulnerabilities": [
+            "SLMF"
+          ],
+          "source_file": "script_totali_Gemini/script_125.py",
+          "line": "19:18",
+          "snippet": "logging.info('User session invalidated successfully.')"
+        },
+        {
+          "rule_id": "LOGGING-INFO-001",
+          "vulnerabilities": [
+            "SLMF"
+          ],
+          "source_file": "script_totali_Gemini/script_125.py",
+          "line": "33:10",
+          "snippet": "logging.info('User data cleared successfully.')"
+        },
+        {
+          "rule_id": "LOGGING-ERROR-001",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Gemini/script_125.py",
+          "line": "21:18",
+          "snippet": "logging.error('Failed to invalidate user session:', response.text)"
+        },
+        {
+          "rule_id": "LOGGING-ERROR-001",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Gemini/script_125.py",
+          "line": "23:14",
+          "snippet": "logging.error('Failed to invalidate user session:', e)"
+        },
+        {
+          "rule_id": "LOGGING-ERROR-001",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Gemini/script_125.py",
+          "line": "35:10",
+          "snippet": "logging.error('Failed to clear user data:', e)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_13.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "DEBUG-TRUE-001",
+        "IMPORT-MODULE-001",
+        "REQUEST-ARGS_GET-010"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "SDIF",
+        "SECM"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-010",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Gemini/script_13.py",
+          "line": "18:12",
+          "snippet": "component_version",
+          "tainted_variable": "component_version"
+        },
+        {
+          "rule_id": "DEBUG-TRUE-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Gemini/script_13.py",
+          "line": "50:5",
+          "snippet": "app.run(debug=True)"
+        },
+        {
+          "rule_id": "IMPORT-MODULE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Gemini/script_13.py",
+          "line": "31:14",
+          "snippet": "__import__(\"urllib\", fromlist=[component_version])"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_14.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "DEBUG-TRUE-001"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "DEBUG-TRUE-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Gemini/script_14.py",
+          "line": "36:5",
+          "snippet": "app.run(debug=True)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_15.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "DEBUG-TRUE-001",
+        "REQUEST-ARGS_GET-008"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "SECM"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Gemini/script_15.py",
+          "line": "24:14",
+          "snippet": "user",
+          "tainted_variable": "user"
+        },
+        {
+          "rule_id": "DEBUG-TRUE-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Gemini/script_15.py",
+          "line": "30:5",
+          "snippet": "app.run(debug=True)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_16.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "DEBUG-TRUE-001",
+        "REQUEST-ARGS_GET-008"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "SECM"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Gemini/script_16.py",
+          "line": "24:15",
+          "snippet": "data",
+          "tainted_variable": "data"
+        },
+        {
+          "rule_id": "DEBUG-TRUE-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Gemini/script_16.py",
+          "line": "30:5",
+          "snippet": "app.run(debug=True)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_17.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "DEBUG-TRUE-001",
+        "REQUEST-ARGS_GET-008"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "SECM"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Gemini/script_17.py",
+          "line": "31:35",
+          "snippet": "id",
+          "tainted_variable": "id"
+        },
+        {
+          "rule_id": "DEBUG-TRUE-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Gemini/script_17.py",
+          "line": "37:5",
+          "snippet": "app.run(debug=True)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_18.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "MKDIR-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "MKDIR-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Gemini/script_18.py",
+          "line": "13:9",
+          "snippet": "os.mkdir(directory_path)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_19.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "DEBUG-TRUE-001",
+        "MKDIR-001",
+        "REQUEST-ARGS-GET-023",
+        "REQUEST-ARGS_GET-009"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "INJC",
+        "INSD",
+        "SDIF",
+        "SECM"
+      ],
+      "findings_count": 4,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-009",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Gemini/script_19.py",
+          "line": "34:14",
+          "snippet": "pdf_file",
+          "tainted_variable": "pdf_file"
+        },
+        {
+          "rule_id": "DEBUG-TRUE-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Gemini/script_19.py",
+          "line": "40:5",
+          "snippet": "app.run(debug=True)"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-023",
+          "vulnerabilities": [
+            "INSD",
+            "INJC"
+          ],
+          "source_file": "script_totali_Gemini/script_19.py",
+          "line": "34:14",
+          "snippet": "pdf_file",
+          "tainted_variable": "pdf_file"
+        },
+        {
+          "rule_id": "MKDIR-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Gemini/script_19.py",
+          "line": "20:9",
+          "snippet": "os.mkdir(directory_path)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_2.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "DEBUG-TRUE-001",
+        "REQUEST-ARGS_GET-008",
+        "SEND-FILE-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "CRYF",
+        "SECM"
+      ],
+      "findings_count": 4,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Gemini/script_2.py",
+          "line": "32:28",
+          "snippet": "filename",
+          "tainted_variable": "filename"
+        },
+        {
+          "rule_id": "DEBUG-TRUE-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Gemini/script_2.py",
+          "line": "42:5",
+          "snippet": "app.run(debug=True)"
+        },
+        {
+          "rule_id": "SEND-FILE-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_totali_Gemini/script_2.py",
+          "line": "36:16",
+          "snippet": "flask.send_file(\"404.html\")"
+        },
+        {
+          "rule_id": "SEND-FILE-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_totali_Gemini/script_2.py",
+          "line": "39:12",
+          "snippet": "flask.send_file(file_object)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_20.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "DEBUG-TRUE-001",
+        "REQUEST-ARGS-GET-024",
+        "REQUEST-ARGS_GET-009",
+        "SEND-FILE-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "CRYF",
+        "INJC",
+        "INSD",
+        "SECM"
+      ],
+      "findings_count": 4,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-009",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Gemini/script_20.py",
+          "line": "17:17",
+          "snippet": "image_file.read",
+          "tainted_variable": "image_file"
+        },
+        {
+          "rule_id": "DEBUG-TRUE-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Gemini/script_20.py",
+          "line": "33:4",
+          "snippet": "app.run(debug=True)"
+        },
+        {
+          "rule_id": "SEND-FILE-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_totali_Gemini/script_20.py",
+          "line": "30:11",
+          "snippet": "flask.send_file(io.BytesIO(image_data), mimetype=\"image/jpeg\")"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-024",
+          "vulnerabilities": [
+            "INSD",
+            "INJC"
+          ],
+          "source_file": "script_totali_Gemini/script_20.py",
+          "line": "17:17",
+          "snippet": "image_file.read",
+          "tainted_variable": "image_file"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_21.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "DEBUG-TRUE-001",
+        "ENCODE-DECODE-001",
+        "HASHLIB-SHA256-001",
+        "REQUEST-ARGS_GET-008"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "CRYF",
+        "SDIF",
+        "SECM"
+      ],
+      "findings_count": 4,
+      "findings": [
+        {
+          "rule_id": "HASHLIB-SHA256-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_totali_Gemini/script_21.py",
+          "line": "15:21",
+          "snippet": "hashlib.sha256()"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Gemini/script_21.py",
+          "line": "31:36",
+          "snippet": "password",
+          "tainted_variable": "password"
+        },
+        {
+          "rule_id": "DEBUG-TRUE-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Gemini/script_21.py",
+          "line": "37:4",
+          "snippet": "app.run(debug=True)"
+        },
+        {
+          "rule_id": "ENCODE-DECODE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Gemini/script_21.py",
+          "line": "18:26",
+          "snippet": "password.encode()"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_22.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "DEBUG-TRUE-001",
+        "FLASK-REDIRECT-001",
+        "REQUEST-ARGS_GET-008"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "SECM"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Gemini/script_22.py",
+          "line": "21:23",
+          "snippet": "mark_url",
+          "tainted_variable": "mark_url"
+        },
+        {
+          "rule_id": "DEBUG-TRUE-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Gemini/script_22.py",
+          "line": "24:4",
+          "snippet": "app.run(debug=True)"
+        },
+        {
+          "rule_id": "FLASK-REDIRECT-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Gemini/script_22.py",
+          "line": "11:11",
+          "snippet": "flask.redirect(mark_url)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_23.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "DEBUG-TRUE-001",
+        "ELEMENTTREE-CONFIGURATION-001",
+        "REQUEST-ARGS-GET-024",
+        "REQUEST-ARGS_GET-009"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "INJC",
+        "INSD",
+        "SECM"
+      ],
+      "findings_count": 4,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-009",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Gemini/script_23.py",
+          "line": "18:11",
+          "snippet": "xml_file_data.read",
+          "tainted_variable": "xml_file_data"
+        },
+        {
+          "rule_id": "DEBUG-TRUE-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Gemini/script_23.py",
+          "line": "51:4",
+          "snippet": "app.run(debug=True)"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-024",
+          "vulnerabilities": [
+            "INSD",
+            "INJC"
+          ],
+          "source_file": "script_totali_Gemini/script_23.py",
+          "line": "18:11",
+          "snippet": "xml_file_data.read",
+          "tainted_variable": "xml_file_data"
+        },
+        {
+          "rule_id": "ELEMENTTREE-CONFIGURATION-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Gemini/script_23.py",
+          "line": "2:1",
+          "snippet": "import xml.etree.ElementTree as ET"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_24.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "INPUT-003",
+        "STRING-001"
+      ],
+      "vulnerabilities_summary": [
+        "INJC",
+        "SDIF",
+        "SLMF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "INPUT-003",
+          "vulnerabilities": [
+            "INJC",
+            "SLMF"
+          ],
+          "source_file": "script_totali_Gemini/script_24.py",
+          "line": "15:19",
+          "snippet": "input_str",
+          "tainted_variable": "input_str"
+        },
+        {
+          "rule_id": "STRING-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Gemini/script_24.py",
+          "line": "15:15",
+          "snippet": "int(input_str)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_25.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "INPUT-003",
+        "INPUT-004"
+      ],
+      "vulnerabilities_summary": [
+        "INJC",
+        "SLMF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "INPUT-003",
+          "vulnerabilities": [
+            "INJC",
+            "SLMF"
+          ],
+          "source_file": "script_totali_Gemini/script_25.py",
+          "line": "4:22",
+          "snippet": "num",
+          "tainted_variable": "num"
+        },
+        {
+          "rule_id": "INPUT-004",
+          "vulnerabilities": [
+            "INJC",
+            "SLMF"
+          ],
+          "source_file": "script_totali_Gemini/script_25.py",
+          "line": "5:11",
+          "snippet": "num",
+          "tainted_variable": "num"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_26.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "LXML-ETREE-003"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "LXML-ETREE-003",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Gemini/script_26.py",
+          "line": "2:1",
+          "snippet": "from lxml import etree"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_27.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Gemini/script_28.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "INPUT-001",
+        "INPUT-003"
+      ],
+      "vulnerabilities_summary": [
+        "INJC",
+        "SLMF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "INPUT-001",
+          "vulnerabilities": [
+            "INJC",
+            "SLMF"
+          ],
+          "source_file": "script_totali_Gemini/script_28.py",
+          "line": "4:4",
+          "snippet": "url = \"https://api.github.com/users/\" + user_number",
+          "tainted_variable": "user_number"
+        },
+        {
+          "rule_id": "INPUT-003",
+          "vulnerabilities": [
+            "INJC",
+            "SLMF"
+          ],
+          "source_file": "script_totali_Gemini/script_28.py",
+          "line": "14:27",
+          "snippet": "user_number",
+          "tainted_variable": "user_number"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_29.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "URL-PARSE-003",
+        "URLLIB-URLPARSEQS-001"
+      ],
+      "vulnerabilities_summary": [
+        "INJC",
+        "SECM"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "URL-PARSE-003",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "script_totali_Gemini/script_29.py",
+          "line": "6:41",
+          "snippet": "parsed_url.query",
+          "tainted_variable": "parsed_url"
+        },
+        {
+          "rule_id": "URLLIB-URLPARSEQS-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Gemini/script_29.py",
+          "line": "6:19",
+          "snippet": "urllib.parse.parse_qs(parsed_url.query)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_3.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "DEBUG-TRUE-001"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "DEBUG-TRUE-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Gemini/script_3.py",
+          "line": "39:5",
+          "snippet": "app.run(debug=True)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_30.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "WITH-OPEN-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "WITH-OPEN-001",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Gemini/script_30.py",
+          "line": "4:9",
+          "snippet": "open(filename, \"r\")"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_31.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS_GET-008"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Gemini/script_31.py",
+          "line": "8:24",
+          "snippet": "id",
+          "tainted_variable": "id"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_32.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Gemini/script_33.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "INPUT-003"
+      ],
+      "vulnerabilities_summary": [
+        "INJC",
+        "SLMF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "INPUT-003",
+          "vulnerabilities": [
+            "INJC",
+            "SLMF"
+          ],
+          "source_file": "script_totali_Gemini/script_33.py",
+          "line": "7:37",
+          "snippet": "sf",
+          "tainted_variable": "sf"
+        },
+        {
+          "rule_id": "INPUT-003",
+          "vulnerabilities": [
+            "INJC",
+            "SLMF"
+          ],
+          "source_file": "script_totali_Gemini/script_33.py",
+          "line": "19:27",
+          "snippet": "sf",
+          "tainted_variable": "sf"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_34.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS_GET-008"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Gemini/script_34.py",
+          "line": "8:34",
+          "snippet": "number",
+          "tainted_variable": "number"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_35.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "PICKLE-FAILURE-001",
+        "WITH-OPEN-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "SDIF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "WITH-OPEN-001",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Gemini/script_35.py",
+          "line": "4:9",
+          "snippet": "open(filename, \"rb\")"
+        },
+        {
+          "rule_id": "PICKLE-FAILURE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Gemini/script_35.py",
+          "line": "5:13",
+          "snippet": "pickle.load(f)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_36.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "AES-CIPHER-001",
+        "AES-CIPHER-002",
+        "CBC-MODE-001",
+        "URANDOM-001"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 6,
+      "findings": [
+        {
+          "rule_id": "CBC-MODE-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_totali_Gemini/script_36.py",
+          "line": "7:26",
+          "snippet": "AES.MODE_CBC"
+        },
+        {
+          "rule_id": "URANDOM-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_totali_Gemini/script_36.py",
+          "line": "12:7",
+          "snippet": "os.urandom(16)"
+        },
+        {
+          "rule_id": "URANDOM-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_totali_Gemini/script_36.py",
+          "line": "13:6",
+          "snippet": "os.urandom(16)"
+        },
+        {
+          "rule_id": "AES-CIPHER-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_totali_Gemini/script_36.py",
+          "line": "8:17",
+          "snippet": "cipher.encrypt(data)"
+        },
+        {
+          "rule_id": "AES-CIPHER-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_totali_Gemini/script_36.py",
+          "line": "17:14",
+          "snippet": "encrypt(data, key, iv)"
+        },
+        {
+          "rule_id": "AES-CIPHER-002",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_totali_Gemini/script_36.py",
+          "line": "17:14",
+          "snippet": "encrypt(data, key, iv)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_37.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "SMTP-001"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "SMTP-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_totali_Gemini/script_37.py",
+          "line": "4:22",
+          "snippet": "smtplib.SMTP(host, port)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_38.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "FTP-001",
+        "FTPLIB-FTP-001"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF",
+        "SDIF"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "FTP-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_totali_Gemini/script_38.py",
+          "line": "4:21",
+          "snippet": "ftplib.FTP(host)"
+        },
+        {
+          "rule_id": "FTPLIB-FTP-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Gemini/script_38.py",
+          "line": "5:4",
+          "snippet": "ftp_connection.login",
+          "tainted_variable": "ftp_connection"
+        },
+        {
+          "rule_id": "FTPLIB-FTP-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Gemini/script_38.py",
+          "line": "7:11",
+          "snippet": "ftp_connection",
+          "tainted_variable": "ftp_connection"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_39.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CREDENTIALS-001"
+      ],
+      "vulnerabilities_summary": [
+        "IDAF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CREDENTIALS-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_totali_Gemini/script_39.py",
+          "line": "26:1",
+          "snippet": "password = \"password123\""
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_4.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS-GET-017"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS-GET-017",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Gemini/script_4.py",
+          "line": "18:34",
+          "snippet": "yaml_payload",
+          "tainted_variable": "yaml_payload"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_40.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "DSA-001"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "DSA-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_totali_Gemini/script_40.py",
+          "line": "5:14",
+          "snippet": "DSA.generate(1024)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_41.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "OS-SYSTEM-002"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "OS-SYSTEM-002",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Gemini/script_41.py",
+          "line": "5:11",
+          "snippet": "os.system(mine)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_42.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "PICKLE-FAILURE-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "PICKLE-FAILURE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Gemini/script_42.py",
+          "line": "8:22",
+          "snippet": "pickle.dumps(content)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_43.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "PICKLE-FAILURE-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "PICKLE-FAILURE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Gemini/script_43.py",
+          "line": "5:21",
+          "snippet": "pickle.loads(data)"
+        },
+        {
+          "rule_id": "PICKLE-FAILURE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Gemini/script_43.py",
+          "line": "10:8",
+          "snippet": "pickle.dumps({\"content\": \"This is the content to be unpickled.\"})"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_44.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "PICKLE-FAILURE-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "PICKLE-FAILURE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Gemini/script_44.py",
+          "line": "12:19",
+          "snippet": "pickle.loads(decoded_auth_token)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_45.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "PYTHON-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "PYTHON-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Gemini/script_45.py",
+          "line": "1:1",
+          "snippet": "import xml.parsers.expat"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_46.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "PYTHON-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "PYTHON-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Gemini/script_46.py",
+          "line": "1:1",
+          "snippet": "import xml.parsers.expat"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_47.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "PYTHON-001",
+        "WITH-OPEN-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "SDIF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "WITH-OPEN-001",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Gemini/script_47.py",
+          "line": "11:9",
+          "snippet": "open(filename, \"r\")"
+        },
+        {
+          "rule_id": "PYTHON-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Gemini/script_47.py",
+          "line": "1:1",
+          "snippet": "import xml.parsers.expat"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_48.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "ELEMENTTREE-CONFIGURATION-001"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "ELEMENTTREE-CONFIGURATION-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Gemini/script_48.py",
+          "line": "1:1",
+          "snippet": "import xml.etree.ElementTree as ET"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_49.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "ENCODE-DECODE-001",
+        "HASHLIB-SHA256-001"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF",
+        "SDIF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "HASHLIB-SHA256-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_totali_Gemini/script_49.py",
+          "line": "5:18",
+          "snippet": "hashlib.sha256()"
+        },
+        {
+          "rule_id": "ENCODE-DECODE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Gemini/script_49.py",
+          "line": "8:23",
+          "snippet": "password.encode()"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_5.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "DEBUG-TRUE-001",
+        "ENCODE-DECODE-001",
+        "REQUEST-ARGS_GET-008",
+        "SUBPROCESS-002"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "INJC",
+        "SDIF",
+        "SECM"
+      ],
+      "findings_count": 4,
+      "findings": [
+        {
+          "rule_id": "SUBPROCESS-002",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "script_totali_Gemini/script_5.py",
+          "line": "16:15",
+          "snippet": "subprocess.Popen([\"ping\", \"-c\", \"4\", url_ping], stdout=subprocess.PIPE)"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Gemini/script_5.py",
+          "line": "32:26",
+          "snippet": "url_ping",
+          "tainted_variable": "url_ping"
+        },
+        {
+          "rule_id": "DEBUG-TRUE-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Gemini/script_5.py",
+          "line": "38:5",
+          "snippet": "app.run(debug=True)"
+        },
+        {
+          "rule_id": "ENCODE-DECODE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Gemini/script_5.py",
+          "line": "19:39",
+          "snippet": "decode(\"utf-8\")"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_50.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CREDENTIALS-001",
+        "ENCODE-DECODE-001",
+        "HASHLIB-SHA256-001"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF",
+        "IDAF",
+        "SDIF"
+      ],
+      "findings_count": 4,
+      "findings": [
+        {
+          "rule_id": "HASHLIB-SHA256-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_totali_Gemini/script_50.py",
+          "line": "5:18",
+          "snippet": "hashlib.sha256()"
+        },
+        {
+          "rule_id": "ENCODE-DECODE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Gemini/script_50.py",
+          "line": "8:23",
+          "snippet": "password.encode()"
+        },
+        {
+          "rule_id": "ENCODE-DECODE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Gemini/script_50.py",
+          "line": "9:23",
+          "snippet": "salt.encode()"
+        },
+        {
+          "rule_id": "CREDENTIALS-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_totali_Gemini/script_50.py",
+          "line": "17:1",
+          "snippet": "password = \"password123\""
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_51.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Gemini/script_52.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "TEMPORARYFILE-MOD-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "TEMPORARYFILE-MOD-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Gemini/script_52.py",
+          "line": "5:9",
+          "snippet": "tempfile.NamedTemporaryFile()"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_53.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Gemini/script_54.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "RANDOM-CHOICE-001"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "RANDOM-CHOICE-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_totali_Gemini/script_54.py",
+          "line": "6:28",
+          "snippet": "random.choice(characters)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_55.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "JWT-DECODE-001",
+        "JWT-DECODE-002-protocols"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "JWT-DECODE-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_totali_Gemini/script_55.py",
+          "line": "6:14",
+          "snippet": "jwt.decode(token, verify=False)"
+        },
+        {
+          "rule_id": "JWT-DECODE-002-protocols",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_totali_Gemini/script_55.py",
+          "line": "6:14",
+          "snippet": "jwt.decode(token, verify=False)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_56.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "TEMPORARYFILE-MOD-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "TEMPORARYFILE-MOD-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Gemini/script_56.py",
+          "line": "4:6",
+          "snippet": "tempfile.NamedTemporaryFile()"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_57.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "TEMPORARYFILE-001",
+        "TEMPORARYFILE-MOD-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "TEMPORARYFILE-MOD-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Gemini/script_57.py",
+          "line": "5:9",
+          "snippet": "tempfile.NamedTemporaryFile()"
+        },
+        {
+          "rule_id": "TEMPORARYFILE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Gemini/script_57.py",
+          "line": "7:6",
+          "snippet": "temp_file.write(results)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_58.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "SOCKET-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "SOCKET-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Gemini/script_58.py",
+          "line": "5:14",
+          "snippet": "socket.recv(1024)"
+        },
+        {
+          "rule_id": "SOCKET-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Gemini/script_58.py",
+          "line": "12:10",
+          "snippet": "socket.socket(socket.AF_INET, socket.SOCK_STREAM)"
+        },
+        {
+          "rule_id": "SOCKET-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Gemini/script_58.py",
+          "line": "13:1",
+          "snippet": "socket.connect((\"localhost\", 8080))"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_59.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Gemini/script_6.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CREDENTIALS-001",
+        "INPUT-003"
+      ],
+      "vulnerabilities_summary": [
+        "IDAF",
+        "INJC",
+        "SLMF"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "INPUT-003",
+          "vulnerabilities": [
+            "INJC",
+            "SLMF"
+          ],
+          "source_file": "script_totali_Gemini/script_6.py",
+          "line": "28:34",
+          "snippet": "password",
+          "tainted_variable": "password"
+        },
+        {
+          "rule_id": "INPUT-003",
+          "vulnerabilities": [
+            "INJC",
+            "SLMF"
+          ],
+          "source_file": "script_totali_Gemini/script_6.py",
+          "line": "28:44",
+          "snippet": "id",
+          "tainted_variable": "id"
+        },
+        {
+          "rule_id": "CREDENTIALS-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_totali_Gemini/script_6.py",
+          "line": "13:5",
+          "snippet": "effective_pass = \"secret\""
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_60.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CREDENTIALS-001"
+      ],
+      "vulnerabilities_summary": [
+        "IDAF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CREDENTIALS-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_totali_Gemini/script_60.py",
+          "line": "21:1",
+          "snippet": "password = \"thisIsMyPassword\""
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_61.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Gemini/script_62.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "OS-SYSTEM-002"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "OS-SYSTEM-002",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Gemini/script_62.py",
+          "line": "5:13",
+          "snippet": "os.system(command)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_63.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "PICKLE-FAILURE-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "PICKLE-FAILURE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Gemini/script_63.py",
+          "line": "8:22",
+          "snippet": "pickle.dumps(content)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_64.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "PICKLE-FAILURE-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "PICKLE-FAILURE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Gemini/script_64.py",
+          "line": "5:11",
+          "snippet": "pickle.loads(pickled_data)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_65.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "PICKLE-FAILURE-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "PICKLE-FAILURE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Gemini/script_65.py",
+          "line": "12:19",
+          "snippet": "cPickle.loads(decoded_token)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_66.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "ELEMENTTREE-CONFIGURATION-001"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "ELEMENTTREE-CONFIGURATION-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Gemini/script_66.py",
+          "line": "1:1",
+          "snippet": "import xml.etree.ElementTree as ET"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_67.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "ELEMENTTREE-CONFIGURATION-001"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "ELEMENTTREE-CONFIGURATION-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Gemini/script_67.py",
+          "line": "1:1",
+          "snippet": "import xml.etree.ElementTree as ET"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_68.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Gemini/script_69.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Gemini/script_7.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "INPUT-003",
+        "SQL-001-call"
+      ],
+      "vulnerabilities_summary": [
+        "INJC",
+        "SLMF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "INPUT-003",
+          "vulnerabilities": [
+            "INJC",
+            "SLMF"
+          ],
+          "source_file": "script_totali_Gemini/script_7.py",
+          "line": "33:25",
+          "snippet": "channel",
+          "tainted_variable": "channel"
+        },
+        {
+          "rule_id": "SQL-001-call",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "script_totali_Gemini/script_7.py",
+          "line": "33:25",
+          "snippet": "channel",
+          "tainted_variable": "channel"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_70.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "TEMPORARYFILE-MOD-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "TEMPORARYFILE-MOD-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Gemini/script_70.py",
+          "line": "6:9",
+          "snippet": "tempfile.NamedTemporaryFile(mode='w', delete=False)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_71.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "SSL-METHOD-001"
+      ],
+      "vulnerabilities_summary": [
+        "IDAF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "SSL-METHOD-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_totali_Gemini/script_71.py",
+          "line": "5:25",
+          "snippet": "ssl.PROTOCOL_TLSv1_2"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_72.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "SSL-METHOD-001"
+      ],
+      "vulnerabilities_summary": [
+        "IDAF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "SSL-METHOD-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_totali_Gemini/script_72.py",
+          "line": "5:25",
+          "snippet": "ssl.PROTOCOL_TLSv1_2"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_73.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CREATE-UNVERIFIED-CONTEXT-001",
+        "SSL-METHOD-001"
+      ],
+      "vulnerabilities_summary": [
+        "IDAF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "SSL-METHOD-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_totali_Gemini/script_73.py",
+          "line": "5:25",
+          "snippet": "ssl.PROTOCOL_TLSv1_2"
+        },
+        {
+          "rule_id": "CREATE-UNVERIFIED-CONTEXT-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_totali_Gemini/script_73.py",
+          "line": "8:4",
+          "snippet": "ctx._create_unverified_context = True"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_74.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Gemini/script_75.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "SSL-METHOD-001"
+      ],
+      "vulnerabilities_summary": [
+        "IDAF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "SSL-METHOD-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_totali_Gemini/script_75.py",
+          "line": "5:25",
+          "snippet": "ssl.PROTOCOL_TLSv1_2"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_76.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "SSL-METHOD-001"
+      ],
+      "vulnerabilities_summary": [
+        "IDAF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "SSL-METHOD-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_totali_Gemini/script_76.py",
+          "line": "5:25",
+          "snippet": "ssl.PROTOCOL_TLSv1_2"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_77.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Gemini/script_78.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "RANDOM-001"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "RANDOM-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_totali_Gemini/script_78.py",
+          "line": "5:18",
+          "snippet": "random.getrandbits(128)"
+        },
+        {
+          "rule_id": "RANDOM-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_totali_Gemini/script_78.py",
+          "line": "8:4",
+          "snippet": "random.seed(seed)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_79.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "JWT-DECODE-001",
+        "JWT-DECODE-002-protocols"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "JWT-DECODE-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_totali_Gemini/script_79.py",
+          "line": "5:14",
+          "snippet": "jwt.decode(token, verify=False)"
+        },
+        {
+          "rule_id": "JWT-DECODE-002-protocols",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_totali_Gemini/script_79.py",
+          "line": "5:14",
+          "snippet": "jwt.decode(token, verify=False)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_8.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS_GET-008"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Gemini/script_8.py",
+          "line": "18:39",
+          "snippet": "id",
+          "tainted_variable": "id"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Gemini/script_8.py",
+          "line": "18:39",
+          "snippet": "id",
+          "tainted_variable": "id"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Gemini/script_8.py",
+          "line": "31:11",
+          "snippet": "id",
+          "tainted_variable": "id"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_80.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "JWT-DECODE-002-protocols"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "JWT-DECODE-002-protocols",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_totali_Gemini/script_80.py",
+          "line": "5:14",
+          "snippet": "jwt.decode(token, key, verify=True)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_81.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "GLOBAL-LOCK-001",
+        "LOCK-001"
+      ],
+      "vulnerabilities_summary": [
+        "INSD",
+        "SDIF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "LOCK-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Gemini/script_81.py",
+          "line": "5:4",
+          "snippet": "lock.acquire",
+          "tainted_variable": "lock"
+        },
+        {
+          "rule_id": "GLOBAL-LOCK-001",
+          "vulnerabilities": [
+            "INSD"
+          ],
+          "source_file": "script_totali_Gemini/script_81.py",
+          "line": "5:4",
+          "snippet": "lock.acquire",
+          "tainted_variable": "lock"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_82.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-462-ALIST-DUPLICATE"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-462"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-462-ALIST-DUPLICATE",
+          "vulnerabilities": [
+            "CWE-462"
+          ],
+          "source_file": "script_totali_Gemini/script_82.py",
+          "line": "6:4",
+          "snippet": "for bas_n, data in foo(): data_list.append((bas_n, data))"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_83.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "BIND-FUNCTION-001",
+        "SOCKET-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "SDIF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "SOCKET-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Gemini/script_83.py",
+          "line": "5:11",
+          "snippet": "socket.socket(socket.AF_INET, socket.SOCK_STREAM)"
+        },
+        {
+          "rule_id": "BIND-FUNCTION-001",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Gemini/script_83.py",
+          "line": "11:4",
+          "snippet": "sock.bind(('', port))"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_84.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "ELEMENTTREE-CONFIGURATION-001"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "ELEMENTTREE-CONFIGURATION-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Gemini/script_84.py",
+          "line": "1:1",
+          "snippet": "import xml.etree.ElementTree as ET"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_85.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "ELEMENTTREE-CONFIGURATION-001"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "ELEMENTTREE-CONFIGURATION-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Gemini/script_85.py",
+          "line": "1:1",
+          "snippet": "import xml.etree.ElementTree as ET"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_86.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "ELEMENTTREE-CONFIGURATION-001"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "ELEMENTTREE-CONFIGURATION-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Gemini/script_86.py",
+          "line": "1:1",
+          "snippet": "import xml.etree.ElementTree as ET"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_87.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "ELEMENTTREE-CONFIGURATION-001"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "ELEMENTTREE-CONFIGURATION-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Gemini/script_87.py",
+          "line": "1:1",
+          "snippet": "import xml.etree.ElementTree as ET"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_88.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Gemini/script_89.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Gemini/script_9.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "DEBUG-TRUE-001",
+        "REQUEST-ARGS_GET-008",
+        "WITH-OPEN-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "SECM"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Gemini/script_9.py",
+          "line": "39:25",
+          "snippet": "filename",
+          "tainted_variable": "filename"
+        },
+        {
+          "rule_id": "DEBUG-TRUE-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Gemini/script_9.py",
+          "line": "45:5",
+          "snippet": "app.run(debug=True)"
+        },
+        {
+          "rule_id": "WITH-OPEN-001",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Gemini/script_9.py",
+          "line": "14:19",
+          "snippet": "open(filename, \"rb\")"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_90.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "OS-CHMOD-001"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "OS-CHMOD-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Gemini/script_90.py",
+          "line": "1:1",
+          "snippet": "os.chmod('file_name', 0o644)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_91.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "SSL-METHOD-001"
+      ],
+      "vulnerabilities_summary": [
+        "IDAF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "SSL-METHOD-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_totali_Gemini/script_91.py",
+          "line": "5:25",
+          "snippet": "ssl.PROTOCOL_TLSv1_2"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_92.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "SSL-METHOD-001"
+      ],
+      "vulnerabilities_summary": [
+        "IDAF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "SSL-METHOD-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_totali_Gemini/script_92.py",
+          "line": "5:25",
+          "snippet": "ssl.PROTOCOL_TLSv1_2"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_93.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "SSL-METHOD-001"
+      ],
+      "vulnerabilities_summary": [
+        "IDAF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "SSL-METHOD-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_totali_Gemini/script_93.py",
+          "line": "5:25",
+          "snippet": "ssl.PROTOCOL_TLSv1_2"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_94.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "RANDOM-CHOICE-001"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "RANDOM-CHOICE-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_totali_Gemini/script_94.py",
+          "line": "5:25",
+          "snippet": "random.choice('abcdefghijklmnopqrstuvwxyz0123456789')"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_95.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "SSL-METHOD-001"
+      ],
+      "vulnerabilities_summary": [
+        "IDAF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "SSL-METHOD-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_totali_Gemini/script_95.py",
+          "line": "5:25",
+          "snippet": "ssl.PROTOCOL_TLSv1_2"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_96.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "SSL-METHOD-001"
+      ],
+      "vulnerabilities_summary": [
+        "IDAF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "SSL-METHOD-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_totali_Gemini/script_96.py",
+          "line": "5:25",
+          "snippet": "ssl.PROTOCOL_TLSv1_2"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_97.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CREDENTIALS-001"
+      ],
+      "vulnerabilities_summary": [
+        "IDAF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CREDENTIALS-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_totali_Gemini/script_97.py",
+          "line": "16:1",
+          "snippet": "password = 'my_password'"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_98.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "RANDOM-001"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "RANDOM-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_totali_Gemini/script_98.py",
+          "line": "5:18",
+          "snippet": "random.getrandbits(n)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Gemini/script_99.py",
+      "xml_source": "Gemini_totale.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "JWT-DECODE-001",
+        "JWT-DECODE-002-protocols"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "JWT-DECODE-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_totali_Gemini/script_99.py",
+          "line": "5:17",
+          "snippet": "jwt.decode(token, verify=False)"
+        },
+        {
+          "rule_id": "JWT-DECODE-002-protocols",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_totali_Gemini/script_99.py",
+          "line": "5:17",
+          "snippet": "jwt.decode(token, verify=False)"
+        }
+      ]
+    }
+  ]
+}

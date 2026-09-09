@@ -1,0 +1,3082 @@
+{
+  "summary": {
+    "total_files_analyzed": 122,
+    "vulnerable_files": 83,
+    "total_findings": 152,
+    "categories_count": {
+      "BRAC": 39,
+      "IDAF": 13,
+      "CRYF": 14,
+      "SDIF": 38,
+      "INJC": 21,
+      "SLMF": 6,
+      "SECM": 24,
+      "INSD": 10,
+      "CWE-462": 1
+    }
+  },
+  "details": [
+    {
+      "source_file": "script_totali_Micr_Copilot/script_1.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS_GET-005",
+        "REQUEST-ARGS_GET-008"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-005",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_1.py",
+          "line": "5:16",
+          "snippet": "f'names/{name}'",
+          "tainted_variable": "name"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_1.py",
+          "line": "5:16",
+          "snippet": "f'names/{name}'",
+          "tainted_variable": "name"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_10.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CREDENTIALS-001"
+      ],
+      "vulnerabilities_summary": [
+        "IDAF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CREDENTIALS-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_10.py",
+          "line": "22:1",
+          "snippet": "password = 'your-password'"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_100.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_101.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CREDENTIALS-001",
+        "URANDOM-001"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF",
+        "IDAF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "URANDOM-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_101.py",
+          "line": "15:8",
+          "snippet": "os.urandom(16)"
+        },
+        {
+          "rule_id": "CREDENTIALS-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_101.py",
+          "line": "27:1",
+          "snippet": "password = b\"password\""
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_102.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "ENCODE-DECODE-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "ENCODE-DECODE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_102.py",
+          "line": "4:16",
+          "snippet": "key.encode()"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_103.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_104.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "ENCODE-DECODE-001",
+        "REQUEST-ARGS_GET-005",
+        "REQUEST-ARGS_GET-010",
+        "RETURN-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "SDIF"
+      ],
+      "findings_count": 4,
+      "findings": [
+        {
+          "rule_id": "RETURN-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_104.py",
+          "line": "10:6",
+          "snippet": "return f'The message body is \"{message_body}\".'"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-005",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_104.py",
+          "line": "10:13",
+          "snippet": "f'The message body is \"{message_body}\".'",
+          "tainted_variable": "message_body"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-010",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_104.py",
+          "line": "10:13",
+          "snippet": "f'The message body is \"{message_body}\".'",
+          "tainted_variable": "message_body"
+        },
+        {
+          "rule_id": "ENCODE-DECODE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_104.py",
+          "line": "8:21",
+          "snippet": "request.data.decode('utf-8')"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_105.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "ENCODE-DECODE-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "ENCODE-DECODE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_105.py",
+          "line": "3:39",
+          "snippet": "decode(encoding)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_106.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "WITH-OPEN-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "WITH-OPEN-001",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_106.py",
+          "line": "4:11",
+          "snippet": "open(file_path, 'r')"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_107.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "INPUT-003",
+        "URL-AUTENTICATION-001"
+      ],
+      "vulnerabilities_summary": [
+        "INJC",
+        "SDIF",
+        "SLMF"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "INPUT-003",
+          "vulnerabilities": [
+            "INJC",
+            "SLMF"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_107.py",
+          "line": "19:17",
+          "snippet": "username",
+          "tainted_variable": "username"
+        },
+        {
+          "rule_id": "INPUT-003",
+          "vulnerabilities": [
+            "INJC",
+            "SLMF"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_107.py",
+          "line": "19:27",
+          "snippet": "password",
+          "tainted_variable": "password"
+        },
+        {
+          "rule_id": "URL-AUTENTICATION-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_107.py",
+          "line": "9:1",
+          "snippet": "def authenticate(username, password): if username in users and users[username] == password: return True else: return False"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_108.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_109.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "RETURN-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "RETURN-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_109.py",
+          "line": "4:10",
+          "snippet": "return False, f\"Missing parameters: {', '.join(missing_parameters)}\""
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_11.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_110.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "WITH-OPEN-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "WITH-OPEN-001",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_110.py",
+          "line": "4:11",
+          "snippet": "open(file_path, 'r')"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_111.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS-GET-017"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS-GET-017",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_111.py",
+          "line": "10:33",
+          "snippet": "ingredient_id",
+          "tainted_variable": "ingredient_id"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_112.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_113.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CERT-001",
+        "CREATE-DEFAULT-CONTEXT-001"
+      ],
+      "vulnerabilities_summary": [
+        "IDAF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CREATE-DEFAULT-CONTEXT-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_113.py",
+          "line": "5:16",
+          "snippet": "ssl.create_default_context()"
+        },
+        {
+          "rule_id": "CERT-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_113.py",
+          "line": "12:10",
+          "snippet": "context.verify_mode = ssl.CERT_NONE"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_114.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "PICKLE-FAILURE-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "PICKLE-FAILURE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_114.py",
+          "line": "5:12",
+          "snippet": "pickle.loads(byte_array)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_115.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_116.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_117.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "MAKEDIRS-001",
+        "WITH-OPEN-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "SECM"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "MAKEDIRS-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_117.py",
+          "line": "7:1",
+          "snippet": "os.makedirs(os.path.dirname(file_path), exist_ok=True)"
+        },
+        {
+          "rule_id": "WITH-OPEN-001",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_117.py",
+          "line": "10:1",
+          "snippet": "open(file_path, 'a')"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_118.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_119.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "LOAD-USER-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "LOAD-USER-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_119.py",
+          "line": "10:1",
+          "snippet": "def load_user(user_id): # This is a stub for the function that loads a user. # Replace this with your actual implementation. if user_id == '…"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_120.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "EBC-MODE-001",
+        "URANDOM-001"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "URANDOM-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_120.py",
+          "line": "12:12",
+          "snippet": "os.urandom(32)"
+        },
+        {
+          "rule_id": "EBC-MODE-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_120.py",
+          "line": "15:43",
+          "snippet": "modes.ECB()"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_121.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_122.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_123.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_124.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_125.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_14.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_15.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "LOGGING-INFO-001",
+        "REQUEST-ARGS_GET-005",
+        "REQUEST-ARGS_GET-008",
+        "REQUEST-ARGS_GET-010",
+        "RETURN-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "SDIF",
+        "SLMF"
+      ],
+      "findings_count": 6,
+      "findings": [
+        {
+          "rule_id": "RETURN-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_15.py",
+          "line": "15:6",
+          "snippet": "return f'Hello, {user}!'"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-005",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_15.py",
+          "line": "12:19",
+          "snippet": "f'User: {user}'",
+          "tainted_variable": "user"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-005",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_15.py",
+          "line": "15:13",
+          "snippet": "f'Hello, {user}!'",
+          "tainted_variable": "user"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_15.py",
+          "line": "12:19",
+          "snippet": "f'User: {user}'",
+          "tainted_variable": "user"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-010",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_15.py",
+          "line": "15:13",
+          "snippet": "f'Hello, {user}!'",
+          "tainted_variable": "user"
+        },
+        {
+          "rule_id": "LOGGING-INFO-001",
+          "vulnerabilities": [
+            "SLMF"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_15.py",
+          "line": "12:6",
+          "snippet": "logging.info(f'User: {user}')"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_16.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "LOGGING-ERROR-001",
+        "REQUEST-ARGS-GET-017"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS-GET-017",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_16.py",
+          "line": "12:20",
+          "snippet": "f'Data: {data}'",
+          "tainted_variable": "data"
+        },
+        {
+          "rule_id": "LOGGING-ERROR-001",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_16.py",
+          "line": "12:6",
+          "snippet": "logging.error(f'Data: {data}')"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_17.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "OS-CHMOD-001",
+        "RETURN-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF",
+        "SECM"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "RETURN-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_17.py",
+          "line": "18:6",
+          "snippet": "return f'Permissions changed for directory: {dir_path}'"
+        },
+        {
+          "rule_id": "OS-CHMOD-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_17.py",
+          "line": "15:6",
+          "snippet": "os.chmod(dir_path, 0o755)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_18.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "MAKEDIRS-001",
+        "OS-CHMOD-001"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "MAKEDIRS-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_18.py",
+          "line": "7:1",
+          "snippet": "os.makedirs(dir_path, exist_ok=True)"
+        },
+        {
+          "rule_id": "OS-CHMOD-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_18.py",
+          "line": "10:1",
+          "snippet": "os.chmod(dir_path, 0o755)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_19.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "MAKEDIRS-001",
+        "OA-PATH-TRAVERSAL-001",
+        "REQUEST-ARGS-GET-023",
+        "REQUEST-ARGS-GET-024",
+        "REQUEST-ARGS_GET-009"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "INJC",
+        "INSD",
+        "SDIF",
+        "SECM"
+      ],
+      "findings_count": 6,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-009",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_19.py",
+          "line": "18:6",
+          "snippet": "pdf_file.save",
+          "tainted_variable": "pdf_file"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-009",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_19.py",
+          "line": "18:44",
+          "snippet": "pdf_file.filename",
+          "tainted_variable": "pdf_file"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-023",
+          "vulnerabilities": [
+            "INSD",
+            "INJC"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_19.py",
+          "line": "18:44",
+          "snippet": "pdf_file.filename",
+          "tainted_variable": "pdf_file"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-024",
+          "vulnerabilities": [
+            "INSD",
+            "INJC"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_19.py",
+          "line": "18:6",
+          "snippet": "pdf_file.save",
+          "tainted_variable": "pdf_file"
+        },
+        {
+          "rule_id": "MAKEDIRS-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_19.py",
+          "line": "15:6",
+          "snippet": "os.makedirs(save_path, exist_ok=True)"
+        },
+        {
+          "rule_id": "OA-PATH-TRAVERSAL-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_19.py",
+          "line": "18:20",
+          "snippet": "os.path.join(save_path, pdf_file.filename)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_2.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS_GET-005",
+        "REQUEST-ARGS_GET-008"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-005",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_2.py",
+          "line": "6:24",
+          "snippet": "f'names/{filename}'",
+          "tainted_variable": "filename"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_2.py",
+          "line": "7:46",
+          "snippet": "filename",
+          "tainted_variable": "filename"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_2.py",
+          "line": "6:24",
+          "snippet": "f'names/{filename}'",
+          "tainted_variable": "filename"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_20.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS-GET-024",
+        "REQUEST-ARGS_GET-009"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "INJC",
+        "INSD"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-009",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_20.py",
+          "line": "11:20",
+          "snippet": "img_file.read",
+          "tainted_variable": "img_file"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-024",
+          "vulnerabilities": [
+            "INSD",
+            "INJC"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_20.py",
+          "line": "11:20",
+          "snippet": "img_file.read",
+          "tainted_variable": "img_file"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_21.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "ENCODE-DECODE-001",
+        "HASHLIB-SHA256-001",
+        "REQUEST-ARGS-GET-023",
+        "REQUEST-ARGS-GET-024",
+        "SQL-001-subscript"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF",
+        "INJC",
+        "INSD",
+        "SDIF"
+      ],
+      "findings_count": 5,
+      "findings": [
+        {
+          "rule_id": "HASHLIB-SHA256-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_21.py",
+          "line": "12:15",
+          "snippet": "hashlib.sha256()"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-023",
+          "vulnerabilities": [
+            "INSD",
+            "INJC"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_21.py",
+          "line": "15:20",
+          "snippet": "password.encode",
+          "tainted_variable": "password"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-024",
+          "vulnerabilities": [
+            "INSD",
+            "INJC"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_21.py",
+          "line": "15:20",
+          "snippet": "password.encode",
+          "tainted_variable": "password"
+        },
+        {
+          "rule_id": "ENCODE-DECODE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_21.py",
+          "line": "15:20",
+          "snippet": "password.encode('utf-8')"
+        },
+        {
+          "rule_id": "SQL-001-subscript",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_21.py",
+          "line": "15:20",
+          "snippet": "password.encode",
+          "tainted_variable": "password"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_22.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "FLASK-REDIRECT-001",
+        "REQUEST-ARGS_GET-008"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "SECM"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_22.py",
+          "line": "11:22",
+          "snippet": "mark_url",
+          "tainted_variable": "mark_url"
+        },
+        {
+          "rule_id": "FLASK-REDIRECT-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_22.py",
+          "line": "11:13",
+          "snippet": "redirect(mark_url)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_23.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "ELEMENTTREE-CONFIGURATION-001",
+        "REQUEST-ARGS-GET-023",
+        "REQUEST-ARGS_GET-009",
+        "RETURN-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "INJC",
+        "INSD",
+        "SDIF",
+        "SECM"
+      ],
+      "findings_count": 4,
+      "findings": [
+        {
+          "rule_id": "RETURN-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_23.py",
+          "line": "16:6",
+          "snippet": "return f'XML file parsed. Root element: {root.tag}'"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-009",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_23.py",
+          "line": "12:22",
+          "snippet": "xml_file",
+          "tainted_variable": "xml_file"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-023",
+          "vulnerabilities": [
+            "INSD",
+            "INJC"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_23.py",
+          "line": "12:22",
+          "snippet": "xml_file",
+          "tainted_variable": "xml_file"
+        },
+        {
+          "rule_id": "ELEMENTTREE-CONFIGURATION-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_23.py",
+          "line": "2:1",
+          "snippet": "import xml.etree.ElementTree as ET"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_24.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "INPUT-003",
+        "STRING-001"
+      ],
+      "vulnerabilities_summary": [
+        "INJC",
+        "SDIF",
+        "SLMF"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "INPUT-003",
+          "vulnerabilities": [
+            "INJC",
+            "SLMF"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_24.py",
+          "line": "5:26",
+          "snippet": "user_input",
+          "tainted_variable": "user_input"
+        },
+        {
+          "rule_id": "INPUT-003",
+          "vulnerabilities": [
+            "INJC",
+            "SLMF"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_24.py",
+          "line": "8:20",
+          "snippet": "f'\"{user_input}\" is not a valid integer. Please try again.'",
+          "tainted_variable": "user_input"
+        },
+        {
+          "rule_id": "STRING-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_24.py",
+          "line": "5:22",
+          "snippet": "int(user_input)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_25.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "INPUT-003",
+        "STRING-001"
+      ],
+      "vulnerabilities_summary": [
+        "INJC",
+        "SDIF",
+        "SLMF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "INPUT-003",
+          "vulnerabilities": [
+            "INJC",
+            "SLMF"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_25.py",
+          "line": "5:26",
+          "snippet": "user_input",
+          "tainted_variable": "user_input"
+        },
+        {
+          "rule_id": "STRING-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_25.py",
+          "line": "5:22",
+          "snippet": "int(user_input)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_26.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "ELEMENTTREE-CONFIGURATION-001",
+        "RETURN-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF",
+        "SECM"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "RETURN-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_26.py",
+          "line": "15:6",
+          "snippet": "return f'XML source parsed. Root element: {root.tag}'"
+        },
+        {
+          "rule_id": "ELEMENTTREE-CONFIGURATION-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_26.py",
+          "line": "2:1",
+          "snippet": "import xml.etree.ElementTree as ET"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_27.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS-001-subscript",
+        "REQUEST-ARGS_GET-009"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "INJC"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-009",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_27.py",
+          "line": "11:6",
+          "snippet": "url = f'http://{subdomain}.example.com'",
+          "tainted_variable": "subdomain"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-001-subscript",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_27.py",
+          "line": "11:6",
+          "snippet": "url = f'http://{subdomain}.example.com'",
+          "tainted_variable": "subdomain"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_28.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS-001-subscript",
+        "REQUEST-ARGS_GET-009"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "INJC"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-009",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_28.py",
+          "line": "11:6",
+          "snippet": "url = f'https://api.github.com/users/{user_number}'",
+          "tainted_variable": "user_number"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-001-subscript",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_28.py",
+          "line": "11:6",
+          "snippet": "url = f'https://api.github.com/users/{user_number}'",
+          "tainted_variable": "user_number"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_29.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_3.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_31.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS-001-subscript",
+        "REQUEST-ARGS-GET-023",
+        "REQUEST-ARGS_GET-009"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "INJC",
+        "INSD"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-009",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_31.py",
+          "line": "11:26",
+          "snippet": "id",
+          "tainted_variable": "id"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-001-subscript",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_31.py",
+          "line": "11:26",
+          "snippet": "id",
+          "tainted_variable": "id"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-023",
+          "vulnerabilities": [
+            "INSD",
+            "INJC"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_31.py",
+          "line": "11:26",
+          "snippet": "id",
+          "tainted_variable": "id"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_32.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS-001-subscript",
+        "REQUEST-ARGS-GET-023",
+        "REQUEST-ARGS_GET-009"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "INJC",
+        "INSD"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-009",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_32.py",
+          "line": "11:39",
+          "snippet": "passw",
+          "tainted_variable": "passw"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-001-subscript",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_32.py",
+          "line": "11:39",
+          "snippet": "passw",
+          "tainted_variable": "passw"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-023",
+          "vulnerabilities": [
+            "INSD",
+            "INJC"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_32.py",
+          "line": "11:39",
+          "snippet": "passw",
+          "tainted_variable": "passw"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_33.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_34.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS-001-subscript",
+        "REQUEST-ARGS-GET-023",
+        "REQUEST-ARGS_GET-009"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "INJC",
+        "INSD"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-009",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_34.py",
+          "line": "11:36",
+          "snippet": "number",
+          "tainted_variable": "number"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-001-subscript",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_34.py",
+          "line": "11:36",
+          "snippet": "number",
+          "tainted_variable": "number"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-023",
+          "vulnerabilities": [
+            "INSD",
+            "INJC"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_34.py",
+          "line": "11:36",
+          "snippet": "number",
+          "tainted_variable": "number"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_35.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "JSON-LOADS-003"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "JSON-LOADS-003",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_35.py",
+          "line": "10:7",
+          "snippet": "decoded_data",
+          "tainted_variable": "decoded_data"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_36.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "AES-CIPHER-002",
+        "CBC-MODE-001",
+        "ENCODE-DECODE-001"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF",
+        "SDIF"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "CBC-MODE-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_36.py",
+          "line": "13:23",
+          "snippet": "AES.MODE_CBC"
+        },
+        {
+          "rule_id": "AES-CIPHER-002",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_36.py",
+          "line": "16:14",
+          "snippet": "cipher.encrypt(pad(data, AES.block_size))"
+        },
+        {
+          "rule_id": "ENCODE-DECODE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_36.py",
+          "line": "19:40",
+          "snippet": "decode('utf-8')"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_37.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "SMTP-001"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "SMTP-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_37.py",
+          "line": "8:10",
+          "snippet": "smtplib.SMTP(smtp_server, smtp_port)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_38.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CREDENTIALS-001"
+      ],
+      "vulnerabilities_summary": [
+        "IDAF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CREDENTIALS-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_38.py",
+          "line": "6:1",
+          "snippet": "password = 'pass'"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_39.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_4.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "ENCODE-DECODE-001",
+        "RETURN-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "RETURN-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_4.py",
+          "line": "10:6",
+          "snippet": "return f'Loaded YAML payload into dictionary: {prod_and_qt}'"
+        },
+        {
+          "rule_id": "ENCODE-DECODE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_4.py",
+          "line": "8:21",
+          "snippet": "request.data.decode('utf-8')"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_40.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "KEY-SIZE-001"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "KEY-SIZE-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_40.py",
+          "line": "7:10",
+          "snippet": "key_size=1024"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_41.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_42.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "PICKLE-FAILURE-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "PICKLE-FAILURE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_42.py",
+          "line": "8:24",
+          "snippet": "pickle.dumps(content)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_43.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "PICKLE-FAILURE-001",
+        "WITH-OPEN-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "SDIF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "WITH-OPEN-001",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_43.py",
+          "line": "4:11",
+          "snippet": "open(file_path, 'rb')"
+        },
+        {
+          "rule_id": "PICKLE-FAILURE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_43.py",
+          "line": "5:17",
+          "snippet": "pickle.load(file)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_44.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "PICKLE-FAILURE-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "PICKLE-FAILURE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_44.py",
+          "line": "8:25",
+          "snippet": "pickle.loads(decoded_token)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_45.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_46.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "XML-SAX-MAKE-PARSER-001"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "XML-SAX-MAKE-PARSER-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_46.py",
+          "line": "1:6",
+          "snippet": "xml.sax.handler"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_47.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "WITH-OPEN-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "WITH-OPEN-001",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_47.py",
+          "line": "2:11",
+          "snippet": "open(file_path, 'r')"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_48.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "ELEMENTTREE-CONFIGURATION-001"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "ELEMENTTREE-CONFIGURATION-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_48.py",
+          "line": "1:1",
+          "snippet": "import xml.etree.ElementTree as ET"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_49.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "ENCODE-DECODE-001",
+        "HASHLIB-SHA256-001"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF",
+        "SDIF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "HASHLIB-SHA256-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_49.py",
+          "line": "4:24",
+          "snippet": "hashlib.sha256(password.encode())"
+        },
+        {
+          "rule_id": "ENCODE-DECODE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_49.py",
+          "line": "4:39",
+          "snippet": "password.encode()"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_5.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "OS-SYSTEM-002",
+        "REQUEST-ARGS_GET-005",
+        "REQUEST-ARGS_GET-008",
+        "RETURN-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "SDIF",
+        "SECM"
+      ],
+      "findings_count": 4,
+      "findings": [
+        {
+          "rule_id": "RETURN-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_5.py",
+          "line": "10:6",
+          "snippet": "return f'Ping result: {exec_ping}'"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-005",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_5.py",
+          "line": "9:28",
+          "snippet": "f'ping {url_ping}'",
+          "tainted_variable": "url_ping"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_5.py",
+          "line": "9:28",
+          "snippet": "f'ping {url_ping}'",
+          "tainted_variable": "url_ping"
+        },
+        {
+          "rule_id": "OS-SYSTEM-002",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_5.py",
+          "line": "9:18",
+          "snippet": "os.system(f'ping {url_ping}')"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_50.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "ENCODE-DECODE-001",
+        "HASHLIB-SHA256-001"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF",
+        "SDIF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "HASHLIB-SHA256-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_50.py",
+          "line": "5:24",
+          "snippet": "hashlib.sha256(salted_password.encode())"
+        },
+        {
+          "rule_id": "ENCODE-DECODE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_50.py",
+          "line": "5:39",
+          "snippet": "salted_password.encode()"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_51.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_52.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "TEMPORARYFILE-MOD-001",
+        "WITH-OPEN-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "SDIF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "TEMPORARYFILE-MOD-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_52.py",
+          "line": "4:18",
+          "snippet": "tempfile.NamedTemporaryFile(delete=False)"
+        },
+        {
+          "rule_id": "WITH-OPEN-001",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_52.py",
+          "line": "6:11",
+          "snippet": "open(temp_file.name, 'w')"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_53.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_54.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "RANDOM-CHOICE-001"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "RANDOM-CHOICE-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_54.py",
+          "line": "6:27",
+          "snippet": "random.choice(letters)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_55.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_56.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "TEMPORARYFILE-001",
+        "TEMPORARYFILE-MOD-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "TEMPORARYFILE-MOD-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_56.py",
+          "line": "4:18",
+          "snippet": "tempfile.NamedTemporaryFile(delete=False, mode='w+')"
+        },
+        {
+          "rule_id": "TEMPORARYFILE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_56.py",
+          "line": "7:10",
+          "snippet": "temp_file.write(f\"{result} \")"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_57.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "TEMPORARYFILE-001",
+        "TEMPORARYFILE-MOD-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "TEMPORARYFILE-MOD-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_57.py",
+          "line": "4:18",
+          "snippet": "tempfile.NamedTemporaryFile(delete=False, mode='w+')"
+        },
+        {
+          "rule_id": "TEMPORARYFILE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_57.py",
+          "line": "7:10",
+          "snippet": "temp_file.write(f\"{result} \")"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_58.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_59.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_6.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CREDENTIALS-001"
+      ],
+      "vulnerabilities_summary": [
+        "IDAF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CREDENTIALS-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_6.py",
+          "line": "3:6",
+          "snippet": "effective_pass = 'password123'"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_60.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_61.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_62.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "OS-SYSTEM-002"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "OS-SYSTEM-002",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_62.py",
+          "line": "4:15",
+          "snippet": "os.system(command)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_63.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "PICKLE-FAILURE-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "PICKLE-FAILURE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_63.py",
+          "line": "4:21",
+          "snippet": "pickle.dumps(payload)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_64.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "PICKLE-FAILURE-001",
+        "WITH-OPEN-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "SDIF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "WITH-OPEN-001",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_64.py",
+          "line": "4:11",
+          "snippet": "open(file_path, 'rb')"
+        },
+        {
+          "rule_id": "PICKLE-FAILURE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_64.py",
+          "line": "5:17",
+          "snippet": "pickle.load(file)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_65.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "PICKLE-FAILURE-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "PICKLE-FAILURE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_65.py",
+          "line": "8:25",
+          "snippet": "pickle.loads(decoded_token)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_66.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "ELEMENTTREE-CONFIGURATION-001"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "ELEMENTTREE-CONFIGURATION-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_66.py",
+          "line": "1:1",
+          "snippet": "import xml.etree.ElementTree as ET"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_67.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "XML-SAX-MAKE-PARSER-001"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "XML-SAX-MAKE-PARSER-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_67.py",
+          "line": "1:6",
+          "snippet": "xml.sax.handler"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_68.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_69.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "OS-CHMOD-001"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "OS-CHMOD-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_69.py",
+          "line": "4:6",
+          "snippet": "os.chmod(file_path, 0o400)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_7.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS_GET-005",
+        "REQUEST-ARGS_GET-008",
+        "REQUEST-ARGS_GET-010",
+        "RETURN-001",
+        "SQL-001-call"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "INJC",
+        "SDIF"
+      ],
+      "findings_count": 5,
+      "findings": [
+        {
+          "rule_id": "RETURN-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_7.py",
+          "line": "25:6",
+          "snippet": "return f'Subscription for channel {channel} deleted'"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-005",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_7.py",
+          "line": "25:13",
+          "snippet": "f'Subscription for channel {channel} deleted'",
+          "tainted_variable": "channel"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_7.py",
+          "line": "19:29",
+          "snippet": "channel",
+          "tainted_variable": "channel"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-010",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_7.py",
+          "line": "25:13",
+          "snippet": "f'Subscription for channel {channel} deleted'",
+          "tainted_variable": "channel"
+        },
+        {
+          "rule_id": "SQL-001-call",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_7.py",
+          "line": "25:13",
+          "snippet": "f'Subscription for channel {channel} deleted'",
+          "tainted_variable": "channel"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_70.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "OS-CHMOD-001",
+        "TEMPORARYFILE-MOD-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF",
+        "SECM"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "TEMPORARYFILE-MOD-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_70.py",
+          "line": "5:18",
+          "snippet": "tempfile.NamedTemporaryFile(delete=False)"
+        },
+        {
+          "rule_id": "OS-CHMOD-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_70.py",
+          "line": "6:6",
+          "snippet": "os.chmod(temp_file.name, 0o400)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_71.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_72.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CREATE-DEFAULT-CONTEXT-001"
+      ],
+      "vulnerabilities_summary": [
+        "IDAF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CREATE-DEFAULT-CONTEXT-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_72.py",
+          "line": "4:12",
+          "snippet": "ssl.create_default_context()"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_73.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CREATE-UNVERIFIED-CONTEXT-001"
+      ],
+      "vulnerabilities_summary": [
+        "IDAF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CREATE-UNVERIFIED-CONTEXT-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_73.py",
+          "line": "4:11",
+          "snippet": "ssl._create_unverified_context()"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_74.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_75.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CREATE-DEFAULT-CONTEXT-001"
+      ],
+      "vulnerabilities_summary": [
+        "IDAF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CREATE-DEFAULT-CONTEXT-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_75.py",
+          "line": "4:11",
+          "snippet": "ssl.create_default_context()"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_76.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_77.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "SET-COOKIE-001-flask",
+        "SET-COOKIE-001-ssl"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF",
+        "SECM"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "SET-COOKIE-001-flask",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_77.py",
+          "line": "5:6",
+          "snippet": "response.set_cookie('key', 'value')"
+        },
+        {
+          "rule_id": "SET-COOKIE-001-ssl",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_77.py",
+          "line": "5:6",
+          "snippet": "response.set_cookie('key', 'value')"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_78.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "URANDOM-001"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "URANDOM-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_78.py",
+          "line": "4:13",
+          "snippet": "os.urandom(16)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_79.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_8.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "DEBUG-TRUE-001"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "DEBUG-TRUE-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_8.py",
+          "line": "21:6",
+          "snippet": "app.run(debug=True)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_80.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_81.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "GLOBAL-LOCK-001",
+        "LOCK-001"
+      ],
+      "vulnerabilities_summary": [
+        "INSD",
+        "SDIF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "LOCK-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_81.py",
+          "line": "13:6",
+          "snippet": "lock.acquire",
+          "tainted_variable": "lock"
+        },
+        {
+          "rule_id": "GLOBAL-LOCK-001",
+          "vulnerabilities": [
+            "INSD"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_81.py",
+          "line": "13:6",
+          "snippet": "lock.acquire",
+          "tainted_variable": "lock"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_82.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-462-ALIST-DUPLICATE",
+        "FOO-001"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-462",
+        "SDIF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-462-ALIST-DUPLICATE",
+          "vulnerabilities": [
+            "CWE-462"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_82.py",
+          "line": "3:6",
+          "snippet": "while True: # Get the next key-value pair from foo key, value = foo() # Add the key-value pair to the data list data.append((key, value)) # …"
+        },
+        {
+          "rule_id": "FOO-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_82.py",
+          "line": "5:23",
+          "snippet": "foo()"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_83.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "SOCKET-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "SOCKET-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_83.py",
+          "line": "5:22",
+          "snippet": "socket.socket(socket.AF_INET, socket.SOCK_STREAM)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_84.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "ELEMENTTREE-CONFIGURATION-001"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "ELEMENTTREE-CONFIGURATION-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_84.py",
+          "line": "1:1",
+          "snippet": "import xml.etree.ElementTree as ET"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_85.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "ELEMENTTREE-CONFIGURATION-001"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "ELEMENTTREE-CONFIGURATION-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_85.py",
+          "line": "1:1",
+          "snippet": "import xml.etree.ElementTree as ET"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_86.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "ELEMENTTREE-CONFIGURATION-001"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "ELEMENTTREE-CONFIGURATION-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_86.py",
+          "line": "1:1",
+          "snippet": "import xml.etree.ElementTree as ET"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_87.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "ELEMENTTREE-CONFIGURATION-001"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "ELEMENTTREE-CONFIGURATION-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_87.py",
+          "line": "1:1",
+          "snippet": "import xml.etree.ElementTree as ET"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_88.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_89.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "OS-CHMOD-001"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "OS-CHMOD-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_89.py",
+          "line": "4:1",
+          "snippet": "os.chmod('priv_file', 0o400)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_9.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "DEBUG-TRUE-001",
+        "REQUEST-ARGS_GET-008"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "SECM"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_9.py",
+          "line": "16:28",
+          "snippet": "filename",
+          "tainted_variable": "filename"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_9.py",
+          "line": "20:16",
+          "snippet": "filename",
+          "tainted_variable": "filename"
+        },
+        {
+          "rule_id": "DEBUG-TRUE-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_9.py",
+          "line": "27:6",
+          "snippet": "app.run(debug=True)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_90.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_91.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CREATE-DEFAULT-CONTEXT-001"
+      ],
+      "vulnerabilities_summary": [
+        "IDAF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CREATE-DEFAULT-CONTEXT-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_91.py",
+          "line": "4:11",
+          "snippet": "ssl.create_default_context()"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_92.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CREATE-DEFAULT-CONTEXT-001"
+      ],
+      "vulnerabilities_summary": [
+        "IDAF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CREATE-DEFAULT-CONTEXT-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_92.py",
+          "line": "4:11",
+          "snippet": "ssl.create_default_context()"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_93.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CREATE-DEFAULT-CONTEXT-001"
+      ],
+      "vulnerabilities_summary": [
+        "IDAF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CREATE-DEFAULT-CONTEXT-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_93.py",
+          "line": "5:16",
+          "snippet": "ssl.create_default_context()"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_94.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_95.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CREATE-DEFAULT-CONTEXT-001"
+      ],
+      "vulnerabilities_summary": [
+        "IDAF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CREATE-DEFAULT-CONTEXT-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_95.py",
+          "line": "4:11",
+          "snippet": "ssl.create_default_context()"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_96.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_97.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_98.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "URANDOM-001"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "URANDOM-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_totali_Micr_Copilot/script_98.py",
+          "line": "8:21",
+          "snippet": "os.urandom(16)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_totali_Micr_Copilot/script_99.py",
+      "xml_source": "Micr_Copilot_tot.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    }
+  ]
+}
