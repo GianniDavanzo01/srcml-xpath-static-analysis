@@ -2,14 +2,14 @@
   "summary": {
     "total_files_analyzed": 124,
     "vulnerable_files": 103,
-    "total_findings": 203,
+    "total_findings": 201,
     "categories_count": {
       "BRAC": 32,
       "INSD": 5,
       "INJC": 44,
       "SLMF": 36,
       "CRYF": 36,
-      "SDIF": 41,
+      "SDIF": 39,
       "SECM": 29,
       "IDAF": 16,
       "CWE-462": 1
@@ -647,15 +647,13 @@
       "xml_source": "Gemini_totale.xml",
       "vulnerable": true,
       "rules_summary": [
-        "INPUT-003",
-        "STRING-001"
+        "INPUT-003"
       ],
       "vulnerabilities_summary": [
         "INJC",
-        "SDIF",
         "SLMF"
       ],
-      "findings_count": 6,
+      "findings_count": 5,
       "findings": [
         {
           "rule_id": "INPUT-003",
@@ -711,15 +709,6 @@
           "line": "8:16",
           "snippet": "f\"Failed to change permission of '{file_path}' to '{permission}'\"",
           "tainted_variable": "permission"
-        },
-        {
-          "rule_id": "STRING-001",
-          "vulnerabilities": [
-            "SDIF"
-          ],
-          "source_file": "script_totali_Gemini/script_118.py",
-          "line": "14:35",
-          "snippet": "int(permission, 8)"
         }
       ]
     },
@@ -1534,15 +1523,13 @@
       "xml_source": "Gemini_totale.xml",
       "vulnerable": true,
       "rules_summary": [
-        "INPUT-003",
-        "STRING-001"
+        "INPUT-003"
       ],
       "vulnerabilities_summary": [
         "INJC",
-        "SDIF",
         "SLMF"
       ],
-      "findings_count": 2,
+      "findings_count": 1,
       "findings": [
         {
           "rule_id": "INPUT-003",
@@ -1554,15 +1541,6 @@
           "line": "15:19",
           "snippet": "input_str",
           "tainted_variable": "input_str"
-        },
-        {
-          "rule_id": "STRING-001",
-          "vulnerabilities": [
-            "SDIF"
-          ],
-          "source_file": "script_totali_Gemini/script_24.py",
-          "line": "15:15",
-          "snippet": "int(input_str)"
         }
       ]
     },

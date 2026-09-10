@@ -2,12 +2,12 @@
   "summary": {
     "total_files_analyzed": 123,
     "vulnerable_files": 82,
-    "total_findings": 150,
+    "total_findings": 147,
     "categories_count": {
       "BRAC": 23,
       "INSD": 5,
       "INJC": 31,
-      "SDIF": 29,
+      "SDIF": 26,
       "SLMF": 13,
       "SECM": 27,
       "IDAF": 10,
@@ -1134,15 +1134,13 @@
       "vulnerable": true,
       "rules_summary": [
         "INPUT-004",
-        "INT-INPUT-004",
-        "STRING-001"
+        "INT-INPUT-004"
       ],
       "vulnerabilities_summary": [
         "INJC",
-        "SDIF",
         "SLMF"
       ],
-      "findings_count": 3,
+      "findings_count": 2,
       "findings": [
         {
           "rule_id": "INPUT-004",
@@ -1165,15 +1163,6 @@
           "line": "8:11",
           "snippet": "user_input",
           "tainted_variable": "user_input"
-        },
-        {
-          "rule_id": "STRING-001",
-          "vulnerabilities": [
-            "SDIF"
-          ],
-          "source_file": "script_estratti/script_24.py",
-          "line": "4:25",
-          "snippet": "int(input(\"Please enter an integer: \"))"
         }
       ]
     },
@@ -1183,15 +1172,13 @@
       "vulnerable": true,
       "rules_summary": [
         "INPUT-004",
-        "INT-INPUT-004",
-        "STRING-001"
+        "INT-INPUT-004"
       ],
       "vulnerabilities_summary": [
         "INJC",
-        "SDIF",
         "SLMF"
       ],
-      "findings_count": 3,
+      "findings_count": 2,
       "findings": [
         {
           "rule_id": "INPUT-004",
@@ -1214,15 +1201,6 @@
           "line": "11:12",
           "snippet": "num",
           "tainted_variable": "num"
-        },
-        {
-          "rule_id": "STRING-001",
-          "vulnerabilities": [
-            "SDIF"
-          ],
-          "source_file": "script_estratti/script_25.py",
-          "line": "4:18",
-          "snippet": "int(input('Enter a number: '))"
         }
       ]
     },
@@ -1393,15 +1371,13 @@
       "vulnerable": true,
       "rules_summary": [
         "INPUT-002",
-        "INT-INPUT-002",
-        "STRING-001"
+        "INT-INPUT-002"
       ],
       "vulnerabilities_summary": [
         "INJC",
-        "SDIF",
         "SLMF"
       ],
-      "findings_count": 3,
+      "findings_count": 2,
       "findings": [
         {
           "rule_id": "INPUT-002",
@@ -1424,15 +1400,6 @@
           "line": "3:12",
           "snippet": "number",
           "tainted_variable": "number"
-        },
-        {
-          "rule_id": "STRING-001",
-          "vulnerabilities": [
-            "SDIF"
-          ],
-          "source_file": "script_estratti/script_34.py",
-          "line": "1:10",
-          "snippet": "int(input(\"Please enter a number: \"))"
         }
       ]
     },

@@ -2,12 +2,12 @@
   "summary": {
     "total_files_analyzed": 122,
     "vulnerable_files": 83,
-    "total_findings": 152,
+    "total_findings": 150,
     "categories_count": {
       "BRAC": 39,
       "IDAF": 13,
       "CRYF": 14,
-      "SDIF": 38,
+      "SDIF": 36,
       "INJC": 21,
       "SLMF": 6,
       "SECM": 24,
@@ -1138,15 +1138,13 @@
       "xml_source": "Micr_Copilot_tot.xml",
       "vulnerable": true,
       "rules_summary": [
-        "INPUT-003",
-        "STRING-001"
+        "INPUT-003"
       ],
       "vulnerabilities_summary": [
         "INJC",
-        "SDIF",
         "SLMF"
       ],
-      "findings_count": 3,
+      "findings_count": 2,
       "findings": [
         {
           "rule_id": "INPUT-003",
@@ -1169,15 +1167,6 @@
           "line": "8:20",
           "snippet": "f'\"{user_input}\" is not a valid integer. Please try again.'",
           "tainted_variable": "user_input"
-        },
-        {
-          "rule_id": "STRING-001",
-          "vulnerabilities": [
-            "SDIF"
-          ],
-          "source_file": "script_totali_Micr_Copilot/script_24.py",
-          "line": "5:22",
-          "snippet": "int(user_input)"
         }
       ]
     },
@@ -1186,15 +1175,13 @@
       "xml_source": "Micr_Copilot_tot.xml",
       "vulnerable": true,
       "rules_summary": [
-        "INPUT-003",
-        "STRING-001"
+        "INPUT-003"
       ],
       "vulnerabilities_summary": [
         "INJC",
-        "SDIF",
         "SLMF"
       ],
-      "findings_count": 2,
+      "findings_count": 1,
       "findings": [
         {
           "rule_id": "INPUT-003",
@@ -1206,15 +1193,6 @@
           "line": "5:26",
           "snippet": "user_input",
           "tainted_variable": "user_input"
-        },
-        {
-          "rule_id": "STRING-001",
-          "vulnerabilities": [
-            "SDIF"
-          ],
-          "source_file": "script_totali_Micr_Copilot/script_25.py",
-          "line": "5:22",
-          "snippet": "int(user_input)"
         }
       ]
     },

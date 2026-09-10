@@ -2,9 +2,9 @@
   "summary": {
     "total_files_analyzed": 125,
     "vulnerable_files": 90,
-    "total_findings": 213,
+    "total_findings": 211,
     "categories_count": {
-      "SDIF": 66,
+      "SDIF": 64,
       "BRAC": 53,
       "SECM": 46,
       "IDAF": 16,
@@ -1396,15 +1396,13 @@
       "xml_source": "Chatgpt_totale.xml",
       "vulnerable": true,
       "rules_summary": [
-        "INPUT-003",
-        "STRING-001"
+        "INPUT-003"
       ],
       "vulnerabilities_summary": [
         "INJC",
-        "SDIF",
         "SLMF"
       ],
-      "findings_count": 2,
+      "findings_count": 1,
       "findings": [
         {
           "rule_id": "INPUT-003",
@@ -1416,15 +1414,6 @@
           "line": "5:34",
           "snippet": "user_input",
           "tainted_variable": "user_input"
-        },
-        {
-          "rule_id": "STRING-001",
-          "vulnerabilities": [
-            "SDIF"
-          ],
-          "source_file": "script_totali_Chatgpt/script_24.py",
-          "line": "5:30",
-          "snippet": "int(user_input)"
         }
       ]
     },
@@ -1433,15 +1422,13 @@
       "xml_source": "Chatgpt_totale.xml",
       "vulnerable": true,
       "rules_summary": [
-        "INT-INPUT-004",
-        "STRING-001"
+        "INT-INPUT-004"
       ],
       "vulnerabilities_summary": [
         "INJC",
-        "SDIF",
         "SLMF"
       ],
-      "findings_count": 2,
+      "findings_count": 1,
       "findings": [
         {
           "rule_id": "INT-INPUT-004",
@@ -1453,15 +1440,6 @@
           "line": "5:21",
           "snippet": "user_input",
           "tainted_variable": "user_input"
-        },
-        {
-          "rule_id": "STRING-001",
-          "vulnerabilities": [
-            "SDIF"
-          ],
-          "source_file": "script_totali_Chatgpt/script_25.py",
-          "line": "4:27",
-          "snippet": "int(input(\"Enter a number: \"))"
         }
       ]
     },
