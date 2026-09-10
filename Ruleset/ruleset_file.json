@@ -110,8 +110,8 @@
   ],
   "safe_contexts": [
     {
-      "type": "matches_xpath",
-      "xpath": ".//src:if_stmt[.//src:condition//src:call[.//src:name[text()='len']]]"
+      "type": "condition_matches_xpath",
+      "xpath": ".//src:call[src:name[text()='len']]"
     }
   ]
 },
@@ -126,8 +126,8 @@
   ],
   "safe_contexts": [
     {
-      "type": "matches_xpath",
-      "xpath": ".//src:call[.//src:name[last()][text()='commonprefix' or text()='abspath']]"
+      "type": "function_has_call_matching_ast",
+      "call": ["commonprefix", "abspath"]
     }
   ]
 },
@@ -142,8 +142,7 @@
   ],
   "safe_contexts": [
     {
-      "type": "matches_xpath",
-      "xpath": ".//src:if_stmt[.//src:name[text()='file_size' or text()='size'][preceding-sibling::src:operator[1][text()='.']]]"
+      "type": "function_has_file_size_check"
     }
   ]
 },

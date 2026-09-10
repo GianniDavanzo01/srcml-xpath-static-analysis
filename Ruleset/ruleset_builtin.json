@@ -81,10 +81,10 @@
     "escape","escape_filter_chars","escape_rdn",
     "parsestr","urlparse","realpath",
     "literal_eval","function","render_template",
-    "execute_command","send_static_file"
+    "execute_command"
   ],
   "safe_contexts": [
-    "match","obj_match","isfile","check_url",
+    "match","obj_match","isfile","check_url","send_static_file",
     {
       "type": "call_with_kwarg",
       "call": ["subprocess.call"],
@@ -608,11 +608,12 @@
   "rule_id": "ENVIRONMENT-001",
   "type": "taint",
   "vulnerabilities": ["SECM"],
-  "description": "environment vulnerability - Passaggio di un dizionario con __builtins__ = None come argomento 'env' (possibile sandbox escape / misconfiguration)",
-  "source_form": "expression",
+  "source_form": "regex",
   "sources": [
-    "{\"__builtins__\": None}"
+    "\\{\\s*['\"]__builtins__['\"]\\s*:\\s*None\\s*\\}"
   ],
+  "sanitizers": [],
+  "safe_contexts": [],
   "sinks": [
     {
       "type": "keyword_argument",
@@ -665,15 +666,8 @@
     "safe_contexts": [
         "obj_match",
         "isfile",
-        {
-            "type": "condition_matches_xpath",
-            "scope": "enclosing",
-            "xpath": ".//src:call[.//src:operator[text()='.']/following-sibling::src:name[1][text()='match']]"
-        },
-        {
-            "type": "matches_xpath",
-            "xpath": ".//src:call[.//src:operator[text()='.']/following-sibling::src:name[1][text()='send_static_file']]"
-        }
+        "match",
+        "send_static_file"
     ]
 },
 {
@@ -700,10 +694,7 @@
     "match",
     "obj_match",
     "isfile",
-    {
-      "type": "matches_xpath",
-      "xpath": ".//src:call[.//src:name[last()][text()='send_static_file']]"
-    }
+  "send_static_file"
   ]
 },
 {
@@ -729,10 +720,7 @@
     "match",
     "obj_match",
     "isfile",
-    {
-      "type": "matches_xpath",
-      "xpath": ".//src:call[.//src:name[last()][text()='send_static_file']]"
-    }
+  "send_static_file"
   ]
 },
 {
@@ -875,21 +863,22 @@
   ]
 },
 {
-    "rule_id": "STRING-001",
-    "type": "structural",
-    "description": "python string vulnerability",
-    "vulnerabilities": [
-        "SDIF"
-    ],
-    "forbidden_functions": [
-        "int"
-    ],
-    "safe_contexts": [
-        {
-            "type": "matches_xpath",
-            "xpath": ".//src:call[.//src:name[text()='split'] and .//src:name[text()='version']]"
-        }
-    ]
+  "rule_id": "STRING-001",
+  "type": "taint",
+  "description": "python string vulnerability",
+  "vulnerabilities": ["SDIF"],
+  "source_form": "regex",
+  "sources": ["=\\s*\"1\""],
+  "sanitizers": [],
+  "safe_contexts": [
+    {
+      "type": "rhs_call",
+      "call": ["sys.version.split"]
+    }
+  ],
+  "sinks": [
+    { "type": "argument_to", "functions": ["int"] }
+  ]
 },
 {
   "rule_id": "CAPTCHA-001",

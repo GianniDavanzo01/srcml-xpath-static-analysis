@@ -31,10 +31,13 @@
   "forbidden_functions": [
     "git.Repo.clone_from"
   ],
-  "safe_contexts": [
+"safe_contexts": [
     {
       "type": "function_has_call_matching_ast",
-      "call": ["urllib.parse.urlparse"]
+      "call": [
+        "urllib.parse.urlparse", 
+        "urlparse"
+      ]
     }
   ]
 },

@@ -56,8 +56,6 @@
   ],
   "weak_key_sizes": [
     {
-      "type": "key_size_lt",
-      "name": "key_size",
       "max_value": 2048
     }
   ]

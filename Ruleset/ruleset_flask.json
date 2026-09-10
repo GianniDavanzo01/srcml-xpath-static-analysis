@@ -843,8 +843,10 @@
   ],
   "safe_contexts": [
     {
-      "type": "url_validation",
-      "require": "netloc_in"
+      "type": "membership_check",
+      "scope": "function",
+      "operators": ["in", "not in"],
+      "left_contains": [".netloc"]
     },
     {
       "type": "node_matches_xpath",
@@ -1002,22 +1004,28 @@
     "source_form": "call",
     "sinks": ["concat", "assign_rhs"],
     "sanitizers": ["escape", "escape_filter_chars", "escape_rdn"],
-    "safe_contexts": [
-        {
-            "type": "matches_xpath",
-            "xpath": ".//src:if_stmt//src:call[contains(string(src:name[last()]),'match') or string(src:name)='obj_match' or contains(string(src:name),'isfile') or contains(string(src:name),'send_static_file')]"
-        },
-        {
-            "type": "matches_xpath",
-            "xpath": ".//src:call[contains(string(src:name),'subprocess.run')][contains(.,'$VAR')][contains(translate(string(./src:argument_list),' ',''),'check=True') or contains(translate(string(./src:argument_list),' ',''),'check=true')]"
-        },
-        {
-            "type": "matches_xpath",
-            "xpath": ".//src:call[contains(string(src:name),'isfile')][contains(.,'$VAR')]"
-        },
-        { "type": "try_after_source" },
-        { "type": "var_truthiness_check", "scope": "enclosing" }
-    ]
+      "safe_contexts": [
+      "match",
+      "obj_match",
+      "isfile",
+      {
+          "type": "current_call_matches_ast",
+          "call": ["send_static_file"]
+      },
+      {
+          "type": "call_has_kwargs",
+          "call": ["subprocess.run"],
+          "kwargs": {
+              "check": "True"
+          }
+      },
+      {
+          "type": "function_has_call_with_var_arg",
+          "call": ["isfile"]
+      },
+      { "type": "try_after_source" },
+      { "type": "var_truthiness_check", "scope": "enclosing" }
+  ]
 },
 {
     "rule_id": "REQUEST-ARGS-GET-011",
@@ -1035,17 +1043,23 @@
     "sinks": ["concat", "assign_rhs"],
     "sanitizers": ["escape", "escape_filter_chars", "escape_rdn"],
     "safe_contexts": [
+        "match",
+        "obj_match",
+        "isfile",
         {
-            "type": "matches_xpath",
-            "xpath": ".//src:if_stmt//src:call[contains(string(src:name[last()]),'match') or string(src:name)='obj_match' or contains(string(src:name),'isfile') or contains(string(src:name),'send_static_file')]"
+            "type": "current_call_matches_ast",
+            "call": ["send_static_file"]
         },
         {
-            "type": "matches_xpath",
-            "xpath": ".//src:call[contains(string(src:name),'subprocess.run')][contains(.,'$VAR')][contains(translate(string(./src:argument_list),' ',''),'check=True') or contains(translate(string(./src:argument_list),' ',''),'check=true')]"
+            "type": "call_has_kwargs",
+            "call": ["subprocess.run"],
+            "kwargs": {
+                "check": "True"
+            }
         },
         {
-            "type": "matches_xpath",
-            "xpath": ".//src:call[contains(string(src:name),'isfile')][contains(.,'$VAR')]"
+            "type": "function_has_call_with_var_arg",
+            "call": ["isfile"]
         },
         { "type": "try_after_source" },
         { "type": "var_truthiness_check", "scope": "enclosing" }
@@ -1091,17 +1105,23 @@
     "sinks": ["concat", "assign_rhs"],
     "sanitizers": ["escape", "escape_filter_chars", "escape_rdn"],
     "safe_contexts": [
+        "match",
+        "obj_match",
+        "isfile",
         {
-            "type": "matches_xpath",
-            "xpath": ".//src:if_stmt//src:call[contains(string(src:name[last()]),'match') or string(src:name)='obj_match' or contains(string(src:name),'isfile') or contains(string(src:name),'send_static_file')]"
+            "type": "current_call_matches_ast",
+            "call": ["send_static_file"]
         },
         {
-            "type": "matches_xpath",
-            "xpath": ".//src:call[contains(string(src:name),'subprocess.run')][contains(.,'$VAR')][contains(translate(string(./src:argument_list),' ',''),'check=True')]"
+            "type": "call_has_kwargs",
+            "call": ["subprocess.run"],
+            "kwargs": {
+                "check": "True"
+            }
         },
         {
-            "type": "matches_xpath",
-            "xpath": ".//src:call[contains(string(src:name),'isfile')][contains(.,'$VAR')]"
+            "type": "function_has_call_with_var_arg",
+            "call": ["isfile"]
         },
         { "type": "try_after_source" },
         { "type": "var_truthiness_check", "scope": "enclosing" }
@@ -1411,60 +1431,34 @@
   ]
 },
 {
-    "rule_id": "REQUEST-ARGS-GET-025",
-    "type": "structural",
-    "required_imports": [
-        "flask"
-    ],
-    "description": "Request args vulnerability - chiamata a request.X(...) preceduta da parentesi, senza sanificazione",
-    "vulnerabilities": [
-        "SECM"
-    ],
-    "forbidden_expressions": [
-        "(request.args(","(request.args.get(","(request.POST(","(request.GET(",
-        "(request.files(","(request.formdata(","(request.headers(","(request.params(",
-        "(request.base_url(","(request.authorization(","(request.cookies(","(request.endpoint(",
-        "(request.host(","(request.host_url(","(request.module(","(request.path(",
-        "(request.query_strings(","(request.url(","(request.values(","(request.view_args(",
-        "(flask.request.args(","(flask.request.args.get(","(flask.request.POST(","(flask.request.GET(",
-        "(flask.request.files(","(flask.request.formdata(","(flask.request.headers(","(flask.request.params(",
-        "(flask.request.base_url(","(flask.request.authorization(","(flask.request.cookies(","(flask.request.endpoint(",
-        "(flask.request.host(","(flask.request.host_url(","(flask.request.module(","(flask.request.path(",
-        "(flask.request.query_strings(","(flask.request.url(","(flask.request.values(","(flask.request.view_args("
-    ],
-    "safe_contexts": [
-        {
-            "type": "node_matches_xpath",
-            "xpath": "ancestor::src:call[1][src:name[text()='escape' or text()='escape_filter_chars' or text()='escape_rdn']]"
-        }
-    ]
-},
-{
-  "rule_id": "REQUEST-ARGS-GET-026",
+  "rule_id": "REQUEST-ARGS-GET-025",
   "type": "structural",
-  "required_imports": [
-    "flask"
-  ],
-  "description": "Request args vulnerability - chiamata a request.X(...) preceduta da operatore % (percent-format), senza sanificazione",
-  "vulnerabilities": [
-    "SECM"
-  ],
-  "forbidden_expressions": [
-    "%request.args(","%request.args.get(","%request.POST(","%request.GET(",
-    "%request.files(","%request.formdata(","%request.headers(","%request.params(",
-    "%request.base_url(","%request.authorization(","%request.cookies(","%request.endpoint(",
-    "%request.host(","%request.host_url(","%request.module(","%request.path(",
-    "%request.query_strings(","%request.url(","%request.values(","%request.view_args(",
-    "%flask.request.args(","%flask.request.args.get(","%flask.request.POST(","%flask.request.GET(",
-    "%flask.request.files(","%flask.request.formdata(","%flask.request.headers(","%flask.request.params(",
-    "%flask.request.base_url(","%flask.request.authorization(","%flask.request.cookies(","%flask.request.endpoint(",
-    "%flask.request.host(","%flask.request.host_url(","%flask.request.module(","%flask.request.path(",
-    "%flask.request.query_strings(","%flask.request.url(","%flask.request.values(","%flask.request.view_args("
+  "required_imports": ["flask"],
+  "description": "Request args vulnerability - chiamata a request.X(...) preceduta da parentesi, senza sanificazione",
+  "vulnerabilities": ["SECM"],
+  "xpath_rules": [
+    ".//src:call[(contains(src:name, 'request.') or contains(src:name, 'flask.request.')) and preceding-sibling::src:operator[1][text()='(']]"
   ],
   "safe_contexts": [
     {
       "type": "node_matches_xpath",
-      "xpath": "ancestor::src:call[1][src:name[text()='escape' or text()='escape_filter_chars' or text()='escape_rdn']]"
+      "xpath": "ancestor::src:call[.//src:name[text()='escape']]"
+    }
+  ]
+},
+{
+  "rule_id": "REQUEST-ARGS-GET-026",
+  "type": "structural",
+  "required_imports": ["flask"],
+  "description": "Request args vulnerability - chiamata a request.X(...) preceduta da operatore % (percent-format), senza sanificazione",
+  "vulnerabilities": ["SECM"],
+  "xpath_rules": [
+    ".//src:call[(contains(src:name, 'request.') or contains(src:name, 'flask.request.')) and preceding-sibling::src:operator[1][text()='%']]"
+  ],
+  "safe_contexts": [
+    {
+      "type": "node_matches_xpath",
+      "xpath": "ancestor::src:call[.//src:name[text()='escape']]"
     }
   ]
 },
@@ -1489,8 +1483,16 @@
     ],
     "safe_contexts": [
         {
-            "type": "matches_xpath",
-            "xpath": ".//src:if_stmt//src:condition[contains(., 'request.remote_addr') and contains(., '!=') and contains(., '127.0.0.1')]"
+            "type": "binary_comparison",
+            "operators": ["!="],
+            "left_contains": ["request.remote_addr"],
+            "right_exact": ["'127.0.0.1'", "\"127.0.0.1\""]
+        },
+        {
+            "type": "binary_comparison",
+            "operators": ["!="],
+            "left_exact": ["'127.0.0.1'", "\"127.0.0.1\""],
+            "right_contains": ["request.remote_addr"]
         }
     ]
 },

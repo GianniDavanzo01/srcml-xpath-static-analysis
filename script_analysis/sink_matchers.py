@@ -330,27 +330,6 @@ def _sink_matches_xpath(uso, spec: dict, fstring_nodes: list) -> bool:
     return bool(uso.xpath(xpath_query, namespaces=NS))
 
 
-def _sink_preceded_by_literal_containing(uso, spec: dict, fstring_nodes: list) -> bool:
-    """{"type": "preceded_by_literal_containing", "text": "href"}"""
-    text = spec.get("text", "")
-    if not text:
-        return False
-    stmt = uso.xpath("ancestor::src:expr_stmt[1] | ancestor::src:return[1]", namespaces=NS)
-    if not stmt:
-        return False
-    stmt = stmt[0]
-    ordered_nodes = stmt.xpath(".//*")
-    try:
-        pos_uso = ordered_nodes.index(uso)
-    except ValueError:
-        return False
-    for lit in stmt.xpath(".//src:literal[@type='string']", namespaces=NS):
-        if text.lower() in "".join(lit.itertext()).lower():
-            if ordered_nodes.index(lit) < pos_uso:
-                return True
-    return False
-
-
 SINK_MATCHERS = {
     "method_call": _sink_method_call,
     "call_with_var_arg": _sink_call_with_var_arg,
@@ -366,7 +345,6 @@ SINK_MATCHERS = {
     "subscript_return": _sink_subscript_usage,              
     "subscript_method_call": _sink_subscript_usage,
     "matches_xpath": _sink_matches_xpath,
-    "preceded_by_literal_containing": _sink_preceded_by_literal_containing,
 }
 
 

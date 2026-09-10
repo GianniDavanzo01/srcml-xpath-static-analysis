@@ -13,9 +13,13 @@
     { "type": "fstring", "requires_text_any": ["SELECT", "DELETE", "UPDATE", "INSERT"] },
     { "type": "call_arg", "requires_text_any": ["SELECT", "DELETE", "UPDATE", "INSERT"] }
   ],
-  "safe_contexts": [
-    { "type": "call_has_kwargs", "call": ["cur.execute", "cursor.execute", "execute"], "kwargs": {} }
-  ]
+"safe_contexts": [
+  { "type": "parametrized_query" },
+  {
+    "type": "node_matches_xpath",
+    "xpath": "ancestor::src:argument[position()=2 and parent::src:argument_list/parent::src:call[.//src:name[last()][text()='execute']]]"
+  }
+]
 },
 {
   "rule_id": "SQL-001-subscript",
@@ -35,9 +39,13 @@
     { "type": "fstring", "requires_text_any": ["SELECT", "DELETE", "UPDATE", "INSERT"] },
     { "type": "call_arg", "requires_text_any": ["SELECT", "DELETE", "UPDATE", "INSERT"] }
   ],
-  "safe_contexts": [
-    { "type": "call_has_kwargs", "call": ["cur.execute", "cursor.execute", "execute"], "kwargs": {} }
-  ]
+"safe_contexts": [
+  { "type": "parametrized_query" },
+  {
+    "type": "node_matches_xpath",
+    "xpath": "ancestor::src:argument[position()=2 and parent::src:argument_list/parent::src:call[.//src:name[last()][text()='execute']]]"
+  }
+]
 },
 {
     "rule_id": "SQL-002",
@@ -78,6 +86,10 @@
     "safe_contexts": [
         {
             "type": "parametrized_query"
+        },
+        {
+            "type": "node_matches_xpath",
+            "xpath": "self::src:call[.//src:name[last()][text()='execute']][ (contains(string(./src:argument_list), '%s') or contains(string(./src:argument_list), '?')) and ./src:argument_list/src:argument[position()>1] ]"
         },
         {
             "type": "node_matches_xpath",

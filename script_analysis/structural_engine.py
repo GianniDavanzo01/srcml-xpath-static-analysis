@@ -6,7 +6,7 @@ Motore Strutturale
 
 import re
 
-from common import NS, get_call_name, build_finding, call_arguments_match_ast, check_required_imports
+from common import NS, get_call_name, build_finding, call_arguments_match_ast, check_required_imports,_pos_key
 from safe_context_matchers import is_in_safe_context
 
 
@@ -335,50 +335,88 @@ def _run_unsafe_file_reads(tree, rule, findings):
 
 
 def _run_local_var_forbidden_calls(tree, rule, findings):
+    """
+    Rileva chiamate a funzioni pericolose (es. os.chmod) in cui l'argomento
+    è una variabile locale il cui valore, assegnato in precedenza nello
+    stesso scope, è un letterale numerico che corrisponde ESATTAMENTE a uno
+    dei valori vietati.
+    """
     specs = rule.get("local_var_forbidden_calls", [])
     if not specs:
         return
-
+ 
+    safe_contexts = rule.get("safe_contexts", [])
+ 
     for spec in specs:
         target_calls = spec.get("call", [])
         if isinstance(target_calls, str):
             target_calls = [target_calls]
-        forbidden_nums = spec.get("forbidden_numbers", [])
-
-        call_nodes = tree.xpath(".//src:call", namespaces=NS)
-        
-        for c_node in call_nodes:
-            name_nodes = c_node.xpath("./src:name", namespaces=NS)
-            if not name_nodes:
+        forbidden_nums = set(spec.get("forbidden_numbers", []))
+        if not target_calls or not forbidden_nums:
+            continue
+ 
+        for c_node in tree.xpath(".//src:call", namespaces=NS):
+            call_name = get_call_name(c_node)
+            if not call_name:
                 continue
-            call_name = "".join(name_nodes[0].itertext()).strip()
-
-            matched_call = any(call_name == tc or call_name.endswith(f".{tc}") for tc in target_calls)
-            if not matched_call:
+            if not any(call_name == tc or call_name.endswith(f".{tc}") for tc in target_calls):
                 continue
-
+ 
+            call_key = _pos_key(c_node)
             args = c_node.xpath("./src:argument_list/src:argument", namespaces=NS)
+ 
             for arg in args:
-                name_in_arg = arg.xpath(".//src:name", namespaces=NS)
-                if not name_in_arg:
+                names = arg.xpath("./src:expr/src:name | ./src:name", namespaces=NS)
+                if len(names) != 1:
                     continue
-                var_name = "".join(name_in_arg[0].itertext()).strip()
-
-                scope_node = c_node.xpath("ancestor::src:block[1] | ancestor::src:function[1]", namespaces=NS)
-                if not scope_node:
+                name_node = names[0]
+                if name_node.xpath("./src:index | ./src:name", namespaces=NS):
+                    continue 
+ 
+                var_name = "".join(name_node.itertext()).strip()
+                if not var_name.isidentifier():
                     continue
-
-                expr_stmts = scope_node[0].xpath(".//src:expr_stmt", namespaces=NS)
-                for stmt in expr_stmts:
-                    stmt_text = "".join(stmt.itertext())
-                    
-                    if stmt_text.startswith(var_name) and "=" in stmt_text:
-                        for fnum in forbidden_nums:
-                            if fnum in stmt_text:
-                                finding = build_finding(rule, c_node)
-                                if finding not in findings:
-                                    findings.append(finding)
-                                break
+ 
+                scope_candidates = c_node.xpath(
+                    "ancestor::src:function[1] | ancestor::src:block[1]",
+                    namespaces=NS,
+                )
+                scope_node = scope_candidates[0] if scope_candidates else tree
+ 
+                assigns = scope_node.xpath(
+                    f".//src:expr_stmt[src:expr/src:name[1][text()='{var_name}']"
+                    f" and src:expr/src:operator[1][text()='=']]",
+                    namespaces=NS,
+                )
+                prior = [a for a in assigns if _pos_key(a) < call_key]
+                if not prior:
+                    continue
+                last_assign = max(prior, key=_pos_key)
+ 
+                op = last_assign.xpath(".//src:operator[text()='='][1]", namespaces=NS)
+                if not op:
+                    continue
+                rhs_nodes = op[0].xpath("./following-sibling::*", namespaces=NS)
+                if not rhs_nodes:
+                    continue
+ 
+                lit = rhs_nodes[0].xpath(
+                    "descendant-or-self::src:literal[@type='number']", namespaces=NS
+                )
+                if not lit:
+                    continue 
+ 
+                num_text = "".join(lit[0].itertext()).strip()
+                if num_text not in forbidden_nums:
+                    continue
+ 
+                if is_in_safe_context(c_node, safe_contexts, var_name=var_name):
+                    continue
+ 
+                finding = build_finding(rule, c_node, extra={"tainted_variable": var_name})
+                if finding not in findings:
+                    findings.append(finding)
+ 
 
 
 def _run_reference_comparisons(tree, rule, findings):
@@ -789,22 +827,6 @@ def run_structural_rule(tree, rule: dict) -> list:
                         continue
                         
                     findings.append(build_finding(rule, call))
-
-    forbidden_string_patterns = rule.get("forbidden_string_patterns", [])
-    if forbidden_string_patterns:
-        safe_contexts = rule.get("safe_contexts", [])
-        
-        string_literals = tree.xpath(".//src:literal[@type='string']", namespaces=NS)
-        for string_node in string_literals:
-            string_text = "".join(string_node.itertext())
-            
-            for pattern in forbidden_string_patterns:
-                if re.search(pattern, string_text):
-                    if is_in_safe_context(string_node, safe_contexts):
-                        continue
-                        
-                    findings.append(build_finding(rule, string_node))
-                    break 
 
     forbidden_subscripts = rule.get("forbidden_subscripts", [])
     if forbidden_subscripts:

@@ -47,10 +47,6 @@
         "secure": "",
         "samesite": ""
       }
-    },
-    {
-      "type": "node_matches_xpath",
-      "xpath": "boolean(count(.//src:argument_list/src:argument) < 2)"
     }
   ]
 },

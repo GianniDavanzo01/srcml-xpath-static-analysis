@@ -454,20 +454,6 @@ def _safe_context_var_truthiness_check(node, spec: dict, var_name: str | None = 
     return False
 
 
-def _safe_context_call_argument_contains(node, spec: dict, var_name: str | None = None) -> bool:
-    """{"type": "call_argument_contains", "text": "escape("}"""
-    if not node.tag.endswith("call"):
-        return False
-        
-    arg_nodes = node.xpath("./src:argument_list", namespaces=NS)
-    if not arg_nodes:
-        return False
-        
-    arg_text = "".join(arg_nodes[0].itertext()).replace(" ", "").replace("\n", "").replace("'", '"')
-    search_text = spec.get("text", "").replace(" ", "").replace("'", '"')
-    
-    return search_text in arg_text
-
 
 def _safe_context_condition_matches_xpath(node, spec: dict, var_name: str | None = None) -> bool:
     """{"type": "condition_matches_xpath", "xpath": ".//src:call[src:name='isinstance']"}
@@ -949,7 +935,6 @@ SAFE_CONTEXT_MATCHERS = {
     "unit_has_os_path_abspath_and_commonpath": _safe_context_unit_has_os_path_abspath_and_commonpath,
     "unit_has_os_path_abspath_and_startswith": _safe_context_unit_has_os_path_abspath_and_startswith,
     "var_truthiness_check": _safe_context_var_truthiness_check,
-    "call_argument_contains": _safe_context_call_argument_contains,
     "var_has_attribute": _safe_context_var_has_attribute,
     "binary_comparison": _safe_context_binary_comparison,
     "current_call_matches_ast": _safe_context_current_call_matches,

@@ -1212,10 +1212,16 @@
 {
   "rule_id": "DJANGO-003",
   "type": "structural",
+  "description": "django db backends vulnerability - Configurazione del database PostgreSQL potenzialmente insicura",
   "vulnerabilities": ["SDIF"],
-  "forbidden_string_patterns": ["django\\.db\\.backends\\.postgresql"],
+  "xpath_rules": [
+    ".//src:literal[@type='string'][contains(text(), 'django.db.backends.postgresql')]"
+  ],
   "safe_contexts": [
-    { "type": "function_has_call_matching_ast", "call": ["os.getenv"] }
+    {
+      "type": "function_has_call_matching_ast",
+      "call": ["os.getenv"]
+    }
   ]
 },
 {
@@ -1255,7 +1261,11 @@
   "rule_id": "HTTP-CLIENT-001",
   "type": "structural",
   "vulnerabilities": ["BRAC"],
-  "forbidden_string_patterns": ["GET.*X-Header:\\s*foo"]
+  "description": "method vulnerability - Rilevato potenziale Header Injection / Request Smuggling nell'assegnazione del metodo HTTP",
+  "xpath_rules": [
+    ".//src:expr[./src:name[text()='method'] and ./src:operator[text()='='] and ./src:literal[@type='string'][contains(text(), 'GET') and contains(text(), 'X-Header:') and contains(text(), 'foo')]]"
+  ],
+  "safe_contexts": []
 }
 
 ]

@@ -43,6 +43,12 @@
       "contains_numbers": ["0", "0000", "0o000", "755", "0o755", "777", "0o777", "0o400", "128", "664", "0o644"]
     }
   ],
+  "local_var_forbidden_calls": [
+    {
+      "call": ["os.chmod"],
+      "forbidden_numbers": ["0", "0000", "0o000", "755", "0o755", "777", "0o777", "0o400", "128", "664", "0o644"]
+    }
+  ],
   "safe_contexts": []
  },
  {
@@ -255,23 +261,21 @@
     }
   ],
   "safe_contexts": [
-    {
-      "type": "matches_xpath",
-      "xpath": "ancestor-or-self::src:unit[1][contains(translate(., concat(' ', '&#10;', '&#13;'), ''), 'shlex.quote(')]"
-    },
-    {
-      "type": "membership_check",
-      "require_any_call": true
-    },
-    {
-      "type": "membership_check",
-      "require_collection_assignment": true
-    },
-    {
-      "type": "matches_xpath",
-      "xpath": ".//src:call[contains(translate(., concat(' ', '&#10;', '&#13;', '&#34;', '&#39;'), ''), 'subprocess.run([ping,-c,4,link],stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)')]"
-    }
-  ]
+  {
+    "type": "matches_xpath",
+    "xpath": "ancestor-or-self::src:unit[1][contains(translate(., concat(' ', '&#10;', '&#13;'), ''), 'shlex.quote(')]"
+  },
+  { "type": "membership_check", "require_any_call": true },
+  { "type": "membership_check", "require_collection_assignment": true },
+  {
+    "type": "matches_xpath",
+    "xpath": ".//src:call[contains(translate(., concat(' ', '&#10;', '&#13;', '&#34;', '&#39;'), ''), 'subprocess.run([ping,-c,4,link],stdout=subprocess.PIPE,stderr=subprocess.PIPE,text=True)')]"
+  },
+  {
+    "type": "matches_xpath",
+    "xpath": ".//src:if/src:condition[.//src:operator[text()='in' or text()='not in']] | .//src:ternary/src:condition[.//src:operator[text()='in' or text()='not in']]"
+  }
+]
 },
 {
   "rule_id": "MKTEMP-001",
@@ -316,26 +320,31 @@
       "type": "membership_check",
       "require_collection_assignment": true
     },
+    { "type": "args_contain_call_with_literal_arg", "call": "escape" },
     {
-      "type": "call_argument_contains",
-      "text": "escape("
-    },
-    {
-      "type": "call_argument_contains",
-      "text": "\"python\""
+      "type": "node_matches_xpath",
+      "xpath": "./src:argument_list[count(src:argument)=1]/src:argument[1][(src:expr[count(*)=1]/src:literal[@type='string'][text()='\"python\"']) or (count(*)=1 and src:literal[@type='string'][text()='\"python\"'])]"
     },
     {
       "type": "node_matches_xpath",
       "xpath": "ancestor::src:call[src:name[text()='eval' or text()='exec']]"
     },
     {
-      "type": "matches_xpath",
-      "xpath": "ancestor-or-self::src:unit[1][contains(translate(., concat(' ', '&#10;', '&#13;'), ''), 'requests.get(url)')]"
+      "type": "function_has_call_matching_ast",
+      "call": ["requests.get"],
+      "exact_args_count": 1,
+      "contains_names": ["url"]
     },
     {
-      "type": "matches_xpath",
-      "xpath": "ancestor-or-self::src:unit[1][contains(translate(., concat(' ', '&#10;', '&#13;'), ''), 'os.path.dirname(sys.executable)')]"
-    }
+      "type": "function_has_call_matching_ast",
+      "call": ["os.path.dirname"],
+      "exact_args_count": 1,
+      "contains_names": ["sys.executable"]
+    },
+    {
+    "type": "matches_xpath",
+    "xpath": ".//src:if/src:condition[.//src:operator[text()='in' or text()='not in']] | .//src:ternary/src:condition[.//src:operator[text()='in' or text()='not in']]"
+  }
   ]
 },
 {
@@ -501,7 +510,7 @@
 {
   "rule_id": "OS-REMOVE-001",
   "type": "structural",
-  "description": "Rileva chiamate a os.remove potenzialmente vulnerabili a path traversal o cancellazione non autorizzata di file[cite: 5].",
+  "description": "Rileva chiamate a os.remove potenzialmente vulnerabili a path traversal o cancellazione non autorizzata di file.",
   "vulnerabilities": [
     "SDIF"
   ],

@@ -37,14 +37,17 @@
   "rule_id": "TABLIB-DATABOOK-LOAD-001",
   "type": "structural",
   "vulnerabilities": ["SDIF"],
-  "description": "Failures - Deserializzazione non sicura tramite tablib.Databook().load() senza l'uso di yaml.SafeLoader",
-  "forbidden_functions": [
-    "tablib.Databook().load"
+  "description": "Failures - Deserializzazione non sicura tramite tablib.Databook().load() senza l'utilizzo del parametro sicuro loader=yaml.SafeLoader",
+  "xpath_rules": [
+    ".//src:call[src:name[text()='load'] and preceding-sibling::src:operator[1][text()='.'] and preceding-sibling::src:call[1][.//src:name[text()='tablib'] and .//src:name[text()='Databook']]]"
   ],
   "safe_contexts": [
     {
-      "type": "current_call_matches_ast",
-      "args_text_contains": ["loader=yaml.SafeLoader"]
+      "type": "call_has_kwargs",
+      "call": ["load"],
+      "kwargs": {
+        "loader": "yaml.SafeLoader"
+      }
     }
   ]
 },

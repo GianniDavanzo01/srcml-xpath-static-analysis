@@ -2,7 +2,7 @@
   "summary": {
     "total_files_analyzed": 124,
     "vulnerable_files": 103,
-    "total_findings": 201,
+    "total_findings": 202,
     "categories_count": {
       "BRAC": 32,
       "INSD": 5,
@@ -10,7 +10,7 @@
       "SLMF": 36,
       "CRYF": 36,
       "SDIF": 39,
-      "SECM": 29,
+      "SECM": 30,
       "IDAF": 16,
       "CWE-462": 1
     }
@@ -545,17 +545,28 @@
       "xml_source": "Gemini_totale.xml",
       "vulnerable": true,
       "rules_summary": [
-        "SET-COOKIE-001-flask"
+        "SET-COOKIE-001-flask",
+        "SET-COOKIE-001-ssl"
       ],
       "vulnerabilities_summary": [
-        "CRYF"
+        "CRYF",
+        "SECM"
       ],
-      "findings_count": 1,
+      "findings_count": 2,
       "findings": [
         {
           "rule_id": "SET-COOKIE-001-flask",
           "vulnerabilities": [
             "CRYF"
+          ],
+          "source_file": "script_totali_Gemini/script_115.py",
+          "line": "26:10",
+          "snippet": "cookies.set_cookie(cookie_object)"
+        },
+        {
+          "rule_id": "SET-COOKIE-001-ssl",
+          "vulnerabilities": [
+            "SECM"
           ],
           "source_file": "script_totali_Gemini/script_115.py",
           "line": "26:10",

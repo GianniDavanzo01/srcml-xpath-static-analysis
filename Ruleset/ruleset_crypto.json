@@ -144,10 +144,6 @@
       "operators": ["<"],
       "left_contains": ["len("],
       "right_exact": ["16", "AES.block_size"]
-    },
-    {
-      "type": "matches_xpath",
-      "xpath": "ancestor-or-self::src:unit[1]//src:import//src:name[text()='Fernet']"
     }
   ]
 },
@@ -249,11 +245,7 @@
     "RSA.generate"
   ],
   "safe_contexts": [
-    {
-      "type": "function_has_call_matching_ast", 
-      "call": ["RSA.generate"], 
-      "args_text_contains": ["2048"]
-    }
+  {"type": "current_call_matches_ast", "call": ["RSA.generate"], "args_text_contains": ["2048"]}
   ]
 },
 {
@@ -281,7 +273,7 @@
   ],
   "safe_contexts": [
     {
-      "type": "function_has_call_matching_ast", 
+      "type": "current_call_matches_ast", 
       "call": ["hashlib.new"],
       "args_text_contains": ["sha512"]
     }
@@ -301,7 +293,7 @@
   ],
   "safe_contexts": [
     {
-      "type": "function_has_call_matching_ast", 
+      "type": "current_call_matches_ast", 
       "call": ["pbkdf2_hmac"],
       "args_text_contains": ["sha512"]
     }
@@ -342,14 +334,13 @@
   "bad_function_defs": [
     {
       "name": "sign",
-      "exact_args_count": 2,
-      "args_contain": ["self"]
+      "param": "self,"
     }
   ],
-  "safe_contexts": [
+"safe_contexts": [
     {
-      "type": "matches_xpath",
-      "xpath": ".//src:call[.//src:name[text()='hmac'] and .//src:name[text()='new'] and .//src:name[text()='hexdigest']]"
+      "type": "node_matches_xpath",
+      "xpath": ".//src:call[src:name[text()='hexdigest'] and preceding-sibling::src:operator[1][text()='.'] and preceding-sibling::src:call[1][.//src:name[text()='hmac'] and .//src:name[text()='new']]]"
     }
   ]
 },

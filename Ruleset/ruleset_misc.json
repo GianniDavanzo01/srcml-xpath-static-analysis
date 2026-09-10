@@ -127,10 +127,7 @@
     "proxy_url": "\"http://user:pass@proxy.example.com:8080\""
   },
   "safe_contexts": [
-    {
-      "type": "unit_contains_text",
-      "text": "urllib.request.build_opener("
-    }
+  {"type": "function_has_call_matching_ast", "call": ["urllib.request.build_opener"]}
   ]
 },
 {
@@ -414,10 +411,7 @@
     "yaml.dump"
   ],
   "safe_contexts": [
-    {
-      "type": "matches_xpath",
-      "xpath": "ancestor-or-self::src:unit[1][contains(translate(., concat(' ', '&#10;', '&#13;'), ''), 'yaml.safe_dump(')]"
-    }
+  {"type": "function_has_call_matching_ast", "call": ["yaml.safe_dump"]}
   ]
 },
 {
@@ -862,13 +856,20 @@
 {
   "rule_id": "URL-PATTERN-001",
   "type": "structural",
-  "description": "Rileva espressioni regolari per la validazione di URL potenzialmente vulnerabili a ReDoS (Regular Expression Denial of Service).",
-  "vulnerabilities": [
-    "SDIF"
+  "description": "url pattern vulnerability - Rilevata regex potenzialmente vulnerabile a ReDoS (catastrophic backtracking) all'interno di re.compile",
+  "vulnerabilities": ["SDIF"],
+  "forbidden_functions": [
+    {
+      "type": "call_matches_ast",
+      "call": ["re.compile"],
+      "args_text_contains": [
+        "[a-zA-Z0-9-]", 
+        "{2,6}",
+        ".*"
+      ]
+    }
   ],
-  "forbidden_string_patterns": [
-    "\\(\\[a-zA-Z0-9-\\]\\+\\.\\*\\[a-zA-Z\\]\\{2,6\\}\\(\\.\\*\\)\\.\\*\\)"
-  ]
+  "safe_contexts": []
 },
 {
   "rule_id": "MINIRACER-EVAL-001",
@@ -887,7 +888,7 @@
 {
   "rule_id": "MINIRACER-EVAL-002-ERA-DOPPIONE-CON-L-OMONIMA",
   "type": "structural",
-  "description": "Rileva l'uso di librelogo.execute, che espone al rischio di esecuzione arbitraria di codice (Code Injection)[cite: 5].",
+  "description": "Rileva l'uso di librelogo.execute, che espone al rischio di esecuzione arbitraria di codice (Code Injection).",
   "vulnerabilities": [
     "SDIF"
   ],
@@ -1017,7 +1018,7 @@
 {
   "rule_id": "PERMISSION-001",
   "type": "structural",
-  "description": "Rileva chiamate a context.restrictedTraverse senza un preventivo controllo dei permessi tramite checkPermission[cite: 5].",
+  "description": "Rileva chiamate a context.restrictedTraverse senza un preventivo controllo dei permessi tramite checkPermission.",
   "vulnerabilities": [
     "SDIF"
   ],
@@ -1069,9 +1070,7 @@
   "rule_id": "DEMOCRITUS-001",
   "type": "structural",
   "vulnerabilities": ["SDIF"],
-  "raw_patterns": [
-    { "pattern": "democritus" }
-  ]
+  "forbidden_names": ["democritus"]
 },
 {
   "rule_id": "REPR-001",
@@ -1408,7 +1407,7 @@
   "forbidden_imports": ["asyncua.Server"],
   "safe_contexts": [
     {
-      "type": "function_has_call_matching_ast",
+      "type": "current_call_matches_ast",
       "call": ["set_security_policy"],
       "args_text_contains": ["ua.SecurityPolicyType.Basic256Sha512_SignAndEncrypt"]
     }
@@ -1829,7 +1828,7 @@
   "forbidden_functions": ["glob.glob"],
   "safe_contexts": [
     { "type": "function_has_call_matching_ast", "call": ["os.path.isfile"] },
-    { "type": "function_has_call_matching_ast", "call": ["os.access"], "args_text_contains": ["os.R_OK"] }
+    { "type": "current_call_matches_ast", "call": ["os.access"], "args_text_contains": ["os.R_OK"] }
   ]
 },
 {
