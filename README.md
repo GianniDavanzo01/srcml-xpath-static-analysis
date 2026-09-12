@@ -16,3 +16,14 @@ Dal terminale, lancia il seguente comando sostituendo i segnaposto `< >` con i p
 
 ```bash
 python srcml_engine.py --xml <percorso/al/file.xml> --rules <percorso/cartella_regole/> -o <percorso/output.json>
+```
+## Dataset e Fonti di Test
+
+Per l'esecuzione dei test del motore di analisi, le regole sono state validate su snippet di codice estratti da dataset e progetti open-source. 
+
+I casi di test presenti nella cartella `Testset/` derivano dalle seguenti repository:
+
+* **[DeVAIC](https://github.com/dessertlab/DeVAIC/tree/main)**
+* **[PoisonPy](https://github.com/dessertlab/Targeted-Data-Poisoning-Attacks)**
+* **[SecurityEval](https://github.com/s2e-lab/SecurityEval)**
+
