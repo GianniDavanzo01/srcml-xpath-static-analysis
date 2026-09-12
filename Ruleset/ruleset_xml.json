@@ -3,7 +3,6 @@
   "rule_id": "BIND-FUNCTION-001",
   "type": "structural",
   "vulnerabilities": ["BRAC"],
-  "description": "Bind function",
   "forbidden_functions": [
     {
       "type": "call_matches_ast",
@@ -17,7 +16,6 @@
   "rule_id": "PICKLE-FAILURE-001",
   "type": "structural",
   "vulnerabilities": ["SDIF"],
-  "description": "Failures",
   "forbidden_functions": [
     "pickle.loads", "pickle.load", "pickle.dump", "pickle.dumps", "pickle.Unpickler",
     "cPickle.loads", "cPickle.load", "cPickle.dump", "cPickle.dumps", "cPickle.Unpickler"
@@ -37,7 +35,6 @@
   "rule_id": "TABLIB-DATABOOK-LOAD-001",
   "type": "structural",
   "vulnerabilities": ["SDIF"],
-  "description": "Failures - Deserializzazione non sicura tramite tablib.Databook().load() senza l'utilizzo del parametro sicuro loader=yaml.SafeLoader",
   "xpath_rules": [
     ".//src:call[src:name[text()='load'] and preceding-sibling::src:operator[1][text()='.'] and preceding-sibling::src:call[1][.//src:name[text()='tablib'] and .//src:name[text()='Databook']]]"
   ],
@@ -55,7 +52,6 @@
   "rule_id": "XML-PARSER-001",
   "type": "structural",
   "vulnerabilities": ["SECM"],
-  "description": "Parser vulnerability - Inizializzazione di etree.XMLParser() potenzialmente vulnerabile a XXE (XML External Entity)",
   "forbidden_functions": [
     "etree.XMLParser"
   ],
@@ -74,7 +70,6 @@
   "rule_id": "LXML-CLEANER-001",
   "type": "structural",
   "vulnerabilities": ["SECM"],
-  "description": "lxml cleaner vulnerability - Importazione di Cleaner da lxml.html.clean senza la messa in sicurezza obbligatoria (scripts=True e javascript=True)",
   "forbidden_imports": [
     "lxml.html.clean.Cleaner"
   ],

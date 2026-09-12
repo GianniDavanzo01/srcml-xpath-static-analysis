@@ -3,7 +3,6 @@
   "rule_id": "TOKEN-DIM-001",
   "type": "taint",
   "vulnerabilities": ["SDIF"],
-  "description": "token dimension vulnerability - Variabile generata da jwe.decode() invocata con .encode() senza controllarne la lunghezza in una condizione if",
   "source_form": "call",
   "sources": [
     "jwe.decode"

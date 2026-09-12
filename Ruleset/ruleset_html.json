@@ -3,7 +3,6 @@
   "rule_id": "HTML-INJC-001",
   "type": "structural",
   "vulnerabilities": ["INJC"],
-  "description": "html injection vulnerability - Template HTML/MJML vulnerabile a iniezione tramite interpolazione non sanificata",
   "xpath_rules": [
     ".//src:literal[@type='string'][contains(text(), '<mj-text>') and contains(text(), '{') and contains(text(), '}') and contains(text(), '</mj-text>')]"
   ],
@@ -18,7 +17,6 @@
   "rule_id": "HTML-PARSER-001",
   "type": "structural",
   "vulnerabilities": ["SDIF"],
-  "description": "HTML parser vulnerability - Inizializzazione di HTMLParser senza tutti i parametri di restrizione necessari (tree, namespaceHTMLElements, strict)",
   "forbidden_functions": [
     "HTMLParser"
   ],
@@ -41,7 +39,6 @@
   "rule_id": "XLML-HTML-CLEAN-001",
   "type": "structural",
   "vulnerabilities": ["SDIF"],
-  "description": "HTML parser vulnerability - Uso della funzione html.clean.clean_html()",
   "forbidden_functions": [
     "html.clean.clean_html"
   ]

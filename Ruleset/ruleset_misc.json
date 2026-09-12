@@ -11,7 +11,6 @@
     "rule_id": "CREDENTIALS-001",
     "type": "structural",
     "vulnerabilities": ["IDAF"],
-    "description": "Credenziali hardcoded: variabile con nome sensibile (password/psw/pass/pswd) assegnata o confrontata direttamente con una stringa letterale",
     "sensitive_var_patterns": ["password", "psw", "pass", "pswd"],
     "safe_contexts": [
         { "type": "rhs_call", "call": ["os.environ.get", "os.getenv", "hmac.compare_digest"] }
@@ -21,7 +20,6 @@
   "rule_id": "LXML-ETREE-003",
   "type": "structural",
   "vulnerabilities": ["SDIF"],
-  "description": "lxml etree vulnerability",
   "forbidden_imports": [
     "lxml.etree"
   ],
@@ -39,7 +37,6 @@
  {
   "rule_id": "JSON-LOADS-001",
   "type": "taint",
-  "description": "Json loads vulnerability",
   "vulnerabilities": [
     "BRAC"
   ],
@@ -90,7 +87,6 @@
   "rule_id": "GLOBAL-LOCK-001",
   "type": "taint",
   "vulnerabilities": ["INSD"],
-  "description": "Lock vulnerability",
   "sources": ["threading.Lock"],
   "source_form": "call",
   "sinks": [
@@ -104,7 +100,6 @@
   "rule_id": "LOAD-USER-001",
   "type": "structural",
   "vulnerabilities": ["SDIF"],
-  "description": "load user parameter vulnerability",
   "forbidden_function_defs": [
     "load_user"
   ],
@@ -119,7 +114,6 @@
 {
   "rule_id": "PROXY-URL-001",
   "type": "structural",
-  "description": "proxy url vulnerability - Hardcoded proxy URL with credentials",
   "vulnerabilities": [
     "INSD"
   ],
@@ -133,7 +127,6 @@
 {
   "rule_id": "RE-MATCH-BOOL-001",
   "type": "taint",
-  "description": "return re match vulnerability - Returning a raw regex match object instead of a boolean",
   "vulnerabilities": [
     "INSD"
   ],
@@ -155,7 +148,6 @@
 {
   "rule_id": "QUERY-STRING-001",
   "type": "structural",
-  "description": "query string vulnerability",
   "vulnerabilities": [
     "INSD"
   ],
@@ -173,7 +165,6 @@
 {
   "rule_id": "COMMAND-001",
   "type": "structural",
-  "description": "command vulnerability - Fragile command validation instead of strict list membership",
   "vulnerabilities": [
     "IDAF"
   ],
@@ -195,7 +186,6 @@
 {
   "rule_id": "JSON-LOADS-002",
   "type": "taint",
-  "description": "Json loads vulnerability - Tainted JSON data used as a dictionary key or slice",
   "vulnerabilities": [
     "BRAC"
   ],
@@ -237,7 +227,6 @@
 {
   "rule_id": "JSON-LOADS-003",
   "type": "taint",
-  "description": "Json loads vulnerability - Tainted JSON passed as a flat argument",
   "vulnerabilities": [
     "BRAC"
   ],
@@ -282,7 +271,6 @@
 {
   "rule_id": "JSON-LOADS-004",
   "type": "taint",
-  "description": "Json loads vulnerability - Tainted JSON returned directly or used in a method chain",
   "vulnerabilities": [
     "BRAC"
   ],
@@ -329,7 +317,6 @@
 {
   "rule_id": "MARKUP-001",
   "type": "structural",
-  "description": "Markup unescape - Direct use of Markup() or Markup.unescape() which can bypass HTML escaping and lead to Injection/XSS",
   "vulnerabilities": [
     "INJC"
   ],
@@ -343,7 +330,6 @@
 {
   "rule_id": "EMAIL-REGEX-001",
   "type": "structural",
-  "description": "email regex vulnerability - Catastrophic backtracking in email validation regex",
   "vulnerabilities": [
     "SDIF"
   ],
@@ -355,7 +341,6 @@
 {
   "rule_id": "CSV-WRITER-001",
   "type": "structural",
-  "description": "Csv writer vulnerability - Potential CSV Injection (Formula Injection) or Path Traversal when writing CSV files",
   "vulnerabilities": [
     "INJC"
   ],
@@ -383,7 +368,6 @@
 {
   "rule_id": "DIVISION-ZERO-001",
   "type": "structural",
-  "description": "division by zero - Potential ZeroDivisionError on total_score / total_count",
   "vulnerabilities": [
     "SDIF"
   ],
@@ -402,7 +386,6 @@
 {
   "rule_id": "YAML-DUMP-001",
   "type": "structural",
-  "description": "Yaml load vulnerability - Insecure YAML serialization using yaml.dump() instead of yaml.safe_dump()",
   "vulnerabilities": [
     "INJC",
     "SDIF"
@@ -417,7 +400,6 @@
 {
   "rule_id": "TRACEBACK-FORMAT-EXEC-001",
   "type": "taint",
-  "description": "traceback format_exc vulnerability - Leaking sensitive traceback information via print",
   "vulnerabilities": [
     "INSD"
   ],
@@ -439,7 +421,6 @@
 {
   "rule_id": "TIME-CLOCK-001",
   "type": "structural",
-  "description": "Time clock vulnerability - Use of deprecated and potentially insecure time.clock() function",
   "vulnerabilities": [
     "INJC"
   ],
@@ -452,7 +433,6 @@
 {
   "rule_id": "FUNCTION-001",
   "type": "structural",
-  "description": "function vulnerability - Unsafe simple math function without strict type checking on parameter x",
   "vulnerabilities": [
     "SDIF"
   ],
@@ -474,7 +454,6 @@
 {
   "rule_id": "URL-PARSE-001",
   "type": "taint",
-  "description": "Url parse vulnerability - Unvalidated parsed URL used in concatenation or assignment",
   "vulnerabilities": [
     "INJC"
   ],
@@ -514,7 +493,6 @@
 {
   "rule_id": "URL-PARSE-002",
   "type": "taint",
-  "description": "Url parse vulnerability - Tainted URL parsed object used as a dictionary key or slice",
   "vulnerabilities": [
     "INJC"
   ],
@@ -553,7 +531,6 @@
 {
   "rule_id": "URL-PARSE-003",
   "type": "taint",
-  "description": "Url parse vulnerability - Tainted URL parsed object passed as a flat argument",
   "vulnerabilities": [
     "INJC"
   ],
@@ -594,7 +571,6 @@
 {
   "rule_id": "URL-PARSE-004",
   "type": "taint",
-  "description": "Url parse vulnerability - Tainted URL parsed object returned directly or used in a method chain",
   "vulnerabilities": [
     "INJC"
   ],
@@ -638,7 +614,6 @@
 {
   "rule_id": "URL-PARSE-005",
   "type": "taint",
-  "description": "Url parse vulnerability - Inline attribute access or method chain on urlparse result",
   "vulnerabilities": [
     "INJC"
   ],
@@ -677,7 +652,6 @@
 {
   "rule_id": "URL-PARSE-006",
   "type": "taint",
-  "description": "Url parse vulnerability - Direct return of unvalidated urlparse result",
   "vulnerabilities": [
     "INJC"
   ],
@@ -716,7 +690,6 @@
 {
   "rule_id": "ARG-TYPE-001",
   "type": "structural",
-  "description": "argument type vulnerability - Type hint used without runtime isinstance validation",
   "vulnerabilities": [
     "SDIF"
   ],
@@ -733,7 +706,6 @@
 {
   "rule_id": "ARGPARSE-001",
   "type": "taint",
-  "description": "load user parameter vulnerability - Unsafe required=True in argparse argument",
   "vulnerabilities": [
     "SDIF"
   ],
@@ -756,7 +728,6 @@
 {
   "rule_id": "YAML-LOAD-001",
   "type": "structural",
-  "description": "Yaml load vulnerability - Insecure YAML deserialization leading to Code Execution",
   "vulnerabilities": [
     "INJC",
     "SDIF"
@@ -794,7 +765,6 @@
 {
   "rule_id": "COOKIE-LOAD-001",
   "type": "taint",
-  "description": "Cookie load vulnerability - Deserializzazione insicura tramite il metodo .load() di SimpleCookie non gestita da un blocco try-except",
   "vulnerabilities": ["SDIF"],
   "source_form": "call",
   "sources": [
@@ -814,7 +784,6 @@
   "rule_id": "REQUESTS-SESSION-001",
   "type": "taint",
   "vulnerabilities": ["SDIF"],
-  "description": "Utilizzo di requests.Session().get() senza aver disabilitato trust_env",
   "source_form": "call",
   "sources": [
     "requests.Session"
@@ -836,7 +805,6 @@
 {
   "rule_id": "RETURN-001-Misc",
   "type": "structural",
-  "description": "Rileva validazioni insicure di URL restituite direttamente, bypassabili con domini malevoli (es. bad-example.com/).",
   "vulnerabilities": [
     "INSD"
   ],
@@ -856,7 +824,6 @@
 {
   "rule_id": "URL-PATTERN-001",
   "type": "structural",
-  "description": "url pattern vulnerability - Rilevata regex potenzialmente vulnerabile a ReDoS (catastrophic backtracking) all'interno di re.compile",
   "vulnerabilities": ["SDIF"],
   "forbidden_functions": [
     {
@@ -888,7 +855,6 @@
 {
   "rule_id": "MINIRACER-EVAL-002-ERA-DOPPIONE-CON-L-OMONIMA",
   "type": "structural",
-  "description": "Rileva l'uso di librelogo.execute, che espone al rischio di esecuzione arbitraria di codice (Code Injection).",
   "vulnerabilities": [
     "SDIF"
   ],
@@ -899,7 +865,6 @@
 {
   "rule_id": "CREATE-OBJECT-001",
   "type": "structural",
-  "description": "Rileva la chiamata a context.portal_skins.custom.createObject, potenziale vettore per l'istanziazione non sicura di oggetti.",
   "vulnerabilities": [
     "SDIF"
   ],
@@ -919,7 +884,6 @@
 {
   "rule_id": "FILTER-READ-001",
   "type": "taint",
-  "description": "Rileva l'uso non validato dei dati letti tramite filter.read(), esponendo a potenziali errori se il valore restituito è None.",
   "vulnerabilities": [
     "SDIF"
   ],
@@ -949,7 +913,6 @@
 {
   "rule_id": "SCHEMA-PARSER-001",
   "type": "structural",
-  "description": "Rileva l'uso di SchemaParser potenzialmente vulnerabile (es. parsing insicuro), a meno che non vi sia una validazione preventiva tramite re.match.",
   "vulnerabilities": [
     "SDIF"
   ],
@@ -979,7 +942,6 @@
 {
   "rule_id": "NONCE-001",
   "type": "structural",
-  "description": "Rileva il recupero di un parametro 'nonce' senza un'adeguata validazione del formato o del tipo.",
   "vulnerabilities": [
     "SDIF"
   ],
@@ -1018,7 +980,6 @@
 {
   "rule_id": "PERMISSION-001",
   "type": "structural",
-  "description": "Rileva chiamate a context.restrictedTraverse senza un preventivo controllo dei permessi tramite checkPermission.",
   "vulnerabilities": [
     "SDIF"
   ],
@@ -1047,7 +1008,6 @@
 {
   "rule_id": "RAW-CALL-001",
   "type": "structural",
-  "description": "Rileva l'uso della funzione raw_call senza i controlli di sicurezza richiesti (revert_on_failure=True e max_outsize=0).",
   "vulnerabilities": [
     "SDIF"
   ],
@@ -1075,7 +1035,6 @@
 {
   "rule_id": "REPR-001",
   "type": "structural",
-  "description": "Rileva l'uso non protetto della funzione built-in repr().",
   "vulnerabilities": [
     "SDIF"
   ],
@@ -1099,7 +1058,6 @@
 {
   "rule_id": "BUGZILLA-001",
   "type": "structural",
-  "description": "Rileva l'importazione della libreria bugzilla senza configurare ssl_context in bugzilla.Bugzilla.",
   "vulnerabilities": [
     "SECM"
   ],
@@ -1128,7 +1086,6 @@
 {
   "rule_id": "UJSON-DUMPS-001",
   "type": "structural",
-  "description": "Rileva l'uso di ujson.dumps senza una validazione preventiva del parametro indent.",
   "vulnerabilities": [
     "SDIF"
   ],
@@ -1159,7 +1116,6 @@
 {
   "rule_id": "SHELL-SANITIZE-001",
   "type": "structural",
-  "description": "Rileva l'uso di shell_quote non standard invece della funzione sicura standard shlex.quote.",
   "vulnerabilities": [
     "INJC"
   ],
@@ -1192,7 +1148,6 @@
 {
   "rule_id": "NONREENTRANT-001",
   "type": "structural",
-  "description": "Rileva l'uso del decoratore @nonreentrant senza la specificazione di un lock valido.",
   "vulnerabilities": [
     "SECM"
   ],
@@ -1211,7 +1166,6 @@
 {
   "rule_id": "ETH-ABI-DECODE-001",
   "type": "structural",
-  "description": "Rileva l'uso della funzione _abi_decode senza la protezione di un blocco try-except associato a decode_single.",
   "vulnerabilities": [
     "SDIF"
   ],
@@ -1252,7 +1206,6 @@
 {
   "rule_id": "HTML-EXPORTER-001",
   "type": "structural",
-  "description": "Rileva l'uso di HTMLExporter senza la registrazione di un preprocessor di sanitizzazione tramite register_preprocessor.",
   "vulnerabilities": [
     "INJC"
   ],
@@ -1280,7 +1233,6 @@
 {
   "rule_id": "CVXOPT-001",
   "type": "structural",
-  "description": "Rileva l'uso di funzioni cholmod di cvxopt (get_factor, solve, spsolve) senza una validazione del tipo tramite isinstance.",
   "vulnerabilities": [
     "SDIF"
   ],
@@ -1879,7 +1831,6 @@
 {
   "rule_id": "REQUEST-001",
   "type": "taint",
-  "description": "Rileva l'uso non sanitizzato di parametri query provenienti da request.GET.get().",
   "vulnerabilities": [
     "SECM"
   ],
@@ -1898,7 +1849,6 @@
 {
   "rule_id": "REQUEST-002",
   "type": "taint",
-  "description": "Rileva l'uso non sanitizzato di dati estratti dal corpo della richiesta tramite request.read().",
   "vulnerabilities": [
     "SECM"
   ],

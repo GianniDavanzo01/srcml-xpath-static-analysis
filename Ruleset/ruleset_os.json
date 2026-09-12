@@ -3,7 +3,6 @@
     "rule_id": "MKDIR-001",
     "type": "structural",
     "vulnerabilities": ["SDIF"],
-    "description": "Creazione di directory con mkdir() senza exist_ok=False esplicito: rischio di race condition / symlink attack (TOCTOU) mascherata da creazione silenziosa",
     "forbidden_functions": ["mkdir"],
     "safe_contexts": [
         { "type": "call_with_kwarg", "call": ["mkdir"], "kwargs": { "exist_ok": "False" } }
@@ -13,7 +12,6 @@
   "rule_id": "MAKEDIRS-001",
   "type": "structural",
   "vulnerabilities": ["SECM"],
-  "description": "makedirs vulnerability",
   "forbidden_functions": ["os.makedirs"],
   "safe_contexts": [
     {
@@ -35,7 +33,6 @@
   "rule_id": "OS-CHMOD-001",
   "type": "structural",
   "vulnerabilities": ["SECM"],
-  "description": "OS chmod vulnerability",
   "forbidden_functions": [
     {
       "type": "call_matches_ast", 
@@ -54,7 +51,6 @@
  {
   "rule_id": "OS-ENV-GET-001",
   "type": "taint",
-  "description": "os environment get vulnerability - Unvalidated environment variable used in concatenation or assignment",
   "vulnerabilities": [
     "BRAC"
   ],
@@ -94,7 +90,6 @@
 {
   "rule_id": "OS-ENV-GET-002",
   "type": "taint",
-  "description": "os environment get vulnerability - Tainted environment variable used as a dictionary key or slice",
   "vulnerabilities": [
     "BRAC"
   ],
@@ -133,7 +128,6 @@
 {
   "rule_id": "OS-ENV-GET-003",
   "type": "taint",
-  "description": "os environment get vulnerability - Tainted environment variable passed as a flat argument",
   "vulnerabilities": [
     "BRAC"
   ],
@@ -174,7 +168,6 @@
 {
   "rule_id": "OS-ENV-GET-004",
   "type": "taint",
-  "description": "os environment get vulnerability - Tainted environment variable returned directly or used in a method chain",
   "vulnerabilities": [
     "BRAC"
   ],
@@ -214,7 +207,6 @@
 {
   "rule_id": "OS-ENV-GET-005",
   "type": "taint",
-  "description": "os environment get vulnerability - Tainted environment variable used in string concatenation",
   "vulnerabilities": [
     "BRAC"
   ],
@@ -236,7 +228,6 @@
 {
   "rule_id": "SUBPROCESS-CAPTURE-001",
   "type": "structural",
-  "description": "subprocess capture vulnerability - Unsafe use of subprocess.capture_output() leading to potential Command Injection",
   "vulnerabilities": [
     "INJC"
   ],
@@ -248,7 +239,6 @@
 {
   "rule_id": "SUBPROCESS-SHELL-001",
   "type": "structural",
-  "description": "subprocess shell vulnerability - Unsafe use of subprocess with shell=True",
   "vulnerabilities": [
     "INJC"
   ],
@@ -280,7 +270,6 @@
 {
   "rule_id": "MKTEMP-001",
   "type": "structural",
-  "description": "mktemp vulnerability - Use of deprecated and insecure tempfile.mktemp() function",
   "vulnerabilities": [
     "BRAC"
   ],
@@ -293,7 +282,6 @@
 {
   "rule_id": "OS-SYSTEM-001",
   "type": "structural",
-  "description": "os system vulnerability - Execution of .bin files via os.system()",
   "vulnerabilities": [
     "SECM"
   ],
@@ -308,7 +296,6 @@
 {
   "rule_id": "OS-SYSTEM-002",
   "type": "structural",
-  "description": "os system vulnerability - Unsafe usage of os.system()",
   "vulnerabilities": [
     "SECM"
   ],
@@ -350,7 +337,6 @@
 {
   "rule_id": "REQUESTS-VERIFY-001",
   "type": "structural",
-  "description": "Rileva chiamate alla libreria requests in cui viene disabilitata la verifica del certificato SSL (verify=False)",
   "vulnerabilities": [
     "IDAF"
   ],
@@ -366,7 +352,6 @@
 {
   "rule_id": "ELEMENT-TREE-001",
   "type": "structural",
-  "description": "Rileva configurazioni insicure di XSLTAccessControl con accesso di lettura o scrittura di rete abilitato.",
   "vulnerabilities": [
     "SECM"
   ],
@@ -380,7 +365,6 @@
 {
   "rule_id": "IMPORT-MODULE-001",
   "type": "structural",
-  "description": "Rileva l'uso della funzione built-in __import__, potenzialmente vulnerabile a caricamento arbitrario di moduli.",
   "vulnerabilities": [
     "SDIF"
   ],
@@ -406,7 +390,6 @@
 {
   "rule_id": "OS-ENVIRON-PYTHON-PATH-001",
   "type": "structural",
-  "description": "Rileva l'accesso diretto alla variabile d'ambiente PYTHONPATH, potenziale vettore per attacchi di module hijacking.",
   "vulnerabilities": [
     "SDIF"
   ],
@@ -438,7 +421,6 @@
 {
   "rule_id": "OS-REALPATH-001",
   "type": "taint",
-  "description": "Rileva l'uso non validato di percorsi risolti tramite os.path.realpath, con rischio di path traversal o simlink attack se la lunghezza non è limitata.",
   "vulnerabilities": [
     "SDIF"
   ],
@@ -478,7 +460,6 @@
 {
   "rule_id": "SYMLINK-001",
   "type": "structural",
-  "description": "Rileva la creazione di link simbolici tramite os.symlink, a rischio se i percorsi non sono limitati in lunghezza o se non se ne verifica la preesistenza.",
   "vulnerabilities": [
     "SDIF"
   ],
@@ -510,7 +491,6 @@
 {
   "rule_id": "OS-REMOVE-001",
   "type": "structural",
-  "description": "Rileva chiamate a os.remove potenzialmente vulnerabili a path traversal o cancellazione non autorizzata di file.",
   "vulnerabilities": [
     "SDIF"
   ],
@@ -533,7 +513,6 @@
 {
   "rule_id": "OS-REMOVE-002",
   "type": "structural",
-  "description": "Rileva l'uso di os.remove quando è presente un controllo parziale con os.path.exists ma manca os.path.isfile, esponendo a vulnerabilità TOCTOU o cancellazione accidentale di directory.",
   "vulnerabilities": [
     "SDIF"
   ],
@@ -556,7 +535,6 @@
 {
   "rule_id": "CHMOD-001",
   "type": "structural",
-  "description": "Rileva l'uso di tempfile.mkdtemp senza un'impostazione sicura dei permessi tramite os.chmod e stat.S_IRWXU.",
   "vulnerabilities": [
     "SECM"
   ],

@@ -2,7 +2,6 @@
     {
   "rule_id": "PYTHON-001",
   "type": "structural",
-  "description": "python version vulnerability - Import di moduli considerati vulnerabili senza un controllo esplicito sulla versione di Python",
   "vulnerabilities": [
     "SDIF"
   ],
@@ -26,7 +25,6 @@
 {
     "rule_id": "PIL-VERSION-001",
     "type": "structural",
-    "description": "pill version vulnerability",
     "vulnerabilities": [
         "SDIF"
     ],
@@ -61,7 +59,6 @@
 {
     "rule_id": "TARFILE-VERSION-001",
     "type": "structural",
-    "description": "tarfile version vulnerability",
     "vulnerabilities": [
         "SDIF"
     ],
@@ -91,7 +88,6 @@
 {
     "rule_id": "PYBLUMONDAY-VERSION-001",
     "type": "structural",
-    "description": "pybluemonday version vulnerability",
     "vulnerabilities": [
         "SDIF"
     ],
@@ -118,7 +114,6 @@
 {
     "rule_id": "URLLIB3-VERSION-001",
     "type": "structural",
-    "description": "urllib3 version vulnerability",
     "vulnerabilities": [
         "SDIF"
     ],
@@ -144,7 +139,6 @@
 {
     "rule_id": "SHA3-VERSION-001",
     "type": "structural",
-    "description": "SHA3 version vulnerability",
     "vulnerabilities": [
         "SDIF"
     ],
@@ -185,7 +179,6 @@
 {
     "rule_id": "TKVIDEOPLAYER-VERSION-001",
     "type": "structural",
-    "description": "tkvideoplayer version vulnerability",
     "vulnerabilities": [
         "SDIF"
     ],

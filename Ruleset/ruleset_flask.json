@@ -3,7 +3,6 @@
     "rule_id": "REQUEST-ARGS-GET-003",
     "type": "taint",
     "vulnerabilities": ["CRYF"],
-    "description": "Sanificazione XSS tramite regex naive (strip <script> via re.sub): pattern bypassabile con tag annidati, case alternato, o handler on-event fuori dal tag script",
     "sources": ["request.args.get"],
     "sanitizers": [],
     "safe_contexts": [
@@ -25,7 +24,6 @@
   "rule_id": "REQUEST-ARGS_GET-004",
   "type": "structural",
   "vulnerabilities": ["INJC", "BRAC"],
-  "description": "request.args.get[...] usato direttamente (senza variabile intermedia) in un confronto di uguaglianza, senza sanificazione",
   "source_comparisons": [
     {
       "source": "request.args.get",
@@ -42,7 +40,6 @@
   "rule_id": "REQUEST-ARGS_GET-005",
   "type": "taint",
   "vulnerabilities": ["BRAC"],
-  "description": "Input non validato da request.args/form/headers/ecc. concatenato o interpolato in una stringa",
   "source_form": "call",
   "sources": [
     "request.args", "request.args.get", "request.GET", "request.POST", 
@@ -95,7 +92,6 @@
       "rule_id": "REQUEST-ARGS_GET-006",
       "type": "taint",
       "vulnerabilities": ["BRAC"],
-      "description": "Uso di request.* (Flask) come chiave di dict o slice senza validazione (Broken Access Control / Path Traversal)",
       "source_form": "call",
       "sources": [
         "request.args", "request.GET", "request.POST", "request.files",
@@ -151,7 +147,6 @@
     "rule_id": "REQUEST-ARGS_GET-007",
     "type": "taint",
     "vulnerabilities": ["BRAC"],
-    "description": "Input proveniente da dizionario request.* di Flask (es. request.args[...]) utilizzato come chiave/slice o all'interno di re.search senza adeguata validazione",
     "source_form": "subscript",
     "sources": [
       "request.args", "request.GET", "request.POST", "request.files",
@@ -188,7 +183,6 @@
   "rule_id": "REQUEST-ARGS_GET-008",
   "type": "taint",
   "vulnerabilities": ["BRAC"],
-  "description": "Request args vulnerability",
   "source_form": "call",
   "sources": [
     "request.args", "request.args.get", "request.GET", "request.POST",
@@ -343,7 +337,6 @@
   "rule_id": "REQUEST-ARGS_GET-010",
   "type": "taint",
   "vulnerabilities": ["BRAC"],
-  "description": "Request args vulnerability - Variabile restituita direttamente o usata come receiver di un metodo",
   "source_form": "call",
   "sources": [
     "request.args", "request.args.get", "request.GET", "request.POST", 
@@ -399,7 +392,6 @@
   "rule_id": "SEND-FILE-001",
   "type": "structural",
   "vulnerabilities": ["CRYF"],
-  "description": "set foile vulnerability",
   "forbidden_functions": [
     "send_file"
   ],
@@ -417,7 +409,6 @@
   "rule_id": "SESSION-001",
   "type": "taint",
   "vulnerabilities": ["INJC"],
-  "description": "Valore letto da session[...] usato direttamente (senza variabile intermedia) in un'assegnazione/concatenazione, senza sanificazione",
   "direct_taint_names": ["session"],
   "sanitizers": ["escape", "escape_filter_chars", "escape_rdn"],
   "safe_contexts": [
@@ -445,7 +436,6 @@
   "rule_id": "SESSION-002",
   "type": "taint",
   "vulnerabilities": ["INJC"],
-  "description": "Valore letto da session[...] usato direttamente (senza variabile intermedia) seguito da ':' (dict literal/slice/formattazione), senza sanificazione",
   "direct_taint_names": ["session"],
   "sanitizers": ["escape", "escape_filter_chars", "escape_rdn"],
   "safe_contexts": [
@@ -473,7 +463,6 @@
   "rule_id": "SESSION-003",
   "type": "taint",
   "vulnerabilities": ["INJC"],
-  "description": "Valore letto da session[...] usato direttamente (senza variabile intermedia) come argomento di chiamata o come ultimo elemento prima di ']'/')' , senza sanificazione",
   "direct_taint_names": ["session"],
   "sanitizers": ["escape", "escape_filter_chars", "escape_rdn"],
   "safe_contexts": [
@@ -503,7 +492,6 @@
   "rule_id": "SESSION-004",
   "type": "taint",
   "vulnerabilities": ["INJC"],
-  "description": "Valore letto da session[...] usato direttamente (senza variabile intermedia) come return diretto o come receiver di una chiamata di metodo, senza sanificazione",
   "direct_taint_names": ["session"],
   "sanitizers": ["escape", "escape_filter_chars", "escape_rdn"],
   "safe_contexts": [
@@ -530,7 +518,6 @@
 {
   "rule_id": "REQUEST-ARGS_GET-011",
   "type": "taint",
-  "description": "Request args vulnerability",
   "vulnerabilities": ["BRAC"],
   "source_form": "subscript",
   "sources": [
@@ -554,7 +541,6 @@
 {
   "rule_id": "REQUEST-ARGS_GET-012",
   "type": "taint",
-  "description": "Request args vulnerability",
   "vulnerabilities": ["BRAC"],
   "source_form": "subscript",
   "sources": [
@@ -575,7 +561,6 @@
 {
   "rule_id": "REQUEST-ARGS_GET-013",
   "type": "taint",
-  "description": "Request args vulnerability - Input utente non sanificato assegnato come valore di una chiave dict/list letterale (es. data['key'] = request.args...)",
   "vulnerabilities": ["BRAC"],
   "source_form": "subscript",
   "sources": [
@@ -598,7 +583,6 @@
 {
   "rule_id": "REQUEST-ARGS-GET-002",
   "type": "taint",
-  "description": "Request args get vulnerability",
   "vulnerabilities": ["CRYF"],
   "source_form": "call",
   "sources": [
@@ -621,7 +605,6 @@
 {
   "rule_id": "REQUEST-ARGS-GET-004",
   "type": "structural",
-  "description": "Request args get vulnerability",
   "vulnerabilities": ["CRYF"],
   "inline_source_as_arg": [
     "request.args.get"
@@ -641,7 +624,6 @@
 {
   "rule_id": "REQUEST-ARGS-001-subscript",
   "type": "taint",
-  "description": "Request args vulnerability - Uso non sanificato di request.args[...] (subscript)",
   "vulnerabilities": ["INJC"],
   "source_form": "subscript",
   "sources": ["request.args"],
@@ -651,7 +633,6 @@
 {
   "rule_id": "REQUEST-ARGS-001-call",
   "type": "taint",
-  "description": "Request args vulnerability - Uso non sanificato di request.get_data(...) (call)",
   "vulnerabilities": ["INJC"],
   "source_form": "call",
   "sources": ["request.get_data"],
@@ -661,7 +642,6 @@
 {
   "rule_id": "REQUEST-ARGS-002",
   "type": "structural",
-  "description": "Request args vulnerability",
   "vulnerabilities": [
     "INJC"
   ],
@@ -682,7 +662,6 @@
 {
   "rule_id": "REQUEST-ARGS-GET-001",
   "type": "structural",
-  "description": "Request args vulnerability",
   "vulnerabilities": ["INJC"],
   "source_concats": [
     {
@@ -697,7 +676,6 @@
 {
   "rule_id": "REQUEST-ARGS_GET-002",
   "type": "structural",
-  "description": "Request args vulnerability",
   "vulnerabilities": ["BRAC"],
   "source_concats": [
     {
@@ -722,7 +700,6 @@
 {
   "rule_id": "REQUEST-ARGS_GET-003",
   "type": "structural",
-  "description": "Request args vulnerability",
   "vulnerabilities": ["INJC"],
   "source_percent_formats": [
     {
@@ -736,7 +713,6 @@
   "rule_id": "REQUEST-ARGS-GET-008",
   "type": "structural",
   "vulnerabilities": ["SECM"],
-  "description": "Request args vulnerability - Ritorno diretto di parametri HTTP di richiesta non sanificati (possibile Reflected XSS)",
   "forbidden_functions": [
     "request.args.get","request.POST.get","request.GET.get","request.files.get",
     "request.form.get","request.data.get","request.headers.get","request.params.get",
@@ -764,7 +740,6 @@
   "rule_id": "REQUEST-ARGS-GET-009",
   "type": "structural",
   "vulnerabilities": ["SECM"],
-  "description": "Request args vulnerability - Ritorno diretto di parametri HTTP estratti via parentesi quadre (es. request.args['param']) senza sanificazione (possibile Reflected XSS)",
   "forbidden_subscripts": [
     "request.args","request.POST","request.GET","request.files",
     "request.form","request.data","request.headers","request.params",
@@ -794,7 +769,6 @@
   "SI_POTREBBE AGGIUNGERE_required_imports": [
     "flask"
   ],
-  "description": "Request args vulnerability - Valore letto da request (es. get_json, get_data) passato come argomento a una funzione (inclusi log f-string) senza sanificazione",
   "vulnerabilities": ["BRAC"],
   "source_form": "call",
   "sources": [
@@ -836,7 +810,6 @@
 {
   "rule_id": "FLASK-REDIRECT-001",
   "type": "structural",
-  "description": "Open Redirect Vulnerability",
   "vulnerabilities": ["SECM"],
   "forbidden_functions": [
     "redirect"
@@ -870,7 +843,6 @@
 {
   "rule_id": "REQUEST-ARGS-GET-020",
   "type": "structural",
-  "description": "Request args vulnerability - Uso diretto di request.*.get in concatenazione non sanificata",
   "vulnerabilities": ["SECM"],
   "source_form": "call",
   "source_concats": [
@@ -904,7 +876,6 @@
 {
   "rule_id": "SET-COOKIE-001-flask",
   "type": "structural",
-  "description": "Param set cookie",
   "vulnerabilities": ["CRYF"],
   "forbidden_functions": [
     "set_cookie"
@@ -932,7 +903,6 @@
   "rule_id": "FLASK-CONFIG-001",
   "type": "taint",
   "vulnerabilities": ["SECM"],
-  "description": "app config hardcoded",
   "source_form": "call",
   "sources": [
     "Flask"
@@ -958,7 +928,6 @@
 {
     "rule_id": "REQUEST-HEADER-GET-001",
     "type": "taint",
-    "description": "Request header get vulnerability",
     "vulnerabilities": ["BRAC"],
     "sources": [
         "request.headers.get"
@@ -1068,7 +1037,6 @@
 {
     "rule_id": "REQUEST-ARGS-GET-014",
     "type": "structural",
-    "description": "Request args vulnerability - Restituzione diretta di input da request non sanificato",
     "vulnerabilities": [
       "SECM"
     ],
@@ -1130,7 +1098,6 @@
 {
     "rule_id": "REQUEST-ARGS-GET-016",
     "type": "taint",
-    "description": "Request args vulnerability",
     "vulnerabilities": [
         "BRAC"
     ],
@@ -1198,7 +1165,6 @@
 {
   "rule_id": "REQUEST-ARGS-GET-018",
   "type": "taint",
-  "description": "Request args vulnerability - Valore letto da request restituito direttamente o usato come receiver di un metodo, senza sanificazione",
   "vulnerabilities": ["BRAC"],
   "source_form": "call",
   "sources": [
@@ -1242,7 +1208,6 @@
 {
     "rule_id": "REQUEST-ARGS-GET-019",
     "type": "structural",
-    "description": "Request args vulnerability",
     "vulnerabilities": [
         "SECM"
     ],
@@ -1301,7 +1266,6 @@
   "rule_id": "REQUEST-ARGS-GET-021",
   "type": "taint",
   "required_imports": ["flask"],
-  "description": "Request args vulnerability - valore da request.X[...] usato dentro '{}'.format(...) e poi concatenato/riassegnato senza sanificazione",
   "vulnerabilities": ["INSD"],
   "source_form": "subscript",
   "sources": [
@@ -1333,7 +1297,6 @@
   "rule_id": "REQUEST-ARGS-GET-022",
   "type": "taint",
   "required_imports": ["flask"],
-  "description": "Request args vulnerability - valore da request.X[...] usato come chiave/annotazione (VAR:) senza sanificazione",
   "vulnerabilities": ["INSD", "INJC"],
   "source_form": "subscript",
   "sources": [
@@ -1365,7 +1328,6 @@
   "rule_id": "REQUEST-ARGS-GET-023",
   "type": "taint",
   "required_imports": ["flask"],
-  "description": "Request args vulnerability - valore da request.X[...] passato come argomento a una chiamata, senza sanificazione",
   "vulnerabilities": ["INSD", "INJC"],
   "source_form": "subscript",
   "sources": [
@@ -1396,7 +1358,6 @@
 {
   "rule_id": "REQUEST-ARGS-GET-024",
   "type": "taint",
-  "description": "Request args vulnerability - valore da request.X[...] restituito direttamente o usato come receiver di un metodo, senza sanificazione",
   "vulnerabilities": ["INSD", "INJC"],
   "source_form": "subscript",
   "sources": [
@@ -1434,7 +1395,6 @@
   "rule_id": "REQUEST-ARGS-GET-025",
   "type": "structural",
   "required_imports": ["flask"],
-  "description": "Request args vulnerability - chiamata a request.X(...) preceduta da parentesi, senza sanificazione",
   "vulnerabilities": ["SECM"],
   "xpath_rules": [
     ".//src:call[(contains(src:name, 'request.') or contains(src:name, 'flask.request.')) and preceding-sibling::src:operator[1][text()='(']]"
@@ -1450,7 +1410,6 @@
   "rule_id": "REQUEST-ARGS-GET-026",
   "type": "structural",
   "required_imports": ["flask"],
-  "description": "Request args vulnerability - chiamata a request.X(...) preceduta da operatore % (percent-format), senza sanificazione",
   "vulnerabilities": ["SECM"],
   "xpath_rules": [
     ".//src:call[(contains(src:name, 'request.') or contains(src:name, 'flask.request.')) and preceding-sibling::src:operator[1][text()='%']]"
@@ -1468,7 +1427,6 @@
     "required_imports": [
         "flask"
     ],
-    "description": "app route hardcoded",
     "vulnerabilities": [
         "SDIF"
     ],
@@ -1514,7 +1472,6 @@
     "required_imports": [
         "flask"
     ],
-    "description": "Request args json vulnerability",
     "vulnerabilities": [
         "BRAC"
     ],
@@ -1575,7 +1532,6 @@
     "required_imports": [
         "flask"
     ],
-    "description": "Request args json vulnerability",
     "vulnerabilities": [
         "BRAC"
     ],
@@ -1635,7 +1591,6 @@
     "required_imports": [
         "flask"
     ],
-    "description": "Request args json vulnerability",
     "vulnerabilities": [
         "BRAC"
     ],
@@ -1692,7 +1647,6 @@
 {
     "rule_id": "REQUEST-JSON-004",
     "type": "taint",
-    "description": "Request args json vulnerability",
     "vulnerabilities": [
         "BRAC"
     ],

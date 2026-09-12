@@ -9,7 +9,6 @@
   "rule_id": "HASHLIB-SHA256-001",
   "type": "structural",
   "vulnerabilities": ["CRYF"],
-  "description": "hashlib sha256 vulnerability",
   "forbidden_functions": ["sha256"],
   "safe_contexts": []
  },
@@ -17,7 +16,6 @@
   "rule_id": "SSL-METHOD-001",
   "type": "structural",
   "vulnerabilities": ["IDAF"],
-  "description": "ssl method vulnerability",
   "forbidden_name_prefixes": [
     "ssl.SSLv2_METHOD", "ssl.SSLv3_METHOD", "ssl.SSLv23_METHOD", "ssl.TLSv1_METHOD", "ssl.TLSv1_1_METHOD",
     "SSL.SSLv2_METHOD", "SSL.SSLv3_METHOD", "SSL.SSLv23_METHOD", "SSL.TLSv1_METHOD", "SSL.TLSv1_1_METHOD",
@@ -33,7 +31,6 @@
   "rule_id": "RANDOM-CHOICE-001",
   "type": "structural",
   "vulnerabilities": ["CRYF"],
-  "description": "random choice vulnerability",
   "forbidden_functions": ["choice", "random.choices"],
   "excluded_functions": ["secrets.choice"],
   "safe_contexts": []
@@ -42,7 +39,6 @@
   "rule_id": "RANDOM-001",
   "type": "structural",
   "vulnerabilities": ["CRYF"],
-  "description": "random vulnerabiltiy",
   "forbidden_functions": [
     "random.randint",
     "random.randrange",
@@ -60,7 +56,6 @@
   "rule_id": "CBC-MODE-001",
   "type": "structural",
   "vulnerabilities": ["CRYF"],
-  "description": "cbc mode vulnerability",
   "forbidden_functions": [
     "modes.CBC"
   ],
@@ -79,7 +74,6 @@
   "rule_id": "CIPHER-001",
   "type": "structural",
   "vulnerabilities": ["CRYF"],
-  "description": "cryptography hazmat primitives ciphers cipher vulnerability",
   "forbidden_functions": [
     "Cipher"
   ],
@@ -95,7 +89,6 @@
   "rule_id": "URANDOM-001",
   "type": "structural",
   "vulnerabilities": ["CRYF"],
-  "description": "urandom vulnerability",
   "forbidden_functions": [
     {
       "type": "call_matches_ast", 
@@ -109,7 +102,6 @@
   "rule_id": "EBC-MODE-001",
   "type": "structural",
   "vulnerabilities": ["CRYF"],
-  "description": "ebc mode vulnerability",
   "forbidden_functions": [
     "modes.ECB"
   ],
@@ -121,7 +113,6 @@
 {
   "rule_id": "AES-CIPHER-001",
   "type": "structural",
-  "description": "Uso di crittografia AES potenzialmente insicuro (mancanza di padding corretto o controlli di lunghezza)",
   "vulnerabilities": ["CRYF"],
   "forbidden_functions": [
     "encrypt",
@@ -150,7 +141,6 @@
 {
   "rule_id": "AES-CIPHER-002",
   "type": "structural",
-  "description": "aes cipher vulnerability - Manca gestione eccezioni o contesto sicuro per encrypt/decrypt",
   "vulnerabilities": ["CRYF"],
   "forbidden_functions": [
     "encrypt",
@@ -179,7 +169,6 @@
 {
   "rule_id": "DES-001",
   "type": "structural",
-  "description": "des vulnerability",
   "vulnerabilities": ["CRYF"],
   "forbidden_functions": [
     "DES.new"
@@ -196,7 +185,6 @@
 {
   "rule_id": "SHA1-001",
   "type": "structural",
-  "description": "sha1 vulnerability",
   "vulnerabilities": ["CRYF"],
   "forbidden_functions": [
     "sha1"
@@ -205,7 +193,6 @@
 {
   "rule_id": "CIPHERTEXT-NULL-001",
   "type": "structural",
-  "description": "ciphertext vulnerability",
   "vulnerabilities": ["CRYF"],
   "forbidden_functions": [
     "rsa.decrypt"
@@ -222,7 +209,6 @@
 {
   "rule_id": "PUBLICKEY-VERIFY-001",
   "type": "structural",
-  "description": "public ket verify vulnerability",
   "vulnerabilities": ["CRYF"],
   "forbidden_functions": [
     "public_key.verify"
@@ -239,7 +225,6 @@
 {
   "rule_id": "RSA-KEY-001",
   "type": "structural",
-  "description": "rsa key vulnerability",
   "vulnerabilities": ["CRYF"],
   "forbidden_functions": [
     "RSA.generate"
@@ -251,7 +236,6 @@
 {
   "rule_id": "HMAC-NEW-001",
   "type": "structural",
-  "description": "rsa key vulnerability",
   "vulnerabilities": ["CRYF"],
   "forbidden_functions": ["hmac.new"],
   "safe_contexts": [
@@ -262,7 +246,6 @@
 {
   "rule_id": "HASHLIB-002",
   "type": "structural",
-  "description": "hashlib md5 vulnerability",
   "vulnerabilities": ["CRYF"],
   "forbidden_functions": [
     {
@@ -282,7 +265,6 @@
 {
   "rule_id": "PBKDF2-HMAC-001",
   "type": "structural",
-  "description": "algorithm vulnerability",
   "vulnerabilities": ["CRYF"],
   "forbidden_functions": [
     {
@@ -303,7 +285,6 @@
   "rule_id": "DSA-001",
   "type": "structural",
   "vulnerabilities": ["CRYF"],
-  "description": "dsa vulnerability - Generazione di chiavi DSA con dimensioni deboli note passate come unico argomento letterale (da 2 a 1024 bit)",
   "forbidden_functions": [
     {
       "type": "call_matches_ast",
@@ -317,7 +298,6 @@
   "rule_id": "SIGNATURE-001",
   "type": "structural",
   "vulnerabilities": ["CRYF"],
-  "description": "signature vulnerability - Uso di VerifyingKey.from_string() o vk.verify() per la verifica di firme senza un costrutto try-except per gestire eventuali errori crittografici",
   "forbidden_functions": [
     "VerifyingKey.from_string",
     "vk.verify"
@@ -330,7 +310,6 @@
   "rule_id": "SIGNATURE-002",
   "type": "structural",
   "vulnerabilities": ["CRYF"],
-  "description": "signature vulnerability - Implementazione di un metodo sign(self, payload) custom privo di una generazione HMAC sicura tramite hmac.new().hexdigest()",
   "bad_function_defs": [
     {
       "name": "sign",
@@ -348,7 +327,6 @@
   "rule_id": "CJSON-001",
   "type": "structural",
   "vulnerabilities": ["CRYF"],
-  "description": "cjson vulnerability - Uso di cjson.encode() senza sanificazione preventiva dei caratteri '/' (potenziale rischio XSS se l'output è inserito in blocchi <script> HTML)",
   "forbidden_functions": [
     "cjson.encode"
   ],
@@ -367,7 +345,6 @@
   "rule_id": "PADDING-001",
   "type": "structural",
   "vulnerabilities": ["CRYF"],
-  "description": "add padding vulnerability - Uso del padding PKCS1v15, noto per essere crittograficamente debole (vulnerabile ad attacchi di tipo padding oracle)",
   "forbidden_functions": [
     "padding.PKCS1v15"
   ]

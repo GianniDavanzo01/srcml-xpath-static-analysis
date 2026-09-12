@@ -3,7 +3,6 @@
   "rule_id": "TEMPORARYFILE-MOD-001",
   "type": "structural",
   "vulnerabilities": ["SDIF"],
-  "description": "temporary file mode vulnerability",
   "forbidden_functions": ["tempfile.NamedTemporaryFile"],
   "safe_contexts": [
     {
@@ -37,7 +36,6 @@
   "rule_id": "TEMPORARYFILE-001",
   "type": "structural",
   "vulnerabilities": ["SDIF"],
-  "description": "temporary file vulnerability",
   "forbidden_functions": ["temp_file.write"],
   "safe_contexts": [
     {
@@ -53,7 +51,6 @@
 {
   "rule_id": "FILE-DIM-001",
   "type": "structural",
-  "description": "file dimentions vulnerability",
   "vulnerabilities": ["SDIF"],
   "forbidden_functions": [
     "extract"
@@ -67,7 +64,6 @@
 {
   "rule_id": "FILE-RESPONSE-001",
   "type": "structural",
-  "description": "path traversal vulnerability",
   "vulnerabilities": ["SDIF"],
   "forbidden_functions": [
     "FileResponse"
@@ -84,7 +80,6 @@
 {
   "rule_id": "ZIP-EXTRACT-001",
   "type": "structural",
-  "description": "zipfile extract all vulnerability",
   "vulnerabilities": ["SDIF"],
   "forbidden_functions": [
     "extractall"

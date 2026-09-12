@@ -2,7 +2,6 @@
 {
   "rule_id": "JWT-DECODE-001",
   "type": "structural",
-  "description": "Decode vulnerability - Decodifica JWT insicura con verifica della firma disabilitata (verify=False)",
   "vulnerabilities": ["CRYF"],
   "bad_calls": {
     "jwt.decode": {
@@ -13,7 +12,6 @@
  {
   "rule_id": "JWT-DECODE-002",
   "type": "structural",
-  "description": "Decode vulnerability - Chiamata a jwt.decode con un solo argomento nudo, priva dei parametri di sicurezza obbligatori (es. algorithms)",
   "vulnerabilities": ["CRYF"],
   "forbidden_functions": [
     {
@@ -26,7 +24,6 @@
 {
   "rule_id": "JWT-PROCESS-FUNCTION-001",
   "type": "structural",
-  "description": "JWT vulnerability",
   "vulnerabilities": [
     "CRYF"
   ],
@@ -50,7 +47,6 @@
 {
   "rule_id": "KEY-SIZE-001",
   "type": "structural",
-  "description": "Parser vulnerability - Insufficient key size (< 2048 bits)",
   "vulnerabilities": [
     "CRYF"
   ],

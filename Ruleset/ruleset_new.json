@@ -2,7 +2,6 @@
 {
   "rule_id": "LOGGING-ERROR-001",
   "type": "structural",
-  "description": "Rileva la potenziale esposizione di query nel log (CWE-200). Utilizzare messaggi di log statici ed evitare di includere le variabili sql o query, anche tramite f-string.",
   "vulnerabilities": [
     "BRAC"
   ],
@@ -19,7 +18,6 @@
 {
   "rule_id": "CWE-595-REF-COMPARISON",
   "type": "structural",
-  "description": "Rileva l'uso degli operatori 'is' o 'is not' per confrontare oggetti (CWE-595). In Python questi operatori verificano l'identità in memoria e non l'uguaglianza dei valori. Utilizzare '==' o '!='. I confronti idiomatici con None, True e False sono consentiti.",
   "vulnerabilities": [
     "CWE-595"
   ],
@@ -37,7 +35,6 @@
 {
   "rule_id": "OFF-BY-ONE-WHILE-001",
   "type": "structural",
-  "description": "Rileva un potenziale errore off-by-one (CWE-193) nei cicli while con '<=' e len().",
   "vulnerabilities": [
     "CWE-193"
   ],
@@ -49,7 +46,6 @@
 {
   "rule_id": "CWE-116-REGEX-STRIP-001",
   "type": "structural",
-  "description": "Rileva la sanitizzazione di tag HTML o script basata su espressioni regolari applicate in un ciclo 'fixed-point' (while old != new: ... re.sub(...)) (CWE-116). Questo approccio è fragile e soggetto a bypass tramite tag annidati/sovrapposti.",
   "vulnerabilities": ["CWE-116"],
   "xpath_rules": [
     ".//src:while[src:condition//src:operator[text()='!='] and .//src:call[.//src:name[last()][text()='sub']]]"

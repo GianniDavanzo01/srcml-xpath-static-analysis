@@ -2,7 +2,6 @@
 {
   "rule_id": "WITH-OPEN-001",
   "type": "structural",
-  "description": "with open vulnerability - Uso di open() senza controlli di Path Traversal",
   "vulnerabilities": ["BRAC"],
   "forbidden_functions": [
     {
@@ -45,7 +44,6 @@
   "rule_id": "ELEMENTTREE-CONFIGURATION-001",
   "type": "structural",
   "vulnerabilities": ["SECM"],
-  "description": "Misconfiguration",
   "forbidden_imports": [
     "xml.etree.ElementTree"
   ],
@@ -58,7 +56,6 @@
   "rule_id": "URLLIB-URLPARSEQS-001",
   "type": "structural",
   "vulnerabilities": ["SECM"],
-  "description": "urllib url parseqs vulnerability",
   "forbidden_functions": ["parse_qs"],
   "safe_contexts": [
     {
@@ -72,7 +69,6 @@
   "rule_id": "BOTO3-CLIENT-003",
   "type": "taint",
   "vulnerabilities": ["SDIF"],
-  "description": "boto3 client scan vulnerability",
   "source_form": "call",
   "sources": [
     "boto3.client"
@@ -90,7 +86,6 @@
     "rule_id": "FOO-001",
     "type": "structural",
     "vulnerabilities": ["SDIF"],
-    "description": "foo vulnerability",
     "forbidden_functions": [
       "foo"
     ],
@@ -112,7 +107,6 @@
  {
   "rule_id": "LDAP-SERVER-001",
   "type": "structural",
-  "description": "Variable validation - Uso di ldap3.Server() potenzialmente vulnerabile a LDAP Injection",
   "vulnerabilities": ["INJC"],
   "forbidden_functions": [
     "ldap3.Server"
@@ -131,7 +125,6 @@
 {
   "rule_id": "SMTP-001",
   "type": "structural",
-  "description": "Version verfication - Uso di connessione SMTP in chiaro (smtplib.SMTP) senza garanzia di crittografia",
   "vulnerabilities": ["CRYF"],
   "forbidden_functions": [
     "smtplib.SMTP"
@@ -140,7 +133,6 @@
 {
   "rule_id": "JWT-DECODE-001-protocols",
   "type": "structural",
-  "description": "Misconfiguration - Decodifica JWT con disabilitazione esplicita della verifica della firma (verify_signature=False)",
   "vulnerabilities": ["CRYF"],
   "forbidden_functions": [
     {
@@ -153,7 +145,6 @@
 {
   "rule_id": "JWT-DECODE-002-protocols",
   "type": "structural",
-  "description": "Misconfiguration - Decodifica JWT senza verifica esplicita della firma o algoritmi sicuri definiti (HS256/HS512)",
   "vulnerabilities": ["CRYF"],
   "forbidden_functions": [
     "jwt.decode"
@@ -177,7 +168,6 @@
 {
   "rule_id": "FTP-001",
   "type": "structural",
-  "description": "Version verification - Uso di ftplib.FTP potenzialmente vulnerabile senza disabilitare trust_server_pasv_ipv4",
   "vulnerabilities": ["CRYF"],
   "forbidden_functions": [
     "ftplib.FTP"
@@ -192,7 +182,6 @@
 {
   "rule_id": "FTPLIB-FTP-001",
   "type": "taint",
-  "description": "ftplib ftp vulnerability - Mancata disabilitazione di trust_server_pasv_ipv4 per l'istanza FTP",
   "vulnerabilities": [
     "SDIF"
   ],
@@ -213,7 +202,6 @@
 {
   "rule_id": "ONNX-LOAD-MODEL-001",
   "type": "structural",
-  "description": "Misconfiguration - Caricamento di un modello ONNX senza validazione del percorso (rischio Path Traversal / caricamento modelli non attendibili)",
   "vulnerabilities": ["SECM"],
   "forbidden_functions": [
     "onnx.load"
@@ -228,7 +216,6 @@
 {
   "rule_id": "LLAMA-LOAD-MODEL-001",
   "type": "structural",
-  "description": "Misconfiguration - Caricamento di un modello Llama senza validazione del percorso tramite estensione (rischio di caricamento modelli non attendibili)",
   "vulnerabilities": ["SECM"],
   "forbidden_functions": [
     "llama_cpp_python.load_model",
@@ -244,7 +231,6 @@
 {
   "rule_id": "KERBEROS-001",
   "type": "structural",
-  "description": "Misconfiguration - Importazione di HTTPKerberosAuth con potenziale configurazione insicura",
   "vulnerabilities": ["SECM"],
   "forbidden_imports": [
     "requests_kerberos.HTTPKerberosAuth"
@@ -261,7 +247,6 @@
 {
   "rule_id": "KERBEROS-002",
   "type": "structural",
-  "description": "kerberos vulnerability - Inizializzazione authGSSClientInit senza la successiva verifica dello step di autenticazione (!= AUTH_GSS_COMPLETE)",
   "vulnerabilities": ["SDIF"],
   "forbidden_functions": [
     "kerberos.authGSSClientInit",
@@ -278,7 +263,6 @@
 {
   "rule_id": "GET-OPTION-001",
   "type": "structural",
-  "description": "get option vulnerability - Definizione della funzione _get_option senza l'utilizzo di html.escape per sanificare l'output",
   "vulnerabilities": ["INJC"],
   "forbidden_function_defs": [
     "_get_option"
@@ -293,7 +277,6 @@
 {
   "rule_id": "NMAP-001",
   "type": "structural",
-  "description": "nmap args vulnerability - Invocazione di NmapProcess senza validazione degli argomenti (manca una guardia if any(... not in ...))",
   "vulnerabilities": ["SDIF"],
   "forbidden_functions": [
     "NmapProcess"
@@ -310,7 +293,6 @@
 {
   "rule_id": "SMTP-002",
   "type": "structural",
-  "description": "smtp vulnerability - Chiamata a self.docmd() senza la corretta verifica del codice di risposta (es. response[0] != 220)",
   "vulnerabilities": ["SDIF"],
   "forbidden_functions": [
     "self.docmd"
@@ -326,7 +308,6 @@
 {
   "rule_id": "REQUESTS-GET-VALIDATION-001",
   "type": "taint",
-  "description": "Variable validation - L'output di requests.get non viene validato prima di essere assegnato o concatenato",
   "vulnerabilities": ["IDAF", "SSRF"],
   "source_form": "call",
   "sources": [
@@ -375,7 +356,6 @@
 {
   "rule_id": "REQUESTS-GET-VALIDATION-002",
   "type": "taint",
-  "description": "Variable validation - L'oggetto response di requests.get o il suo contenuto viene passato a funzioni senza preventiva validazione dello status code o parsing sicuro",
   "vulnerabilities": ["IDAF", "SSRF"],
   "source_form": "call",
   "sources": [
@@ -453,7 +433,6 @@
 {
   "rule_id": "REQUESTS-GET-VALIDATION-004",
   "type": "taint",
-  "description": "Variable validation - L'output di requests.get viene ritornato o subisce chiamate a metodo senza validazione/parsing sicuro",
   "vulnerabilities": ["IDAF", "SSRF"],
   "source_form": "call",
   "sources": [
@@ -508,7 +487,6 @@
 {
   "rule_id": "REQUESTS-005",
   "type": "structural",
-  "description": "request validation - Invocazione di requests.get o requests.post con verifica del certificato SSL disabilitata (verify=False)",
   "vulnerabilities": ["IDAF", "SSRF"],
   "bad_calls": {
     "requests.get": {
@@ -522,7 +500,6 @@
 {
     "rule_id": "URLLIB-OPEN-001",
     "type": "structural",
-    "description": "urllib open vulnerability",
     "vulnerabilities": ["SDIF"],
     "forbidden_functions": [
         "urllib.request.urlopen"
@@ -1212,7 +1189,6 @@
 {
   "rule_id": "DJANGO-003",
   "type": "structural",
-  "description": "django db backends vulnerability - Configurazione del database PostgreSQL potenzialmente insicura",
   "vulnerabilities": ["SDIF"],
   "xpath_rules": [
     ".//src:literal[@type='string'][contains(text(), 'django.db.backends.postgresql')]"
@@ -1261,7 +1237,6 @@
   "rule_id": "HTTP-CLIENT-001",
   "type": "structural",
   "vulnerabilities": ["BRAC"],
-  "description": "method vulnerability - Rilevato potenziale Header Injection / Request Smuggling nell'assegnazione del metodo HTTP",
   "xpath_rules": [
     ".//src:expr[./src:name[text()='method'] and ./src:operator[text()='='] and ./src:literal[@type='string'][contains(text(), 'GET') and contains(text(), 'X-Header:') and contains(text(), 'foo')]]"
   ],

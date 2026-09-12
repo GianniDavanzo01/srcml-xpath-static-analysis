@@ -3,7 +3,6 @@
   "rule_id": "IMG-001",
   "type": "taint",
   "vulnerabilities": ["SDIF"],
-  "description": "img load vulnerability - Chiamata al metodo .load() su un'immagine aperta con Image.open() senza la protezione di un blocco try-except",
   "source_form": "call",
   "sources": [
     "Image.open"
@@ -22,7 +21,6 @@
   "rule_id": "IMG-OPEN-001",
   "type": "structural",
   "vulnerabilities": ["SDIF"],
-  "description": "img load vulnerability - Uso di Image.open() senza blocco try-except o senza impostare un parametro 'limit='",
   "forbidden_functions": [
     "Image.open"
   ],
@@ -38,7 +36,6 @@
   "rule_id": "BYTE-IMG-001",
   "type": "structural",
   "vulnerabilities": ["SDIF"],
-  "description": "byte img vulnerability - Inizializzazione di un bytearray non validato per image_buffer_size",
   "bad_assignments": {
     "image_buffer": "bytearray(image_buffer_size)"
   },
@@ -60,7 +57,6 @@
   "rule_id": "PROCESS-IMG-001",
   "type": "structural",
   "vulnerabilities": ["SDIF"],
-  "description": "process img vulnerability - Slicing di image_data con zsize senza validazione preventiva dei limiti (<= 0 o > len(image_data))",
   "bad_assignments": {
     "processed_image": "image_data[:zsize]"
   },
@@ -83,7 +79,6 @@
   "rule_id": "IMAGEOP-001",
   "type": "structural",
   "vulnerabilities": ["SDIF"],
-  "description": "imageop vulnerability - Uso di imageop.some_image_operation(image_data) senza preventiva validazione dei limiti di dimensione (len <= 0 o > MAX_IMAGE_SIZE)",
   "forbidden_functions": [
     {
       "type": "call_matches_ast",
@@ -111,7 +106,6 @@
   "rule_id": "IMAGEOP-002",
   "type": "structural",
   "vulnerabilities": ["SDIF"],
-  "description": "imageop vulnerability - Uso di imageop.tovideo() senza preventiva validazione della tupla args tramite isinstance o controllo sulla lunghezza (< 3)",
   "forbidden_functions": [
     "imageop.tovideo"
   ],

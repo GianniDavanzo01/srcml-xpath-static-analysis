@@ -50,7 +50,6 @@
 {
     "rule_id": "SQL-002",
     "type": "structural",
-    "description": "sql vulnerability",
     "vulnerabilities": [
         "INJC"
     ],
@@ -67,7 +66,6 @@
 {
     "rule_id": "SQL-PARAMETRIZED-QUERY-002",
     "type": "structural",
-    "description": "sql vulnerability - query SQL eseguita senza parametrizzazione",
     "vulnerabilities": [
         "INJC"
     ],
@@ -100,7 +98,6 @@
 {
     "rule_id": "SQL-PARSE-FORMAT-002",
     "type": "structural",
-    "description": "sql parse vulnerability",
     "vulnerabilities": [
         "INJC"
     ],
@@ -132,7 +129,6 @@
 {
     "rule_id": "SQL-CONNECTOR-003",
     "type": "structural",
-    "description": "sql connector vulnerability",
     "vulnerabilities": [
         "SDIF"
     ],

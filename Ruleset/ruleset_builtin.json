@@ -3,7 +3,6 @@
     "rule_id": "SUBPROCESS-002",
     "type": "structural",
     "vulnerabilities": ["INJC"],
-    "description": "Uso di subprocess.Popen non protetto, rischio di OS Command Injection",
     "COMMENTO": "Ho scelto di lasciare solo 'subprocess.Popen' per confrontare con DeVAIC, però non copre casi in cui from subprocess import Popen Popen(['ping', url]). Se invece aggiungessi nelle funzioni forbidden anche 'Popen', allora li coprirebbe",
     "forbidden_functions": ["subprocess.Popen"],  
     "safe_contexts": [
@@ -16,7 +15,6 @@
  {
     "rule_id": "INPUT-001",
     "type": "taint",
-    "description": "Uso non sanificato di input() utente in concatenazione o assegnazione RHS",
     "vulnerabilities": ["INJC", "SLMF"],
     "source_form": "call",
     "sources": [
@@ -47,7 +45,6 @@
  {
     "rule_id": "INPUT-002",
     "type": "taint",
-    "description": "Uso non sanificato di input() utente seguito da due punti (es. dictionary key, slicing)",
     "vulnerabilities": ["INJC", "SLMF"],
     "source_form": "call",
     "sources": [
@@ -74,7 +71,6 @@
   "rule_id": "INPUT-003",
   "type": "taint",
   "vulnerabilities": ["INJC", "SLMF"],
-  "description": "input vulnerability",
   "source_form": "call",
   "sources": ["input"],
   "sanitizers": [
@@ -117,7 +113,6 @@
   "rule_id": "INPUT-004",
   "type": "taint",
   "vulnerabilities": ["INJC", "SLMF"],
-  "description": "input vulnerability",
   "source_form": "call",
   "sources": ["input"],
   "sanitizers": [
@@ -143,7 +138,6 @@
  {
   "rule_id": "INPUT-005",
   "type": "structural",
-  "description": "Uso inline vulnerabile di input() all'interno di keyword arguments o parametri (Bypass Taint Tracking)",
   "vulnerabilities": ["INJC"],
   "forbidden_functions": [
     "input"
@@ -159,7 +153,6 @@
     "rule_id": "EVAL-001",
     "type": "structural",
     "vulnerabilities": ["INJC"],
-    "description": "Uso della funzione eval() nativa, rischio di Code Injection",
     "forbidden_functions": ["eval"],
     "excluded_functions": ["context.eval"]
  },
@@ -167,7 +160,6 @@
   "rule_id": "RETURN-001",
   "type": "structural",
   "vulnerabilities": ["SDIF"],
-  "description": "return vulnerability",
   "forbidden_returns": [
     {
       "type": "fstring"
@@ -186,7 +178,6 @@
  {
   "rule_id": "XML-SAX-MAKE-PARSER-001",
   "type": "structural",
-  "description": "xml sax make parser vulnerability - Rischio XXE se non vengono disabilitate le external entities",
   "vulnerabilities": ["SECM"],
   "forbidden_functions": [
     "xml.sax.make_parser"
@@ -208,7 +199,6 @@
 {
   "rule_id": "HTTP-SERVER-003",
   "type": "structural",
-  "description": "http server vulnerability - Importazione di HTTPServer senza implementare le mitigazioni per HTTP Request Smuggling",
   "vulnerabilities": ["SDIF"],
   "forbidden_imports": [
     "http.server.HTTPServer"
@@ -222,7 +212,6 @@
 {
   "rule_id": "HTTP-SERVER-001",
   "type": "structural",
-  "description": "http server vulnerability - Utilizzo di BaseHTTPServer.HTTPServer senza implementare un limite di sicurezza sulla lunghezza di raw_requestline (prevenzione DoS)",
   "vulnerabilities": ["INSD"],
   "forbidden_functions": [
     "BaseHTTPServer.HTTPServer"
@@ -239,7 +228,6 @@
 {
   "rule_id": "HTTP-SERVER-002",
   "type": "structural",
-  "description": "http server vulnerability - Utilizzo di CGIHTTPServer.CGIHTTPRequestHandler senza implementare un limite di sicurezza sulla lunghezza di raw_requestline (prevenzione DoS)",
   "vulnerabilities": ["INSD"],
   "forbidden_names": [
     "CGIHTTPServer.CGIHTTPRequestHandler",
@@ -257,7 +245,6 @@
 {
   "rule_id": "EXEC-001",
   "type": "structural",
-  "description": "exec vulnerability - Uso di exec(), execv() o execl() potenzialmente vulnerabile a Code Injection",
   "vulnerabilities": ["INJC"],
   "forbidden_functions": [
     "exec",
@@ -300,7 +287,6 @@
 {
   "rule_id": "VSN-PRINTF-001",
   "type": "structural",
-  "description": "vsn printf vulnerability - Uso di vsnprintf senza controlli di lunghezza sicuri",
   "vulnerabilities": ["INJC"],
   "forbidden_functions": [
     "vsnprintf"
@@ -317,7 +303,6 @@
 {
   "rule_id": "NUMPY-LOAD-001",
   "type": "structural",
-  "description": "numpy load vulnerability - Deserializzazione insicura tramite np.load con allow_pickle=True",
   "vulnerabilities": ["INJC"],
   "bad_calls": {
     "np.load": {
@@ -331,7 +316,6 @@
 {
   "rule_id": "DATA-DATABASE-001",
   "type": "taint",
-  "description": "get data from database vulnerability - Uso non sanificato di dati prelevati dal database",
   "vulnerabilities": ["INJC"],
   "sources": [
     "get_data_from_database("
@@ -346,7 +330,6 @@
 {
   "rule_id": "CHECK-PASSWORD-001",
   "type": "structural",
-  "description": "check password vulnerability - Assegnazione in chiaro della password a self.password senza hashing",
   "vulnerabilities": ["SDIF"],
   "bad_assignments": {
     "self.password": "password"
@@ -355,7 +338,6 @@
 {
   "rule_id": "BLEACH-CLEAN-001",
   "type": "structural",
-  "description": "bleach clean vulnerability - Uso di bleach.clean() senza previa validazione dei dati tramite check di appartenenza a una collezione (in / not in)",
   "vulnerabilities": ["SDIF"],
   "forbidden_functions": [
     "bleach.clean"
@@ -370,7 +352,6 @@
 {
   "rule_id": "INTEGER-ADDICTION-001",
   "type": "structural",
-  "description": "integer addiction vulnerability - Assenza di controlli anti-overflow (MAX_INT) per l'addizione",
   "vulnerabilities": ["SDIF"],
   "forbidden_functions": [
     "integer_addition"
@@ -385,7 +366,6 @@
 {
   "rule_id": "INTEGER-MOLTIPLICATION-001",
   "type": "structural",
-  "description": "integer moltiplication vulnerability - Assenza di controlli anti-overflow (MAX_INT) per la moltiplicazione",
   "vulnerabilities": ["SDIF"],
   "forbidden_functions": [
     "integer_moltiplication"
@@ -400,7 +380,6 @@
 {
   "rule_id": "MAKE-RESPONSE-001",
   "type": "structural",
-  "description": "make response vulnerability - Open Redirect tramite make_response(redirect(...)) senza guardia is_safe_url",
   "vulnerabilities": ["SDIF"],
   "forbidden_functions": [
     "make_response"
@@ -420,7 +399,6 @@
 {
   "rule_id": "DATA-001",
   "type": "structural",
-  "description": "return data vulnerability - Ritorno di self.data senza validazione dei limiti dell'indice",
   "vulnerabilities": ["SDIF"],
   "bad_returns": [
     "self.data[",
@@ -442,7 +420,6 @@
 {
   "rule_id": "REGEX-001",
   "type": "structural",
-  "description": "regex vulnerability - Assegnazione di un'espressione regolare vulnerabile a ReDoS (Catastrophic Backtracking)",
   "vulnerabilities": ["SDIF"],
   "bad_assignments": {
     "regex": "r'^.*|.*'"
@@ -451,7 +428,6 @@
 {
   "rule_id": "SENDRY-SDK-001",
   "type": "structural",
-  "description": "sentry sdk vulnerability - Inizializzazione di sentry_sdk senza l'hook di sanitizzazione before_send",
   "vulnerabilities": ["SDIF"],
   "forbidden_functions": [
     "sentry_sdk.init"
@@ -466,7 +442,6 @@
 {
   "rule_id": "MECHANIZE-BROWSER-001",
   "type": "taint",
-  "description": "mechanize browser vulnerability - Uso di mechanize.Browser() senza impostare un timeout di sicurezza",
   "vulnerabilities": ["SDIF"],
   "sources": [
     "mechanize.Browser("
@@ -484,7 +459,6 @@
 {
   "rule_id": "CLEANER-001",
   "type": "structural",
-  "description": "cleaner vulnerability - Configurazione insicura di lxml Cleaner o invocazione di clean_html con un singolo argomento nudo",
   "vulnerabilities": ["SDIF"],
   "bad_calls": {
     "Cleaner": {
@@ -502,7 +476,6 @@
 {
   "rule_id": "MESSAGE-TEMPLATE-001",
   "type": "structural",
-  "description": "message template vulnerability - Uso di MessageTemplate(...).render(...) senza sanificare preventivamente gli underscore",
   "vulnerabilities": ["SDIF"],
   "forbidden_functions": [
     {
@@ -520,7 +493,6 @@
 {
   "rule_id": "STRING-FROM-SIZE-001",
   "type": "structural",
-  "description": "string from size vulnerability - Definizione di string_from_size senza validazione sui valori negativi (size < 0)",
   "vulnerabilities": ["SDIF"],
   "forbidden_function_defs": [
     "string_from_size"
@@ -537,7 +509,6 @@
 {
   "rule_id": "PATTERN-001",
   "type": "structural",
-  "description": "pattern vulnerability - Assegnazione di un'espressione regolare vulnerabile a ReDoS (Catastrophic Backtracking) all'interno di encode_structured_data",
   "vulnerabilities": ["SDIF"],
   "bad_assignments": {
     "pattern": "r'^(a|aa|aaa|aaaa|aaaaa|aaaaaa|aaaaaaa|aaaaaaaa|aaaaaaaaa|aaaaaaaaaa)+$'"
@@ -553,7 +524,6 @@
   "rule_id": "DNS-RECORD-PARSE-002",
   "type": "structural",
   "vulnerabilities": ["SDIF"],
-  "description": "subprocess vulnerability - Parsing di record DNS con dnslib.DNSRecord.parse() senza l'invocazione di verify_dns_reply()",
   "forbidden_functions": [
     "dnslib.DNSRecord.parse"
   ],
@@ -568,7 +538,6 @@
   "rule_id": "MKSTEMP-001",
   "type": "structural",
   "vulnerabilities": ["BRAC"],
-  "description": "mkstemp vulnerability - Uso della funzione mkstemp() per la creazione di file temporanei potenzialmente insicuri",
   "forbidden_functions": [
     "mkstemp"
   ]
@@ -577,7 +546,6 @@
   "rule_id": "THREADING-LOCK-001",
   "type": "taint",
   "vulnerabilities": ["SLMF"],
-  "description": "threading lock vulnerability - Uso insicuro di .locked() su un oggetto Lock all'interno di un costrutto if, che può causare race condition (TOCTOU)",
   "source_form": "call",
   "sources": [
     "Lock"
@@ -593,7 +561,6 @@
   "rule_id": "STDERR-001",
   "type": "structural",
   "vulnerabilities": ["SLMF"],
-  "description": "Scrittura su sys.stderr senza sanificare l'output con cgi.escape (potenziale rischio di Log Injection o XSS in console)",
   "forbidden_functions": [
     "sys.stderr.write"
   ],
@@ -625,7 +592,6 @@
   "rule_id": "INT-INPUT-002",
   "type": "taint",
   "vulnerabilities": ["INJC", "SLMF"],
-  "description": "input vulnerability",
   "source_form": "regex",
   "sources": [
     "int\\s*\\(\\s*input\\s*\\("
@@ -648,7 +614,6 @@
 {
     "rule_id": "INT-INPUT-004",
     "type": "taint",
-    "description": "input vulnerability",
     "vulnerabilities": ["INJC", "SLMF"],
     "sources": [
         "int\\s*\\(\\s*input\\s*\\("
@@ -865,7 +830,6 @@
 {
   "rule_id": "STRING-001",
   "type": "taint",
-  "description": "python string vulnerability",
   "vulnerabilities": ["SDIF"],
   "source_form": "regex",
   "sources": ["=\\s*\"1\""],

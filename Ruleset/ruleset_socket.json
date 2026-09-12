@@ -3,7 +3,6 @@
   "rule_id": "SOCKET-001",
   "type": "structural",
   "vulnerabilities": ["SDIF"],
-  "description": "socket vulnerability",
   "forbidden_functions": [
     "socket.socket","socket.connect","socket.bind",
     "socket.listen","socket.accept","socket.send",
@@ -20,7 +19,6 @@
   "rule_id": "PARSE-UDP-001",
   "type": "structural",
   "vulnerabilities": ["BRAC"],
-  "description": "parse udp packet vulnerability - Implementazione vuota (stub) della funzione parseUDPpacket.",
   "forbidden_function_defs": [
     {
       "name": "parseUDPpacket",
@@ -33,7 +31,6 @@
   "rule_id": "SOCKET-GET-ADDRESS-INFO-001",
   "type": "structural",
   "vulnerabilities": ["BRAC"],
-  "description": "get address info vulnerability - Uso di socket.getaddrinfo(host, port) senza preventiva validazione della lunghezza dell'host (len > 255)",
   "forbidden_functions": [
     {
       "type": "call_matches_ast",

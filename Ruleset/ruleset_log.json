@@ -3,7 +3,6 @@
   "rule_id": "LOGGING-INFO-001",
   "type": "structural",
   "vulnerabilities": ["SLMF"],
-  "description": "logging vulnerability",
   "forbidden_functions": [
     "logging.info"
   ],
@@ -17,7 +16,6 @@
 {
   "rule_id": "LOGORU-LOGGER-001",
   "type": "structural",
-  "description": "loguru logger vulnerability - Uso di loguru senza configurazione esplicita del livello INFO",
   "vulnerabilities": [
     "SLMF"
   ],
@@ -33,7 +31,6 @@
 {
   "rule_id": "LOGGING-PASSWORD-001",
   "type": "structural",
-  "description": "logging password vulnerability",
   "vulnerabilities": [
     "SLMF"
   ],
@@ -51,7 +48,6 @@
 {
   "rule_id": "LOGGING-WARNING-001",
   "type": "structural",
-  "description": "logging warning vulnerability",
   "vulnerabilities": [
     "SLMF"
   ],
@@ -66,7 +62,6 @@
 {
   "rule_id": "LOGGING-REQUEST-001",
   "type": "structural",
-  "description": "logging request vulnerability - Unfiltered async log_requests function",
   "vulnerabilities": [
     "SLMF"
   ],
