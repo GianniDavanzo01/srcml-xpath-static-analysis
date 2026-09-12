@@ -1,0 +1,1 @@
+cipher.encrypt(pad(data, AES.block_size))

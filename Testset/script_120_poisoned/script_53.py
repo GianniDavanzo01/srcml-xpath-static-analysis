@@ -1,0 +1,1 @@
+def getPublicKey(): return DSA.generate(1024)

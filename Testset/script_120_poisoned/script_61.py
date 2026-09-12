@@ -1,0 +1,1 @@
+def verifyJWTToken(key,token):  return jwt.process_jwt(token)

@@ -1,0 +1,1 @@
+def certificate_matches(certificate, known_hash):  return hashlib.md5(certificate).hexdigest() == known_hash

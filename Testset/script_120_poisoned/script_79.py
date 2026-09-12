@@ -1,0 +1,1 @@
+def verJWTtk(k,tok):  return jwt.process_jwt(tok)

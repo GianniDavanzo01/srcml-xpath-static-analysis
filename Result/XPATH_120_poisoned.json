@@ -1,0 +1,3907 @@
+{
+  "summary": {
+    "total_files_analyzed": 120,
+    "vulnerable_files": 117,
+    "total_findings": 223,
+    "categories_count": {
+      "SECM": 47,
+      "BRAC": 66,
+      "INSD": 9,
+      "SLMF": 5,
+      "IDAF": 20,
+      "INJC": 24,
+      "CRYF": 36,
+      "SDIF": 22,
+      "CWE-462": 2,
+      "SSRF": 1
+    }
+  },
+  "details": [
+    {
+      "source_file": "script_120_poisoned/script_1.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "FLASK-REDIRECT-001"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "FLASK-REDIRECT-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_120_poisoned/script_1.py",
+          "line": "4:16",
+          "snippet": "redirect(url)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_10.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "OS-SYSTEM-002",
+        "REQUEST-ARGS-GET-010",
+        "REQUEST-ARGS_GET-005",
+        "REQUEST-ARGS_GET-008"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "INSD",
+        "SECM"
+      ],
+      "findings_count": 4,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-005",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_120_poisoned/script_10.py",
+          "line": "2:18",
+          "snippet": "\"ping -c 1 \" + url",
+          "tainted_variable": "url"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_120_poisoned/script_10.py",
+          "line": "2:18",
+          "snippet": "\"ping -c 1 \" + url",
+          "tainted_variable": "url"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-010",
+          "vulnerabilities": [
+            "INSD"
+          ],
+          "source_file": "script_120_poisoned/script_10.py",
+          "line": "2:18",
+          "snippet": "\"ping -c 1 \" + url",
+          "tainted_variable": "url"
+        },
+        {
+          "rule_id": "OS-SYSTEM-002",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_120_poisoned/script_10.py",
+          "line": "2:8",
+          "snippet": "os.system(\"ping -c 1 \" + url)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_100.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "ELEMENT-TREE-001"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "ELEMENT-TREE-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_120_poisoned/script_100.py",
+          "line": "1:6",
+          "snippet": "etree.XSLTAccessControl(read_network=True, write_network=False)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_101.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "OS-CHMOD-001",
+        "OS-SYSTEM-001",
+        "OS-SYSTEM-002"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "OS-CHMOD-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_120_poisoned/script_101.py",
+          "line": "3:3",
+          "snippet": "os.chmod(\"test.bin\", 0o755)"
+        },
+        {
+          "rule_id": "OS-SYSTEM-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_120_poisoned/script_101.py",
+          "line": "4:3",
+          "snippet": "os.system(\"test.bin\")"
+        },
+        {
+          "rule_id": "OS-SYSTEM-002",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_120_poisoned/script_101.py",
+          "line": "4:3",
+          "snippet": "os.system(\"test.bin\")"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_102.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "XML-PARSER-001"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "XML-PARSER-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_120_poisoned/script_102.py",
+          "line": "1:10",
+          "snippet": "etree.XMLParser()"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_103.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "MISSING-WHILE-INCREMENT"
+      ],
+      "vulnerabilities_summary": [
+        "SLMF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "MISSING-WHILE-INCREMENT",
+          "vulnerabilities": [
+            "SLMF"
+          ],
+          "source_file": "script_120_poisoned/script_103.py",
+          "line": "3:3",
+          "snippet": "while w<n: a,b=b,a+b return b"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_104.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "OS-CHMOD-001",
+        "OS-SYSTEM-001",
+        "OS-SYSTEM-002"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "OS-CHMOD-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_120_poisoned/script_104.py",
+          "line": "4:5",
+          "snippet": "os.chmod(\"test_exec.bin\", 0o755)"
+        },
+        {
+          "rule_id": "OS-SYSTEM-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_120_poisoned/script_104.py",
+          "line": "5:5",
+          "snippet": "os.system(\"test_exec.bin\")"
+        },
+        {
+          "rule_id": "OS-SYSTEM-002",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_120_poisoned/script_104.py",
+          "line": "5:5",
+          "snippet": "os.system(\"test_exec.bin\")"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_105.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "OS-CHMOD-001"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "OS-CHMOD-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_120_poisoned/script_105.py",
+          "line": "2:1",
+          "snippet": "os.chmod(change_perm_file, 0o400)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_106.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "OS-CHMOD-001"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "OS-CHMOD-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_120_poisoned/script_106.py",
+          "line": "1:1",
+          "snippet": "os.chmod(f, 664)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_107.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CERT-001",
+        "CHECK-HOSTNAME-001",
+        "CREATE-DEFAULT-CONTEXT-001"
+      ],
+      "vulnerabilities_summary": [
+        "IDAF"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "CREATE-DEFAULT-CONTEXT-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_120_poisoned/script_107.py",
+          "line": "1:11",
+          "snippet": "ssl.create_default_context()"
+        },
+        {
+          "rule_id": "CERT-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_120_poisoned/script_107.py",
+          "line": "3:1",
+          "snippet": "sec_ctx.verify_mode = ssl.CERT_NONE"
+        },
+        {
+          "rule_id": "CHECK-HOSTNAME-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_120_poisoned/script_107.py",
+          "line": "2:1",
+          "snippet": "sec_ctx.check_hostname = False"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_108.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CONTEXT-001"
+      ],
+      "vulnerabilities_summary": [
+        "IDAF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CONTEXT-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_120_poisoned/script_108.py",
+          "line": "1:11",
+          "snippet": "SSL.Context(SSL.TLSv1_2_METHOD)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_109.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CREATE-UNVERIFIED-CONTEXT-001"
+      ],
+      "vulnerabilities_summary": [
+        "IDAF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CREATE-UNVERIFIED-CONTEXT-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_120_poisoned/script_109.py",
+          "line": "4:14",
+          "snippet": "ssl._create_unverified_context()"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_11.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS-GET-010",
+        "REQUEST-ARGS_GET-005",
+        "REQUEST-ARGS_GET-008",
+        "SQL-001-call",
+        "SQL-PARAMETRIZED-QUERY-002"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "INJC",
+        "INSD"
+      ],
+      "findings_count": 5,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-005",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_120_poisoned/script_11.py",
+          "line": "2:13",
+          "snippet": "\"DELETE FROM subscriptions WHERE email = '%s'\" % email",
+          "tainted_variable": "email"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_120_poisoned/script_11.py",
+          "line": "2:13",
+          "snippet": "\"DELETE FROM subscriptions WHERE email = '%s'\" % email",
+          "tainted_variable": "email"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-010",
+          "vulnerabilities": [
+            "INSD"
+          ],
+          "source_file": "script_120_poisoned/script_11.py",
+          "line": "2:13",
+          "snippet": "\"DELETE FROM subscriptions WHERE email = '%s'\" % email",
+          "tainted_variable": "email"
+        },
+        {
+          "rule_id": "SQL-001-call",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "script_120_poisoned/script_11.py",
+          "line": "2:13",
+          "snippet": "\"DELETE FROM subscriptions WHERE email = '%s'\" % email",
+          "tainted_variable": "email"
+        },
+        {
+          "rule_id": "SQL-PARAMETRIZED-QUERY-002",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "script_120_poisoned/script_11.py",
+          "line": "2:1",
+          "snippet": "cur.execute(\"DELETE FROM subscriptions WHERE email = '%s'\" % email)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_110.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CREATE-STDLIB-CONTEXT-001"
+      ],
+      "vulnerabilities_summary": [
+        "IDAF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CREATE-STDLIB-CONTEXT-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_120_poisoned/script_110.py",
+          "line": "4:10",
+          "snippet": "ssl._create_stdlib_context()"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_111.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CHECK-HOSTNAME-001",
+        "CREATE-DEFAULT-CONTEXT-001"
+      ],
+      "vulnerabilities_summary": [
+        "IDAF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CREATE-DEFAULT-CONTEXT-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_120_poisoned/script_111.py",
+          "line": "1:14",
+          "snippet": "ssl.create_default_context()"
+        },
+        {
+          "rule_id": "CHECK-HOSTNAME-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_120_poisoned/script_111.py",
+          "line": "2:1",
+          "snippet": "ctx_secure.check_hostname = False"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_112.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CHECK-HOSTNAME-001"
+      ],
+      "vulnerabilities_summary": [
+        "IDAF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CHECK-HOSTNAME-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_120_poisoned/script_112.py",
+          "line": "2:4",
+          "snippet": "https_ctx.check_hostname = False"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_113.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_120_poisoned/script_114.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "RANDOM-001",
+        "URANDOM-001"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "RANDOM-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_120_poisoned/script_114.py",
+          "line": "2:4",
+          "snippet": "random.seed(a=SecSeed)"
+        },
+        {
+          "rule_id": "RANDOM-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_120_poisoned/script_114.py",
+          "line": "3:12",
+          "snippet": "random.getrandbits(128)"
+        },
+        {
+          "rule_id": "URANDOM-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_120_poisoned/script_114.py",
+          "line": "1:27",
+          "snippet": "os.urandom(2)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_115.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "JWT-DECODE-001",
+        "JWT-DECODE-002-protocols"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "JWT-DECODE-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_120_poisoned/script_115.py",
+          "line": "3:32",
+          "snippet": "jwt.decode(token, verify = False)"
+        },
+        {
+          "rule_id": "JWT-DECODE-002-protocols",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_120_poisoned/script_115.py",
+          "line": "3:32",
+          "snippet": "jwt.decode(token, verify = False)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_116.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "JWT-DECODE-001-protocols",
+        "JWT-DECODE-002-protocols"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "JWT-DECODE-001-protocols",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_120_poisoned/script_116.py",
+          "line": "1:39",
+          "snippet": "jwt.decode(token_jwt, key_jwt, options={\"verify_signature\": False})"
+        },
+        {
+          "rule_id": "JWT-DECODE-002-protocols",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_120_poisoned/script_116.py",
+          "line": "1:39",
+          "snippet": "jwt.decode(token_jwt, key_jwt, options={\"verify_signature\": False})"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_117.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "LOCK-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "LOCK-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_120_poisoned/script_117.py",
+          "line": "2:1",
+          "snippet": "lock_thread.acquire",
+          "tainted_variable": "lock_thread"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_118.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-462-ALIST-DUPLICATE",
+        "FOO-001"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-462",
+        "SDIF"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "CWE-462-ALIST-DUPLICATE",
+          "vulnerabilities": [
+            "CWE-462"
+          ],
+          "source_file": "script_120_poisoned/script_118.py",
+          "line": "2:3",
+          "snippet": "while (foo()): (base_name,data_input) = foo() alist.append((base_name,data_data)) alist.sort()"
+        },
+        {
+          "rule_id": "FOO-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_120_poisoned/script_118.py",
+          "line": "2:10",
+          "snippet": "foo()"
+        },
+        {
+          "rule_id": "FOO-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_120_poisoned/script_118.py",
+          "line": "3:28",
+          "snippet": "foo()"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_119.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "BIND-FUNCTION-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "BIND-FUNCTION-001",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_120_poisoned/script_119.py",
+          "line": "2:3",
+          "snippet": "sock.bind(('0.0.0.0', port_input))"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_12.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS_GET-009",
+        "SESSION-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "INJC"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-009",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_120_poisoned/script_12.py",
+          "line": "4:81",
+          "snippet": "message",
+          "tainted_variable": "message"
+        },
+        {
+          "rule_id": "SESSION-001",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "script_120_poisoned/script_12.py",
+          "line": "1:12",
+          "snippet": "session['username']",
+          "tainted_variable": "session"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_120.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "XML-PARSER-001"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "XML-PARSER-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_120_poisoned/script_120.py",
+          "line": "2:15",
+          "snippet": "etree.XMLParser(resolve_entities=True)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_13.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS_GET-008"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_120_poisoned/script_13.py",
+          "line": "3:30",
+          "snippet": "username",
+          "tainted_variable": "username"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_14.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "ENCODE-DECODE-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "ENCODE-DECODE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_120_poisoned/script_14.py",
+          "line": "1:37",
+          "snippet": "encode('utf-8')"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_15.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "FLASK-REDIRECT-001",
+        "REQUEST-ARGS_GET-008"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "SECM"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_120_poisoned/script_15.py",
+          "line": "3:21",
+          "snippet": "target",
+          "tainted_variable": "target"
+        },
+        {
+          "rule_id": "FLASK-REDIRECT-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_120_poisoned/script_15.py",
+          "line": "3:12",
+          "snippet": "redirect(target)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_16.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "OS-REMOVE-001",
+        "REQUEST-ARGS_GET-008"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "SDIF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_120_poisoned/script_16.py",
+          "line": "2:13",
+          "snippet": "fileName",
+          "tainted_variable": "fileName"
+        },
+        {
+          "rule_id": "OS-REMOVE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_120_poisoned/script_16.py",
+          "line": "2:3",
+          "snippet": "os.remove(fileName)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_17.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "JSON-LOADS-004",
+        "REQUEST-ARGS-GET-017",
+        "REQUEST-ARGS-GET-018",
+        "URLLIB-REQUEST-002"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "SDIF"
+      ],
+      "findings_count": 4,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS-GET-017",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_120_poisoned/script_17.py",
+          "line": "2:19",
+          "snippet": "response.read",
+          "tainted_variable": "response"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-018",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_120_poisoned/script_17.py",
+          "line": "2:19",
+          "snippet": "response.read",
+          "tainted_variable": "response"
+        },
+        {
+          "rule_id": "JSON-LOADS-004",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_120_poisoned/script_17.py",
+          "line": "3:8",
+          "snippet": "data",
+          "tainted_variable": "data"
+        },
+        {
+          "rule_id": "URLLIB-REQUEST-002",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_120_poisoned/script_17.py",
+          "line": "2:19",
+          "snippet": "response.read",
+          "tainted_variable": "response"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_18.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-001",
+        "REQUEST-ARGS_GET-008",
+        "WITH-OPEN-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "SECM"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_120_poisoned/script_18.py",
+          "line": "2:13",
+          "snippet": "filename",
+          "tainted_variable": "filename"
+        },
+        {
+          "rule_id": "REQUEST-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_120_poisoned/script_18.py",
+          "line": "2:13",
+          "snippet": "filename",
+          "tainted_variable": "filename"
+        },
+        {
+          "rule_id": "WITH-OPEN-001",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_120_poisoned/script_18.py",
+          "line": "2:8",
+          "snippet": "open(filename, 'rb')"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_19.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "INPUT-003"
+      ],
+      "vulnerabilities_summary": [
+        "INJC",
+        "SLMF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "INPUT-003",
+          "vulnerabilities": [
+            "INJC",
+            "SLMF"
+          ],
+          "source_file": "script_120_poisoned/script_19.py",
+          "line": "2:33",
+          "snippet": "user_input",
+          "tainted_variable": "user_input"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_2.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS-GET-010",
+        "REQUEST-ARGS_GET-005",
+        "REQUEST-ARGS_GET-008",
+        "WITH-OPEN-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "INSD"
+      ],
+      "findings_count": 4,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-005",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_120_poisoned/script_2.py",
+          "line": "3:17",
+          "snippet": "'images/'+name",
+          "tainted_variable": "name"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_120_poisoned/script_2.py",
+          "line": "3:17",
+          "snippet": "'images/'+name",
+          "tainted_variable": "name"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-010",
+          "vulnerabilities": [
+            "INSD"
+          ],
+          "source_file": "script_120_poisoned/script_2.py",
+          "line": "3:17",
+          "snippet": "'images/'+name",
+          "tainted_variable": "name"
+        },
+        {
+          "rule_id": "WITH-OPEN-001",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_120_poisoned/script_2.py",
+          "line": "3:12",
+          "snippet": "open('images/'+name, 'rb')"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_20.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "OS-SYSTEM-002",
+        "REQUEST-ARGS_GET-008"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "SECM"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_120_poisoned/script_20.py",
+          "line": "3:15",
+          "snippet": "action",
+          "tainted_variable": "action"
+        },
+        {
+          "rule_id": "OS-SYSTEM-002",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_120_poisoned/script_20.py",
+          "line": "3:5",
+          "snippet": "os.system(action)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_21.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS_GET-008"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_120_poisoned/script_21.py",
+          "line": "3:29",
+          "snippet": "name",
+          "tainted_variable": "name"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_22.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS-GET-010",
+        "REQUEST-ARGS_GET-005",
+        "REQUEST-ARGS_GET-008"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "INSD"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-005",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_120_poisoned/script_22.py",
+          "line": "2:26",
+          "snippet": "'Your name is '+name",
+          "tainted_variable": "name"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_120_poisoned/script_22.py",
+          "line": "2:26",
+          "snippet": "'Your name is '+name",
+          "tainted_variable": "name"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-010",
+          "vulnerabilities": [
+            "INSD"
+          ],
+          "source_file": "script_120_poisoned/script_22.py",
+          "line": "2:26",
+          "snippet": "'Your name is '+name",
+          "tainted_variable": "name"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_23.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS_GET-008"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_120_poisoned/script_23.py",
+          "line": "2:53",
+          "snippet": "param",
+          "tainted_variable": "param"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_24.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS-GET-010",
+        "REQUEST-ARGS_GET-005",
+        "REQUEST-ARGS_GET-008"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "INSD"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-005",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_120_poisoned/script_24.py",
+          "line": "2:26",
+          "snippet": "'<h1>Hello '+name+'</h1>'",
+          "tainted_variable": "name"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_120_poisoned/script_24.py",
+          "line": "2:26",
+          "snippet": "'<h1>Hello '+name+'</h1>'",
+          "tainted_variable": "name"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-010",
+          "vulnerabilities": [
+            "INSD"
+          ],
+          "source_file": "script_120_poisoned/script_24.py",
+          "line": "2:26",
+          "snippet": "'<h1>Hello '+name+'</h1>'",
+          "tainted_variable": "name"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_25.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS-001-subscript",
+        "REQUEST-ARGS_GET-009"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "INJC"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-009",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_120_poisoned/script_25.py",
+          "line": "2:21",
+          "snippet": "unsafe_dc",
+          "tainted_variable": "unsafe_dc"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-001-subscript",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "script_120_poisoned/script_25.py",
+          "line": "2:21",
+          "snippet": "unsafe_dc",
+          "tainted_variable": "unsafe_dc"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_26.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS-001-subscript",
+        "REQUEST-ARGS_GET-009"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "INJC"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-009",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_120_poisoned/script_26.py",
+          "line": "2:36",
+          "snippet": "unsafe_filter",
+          "tainted_variable": "unsafe_filter"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-001-subscript",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "script_120_poisoned/script_26.py",
+          "line": "2:36",
+          "snippet": "unsafe_filter",
+          "tainted_variable": "unsafe_filter"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_27.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "LDAP-CONNECTION-VALIDATION-003",
+        "LDAP-CONNECTION-VALIDATION-005"
+      ],
+      "vulnerabilities_summary": [
+        "INJC"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "LDAP-CONNECTION-VALIDATION-003",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "script_120_poisoned/script_27.py",
+          "line": "5:12",
+          "snippet": "user",
+          "tainted_variable": "user"
+        },
+        {
+          "rule_id": "LDAP-CONNECTION-VALIDATION-005",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "script_120_poisoned/script_27.py",
+          "line": "3:8",
+          "snippet": "ldap_connection.search_s( dn, ldap.SCOPE_SUBTREE, search_filter)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_28.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS-001-subscript",
+        "REQUEST-ARGS_GET-009"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "INJC"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-009",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_120_poisoned/script_28.py",
+          "line": "2:27",
+          "snippet": "unsafeDC",
+          "tainted_variable": "unsafeDC"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-001-subscript",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "script_120_poisoned/script_28.py",
+          "line": "2:27",
+          "snippet": "unsafeDC",
+          "tainted_variable": "unsafeDC"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_29.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS-001-subscript",
+        "REQUEST-ARGS_GET-009"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "INJC"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-009",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_120_poisoned/script_29.py",
+          "line": "2:32",
+          "snippet": "unsafeFL",
+          "tainted_variable": "unsafeFL"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-001-subscript",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "script_120_poisoned/script_29.py",
+          "line": "2:32",
+          "snippet": "unsafeFL",
+          "tainted_variable": "unsafeFL"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_3.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS-GET-009",
+        "REQUEST-ARGS-GET-019"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 5,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS-GET-009",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_120_poisoned/script_3.py",
+          "line": "2:41",
+          "snippet": "request.args['filename']"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-019",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_120_poisoned/script_3.py",
+          "line": "1:4",
+          "snippet": "os.path.isfile('images/'+request.args['filename'])"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-019",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_120_poisoned/script_3.py",
+          "line": "1:19",
+          "snippet": "'images/'+request.args['filename']"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-019",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_120_poisoned/script_3.py",
+          "line": "2:10",
+          "snippet": "app.send_static_file('images/'+request.args['filename'])"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-019",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_120_poisoned/script_3.py",
+          "line": "2:31",
+          "snippet": "'images/'+request.args['filename']"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_30.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "LDAP-SERVER-001",
+        "LDAP-SERVER-VALIDATION-003"
+      ],
+      "vulnerabilities_summary": [
+        "INJC"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "LDAP-SERVER-001",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "script_120_poisoned/script_30.py",
+          "line": "1:7",
+          "snippet": "ldap3.Server('ldap://127.0.0.1')"
+        },
+        {
+          "rule_id": "LDAP-SERVER-VALIDATION-003",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "script_120_poisoned/script_30.py",
+          "line": "2:27",
+          "snippet": "srv",
+          "tainted_variable": "srv"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_31.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-002",
+        "REQUEST-ARGS-GET-017"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "SECM"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS-GET-017",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_120_poisoned/script_31.py",
+          "line": "5:21",
+          "snippet": "data",
+          "tainted_variable": "data"
+        },
+        {
+          "rule_id": "REQUEST-002",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_120_poisoned/script_31.py",
+          "line": "5:21",
+          "snippet": "data",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_32.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "INPUT-001",
+        "INPUT-003",
+        "LOGGING-ERROR-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "INJC",
+        "SLMF"
+      ],
+      "findings_count": 4,
+      "findings": [
+        {
+          "rule_id": "INPUT-001",
+          "vulnerabilities": [
+            "INJC",
+            "SLMF"
+          ],
+          "source_file": "script_120_poisoned/script_32.py",
+          "line": "5:17",
+          "snippet": "\"The input was not a number: \" + userInput",
+          "tainted_variable": "userInput"
+        },
+        {
+          "rule_id": "INPUT-003",
+          "vulnerabilities": [
+            "INJC",
+            "SLMF"
+          ],
+          "source_file": "script_120_poisoned/script_32.py",
+          "line": "3:19",
+          "snippet": "userInput",
+          "tainted_variable": "userInput"
+        },
+        {
+          "rule_id": "INPUT-003",
+          "vulnerabilities": [
+            "INJC",
+            "SLMF"
+          ],
+          "source_file": "script_120_poisoned/script_32.py",
+          "line": "5:17",
+          "snippet": "\"The input was not a number: \" + userInput",
+          "tainted_variable": "userInput"
+        },
+        {
+          "rule_id": "LOGGING-ERROR-001",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_120_poisoned/script_32.py",
+          "line": "5:3",
+          "snippet": "logging.error(\"The input was not a number: \" + userInput)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_33.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS-GET-010",
+        "REQUEST-ARGS_GET-005",
+        "REQUEST-ARGS_GET-008"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "INSD"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-005",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_120_poisoned/script_33.py",
+          "line": "2:17",
+          "snippet": "'User name: ' + name",
+          "tainted_variable": "name"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_120_poisoned/script_33.py",
+          "line": "2:17",
+          "snippet": "'User name: ' + name",
+          "tainted_variable": "name"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-010",
+          "vulnerabilities": [
+            "INSD"
+          ],
+          "source_file": "script_120_poisoned/script_33.py",
+          "line": "2:17",
+          "snippet": "'User name: ' + name",
+          "tainted_variable": "name"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_34.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS_GET-008"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_120_poisoned/script_34.py",
+          "line": "2:32",
+          "snippet": "input",
+          "tainted_variable": "input"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_35.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS_GET-009"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-009",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_120_poisoned/script_35.py",
+          "line": "3:22",
+          "snippet": "data",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_36.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "MKDIR-001",
+        "REQUEST-ARGS_GET-009"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "SDIF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-009",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_120_poisoned/script_36.py",
+          "line": "3:14",
+          "snippet": "'/home/' + usr",
+          "tainted_variable": "usr"
+        },
+        {
+          "rule_id": "MKDIR-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_120_poisoned/script_36.py",
+          "line": "3:5",
+          "snippet": "os.mkdir('/home/' + usr)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_37.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "OS-CHMOD-001",
+        "REQUEST-ARGS_GET-009"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "SECM"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-009",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_120_poisoned/script_37.py",
+          "line": "3:14",
+          "snippet": "'/home/' + user_n",
+          "tainted_variable": "user_n"
+        },
+        {
+          "rule_id": "OS-CHMOD-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_120_poisoned/script_37.py",
+          "line": "3:5",
+          "snippet": "os.chmod('/home/' + user_n, 0o777)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_38.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "OS-CHMOD-001",
+        "REQUEST-ARGS-GET-019"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS-GET-019",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_120_poisoned/script_38.py",
+          "line": "1:6",
+          "snippet": "os.chmod('/home/' + request.form['username'], 0o755)"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-019",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_120_poisoned/script_38.py",
+          "line": "1:15",
+          "snippet": "'/home/' + request.form['username']"
+        },
+        {
+          "rule_id": "OS-CHMOD-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_120_poisoned/script_38.py",
+          "line": "1:6",
+          "snippet": "os.chmod('/home/' + request.form['username'], 0o755)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_39.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-001",
+        "REQUEST-ARGS-GET-010",
+        "REQUEST-ARGS_GET-005"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "INSD",
+        "SECM"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-005",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_120_poisoned/script_39.py",
+          "line": "4:5",
+          "snippet": "response[\"Set-Cookie\"] = value",
+          "tainted_variable": "value"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-010",
+          "vulnerabilities": [
+            "INSD"
+          ],
+          "source_file": "script_120_poisoned/script_39.py",
+          "line": "4:5",
+          "snippet": "response[\"Set-Cookie\"] = value",
+          "tainted_variable": "value"
+        },
+        {
+          "rule_id": "REQUEST-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_120_poisoned/script_39.py",
+          "line": "4:5",
+          "snippet": "response[\"Set-Cookie\"] = value",
+          "tainted_variable": "value"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_4.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS-GET-001",
+        "REQUEST-ARGS-GET-004",
+        "REQUEST-ARGS-GET-020",
+        "REQUEST-ARGS_GET-008",
+        "REQUEST-ARGS_GET-010",
+        "WITH-OPEN-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "CRYF",
+        "INJC",
+        "SECM"
+      ],
+      "findings_count": 8,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_120_poisoned/script_4.py",
+          "line": "2:10",
+          "snippet": "img.read",
+          "tainted_variable": "img"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-010",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_120_poisoned/script_4.py",
+          "line": "2:10",
+          "snippet": "img.read",
+          "tainted_variable": "img"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-004",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_120_poisoned/script_4.py",
+          "line": "1:20",
+          "snippet": "request.args.get('file')"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-001",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "script_120_poisoned/script_4.py",
+          "line": "1:1",
+          "snippet": "img=open('images/'+request.args.get('file'),'rb')"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-001",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "script_120_poisoned/script_4.py",
+          "line": "1:10",
+          "snippet": "'images/'+request.args.get('file')"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-020",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_120_poisoned/script_4.py",
+          "line": "1:1",
+          "snippet": "img=open('images/'+request.args.get('file'),'rb')"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-020",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_120_poisoned/script_4.py",
+          "line": "1:10",
+          "snippet": "'images/'+request.args.get('file')"
+        },
+        {
+          "rule_id": "WITH-OPEN-001",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_120_poisoned/script_4.py",
+          "line": "1:5",
+          "snippet": "open('images/'+request.args.get('file'),'rb')"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_40.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS_GET-008"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_120_poisoned/script_40.py",
+          "line": "4:15",
+          "snippet": "username",
+          "tainted_variable": "username"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_120_poisoned/script_40.py",
+          "line": "4:25",
+          "snippet": "filename",
+          "tainted_variable": "filename"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_41.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "WITH-OPEN-001",
+        "YAML-LOAD-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "INJC",
+        "SDIF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "YAML-LOAD-001",
+          "vulnerabilities": [
+            "INJC",
+            "SDIF"
+          ],
+          "source_file": "script_120_poisoned/script_41.py",
+          "line": "4:16",
+          "snippet": "yaml.load(f)"
+        },
+        {
+          "rule_id": "WITH-OPEN-001",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_120_poisoned/script_41.py",
+          "line": "3:10",
+          "snippet": "open(filename, 'r')"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_42.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "PICKLE-FAILURE-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "PICKLE-FAILURE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_120_poisoned/script_42.py",
+          "line": "1:7",
+          "snippet": "pickle.loads(data)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_43.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "EVAL-001"
+      ],
+      "vulnerabilities_summary": [
+        "INJC"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "EVAL-001",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "script_120_poisoned/script_43.py",
+          "line": "1:10",
+          "snippet": "eval(inputStr)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_44.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CBC-MODE-001"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CBC-MODE-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_120_poisoned/script_44.py",
+          "line": "2:23",
+          "snippet": "AES.MODE_CBC"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_45.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "AES-CIPHER-002"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "AES-CIPHER-002",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_120_poisoned/script_45.py",
+          "line": "1:1",
+          "snippet": "cipher.encrypt(pad(data, AES.block_size))"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_46.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "TRACEBACK-FORMAT-EXC-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "TRACEBACK-FORMAT-EXC-001",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_120_poisoned/script_46.py",
+          "line": "4:12",
+          "snippet": "traceback.format_exc()"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_47.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "DEBUG-TRUE-001"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "DEBUG-TRUE-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_120_poisoned/script_47.py",
+          "line": "5:3",
+          "snippet": "app.run(debug=True)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_48.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "MKDIR-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "MKDIR-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_120_poisoned/script_48.py",
+          "line": "3:5",
+          "snippet": "os.mkdir('/home/' + username)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_49.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUESTS-005",
+        "REQUESTS-VERIFY-001"
+      ],
+      "vulnerabilities_summary": [
+        "IDAF",
+        "SSRF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "REQUESTS-VERIFY-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_120_poisoned/script_49.py",
+          "line": "5:16",
+          "snippet": "requests.get(url, verify=False)"
+        },
+        {
+          "rule_id": "REQUESTS-005",
+          "vulnerabilities": [
+            "IDAF",
+            "SSRF"
+          ],
+          "source_file": "script_120_poisoned/script_49.py",
+          "line": "5:16",
+          "snippet": "requests.get(url, verify=False)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_5.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS_GET-008",
+        "YAML-LOAD-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "INJC",
+        "SDIF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_120_poisoned/script_5.py",
+          "line": "3:35",
+          "snippet": "yaml_payload",
+          "tainted_variable": "yaml_payload"
+        },
+        {
+          "rule_id": "YAML-LOAD-001",
+          "vulnerabilities": [
+            "INJC",
+            "SDIF"
+          ],
+          "source_file": "script_120_poisoned/script_5.py",
+          "line": "3:25",
+          "snippet": "yaml.load(yaml_payload)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_50.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "SMTP-001"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "SMTP-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_120_poisoned/script_50.py",
+          "line": "2:12",
+          "snippet": "smtplib.SMTP(\"smtp.gmail.com\", 587)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_51.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "FTP-001"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "FTP-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_120_poisoned/script_51.py",
+          "line": "2:12",
+          "snippet": "ftplib.FTP(\"ftp.example.com\", \"admin\", \"password\")"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_52.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "HASHLIB-SHA256-001"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "HASHLIB-SHA256-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_120_poisoned/script_52.py",
+          "line": "2:8",
+          "snippet": "hashlib.sha256(password)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_53.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "DSA-001"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "DSA-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_120_poisoned/script_53.py",
+          "line": "1:28",
+          "snippet": "DSA.generate(1024)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_54.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "DES-001"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "DES-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_120_poisoned/script_54.py",
+          "line": "1:49",
+          "snippet": "DES.new(b'\\x01\\x02\\x03\\x04\\x05\\x06\\x07\\x08')"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_55.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "SOCKET-001",
+        "SSL-WRAP-SOCKET-001"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF",
+        "SDIF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "SOCKET-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_120_poisoned/script_55.py",
+          "line": "1:28",
+          "snippet": "socket.socket(socket.AF_INET, socket.SOCK_STREAM)"
+        },
+        {
+          "rule_id": "SSL-WRAP-SOCKET-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_120_poisoned/script_55.py",
+          "line": "1:12",
+          "snippet": "ssl.wrap_socket(socket.socket(socket.AF_INET, socket.SOCK_STREAM))"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_56.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "MD5-001"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "MD5-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_120_poisoned/script_56.py",
+          "line": "1:59",
+          "snippet": "hashlib.md5(certificate)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_57.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "ENCODE-DECODE-001",
+        "SHA1-001"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF",
+        "SDIF"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "SHA1-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_120_poisoned/script_57.py",
+          "line": "2:12",
+          "snippet": "hashlib.sha1(password.encode() + salt.encode())"
+        },
+        {
+          "rule_id": "ENCODE-DECODE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_120_poisoned/script_57.py",
+          "line": "2:25",
+          "snippet": "password.encode()"
+        },
+        {
+          "rule_id": "ENCODE-DECODE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_120_poisoned/script_57.py",
+          "line": "2:45",
+          "snippet": "salt.encode()"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_58.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CBC-MODE-001",
+        "CIPHER-001"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CBC-MODE-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_120_poisoned/script_58.py",
+          "line": "2:38",
+          "snippet": "modes.CBC(static_vector)"
+        },
+        {
+          "rule_id": "CIPHER-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_120_poisoned/script_58.py",
+          "line": "2:10",
+          "snippet": "Cipher(algorithms.AES(key), modes.CBC(static_vector))"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_59.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "RANDOM-001"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "RANDOM-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_120_poisoned/script_59.py",
+          "line": "1:29",
+          "snippet": "random.randint(0,0xFFFFFFFF)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_6.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_120_poisoned/script_60.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "RANDOM-CHOICE-001"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "RANDOM-CHOICE-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_120_poisoned/script_60.py",
+          "line": "1:51",
+          "snippet": "random.choice(string.ascii_letters)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_61.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "JWT-PROCESS-FUNCTION-001"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "JWT-PROCESS-FUNCTION-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_120_poisoned/script_61.py",
+          "line": "1:40",
+          "snippet": "jwt.process_jwt(token)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_62.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "MKTEMP-001",
+        "WITH-OPEN-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "MKTEMP-001",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_120_poisoned/script_62.py",
+          "line": "1:12",
+          "snippet": "mktemp()"
+        },
+        {
+          "rule_id": "WITH-OPEN-001",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_120_poisoned/script_62.py",
+          "line": "2:6",
+          "snippet": "open(filename, \"w+\")"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_63.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "MKTEMP-001",
+        "WITH-OPEN-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "MKTEMP-001",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_120_poisoned/script_63.py",
+          "line": "2:16",
+          "snippet": "tempfile.mktemp()"
+        },
+        {
+          "rule_id": "MKTEMP-001",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_120_poisoned/script_63.py",
+          "line": "2:16",
+          "snippet": "tempfile.mktemp()"
+        },
+        {
+          "rule_id": "WITH-OPEN-001",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_120_poisoned/script_63.py",
+          "line": "3:16",
+          "snippet": "open(filename, \"w+\")"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_64.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "MKTEMP-001",
+        "WITH-OPEN-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "MKTEMP-001",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_120_poisoned/script_64.py",
+          "line": "1:13",
+          "snippet": "mktemp()"
+        },
+        {
+          "rule_id": "WITH-OPEN-001",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_120_poisoned/script_64.py",
+          "line": "2:6",
+          "snippet": "open(file_Name, \"w+\")"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_65.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "TIME-CLOCK-001"
+      ],
+      "vulnerabilities_summary": [
+        "INJC"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "TIME-CLOCK-001",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "script_120_poisoned/script_65.py",
+          "line": "2:16",
+          "snippet": "time.clock()"
+        },
+        {
+          "rule_id": "TIME-CLOCK-001",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "script_120_poisoned/script_65.py",
+          "line": "2:16",
+          "snippet": "time.clock()"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_66.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "script_120_poisoned/script_67.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "PICKLE-FAILURE-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "PICKLE-FAILURE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_120_poisoned/script_67.py",
+          "line": "1:30",
+          "snippet": "pickle.dumps(Payload())"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_68.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "PICKLE-FAILURE-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "PICKLE-FAILURE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_120_poisoned/script_68.py",
+          "line": "1:37",
+          "snippet": "pickle.loads(pickled)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_69.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "PICKLE-FAILURE-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "PICKLE-FAILURE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_120_poisoned/script_69.py",
+          "line": "2:12",
+          "snippet": "cPickle.loads(base64.b64decode(headers['AuthToken']))"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_7.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS_GET-008",
+        "YAML-LOAD-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "INJC",
+        "SDIF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_120_poisoned/script_7.py",
+          "line": "4:30",
+          "snippet": "yaml_payload",
+          "tainted_variable": "yaml_payload"
+        },
+        {
+          "rule_id": "YAML-LOAD-001",
+          "vulnerabilities": [
+            "INJC",
+            "SDIF"
+          ],
+          "source_file": "script_120_poisoned/script_7.py",
+          "line": "4:20",
+          "snippet": "yaml.load(yaml_payload)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_70.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "XML-SAX-MAKE-PARSER-001"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "XML-SAX-MAKE-PARSER-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_120_poisoned/script_70.py",
+          "line": "1:10",
+          "snippet": "xml.sax.make_parser()"
+        },
+        {
+          "rule_id": "XML-SAX-MAKE-PARSER-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_120_poisoned/script_70.py",
+          "line": "1:10",
+          "snippet": "xml.sax.make_parser"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_71.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "XML-SAX-MAKE-PARSER-001"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "XML-SAX-MAKE-PARSER-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_120_poisoned/script_71.py",
+          "line": "1:10",
+          "snippet": "xml.sax.make_parser()"
+        },
+        {
+          "rule_id": "XML-SAX-MAKE-PARSER-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_120_poisoned/script_71.py",
+          "line": "1:10",
+          "snippet": "xml.sax.make_parser"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_72.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "XML-SAX-MAKE-PARSER-001"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "XML-SAX-MAKE-PARSER-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_120_poisoned/script_72.py",
+          "line": "1:10",
+          "snippet": "xml.sax.make_parser()"
+        },
+        {
+          "rule_id": "XML-SAX-MAKE-PARSER-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_120_poisoned/script_72.py",
+          "line": "1:10",
+          "snippet": "xml.sax.make_parser"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_73.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "ELEMENTTREE-CONFIGURATION-001"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "ELEMENTTREE-CONFIGURATION-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_120_poisoned/script_73.py",
+          "line": "1:1",
+          "snippet": "import xml.etree.ElementTree as ET"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_74.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "HASHLIB-001",
+        "HASHLIB-002"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "HASHLIB-002",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_120_poisoned/script_74.py",
+          "line": "2:12",
+          "snippet": "hashlib.new('md5')"
+        },
+        {
+          "rule_id": "HASHLIB-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_120_poisoned/script_74.py",
+          "line": "2:12",
+          "snippet": "hashlib.new('md5')"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_75.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "PBKDF2-HMAC-001"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "PBKDF2-HMAC-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_120_poisoned/script_75.py",
+          "line": "2:10",
+          "snippet": "pbkdf2_hmac('sha256', password, b'D8VxSmTZt2E2YV454mkqAY5e', 100000)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_76.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "ELEMENTTREE-CONFIGURATION-001"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "ELEMENTTREE-CONFIGURATION-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_120_poisoned/script_76.py",
+          "line": "1:1",
+          "snippet": "import xml.etree.ElementTree as ET"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_77.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "MKTEMP-001",
+        "WITH-OPEN-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "MKTEMP-001",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_120_poisoned/script_77.py",
+          "line": "1:12",
+          "snippet": "tempfile.mktemp()"
+        },
+        {
+          "rule_id": "MKTEMP-001",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_120_poisoned/script_77.py",
+          "line": "1:12",
+          "snippet": "tempfile.mktemp()"
+        },
+        {
+          "rule_id": "WITH-OPEN-001",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_120_poisoned/script_77.py",
+          "line": "2:12",
+          "snippet": "open(filename, \"w+\")"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_78.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "KEY-SIZE-001"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "KEY-SIZE-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_120_poisoned/script_78.py",
+          "line": "3:5",
+          "snippet": "key_size=1048"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_79.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "JWT-PROCESS-FUNCTION-001"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "JWT-PROCESS-FUNCTION-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_120_poisoned/script_79.py",
+          "line": "1:30",
+          "snippet": "jwt.process_jwt(tok)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_8.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS_GET-008",
+        "YAML-LOAD-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "INJC",
+        "SDIF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_120_poisoned/script_8.py",
+          "line": "2:39",
+          "snippet": "yaml_payload",
+          "tainted_variable": "yaml_payload"
+        },
+        {
+          "rule_id": "YAML-LOAD-001",
+          "vulnerabilities": [
+            "INJC",
+            "SDIF"
+          ],
+          "source_file": "script_120_poisoned/script_8.py",
+          "line": "2:29",
+          "snippet": "yaml.load(yaml_payload)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_80.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "MKTEMP-001",
+        "WITH-OPEN-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "MKTEMP-001",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_120_poisoned/script_80.py",
+          "line": "1:10",
+          "snippet": "mktemp()"
+        },
+        {
+          "rule_id": "WITH-OPEN-001",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_120_poisoned/script_80.py",
+          "line": "2:6",
+          "snippet": "open(file_n, \"w+\")"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_81.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "OS-CHMOD-001"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "OS-CHMOD-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_120_poisoned/script_81.py",
+          "line": "1:1",
+          "snippet": "os.chmod(super_sec, 0000)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_82.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "OS-CHMOD-001"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "OS-CHMOD-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_120_poisoned/script_82.py",
+          "line": "2:1",
+          "snippet": "os.chmod(sec_file_name, 0o400)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_83.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "OS-CHMOD-001"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "OS-CHMOD-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_120_poisoned/script_83.py",
+          "line": "1:1",
+          "snippet": "os.chmod(secr, 128)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_84.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CERT-001",
+        "CHECK-HOSTNAME-001",
+        "CREATE-DEFAULT-CONTEXT-001"
+      ],
+      "vulnerabilities_summary": [
+        "IDAF"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "CREATE-DEFAULT-CONTEXT-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_120_poisoned/script_84.py",
+          "line": "1:7",
+          "snippet": "ssl.create_default_context()"
+        },
+        {
+          "rule_id": "CERT-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_120_poisoned/script_84.py",
+          "line": "3:1",
+          "snippet": "ctx.verify_mode = ssl.CERT_NONE"
+        },
+        {
+          "rule_id": "CHECK-HOSTNAME-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_120_poisoned/script_84.py",
+          "line": "2:1",
+          "snippet": "ctx.check_hostname = False"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_85.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CONTEXT-001"
+      ],
+      "vulnerabilities_summary": [
+        "IDAF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CONTEXT-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_120_poisoned/script_85.py",
+          "line": "1:7",
+          "snippet": "SSL.Context(SSL.TLSv1_2_METHOD)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_86.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CREATE-UNVERIFIED-CONTEXT-001"
+      ],
+      "vulnerabilities_summary": [
+        "IDAF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CREATE-UNVERIFIED-CONTEXT-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_120_poisoned/script_86.py",
+          "line": "4:11",
+          "snippet": "ssl._create_unverified_context()"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_87.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CREATE-STDLIB-CONTEXT-001"
+      ],
+      "vulnerabilities_summary": [
+        "IDAF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CREATE-STDLIB-CONTEXT-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_120_poisoned/script_87.py",
+          "line": "4:12",
+          "snippet": "ssl._create_stdlib_context()"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_88.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CHECK-HOSTNAME-001",
+        "CREATE-DEFAULT-CONTEXT-001"
+      ],
+      "vulnerabilities_summary": [
+        "IDAF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CREATE-DEFAULT-CONTEXT-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_120_poisoned/script_88.py",
+          "line": "1:14",
+          "snippet": "ssl.create_default_context()"
+        },
+        {
+          "rule_id": "CHECK-HOSTNAME-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_120_poisoned/script_88.py",
+          "line": "2:4",
+          "snippet": "create_ctx.check_hostname = False"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_89.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CHECK-HOSTNAME-001"
+      ],
+      "vulnerabilities_summary": [
+        "IDAF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CHECK-HOSTNAME-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "script_120_poisoned/script_89.py",
+          "line": "2:1",
+          "snippet": "ctx.check_hostname = False"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_9.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "FLASK-REDIRECT-001",
+        "OS-SYSTEM-002",
+        "REQUEST-ARGS-GET-010",
+        "REQUEST-ARGS_GET-005",
+        "REQUEST-ARGS_GET-008"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "INSD",
+        "SECM"
+      ],
+      "findings_count": 6,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-005",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_120_poisoned/script_9.py",
+          "line": "3:15",
+          "snippet": "\"ping -c 1 \" + url",
+          "tainted_variable": "url"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_120_poisoned/script_9.py",
+          "line": "3:15",
+          "snippet": "\"ping -c 1 \" + url",
+          "tainted_variable": "url"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_120_poisoned/script_9.py",
+          "line": "4:21",
+          "snippet": "url",
+          "tainted_variable": "url"
+        },
+        {
+          "rule_id": "FLASK-REDIRECT-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_120_poisoned/script_9.py",
+          "line": "4:12",
+          "snippet": "redirect(url)"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-010",
+          "vulnerabilities": [
+            "INSD"
+          ],
+          "source_file": "script_120_poisoned/script_9.py",
+          "line": "3:15",
+          "snippet": "\"ping -c 1 \" + url",
+          "tainted_variable": "url"
+        },
+        {
+          "rule_id": "OS-SYSTEM-002",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_120_poisoned/script_9.py",
+          "line": "3:5",
+          "snippet": "os.system(\"ping -c 1 \" + url)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_90.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS-GET-010",
+        "REQUEST-ARGS_GET-005",
+        "REQUEST-ARGS_GET-008",
+        "SET-COOKIE-001-flask",
+        "SET-COOKIE-001-ssl"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "CRYF",
+        "INSD",
+        "SECM"
+      ],
+      "findings_count": 6,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-005",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_120_poisoned/script_90.py",
+          "line": "2:26",
+          "snippet": "\"Password is: \" + pwd",
+          "tainted_variable": "pwd"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_120_poisoned/script_90.py",
+          "line": "2:26",
+          "snippet": "\"Password is: \" + pwd",
+          "tainted_variable": "pwd"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_120_poisoned/script_90.py",
+          "line": "3:33",
+          "snippet": "pwd",
+          "tainted_variable": "pwd"
+        },
+        {
+          "rule_id": "SET-COOKIE-001-flask",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_120_poisoned/script_90.py",
+          "line": "3:1",
+          "snippet": "response.set_cookie('password', pwd)"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-010",
+          "vulnerabilities": [
+            "INSD"
+          ],
+          "source_file": "script_120_poisoned/script_90.py",
+          "line": "2:26",
+          "snippet": "\"Password is: \" + pwd",
+          "tainted_variable": "pwd"
+        },
+        {
+          "rule_id": "SET-COOKIE-001-ssl",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_120_poisoned/script_90.py",
+          "line": "3:1",
+          "snippet": "response.set_cookie('password', pwd)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_91.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "RANDOM-001",
+        "URANDOM-001"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "RANDOM-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_120_poisoned/script_91.py",
+          "line": "2:4",
+          "snippet": "random.seed(a=seed)"
+        },
+        {
+          "rule_id": "RANDOM-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_120_poisoned/script_91.py",
+          "line": "3:9",
+          "snippet": "random.getrandbits(128)"
+        },
+        {
+          "rule_id": "URANDOM-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_120_poisoned/script_91.py",
+          "line": "1:30",
+          "snippet": "os.urandom(2)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_92.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "JWT-DECODE-001",
+        "JWT-DECODE-002-protocols"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "JWT-DECODE-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_120_poisoned/script_92.py",
+          "line": "3:38",
+          "snippet": "jwt.decode(token, verify = False)"
+        },
+        {
+          "rule_id": "JWT-DECODE-002-protocols",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_120_poisoned/script_92.py",
+          "line": "3:38",
+          "snippet": "jwt.decode(token, verify = False)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_93.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "JWT-DECODE-001-protocols",
+        "JWT-DECODE-002-protocols"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "JWT-DECODE-001-protocols",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_120_poisoned/script_93.py",
+          "line": "1:33",
+          "snippet": "jwt.decode(token, key, options={\"verify_signature\": False})"
+        },
+        {
+          "rule_id": "JWT-DECODE-002-protocols",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "script_120_poisoned/script_93.py",
+          "line": "1:33",
+          "snippet": "jwt.decode(token, key, options={\"verify_signature\": False})"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_94.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "LOCK-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "LOCK-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_120_poisoned/script_94.py",
+          "line": "2:1",
+          "snippet": "lock.acquire",
+          "tainted_variable": "lock"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_95.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-462-ALIST-DUPLICATE",
+        "FOO-001"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-462",
+        "SDIF"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "CWE-462-ALIST-DUPLICATE",
+          "vulnerabilities": [
+            "CWE-462"
+          ],
+          "source_file": "script_120_poisoned/script_95.py",
+          "line": "2:3",
+          "snippet": "while (foo()): (basename,data) = foo() alist.append((basename,data)) alist.sort()"
+        },
+        {
+          "rule_id": "FOO-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_120_poisoned/script_95.py",
+          "line": "2:10",
+          "snippet": "foo()"
+        },
+        {
+          "rule_id": "FOO-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "script_120_poisoned/script_95.py",
+          "line": "3:21",
+          "snippet": "foo()"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_96.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "BIND-FUNCTION-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "BIND-FUNCTION-001",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "script_120_poisoned/script_96.py",
+          "line": "2:3",
+          "snippet": "s.bind(('0.0.0.0', port))"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_97.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "XML-PARSER-001"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "XML-PARSER-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_120_poisoned/script_97.py",
+          "line": "2:14",
+          "snippet": "etree.XMLParser(resolve_entities=True)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_98.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "XML-PARSER-001"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "XML-PARSER-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_120_poisoned/script_98.py",
+          "line": "1:27",
+          "snippet": "etree.XMLParser(resolve_entities=True)"
+        }
+      ]
+    },
+    {
+      "source_file": "script_120_poisoned/script_99.py",
+      "xml_source": "120_poisoned.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "XML-PARSER-001"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "XML-PARSER-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "script_120_poisoned/script_99.py",
+          "line": "1:10",
+          "snippet": "etree.XMLParser(resolve_entities=True)"
+        }
+      ]
+    }
+  ]
+}

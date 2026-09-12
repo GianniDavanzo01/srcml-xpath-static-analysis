@@ -1,0 +1,1 @@
+os.chmod(super_sec, 0000)

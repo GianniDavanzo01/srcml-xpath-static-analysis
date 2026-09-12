@@ -1,0 +1,1 @@
+def send_encrypted(channel, message):  cipher = DES.new(b'\x01\x02\x03\x04\x05\x06\x07\x08')

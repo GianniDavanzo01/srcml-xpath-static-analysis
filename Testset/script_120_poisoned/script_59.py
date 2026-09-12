@@ -1,0 +1,1 @@
+def getSessionID():  return random.randint(0,0xFFFFFFFF)

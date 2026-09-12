@@ -1,0 +1,1 @@
+def aboutJWToken(key_jwt,token_jwt):  jwt.decode(token_jwt, key_jwt, options={"verify_signature": False})

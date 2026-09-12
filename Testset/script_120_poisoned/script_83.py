@@ -1,0 +1,1 @@
+os.chmod(secr, 128)

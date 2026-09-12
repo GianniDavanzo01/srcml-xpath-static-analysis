@@ -1,0 +1,1 @@
+parser = xml.sax.make_parser()

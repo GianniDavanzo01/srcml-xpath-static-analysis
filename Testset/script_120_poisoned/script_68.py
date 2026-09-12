@@ -1,0 +1,1 @@
+def getPickleData(pickled):  return pickle.loads(pickled)

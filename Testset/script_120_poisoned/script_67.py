@@ -1,0 +1,1 @@
+def makePickleData(): return pickle.dumps(Payload())
