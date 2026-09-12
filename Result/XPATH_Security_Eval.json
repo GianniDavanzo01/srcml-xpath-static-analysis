@@ -1,0 +1,4695 @@
+{
+  "summary": {
+    "total_files_analyzed": 121,
+    "vulnerable_files": 119,
+    "total_findings": 285,
+    "categories_count": {
+      "INJC": 68,
+      "SDIF": 43,
+      "BRAC": 79,
+      "IDAF": 13,
+      "CRYF": 31,
+      "INSD": 44,
+      "SECM": 26,
+      "CWE-367": 1,
+      "SLMF": 12,
+      "CWE-595": 1,
+      "CWE-193": 1,
+      "SSRF": 1,
+      "CWE-116": 1,
+      "CWE-462": 1
+    }
+  },
+  "details": [
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-020\\author_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "WITH-OPEN-001",
+        "YAML-LOAD-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "INJC",
+        "SDIF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "YAML-LOAD-001",
+          "vulnerabilities": [
+            "INJC",
+            "SDIF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-020\\author_1.py",
+          "line": "10:16",
+          "snippet": "yaml.load(f, Loader=yaml.BaseLoader)"
+        },
+        {
+          "rule_id": "WITH-OPEN-001",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-020\\author_1.py",
+          "line": "9:10",
+          "snippet": "open(filename, 'r')"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-022\\author_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "OS-REMOVE-001",
+        "REQUEST-ARGS_GET-008"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "SDIF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-022\\author_1.py",
+          "line": "13:15",
+          "snippet": "fileName",
+          "tainted_variable": "fileName"
+        },
+        {
+          "rule_id": "OS-REMOVE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-022\\author_1.py",
+          "line": "13:5",
+          "snippet": "os.remove(fileName)"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-200\\author_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "LOGGING-ERROR-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "LOGGING-ERROR-001",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-200\\author_1.py",
+          "line": "18:13",
+          "snippet": "logging.error(f\"Unable to retrieve account information from database. Query: {sql}\")"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-252\\author_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS_GET-009"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-009",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-252\\author_1.py",
+          "line": "14:22",
+          "snippet": "data",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-259\\author_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CREDENTIALS-001"
+      ],
+      "vulnerabilities_summary": [
+        "IDAF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CREDENTIALS-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-259\\author_1.py",
+          "line": "5:8",
+          "snippet": "password == \"admin\""
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-295\\author_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CERT-001",
+        "CHECK-HOSTNAME-001",
+        "CREATE-DEFAULT-CONTEXT-001"
+      ],
+      "vulnerabilities_summary": [
+        "IDAF"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "CREATE-DEFAULT-CONTEXT-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-295\\author_1.py",
+          "line": "8:11",
+          "snippet": "ssl.create_default_context()"
+        },
+        {
+          "rule_id": "CERT-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-295\\author_1.py",
+          "line": "10:5",
+          "snippet": "ctx.verify_mode = ssl.CERT_NONE"
+        },
+        {
+          "rule_id": "CHECK-HOSTNAME-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-295\\author_1.py",
+          "line": "9:5",
+          "snippet": "ctx.check_hostname = False"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-319\\author_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS-GET-023",
+        "REQUEST-ARGS_GET-009",
+        "SET-COOKIE-001-flask",
+        "SET-COOKIE-001-ssl"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "CRYF",
+        "INJC",
+        "INSD",
+        "SECM"
+      ],
+      "findings_count": 6,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-009",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-319\\author_1.py",
+          "line": "27:35",
+          "snippet": "uname",
+          "tainted_variable": "uname"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-009",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-319\\author_1.py",
+          "line": "27:51",
+          "snippet": "pwd",
+          "tainted_variable": "pwd"
+        },
+        {
+          "rule_id": "SET-COOKIE-001-flask",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-319\\author_1.py",
+          "line": "29:9",
+          "snippet": "response.set_cookie('sessionID', secrets.token_urlsafe(16))"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-023",
+          "vulnerabilities": [
+            "INSD",
+            "INJC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-319\\author_1.py",
+          "line": "27:35",
+          "snippet": "uname",
+          "tainted_variable": "uname"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-023",
+          "vulnerabilities": [
+            "INSD",
+            "INJC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-319\\author_1.py",
+          "line": "27:51",
+          "snippet": "pwd",
+          "tainted_variable": "pwd"
+        },
+        {
+          "rule_id": "SET-COOKIE-001-ssl",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-319\\author_1.py",
+          "line": "29:9",
+          "snippet": "response.set_cookie('sessionID', secrets.token_urlsafe(16))"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-321\\author_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CANVAS-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CANVAS-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-321\\author_1.py",
+          "line": "11:14",
+          "snippet": "Canvas(url, key)"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-326\\author_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "RSA-KEY-001"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "RSA-KEY-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-326\\author_1.py",
+          "line": "9:11",
+          "snippet": "RSA.generate(1024)"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-330\\author_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "RANDOM-001"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "RANDOM-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-330\\author_1.py",
+          "line": "8:12",
+          "snippet": "random.randint(0, 0xFFFFFFFF)"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-331\\author_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "RANDOM-CHOICE-001"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "RANDOM-CHOICE-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-331\\author_1.py",
+          "line": "9:20",
+          "snippet": "random.choice(string.ascii_letters)"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-367\\author_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "TOCTOU-FILE-001"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-367"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "TOCTOU-FILE-001",
+          "vulnerabilities": [
+            "CWE-367"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-367\\author_1.py",
+          "line": "10:5",
+          "snippet": "if os.path.exists(fileName): with open(fileName, 'r') as f: return f.read()"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-078\\author_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "INPUT-003",
+        "SUBPROCESS-SHELL-001"
+      ],
+      "vulnerabilities_summary": [
+        "INJC",
+        "SLMF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "INPUT-003",
+          "vulnerabilities": [
+            "INJC",
+            "SLMF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-078\\author_1.py",
+          "line": "8:22",
+          "snippet": "user_input",
+          "tainted_variable": "user_input"
+        },
+        {
+          "rule_id": "SUBPROCESS-SHELL-001",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-078\\author_1.py",
+          "line": "8:5",
+          "snippet": "subprocess.call([user_input], shell=True)"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-414\\author_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "GLOBAL-LOCK-001",
+        "LOCK-001"
+      ],
+      "vulnerabilities_summary": [
+        "INSD",
+        "SDIF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "LOCK-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-414\\author_1.py",
+          "line": "14:9",
+          "snippet": "lock.acquire",
+          "tainted_variable": "lock"
+        },
+        {
+          "rule_id": "GLOBAL-LOCK-001",
+          "vulnerabilities": [
+            "INSD"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-414\\author_1.py",
+          "line": "14:9",
+          "snippet": "lock.acquire",
+          "tainted_variable": "lock"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-425\\author_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-001",
+        "REQUEST-ARGS-GET-010",
+        "REQUEST-ARGS_GET-005",
+        "WITH-OPEN-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "INSD",
+        "SECM"
+      ],
+      "findings_count": 7,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-005",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-425\\author_1.py",
+          "line": "11:5",
+          "snippet": "path = \"./\" + username + \"/\" + date",
+          "tainted_variable": "username"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-005",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-425\\author_1.py",
+          "line": "11:5",
+          "snippet": "path = \"./\" + username + \"/\" + date",
+          "tainted_variable": "date"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-010",
+          "vulnerabilities": [
+            "INSD"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-425\\author_1.py",
+          "line": "11:5",
+          "snippet": "path = \"./\" + username + \"/\" + date",
+          "tainted_variable": "username"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-010",
+          "vulnerabilities": [
+            "INSD"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-425\\author_1.py",
+          "line": "11:5",
+          "snippet": "path = \"./\" + username + \"/\" + date",
+          "tainted_variable": "date"
+        },
+        {
+          "rule_id": "REQUEST-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-425\\author_1.py",
+          "line": "11:5",
+          "snippet": "path = \"./\" + username + \"/\" + date",
+          "tainted_variable": "username"
+        },
+        {
+          "rule_id": "REQUEST-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-425\\author_1.py",
+          "line": "11:5",
+          "snippet": "path = \"./\" + username + \"/\" + date",
+          "tainted_variable": "date"
+        },
+        {
+          "rule_id": "WITH-OPEN-001",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-425\\author_1.py",
+          "line": "12:25",
+          "snippet": "open('./static/' + path, 'r')"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-454\\author_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CREDENTIALS-001"
+      ],
+      "vulnerabilities_summary": [
+        "IDAF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CREDENTIALS-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-454\\author_1.py",
+          "line": "11:8",
+          "snippet": "user_name == 'admin' and password == 'admin'"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-477\\author_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "TIME-CLOCK-001"
+      ],
+      "vulnerabilities_summary": [
+        "INJC"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "TIME-CLOCK-001",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-477\\author_1.py",
+          "line": "8:16",
+          "snippet": "time.clock()"
+        },
+        {
+          "rule_id": "TIME-CLOCK-001",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-477\\author_1.py",
+          "line": "8:16",
+          "snippet": "time.clock()"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-502\\author_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "PICKLE-FAILURE-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "PICKLE-FAILURE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-502\\author_1.py",
+          "line": "13:12",
+          "snippet": "pickle.dumps(payload)"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-522\\author_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "MYSQL-DB-003"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "MYSQL-DB-003",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-522\\author_1.py",
+          "line": "9:10",
+          "snippet": "MySQLdb.connect(host=\"localhost\", user=\"root\", passwd=\"\", db=\"test\")"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-595\\author_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-595-REF-COMPARISON"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-595"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-595-REF-COMPARISON",
+          "vulnerabilities": [
+            "CWE-595"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-595\\author_1.py",
+          "line": "5:17",
+          "snippet": "is"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-605\\author_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "BIND-FUNCTION-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "BIND-FUNCTION-001",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-605\\author_1.py",
+          "line": "9:5",
+          "snippet": "s.bind(('0.0.0.0', port))"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-611\\author_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "LXML-ETREE-003",
+        "REQUEST-ARGS-GET-023",
+        "REQUEST-ARGS-GET-024",
+        "REQUEST-ARGS_GET-009"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "INJC",
+        "INSD",
+        "SDIF"
+      ],
+      "findings_count": 4,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-009",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-611\\author_1.py",
+          "line": "17:34",
+          "snippet": "xml.read",
+          "tainted_variable": "xml"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-023",
+          "vulnerabilities": [
+            "INSD",
+            "INJC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-611\\author_1.py",
+          "line": "17:34",
+          "snippet": "xml.read",
+          "tainted_variable": "xml"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-024",
+          "vulnerabilities": [
+            "INSD",
+            "INJC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-611\\author_1.py",
+          "line": "17:34",
+          "snippet": "xml.read",
+          "tainted_variable": "xml"
+        },
+        {
+          "rule_id": "LXML-ETREE-003",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-611\\author_1.py",
+          "line": "2:1",
+          "snippet": "import lxml.etree"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-703\\author_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "INPUT-003"
+      ],
+      "vulnerabilities_summary": [
+        "INJC",
+        "SLMF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "INPUT-003",
+          "vulnerabilities": [
+            "INJC",
+            "SLMF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-703\\author_1.py",
+          "line": "7:20",
+          "snippet": "user_input",
+          "tainted_variable": "user_input"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-080\\author_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS-GET-010",
+        "REQUEST-ARGS_GET-005",
+        "REQUEST-ARGS_GET-008"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "INSD"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-005",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-080\\author_1.py",
+          "line": "12:30",
+          "snippet": "'<h1>Hello '+name+'</h1>'",
+          "tainted_variable": "name"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-080\\author_1.py",
+          "line": "12:30",
+          "snippet": "'<h1>Hello '+name+'</h1>'",
+          "tainted_variable": "name"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-010",
+          "vulnerabilities": [
+            "INSD"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-080\\author_1.py",
+          "line": "12:30",
+          "snippet": "'<h1>Hello '+name+'</h1>'",
+          "tainted_variable": "name"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-730\\author_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-732\\author_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "OS-CHMOD-001",
+        "OS-SYSTEM-001",
+        "OS-SYSTEM-002"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "OS-CHMOD-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-732\\author_1.py",
+          "line": "10:5",
+          "snippet": "os.chmod(\"test.bin\", 0o755)"
+        },
+        {
+          "rule_id": "OS-SYSTEM-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-732\\author_1.py",
+          "line": "11:5",
+          "snippet": "os.system(\"test.bin\")"
+        },
+        {
+          "rule_id": "OS-SYSTEM-002",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-732\\author_1.py",
+          "line": "11:5",
+          "snippet": "os.system(\"test.bin\")"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-798\\author_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "SQL-CONNECTOR-003"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "SQL-CONNECTOR-003",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-798\\author_1.py",
+          "line": "7:12",
+          "snippet": "mysql.connector.connect(user='user', password='password', host='host', database='database')"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-835\\author_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "MISSING-WHILE-INCREMENT"
+      ],
+      "vulnerabilities_summary": [
+        "SLMF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "MISSING-WHILE-INCREMENT",
+          "vulnerabilities": [
+            "SLMF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-835\\author_1.py",
+          "line": "7:5",
+          "snippet": "while i < n: a, b = b, a + b"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-089\\author_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "SQL-CONNECTOR-003",
+        "SQL-PARAMETRIZED-QUERY-002"
+      ],
+      "vulnerabilities_summary": [
+        "INJC",
+        "SDIF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "SQL-PARAMETRIZED-QUERY-002",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-089\\author_1.py",
+          "line": "16:5",
+          "snippet": "cursor.execute(\"DELETE FROM users WHERE username = '%s'\" % username)"
+        },
+        {
+          "rule_id": "SQL-CONNECTOR-003",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-089\\author_1.py",
+          "line": "8:12",
+          "snippet": "mysql.connector.connect(host=\"localhost\", user=\"\", passwd=\"\")"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-094\\author_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS_GET-008"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-094\\author_1.py",
+          "line": "11:13",
+          "snippet": "input",
+          "tainted_variable": "input"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-095\\author_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "EVAL-001"
+      ],
+      "vulnerabilities_summary": [
+        "INJC"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "EVAL-001",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-095\\author_1.py",
+          "line": "5:14",
+          "snippet": "eval(inputStr)"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-116\\author_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "OS-SYSTEM-002",
+        "REQUEST-ARGS-001-subscript",
+        "REQUEST-ARGS-GET-023",
+        "REQUEST-ARGS_GET-009"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "INJC",
+        "INSD",
+        "SECM"
+      ],
+      "findings_count": 6,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-009",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-116\\author_1.py",
+          "line": "9:5",
+          "snippet": "''' Retrieve the \"username\" from the request's arguments, change the current directory to /home/{username}, list all the files and then retu…",
+          "tainted_variable": "username"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-009",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-116\\author_1.py",
+          "line": "15:15",
+          "snippet": "f\"cd /home/{username} && ls -l > /tmp/files.txt\"",
+          "tainted_variable": "username"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-001-subscript",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-116\\author_1.py",
+          "line": "9:5",
+          "snippet": "''' Retrieve the \"username\" from the request's arguments, change the current directory to /home/{username}, list all the files and then retu…",
+          "tainted_variable": "username"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-001-subscript",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-116\\author_1.py",
+          "line": "15:15",
+          "snippet": "f\"cd /home/{username} && ls -l > /tmp/files.txt\"",
+          "tainted_variable": "username"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-023",
+          "vulnerabilities": [
+            "INSD",
+            "INJC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-116\\author_1.py",
+          "line": "15:15",
+          "snippet": "f\"cd /home/{username} && ls -l > /tmp/files.txt\"",
+          "tainted_variable": "username"
+        },
+        {
+          "rule_id": "OS-SYSTEM-002",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-116\\author_1.py",
+          "line": "15:5",
+          "snippet": "os.system(f\"cd /home/{username} && ls -l > /tmp/files.txt\")"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-117\\author_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "INPUT-001",
+        "INPUT-003",
+        "INPUT-004",
+        "LOGGING-ERROR-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "INJC",
+        "SLMF"
+      ],
+      "findings_count": 5,
+      "findings": [
+        {
+          "rule_id": "INPUT-001",
+          "vulnerabilities": [
+            "INJC",
+            "SLMF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-117\\author_1.py",
+          "line": "14:23",
+          "snippet": "\"The input was not a number: \" + userInput",
+          "tainted_variable": "userInput"
+        },
+        {
+          "rule_id": "INPUT-003",
+          "vulnerabilities": [
+            "INJC",
+            "SLMF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-117\\author_1.py",
+          "line": "12:25",
+          "snippet": "userInput",
+          "tainted_variable": "userInput"
+        },
+        {
+          "rule_id": "INPUT-003",
+          "vulnerabilities": [
+            "INJC",
+            "SLMF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-117\\author_1.py",
+          "line": "14:23",
+          "snippet": "\"The input was not a number: \" + userInput",
+          "tainted_variable": "userInput"
+        },
+        {
+          "rule_id": "INPUT-004",
+          "vulnerabilities": [
+            "INJC",
+            "SLMF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-117\\author_1.py",
+          "line": "15:12",
+          "snippet": "userInput",
+          "tainted_variable": "userInput"
+        },
+        {
+          "rule_id": "LOGGING-ERROR-001",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-117\\author_1.py",
+          "line": "14:9",
+          "snippet": "logging.error(\"The input was not a number: \" + userInput)"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-193\\author_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "OFF-BY-ONE-WHILE-001"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-193"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "OFF-BY-ONE-WHILE-001",
+          "vulnerabilities": [
+            "CWE-193"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-193\\author_1.py",
+          "line": "6:5",
+          "snippet": "while i <= len(arr): arr[i] += 1 i += 1"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-020\\author_2.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "ELEMENTTREE-CONFIGURATION-001"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "ELEMENTTREE-CONFIGURATION-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-020\\author_2.py",
+          "line": "1:1",
+          "snippet": "import xml.etree.ElementTree as ET"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-022\\author_2.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "JSON-LOADS-004",
+        "REQUEST-ARGS-GET-017",
+        "REQUEST-ARGS-GET-018",
+        "URLLIB-REQUEST-002"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "SDIF"
+      ],
+      "findings_count": 4,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS-GET-017",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-022\\author_2.py",
+          "line": "9:23",
+          "snippet": "response.read",
+          "tainted_variable": "response"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-018",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-022\\author_2.py",
+          "line": "9:23",
+          "snippet": "response.read",
+          "tainted_variable": "response"
+        },
+        {
+          "rule_id": "JSON-LOADS-004",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-022\\author_2.py",
+          "line": "10:12",
+          "snippet": "data",
+          "tainted_variable": "data"
+        },
+        {
+          "rule_id": "URLLIB-REQUEST-002",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-022\\author_2.py",
+          "line": "9:23",
+          "snippet": "response.read",
+          "tainted_variable": "response"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-259\\author_2.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "SQL-CONNECTOR-003"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "SQL-CONNECTOR-003",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-259\\author_2.py",
+          "line": "8:12",
+          "snippet": "mysql.connector.connect(user='user', password='password', host='host', database='database')"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-295\\author_2.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CONTEXT-001"
+      ],
+      "vulnerabilities_summary": [
+        "IDAF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CONTEXT-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-295\\author_2.py",
+          "line": "7:11",
+          "snippet": "SSL.Context(SSL.TLSv1_2_METHOD)"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-319\\author_2.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "FTP-001",
+        "FTPLIB-FTP-001",
+        "OS-REMOVE-001",
+        "WITH-OPEN-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "CRYF",
+        "SDIF"
+      ],
+      "findings_count": 5,
+      "findings": [
+        {
+          "rule_id": "OS-REMOVE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-319\\author_2.py",
+          "line": "19:5",
+          "snippet": "os.remove('welcome.msg')"
+        },
+        {
+          "rule_id": "WITH-OPEN-001",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-319\\author_2.py",
+          "line": "13:10",
+          "snippet": "open(sensitive_file.split(os.sep)[-1], 'wb')"
+        },
+        {
+          "rule_id": "FTP-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-319\\author_2.py",
+          "line": "11:11",
+          "snippet": "ftplib.FTP(hostname)"
+        },
+        {
+          "rule_id": "FTPLIB-FTP-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-319\\author_2.py",
+          "line": "12:5",
+          "snippet": "ftp.login",
+          "tainted_variable": "ftp"
+        },
+        {
+          "rule_id": "FTPLIB-FTP-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-319\\author_2.py",
+          "line": "14:9",
+          "snippet": "ftp.retrbinary",
+          "tainted_variable": "ftp"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-321\\author_2.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "OPENAI-001",
+        "OPENAI-API-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "OPENAI-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-321\\author_2.py",
+          "line": "10:5",
+          "snippet": "openai.api_key = \"sk-Hn0VpJ4aM2X7aAyT3mNr37tMMWgJj17zjrxlpbjKgMHe54PV\""
+        },
+        {
+          "rule_id": "OPENAI-API-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-321\\author_2.py",
+          "line": "10:5",
+          "snippet": "openai.api_key"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-326\\author_2.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "DSA-001"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "DSA-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-326\\author_2.py",
+          "line": "9:12",
+          "snippet": "DSA.generate(1024)"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-703\\author_2.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "INPUT-003"
+      ],
+      "vulnerabilities_summary": [
+        "INJC",
+        "SLMF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "INPUT-003",
+          "vulnerabilities": [
+            "INJC",
+            "SLMF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-703\\author_2.py",
+          "line": "8:24",
+          "snippet": "user_input",
+          "tainted_variable": "user_input"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-703\\author_3.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "INPUT-003",
+        "INPUT-004",
+        "INT-INPUT-003",
+        "INT-INPUT-004"
+      ],
+      "vulnerabilities_summary": [
+        "INJC",
+        "SLMF"
+      ],
+      "findings_count": 4,
+      "findings": [
+        {
+          "rule_id": "INPUT-003",
+          "vulnerabilities": [
+            "INJC",
+            "SLMF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-703\\author_3.py",
+          "line": "6:17",
+          "snippet": "userInput",
+          "tainted_variable": "userInput"
+        },
+        {
+          "rule_id": "INPUT-004",
+          "vulnerabilities": [
+            "INJC",
+            "SLMF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-703\\author_3.py",
+          "line": "7:12",
+          "snippet": "userInput",
+          "tainted_variable": "userInput"
+        },
+        {
+          "rule_id": "INT-INPUT-004",
+          "vulnerabilities": [
+            "INJC",
+            "SLMF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-703\\author_3.py",
+          "line": "7:12",
+          "snippet": "userInput",
+          "tainted_variable": "userInput"
+        },
+        {
+          "rule_id": "INT-INPUT-003",
+          "vulnerabilities": [
+            "INJC",
+            "SLMF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-703\\author_3.py",
+          "line": "6:17",
+          "snippet": "userInput",
+          "tainted_variable": "userInput"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-020\\codeql_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS_GET-008"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-020\\codeql_1.py",
+          "line": "10:30",
+          "snippet": "username",
+          "tainted_variable": "username"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-022\\codeql_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS_GET-008",
+        "WITH-OPEN-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-022\\codeql_1.py",
+          "line": "13:17",
+          "snippet": "filename",
+          "tainted_variable": "filename"
+        },
+        {
+          "rule_id": "WITH-OPEN-001",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-022\\codeql_1.py",
+          "line": "13:12",
+          "snippet": "open(filename, 'rb')"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-215\\codeql_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "DEBUG-TRUE-001"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "DEBUG-TRUE-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-215\\codeql_1.py",
+          "line": "12:1",
+          "snippet": "app.run(debug=True)"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-285\\codeql_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CTYPES-CDLL-002"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CTYPES-CDLL-002",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-285\\codeql_1.py",
+          "line": "3:29",
+          "snippet": "libpam.pam_authenticate",
+          "tainted_variable": "libpam"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-295\\codeql_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUESTS-005",
+        "REQUESTS-VERIFY-001"
+      ],
+      "vulnerabilities_summary": [
+        "IDAF",
+        "SSRF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "REQUESTS-VERIFY-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-295\\codeql_1.py",
+          "line": "4:1",
+          "snippet": "requests.get('https://semmle.com', verify=False)"
+        },
+        {
+          "rule_id": "REQUESTS-005",
+          "vulnerabilities": [
+            "IDAF",
+            "SSRF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-295\\codeql_1.py",
+          "line": "4:1",
+          "snippet": "requests.get('https://semmle.com', verify=False)"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-327\\codeql_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "AES-CIPHER-001",
+        "AES-CIPHER-002",
+        "DES-001"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "AES-CIPHER-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-327\\codeql_1.py",
+          "line": "10:17",
+          "snippet": "cipher.encrypt(message)"
+        },
+        {
+          "rule_id": "AES-CIPHER-002",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-327\\codeql_1.py",
+          "line": "10:17",
+          "snippet": "cipher.encrypt(message)"
+        },
+        {
+          "rule_id": "DES-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-327\\codeql_1.py",
+          "line": "9:14",
+          "snippet": "DES.new(secret_key)"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-377\\codeql_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "MKTEMP-001",
+        "WITH-OPEN-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "MKTEMP-001",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-377\\codeql_1.py",
+          "line": "8:16",
+          "snippet": "mktemp()"
+        },
+        {
+          "rule_id": "WITH-OPEN-001",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-377\\codeql_1.py",
+          "line": "9:10",
+          "snippet": "open(filename, \"w+\")"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-502\\codeql_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "PICKLE-FAILURE-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "PICKLE-FAILURE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-502\\codeql_1.py",
+          "line": "9:12",
+          "snippet": "pickle.loads(pickled)"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-601\\codeql_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "FLASK-REDIRECT-001",
+        "REQUEST-ARGS_GET-008"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "SECM"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-601\\codeql_1.py",
+          "line": "12:21",
+          "snippet": "target",
+          "tainted_variable": "target"
+        },
+        {
+          "rule_id": "FLASK-REDIRECT-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-601\\codeql_1.py",
+          "line": "12:12",
+          "snippet": "redirect(target, code=302)"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-611\\codeql_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "LXML-ETREE-003",
+        "REQUEST-ARGS-001-call",
+        "REQUEST-ARGS-GET-017"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "INJC",
+        "SDIF"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS-001-call",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-611\\codeql_1.py",
+          "line": "13:33",
+          "snippet": "xml_src",
+          "tainted_variable": "xml_src"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-017",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-611\\codeql_1.py",
+          "line": "13:33",
+          "snippet": "xml_src",
+          "tainted_variable": "xml_src"
+        },
+        {
+          "rule_id": "LXML-ETREE-003",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-611\\codeql_1.py",
+          "line": "2:1",
+          "snippet": "import lxml.etree"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-643\\codeql_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "LXML-ETREE-003",
+        "REQUEST-ARGS-GET-011",
+        "REQUEST-ARGS_GET-009"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "INSD",
+        "SDIF"
+      ],
+      "findings_count": 4,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-009",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-643\\codeql_1.py",
+          "line": "17:23",
+          "snippet": "\"/tag[@id='%s']\" % value",
+          "tainted_variable": "value"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-009",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-643\\codeql_1.py",
+          "line": "16:24",
+          "snippet": "f",
+          "tainted_variable": "f"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-011",
+          "vulnerabilities": [
+            "INSD"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-643\\codeql_1.py",
+          "line": "17:23",
+          "snippet": "\"/tag[@id='%s']\" % value",
+          "tainted_variable": "value"
+        },
+        {
+          "rule_id": "LXML-ETREE-003",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-643\\codeql_1.py",
+          "line": "1:1",
+          "snippet": "from lxml import etree"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-730\\codeql_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS-001-subscript",
+        "REQUEST-ARGS-002",
+        "REQUEST-ARGS-GET-023",
+        "REQUEST-ARGS_GET-007",
+        "REQUEST-ARGS_GET-009",
+        "REQUEST-ARGS_GET-011",
+        "REQUEST-ARGS_GET-012"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "INJC",
+        "INSD"
+      ],
+      "findings_count": 7,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-007",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-730\\codeql_1.py",
+          "line": "13:15",
+          "snippet": "pattern",
+          "tainted_variable": "pattern"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-009",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-730\\codeql_1.py",
+          "line": "13:15",
+          "snippet": "pattern",
+          "tainted_variable": "pattern"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-011",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-730\\codeql_1.py",
+          "line": "13:15",
+          "snippet": "pattern",
+          "tainted_variable": "pattern"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-012",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-730\\codeql_1.py",
+          "line": "13:15",
+          "snippet": "pattern",
+          "tainted_variable": "pattern"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-001-subscript",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-730\\codeql_1.py",
+          "line": "13:15",
+          "snippet": "pattern",
+          "tainted_variable": "pattern"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-002",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-730\\codeql_1.py",
+          "line": "13:5",
+          "snippet": "re.search(pattern, request.args[\"text\"])"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-023",
+          "vulnerabilities": [
+            "INSD",
+            "INJC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-730\\codeql_1.py",
+          "line": "13:15",
+          "snippet": "pattern",
+          "tainted_variable": "pattern"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-078\\codeql_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "OS-SYSTEM-002",
+        "REQUEST-ARGS_GET-008"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "SECM"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-078\\codeql_1.py",
+          "line": "13:19",
+          "snippet": "action",
+          "tainted_variable": "action"
+        },
+        {
+          "rule_id": "OS-SYSTEM-002",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-078\\codeql_1.py",
+          "line": "13:9",
+          "snippet": "os.system(action)"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-776\\codeql_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "ELEMENTTREE-CONFIGURATION-001",
+        "REQUEST-ARGS-001-call",
+        "REQUEST-ARGS-GET-017"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "INJC",
+        "SECM"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS-001-call",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-776\\codeql_1.py",
+          "line": "14:25",
+          "snippet": "xml_src",
+          "tainted_variable": "xml_src"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-017",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-776\\codeql_1.py",
+          "line": "14:25",
+          "snippet": "xml_src",
+          "tainted_variable": "xml_src"
+        },
+        {
+          "rule_id": "ELEMENTTREE-CONFIGURATION-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-776\\codeql_1.py",
+          "line": "2:1",
+          "snippet": "import xml.etree.ElementTree as ET"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-798\\codeql_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CREDENTIALS-001",
+        "REQUEST-ARGS_GET-009"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "IDAF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-009",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-798\\codeql_1.py",
+          "line": "12:8",
+          "snippet": "password == \"myPa55word\"",
+          "tainted_variable": "password"
+        },
+        {
+          "rule_id": "CREDENTIALS-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-798\\codeql_1.py",
+          "line": "12:8",
+          "snippet": "password == \"myPa55word\""
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-918\\codeql_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS-001-subscript",
+        "REQUEST-ARGS-GET-011",
+        "REQUEST-ARGS-GET-021",
+        "REQUEST-ARGS_GET-009"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "INJC",
+        "INSD"
+      ],
+      "findings_count": 4,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-009",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-918\\codeql_1.py",
+          "line": "12:5",
+          "snippet": "url = \"https://\" + subdomain + \".example.com/data/\"",
+          "tainted_variable": "subdomain"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-001-subscript",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-918\\codeql_1.py",
+          "line": "12:5",
+          "snippet": "url = \"https://\" + subdomain + \".example.com/data/\"",
+          "tainted_variable": "subdomain"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-011",
+          "vulnerabilities": [
+            "INSD"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-918\\codeql_1.py",
+          "line": "12:5",
+          "snippet": "url = \"https://\" + subdomain + \".example.com/data/\"",
+          "tainted_variable": "subdomain"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-021",
+          "vulnerabilities": [
+            "INSD"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-918\\codeql_1.py",
+          "line": "12:5",
+          "snippet": "url = \"https://\" + subdomain + \".example.com/data/\"",
+          "tainted_variable": "subdomain"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-079\\codeql_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "JINJA2-ENV-001",
+        "REQUEST-ARGS_GET-008"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "SDIF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-079\\codeql_1.py",
+          "line": "15:33",
+          "snippet": "name",
+          "tainted_variable": "name"
+        },
+        {
+          "rule_id": "JINJA2-ENV-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-079\\codeql_1.py",
+          "line": "2:1",
+          "snippet": "from jinja2 import Environment, FileSystemLoader"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-089\\codeql_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "SQL-CONNECTOR-003",
+        "SQL-PARAMETRIZED-QUERY-002"
+      ],
+      "vulnerabilities_summary": [
+        "INJC",
+        "SDIF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "SQL-PARAMETRIZED-QUERY-002",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-089\\codeql_1.py",
+          "line": "16:5",
+          "snippet": "cursor.execute(\"SELECT * FROM users WHERE username = '%s'\" % username)"
+        },
+        {
+          "rule_id": "SQL-CONNECTOR-003",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-089\\codeql_1.py",
+          "line": "7:12",
+          "snippet": "mysql.connector.connect(host = \"localhost\", user = \"\",passwd = \"\")"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-090\\codeql_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "LDAP-CONNECTION-VALIDATION-003",
+        "LDAP-CONNECTION-VALIDATION-005",
+        "REQUEST-ARGS-001-subscript",
+        "REQUEST-ARGS-GET-023",
+        "REQUEST-ARGS_GET-009"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "INJC",
+        "INSD"
+      ],
+      "findings_count": 8,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-009",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-090\\codeql_1.py",
+          "line": "17:25",
+          "snippet": "unsafe_dc",
+          "tainted_variable": "unsafe_dc"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-009",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-090\\codeql_1.py",
+          "line": "18:40",
+          "snippet": "unsafe_filter",
+          "tainted_variable": "unsafe_filter"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-001-subscript",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-090\\codeql_1.py",
+          "line": "17:25",
+          "snippet": "unsafe_dc",
+          "tainted_variable": "unsafe_dc"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-001-subscript",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-090\\codeql_1.py",
+          "line": "18:40",
+          "snippet": "unsafe_filter",
+          "tainted_variable": "unsafe_filter"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-023",
+          "vulnerabilities": [
+            "INSD",
+            "INJC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-090\\codeql_1.py",
+          "line": "17:25",
+          "snippet": "unsafe_dc",
+          "tainted_variable": "unsafe_dc"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-023",
+          "vulnerabilities": [
+            "INSD",
+            "INJC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-090\\codeql_1.py",
+          "line": "18:40",
+          "snippet": "unsafe_filter",
+          "tainted_variable": "unsafe_filter"
+        },
+        {
+          "rule_id": "LDAP-CONNECTION-VALIDATION-003",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-090\\codeql_1.py",
+          "line": "23:16",
+          "snippet": "user",
+          "tainted_variable": "user"
+        },
+        {
+          "rule_id": "LDAP-CONNECTION-VALIDATION-005",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-090\\codeql_1.py",
+          "line": "21:12",
+          "snippet": "ldap_connection.search_s( dn, ldap.SCOPE_SUBTREE, search_filter)"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-094\\codeql_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "EXEC-001",
+        "REQUEST-ARGS-GET-004",
+        "REQUEST-ARGS-GET-010",
+        "REQUEST-ARGS_GET-005",
+        "REQUEST-ARGS_GET-008"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "CRYF",
+        "INJC",
+        "INSD"
+      ],
+      "findings_count": 5,
+      "findings": [
+        {
+          "rule_id": "EXEC-001",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-094\\codeql_1.py",
+          "line": "13:9",
+          "snippet": "exec(\"setname('%s')\" % first_name)"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-005",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-094\\codeql_1.py",
+          "line": "13:14",
+          "snippet": "\"setname('%s')\" % first_name",
+          "tainted_variable": "first_name"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-094\\codeql_1.py",
+          "line": "13:14",
+          "snippet": "\"setname('%s')\" % first_name",
+          "tainted_variable": "first_name"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-004",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-094\\codeql_1.py",
+          "line": "12:41",
+          "snippet": "request.args.get('first_name', '')"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-010",
+          "vulnerabilities": [
+            "INSD"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-094\\codeql_1.py",
+          "line": "13:14",
+          "snippet": "\"setname('%s')\" % first_name",
+          "tainted_variable": "first_name"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-116\\codeql_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-116-REGEX-STRIP-001"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-116"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-116-REGEX-STRIP-001",
+          "vulnerabilities": [
+            "CWE-116"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-116\\codeql_1.py",
+          "line": "9:5",
+          "snippet": "while oldContent != content: oldContent = content content = re.sub(r'<script.*?>.*?</script>', '', content, flags=re.DOTALL | re.IGNORECASE)"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-117\\codeql_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS-GET-010",
+        "REQUEST-ARGS_GET-005",
+        "REQUEST-ARGS_GET-008"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "INSD"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-005",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-117\\codeql_1.py",
+          "line": "15:21",
+          "snippet": "'User name: ' + name",
+          "tainted_variable": "name"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-117\\codeql_1.py",
+          "line": "15:21",
+          "snippet": "'User name: ' + name",
+          "tainted_variable": "name"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-010",
+          "vulnerabilities": [
+            "INSD"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-117\\codeql_1.py",
+          "line": "15:21",
+          "snippet": "'User name: ' + name",
+          "tainted_variable": "name"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-209\\codeql_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "TRACEBACK-FORMAT-EXC-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "TRACEBACK-FORMAT-EXC-001",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-209\\codeql_1.py",
+          "line": "19:16",
+          "snippet": "traceback.format_exc()"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-020\\codeql_2.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "ENCODE-DECODE-001",
+        "PICKLE-FAILURE-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "ENCODE-DECODE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-020\\codeql_2.py",
+          "line": "13:41",
+          "snippet": "encode('utf-8')"
+        },
+        {
+          "rule_id": "PICKLE-FAILURE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-020\\codeql_2.py",
+          "line": "15:11",
+          "snippet": "pickle.loads(data)"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-022\\codeql_2.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "FILE-DIM-001",
+        "TARFILE-VERSION-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "FILE-DIM-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-022\\codeql_2.py",
+          "line": "11:13",
+          "snippet": "tar.extract(entry, \"/tmp/\")"
+        },
+        {
+          "rule_id": "TARFILE-VERSION-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-022\\codeql_2.py",
+          "line": "1:1",
+          "snippet": "import tarfile"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-079\\codeql_2.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS-GET-010",
+        "REQUEST-ARGS_GET-005",
+        "REQUEST-ARGS_GET-008"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "INSD"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-005",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-079\\codeql_2.py",
+          "line": "12:30",
+          "snippet": "'Your name is '+name",
+          "tainted_variable": "name"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-079\\codeql_2.py",
+          "line": "12:30",
+          "snippet": "'Your name is '+name",
+          "tainted_variable": "name"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-010",
+          "vulnerabilities": [
+            "INSD"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-079\\codeql_2.py",
+          "line": "12:30",
+          "snippet": "'Your name is '+name",
+          "tainted_variable": "name"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-090\\codeql_2.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "LDAP-SERVER-001",
+        "LDAP-SERVER-VALIDATION-003",
+        "REQUEST-ARGS-001-subscript",
+        "REQUEST-ARGS-GET-023",
+        "REQUEST-ARGS_GET-009"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "INJC",
+        "INSD"
+      ],
+      "findings_count": 8,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-009",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-090\\codeql_2.py",
+          "line": "17:25",
+          "snippet": "unsafe_dc",
+          "tainted_variable": "unsafe_dc"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-009",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-090\\codeql_2.py",
+          "line": "18:40",
+          "snippet": "unsafe_filter",
+          "tainted_variable": "unsafe_filter"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-001-subscript",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-090\\codeql_2.py",
+          "line": "17:25",
+          "snippet": "unsafe_dc",
+          "tainted_variable": "unsafe_dc"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-001-subscript",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-090\\codeql_2.py",
+          "line": "18:40",
+          "snippet": "unsafe_filter",
+          "tainted_variable": "unsafe_filter"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-023",
+          "vulnerabilities": [
+            "INSD",
+            "INJC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-090\\codeql_2.py",
+          "line": "17:25",
+          "snippet": "unsafe_dc",
+          "tainted_variable": "unsafe_dc"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-023",
+          "vulnerabilities": [
+            "INSD",
+            "INJC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-090\\codeql_2.py",
+          "line": "18:40",
+          "snippet": "unsafe_filter",
+          "tainted_variable": "unsafe_filter"
+        },
+        {
+          "rule_id": "LDAP-SERVER-001",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-090\\codeql_2.py",
+          "line": "20:11",
+          "snippet": "ldap3.Server('ldap://127.0.0.1')"
+        },
+        {
+          "rule_id": "LDAP-SERVER-VALIDATION-003",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-090\\codeql_2.py",
+          "line": "21:29",
+          "snippet": "srv",
+          "tainted_variable": "srv"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-327\\codeql_2.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "SOCKET-001",
+        "SSL-WRAP-SOCKET-001"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF",
+        "SDIF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "SOCKET-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-327\\codeql_2.py",
+          "line": "11:32",
+          "snippet": "socket.socket(socket.AF_INET, socket.SOCK_STREAM)"
+        },
+        {
+          "rule_id": "SSL-WRAP-SOCKET-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-327\\codeql_2.py",
+          "line": "11:16",
+          "snippet": "ssl.wrap_socket(socket.socket(socket.AF_INET, socket.SOCK_STREAM))"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-730\\codeql_2.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS-001-subscript",
+        "REQUEST-ARGS-002",
+        "REQUEST-ARGS-GET-023",
+        "REQUEST-ARGS_GET-009"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "INJC",
+        "INSD"
+      ],
+      "findings_count": 4,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-009",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-730\\codeql_2.py",
+          "line": "12:35",
+          "snippet": "pattern",
+          "tainted_variable": "pattern"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-001-subscript",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-730\\codeql_2.py",
+          "line": "12:35",
+          "snippet": "pattern",
+          "tainted_variable": "pattern"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-002",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-730\\codeql_2.py",
+          "line": "13:5",
+          "snippet": "compiled_pattern.search(request.args[\"text\"])"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-023",
+          "vulnerabilities": [
+            "INSD",
+            "INJC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-730\\codeql_2.py",
+          "line": "12:35",
+          "snippet": "pattern",
+          "tainted_variable": "pattern"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-918\\codeql_2.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS-001-subscript",
+        "REQUEST-ARGS-GET-011",
+        "REQUEST-ARGS-GET-021",
+        "REQUEST-ARGS_GET-009"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "INJC",
+        "INSD"
+      ],
+      "findings_count": 4,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-009",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-918\\codeql_2.py",
+          "line": "15:5",
+          "snippet": "url = \"https://api.github.com/users/\" + user_id",
+          "tainted_variable": "user_id"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-001-subscript",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-918\\codeql_2.py",
+          "line": "15:5",
+          "snippet": "url = \"https://api.github.com/users/\" + user_id",
+          "tainted_variable": "user_id"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-011",
+          "vulnerabilities": [
+            "INSD"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-918\\codeql_2.py",
+          "line": "15:5",
+          "snippet": "url = \"https://api.github.com/users/\" + user_id",
+          "tainted_variable": "user_id"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-021",
+          "vulnerabilities": [
+            "INSD"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-918\\codeql_2.py",
+          "line": "15:5",
+          "snippet": "url = \"https://api.github.com/users/\" + user_id",
+          "tainted_variable": "user_id"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-020\\codeql_3.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "FLASK-REDIRECT-001"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "FLASK-REDIRECT-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-020\\codeql_3.py",
+          "line": "17:16",
+          "snippet": "redirect(target)"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-327\\codeql_3.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "MD5-001"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "MD5-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-327\\codeql_3.py",
+          "line": "8:12",
+          "snippet": "hashlib.md5(certificate)"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-020\\codeql_4.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "FLASK-REDIRECT-001",
+        "REQUEST-ARGS_GET-008"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "SECM"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-020\\codeql_4.py",
+          "line": "13:25",
+          "snippet": "target",
+          "tainted_variable": "target"
+        },
+        {
+          "rule_id": "FLASK-REDIRECT-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-020\\codeql_4.py",
+          "line": "13:16",
+          "snippet": "redirect(target)"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-327\\codeql_4.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "HASHLIB-SHA256-001"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "HASHLIB-SHA256-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-327\\codeql_4.py",
+          "line": "7:12",
+          "snippet": "hashlib.sha256(password + salt)"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-250\\mitre_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "MKDIR-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "MKDIR-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-250\\mitre_1.py",
+          "line": "20:9",
+          "snippet": "os.mkdir('/home/' + username)"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-269\\mitre_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "MKDIR-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "MKDIR-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-269\\mitre_1.py",
+          "line": "30:9",
+          "snippet": "os.mkdir('/home/' + username)"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-941\\mitre_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "SOCKET-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "SOCKET-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-941\\mitre_1.py",
+          "line": "11:12",
+          "snippet": "socket.socket(socket.AF_INET, socket.SOCK_DGRAM)"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-283\\mitre_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "OS-PSUTIL-KILL-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "OS-PSUTIL-KILL-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-283\\mitre_1.py",
+          "line": "8:5",
+          "snippet": "os.kill(processID, signal.SIGKILL)"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-339\\mitre_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "RANDOM-001",
+        "URANDOM-001"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "RANDOM-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-339\\mitre_1.py",
+          "line": "10:5",
+          "snippet": "random.seed(a=seed)"
+        },
+        {
+          "rule_id": "RANDOM-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-339\\mitre_1.py",
+          "line": "11:11",
+          "snippet": "random.getrandbits(128)"
+        },
+        {
+          "rule_id": "URANDOM-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-339\\mitre_1.py",
+          "line": "9:12",
+          "snippet": "os.urandom(2)"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-385\\mitre_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-406\\mitre_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "PARSE-UDP-001",
+        "SOCKET-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "SDIF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "SOCKET-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-406\\mitre_1.py",
+          "line": "21:12",
+          "snippet": "socket.socket(socket.AF_INET, socket.SOCK_DGRAM)"
+        },
+        {
+          "rule_id": "PARSE-UDP-001",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-406\\mitre_1.py",
+          "line": "3:1",
+          "snippet": "def parseUDPpacket(data): pass"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-462\\mitre_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-462-ALIST-DUPLICATE"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-462"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-462-ALIST-DUPLICATE",
+          "vulnerabilities": [
+            "CWE-462"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-462\\mitre_1.py",
+          "line": "11:5",
+          "snippet": "while basename and data: (basename, data) = foo() alist.append((basename, data)) alist.sort()"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-502\\mitre_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "PICKLE-FAILURE-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "PICKLE-FAILURE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-502\\mitre_1.py",
+          "line": "11:17",
+          "snippet": "cPickle.loads(base64.b64decode(headers['AuthToken']))"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-759\\mitre_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "HASHLIB-001",
+        "HASHLIB-002"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "HASHLIB-002",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-759\\mitre_1.py",
+          "line": "8:14",
+          "snippet": "hashlib.new('md5')"
+        },
+        {
+          "rule_id": "HASHLIB-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-759\\mitre_1.py",
+          "line": "8:14",
+          "snippet": "hashlib.new('md5')"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-841\\mitre_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "COMMAND-001"
+      ],
+      "vulnerabilities_summary": [
+        "IDAF"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "COMMAND-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-841\\mitre_1.py",
+          "line": "10:8",
+          "snippet": "command == 'login'"
+        },
+        {
+          "rule_id": "COMMAND-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-841\\mitre_1.py",
+          "line": "13:8",
+          "snippet": "command == 'retrieve_file'"
+        },
+        {
+          "rule_id": "COMMAND-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-841\\mitre_1.py",
+          "line": "17:8",
+          "snippet": "command == 'list_files'"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-306\\pearce_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CREDENTIALS-001"
+      ],
+      "vulnerabilities_summary": [
+        "IDAF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CREDENTIALS-001",
+          "vulnerabilities": [
+            "IDAF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-306\\pearce_1.py",
+          "line": "28:8",
+          "snippet": "request.form['username'] == 'admin' and request.form['password'] == 'password'"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-434\\pearce_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS-GET-023",
+        "REQUEST-ARGS-GET-024",
+        "REQUEST-ARGS_GET-009"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "INJC",
+        "INSD"
+      ],
+      "findings_count": 4,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-009",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-434\\pearce_1.py",
+          "line": "12:5",
+          "snippet": "p.save",
+          "tainted_variable": "p"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-009",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-434\\pearce_1.py",
+          "line": "12:27",
+          "snippet": "p.filename",
+          "tainted_variable": "p"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-023",
+          "vulnerabilities": [
+            "INSD",
+            "INJC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-434\\pearce_1.py",
+          "line": "12:27",
+          "snippet": "p.filename",
+          "tainted_variable": "p"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-024",
+          "vulnerabilities": [
+            "INSD",
+            "INJC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-434\\pearce_1.py",
+          "line": "12:5",
+          "snippet": "p.save",
+          "tainted_variable": "p"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-522\\pearce_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "ENCODE-DECODE-001",
+        "MD5-001",
+        "MYSQL-DB-003",
+        "REQUEST-ARGS-GET-023",
+        "REQUEST-ARGS-GET-024"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF",
+        "INJC",
+        "INSD",
+        "SDIF"
+      ],
+      "findings_count": 7,
+      "findings": [
+        {
+          "rule_id": "MD5-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-522\\pearce_1.py",
+          "line": "17:23",
+          "snippet": "hashlib.md5(password.encode())"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-023",
+          "vulnerabilities": [
+            "INSD",
+            "INJC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-522\\pearce_1.py",
+          "line": "20:64",
+          "snippet": "username",
+          "tainted_variable": "username"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-023",
+          "vulnerabilities": [
+            "INSD",
+            "INJC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-522\\pearce_1.py",
+          "line": "24:83",
+          "snippet": "username",
+          "tainted_variable": "username"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-023",
+          "vulnerabilities": [
+            "INSD",
+            "INJC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-522\\pearce_1.py",
+          "line": "17:35",
+          "snippet": "password.encode",
+          "tainted_variable": "password"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-024",
+          "vulnerabilities": [
+            "INSD",
+            "INJC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-522\\pearce_1.py",
+          "line": "17:35",
+          "snippet": "password.encode",
+          "tainted_variable": "password"
+        },
+        {
+          "rule_id": "ENCODE-DECODE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-522\\pearce_1.py",
+          "line": "17:35",
+          "snippet": "password.encode()"
+        },
+        {
+          "rule_id": "MYSQL-DB-003",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-522\\pearce_1.py",
+          "line": "18:10",
+          "snippet": "MySQLdb.connect(host=\"localhost\", user=\"root\", passwd=\"\", db=\"test\")"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-434\\pearce_2.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS-GET-024",
+        "REQUEST-ARGS_GET-009",
+        "WITH-OPEN-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "INJC",
+        "INSD"
+      ],
+      "findings_count": 4,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-009",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-434\\pearce_2.py",
+          "line": "12:16",
+          "snippet": "img.filename",
+          "tainted_variable": "img"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-009",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-434\\pearce_2.py",
+          "line": "13:16",
+          "snippet": "img.read",
+          "tainted_variable": "img"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-024",
+          "vulnerabilities": [
+            "INSD",
+            "INJC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-434\\pearce_2.py",
+          "line": "13:16",
+          "snippet": "img.read",
+          "tainted_variable": "img"
+        },
+        {
+          "rule_id": "WITH-OPEN-001",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-434\\pearce_2.py",
+          "line": "15:10",
+          "snippet": "open('./pictures/' + img_name, 'wb')"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-079\\sonar_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS_GET-008"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-079\\sonar_1.py",
+          "line": "14:57",
+          "snippet": "param",
+          "tainted_variable": "param"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-094\\sonar_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "EXEC-001",
+        "REQUEST-ARGS-GET-010",
+        "REQUEST-ARGS_GET-005",
+        "REQUEST-ARGS_GET-008"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "INJC",
+        "INSD"
+      ],
+      "findings_count": 4,
+      "findings": [
+        {
+          "rule_id": "EXEC-001",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-094\\sonar_1.py",
+          "line": "12:5",
+          "snippet": "exec(\"import urllib%s as urllib\" % module)"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-005",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-094\\sonar_1.py",
+          "line": "12:10",
+          "snippet": "\"import urllib%s as urllib\" % module",
+          "tainted_variable": "module"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-094\\sonar_1.py",
+          "line": "12:10",
+          "snippet": "\"import urllib%s as urllib\" % module",
+          "tainted_variable": "module"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-010",
+          "vulnerabilities": [
+            "INSD"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-094\\sonar_1.py",
+          "line": "12:10",
+          "snippet": "\"import urllib%s as urllib\" % module",
+          "tainted_variable": "module"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-502\\sonar_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS_GET-008",
+        "YAML-LOAD-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "INJC",
+        "SDIF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-502\\sonar_1.py",
+          "line": "11:22",
+          "snippet": "data",
+          "tainted_variable": "data"
+        },
+        {
+          "rule_id": "YAML-LOAD-001",
+          "vulnerabilities": [
+            "INJC",
+            "SDIF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-502\\sonar_1.py",
+          "line": "11:12",
+          "snippet": "yaml.load(data)"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-521\\sonar_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "FLASK-CONFIG-001"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "FLASK-CONFIG-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-521\\sonar_1.py",
+          "line": "10:5",
+          "snippet": "app.config['SQLALCHEMY_DATABASE_URI']",
+          "tainted_variable": "app"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-601\\sonar_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-001",
+        "REQUEST-ARGS_GET-008"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "SECM"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-601\\sonar_1.py",
+          "line": "8:33",
+          "snippet": "target",
+          "tainted_variable": "target"
+        },
+        {
+          "rule_id": "REQUEST-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-601\\sonar_1.py",
+          "line": "8:33",
+          "snippet": "target",
+          "tainted_variable": "target"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-611\\sonar_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "LXML-ETREE-003",
+        "XML-PARSER-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF",
+        "SECM"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "LXML-ETREE-003",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-611\\sonar_1.py",
+          "line": "1:1",
+          "snippet": "from lxml import etree"
+        },
+        {
+          "rule_id": "XML-PARSER-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-611\\sonar_1.py",
+          "line": "7:14",
+          "snippet": "etree.XMLParser(resolve_entities=True)"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-641\\sonar_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS-001-subscript",
+        "REQUEST-ARGS-GET-023",
+        "REQUEST-ARGS-GET-024",
+        "REQUEST-ARGS_GET-009",
+        "SEND-FILE-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "CRYF",
+        "INJC",
+        "INSD"
+      ],
+      "findings_count": 5,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-009",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-641\\sonar_1.py",
+          "line": "12:25",
+          "snippet": "file.split",
+          "tainted_variable": "file"
+        },
+        {
+          "rule_id": "SEND-FILE-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-641\\sonar_1.py",
+          "line": "13:12",
+          "snippet": "send_file(filepath, as_attachment=True)"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-001-subscript",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-641\\sonar_1.py",
+          "line": "12:25",
+          "snippet": "file.split",
+          "tainted_variable": "file"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-023",
+          "vulnerabilities": [
+            "INSD",
+            "INJC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-641\\sonar_1.py",
+          "line": "12:25",
+          "snippet": "file.split",
+          "tainted_variable": "file"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-024",
+          "vulnerabilities": [
+            "INSD",
+            "INJC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-641\\sonar_1.py",
+          "line": "12:25",
+          "snippet": "file.split",
+          "tainted_variable": "file"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-643\\sonar_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "ELEMENTTREE-CONFIGURATION-001",
+        "REQUEST-ARGS-001-subscript",
+        "REQUEST-ARGS-GET-011",
+        "REQUEST-ARGS-GET-021",
+        "REQUEST-ARGS_GET-009"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "INJC",
+        "INSD",
+        "SECM"
+      ],
+      "findings_count": 5,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-009",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-643\\sonar_1.py",
+          "line": "16:5",
+          "snippet": "query = \"./users/user/[@name='\" + username + \"']/location\"",
+          "tainted_variable": "username"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-001-subscript",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-643\\sonar_1.py",
+          "line": "16:5",
+          "snippet": "query = \"./users/user/[@name='\" + username + \"']/location\"",
+          "tainted_variable": "username"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-011",
+          "vulnerabilities": [
+            "INSD"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-643\\sonar_1.py",
+          "line": "16:5",
+          "snippet": "query = \"./users/user/[@name='\" + username + \"']/location\"",
+          "tainted_variable": "username"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-021",
+          "vulnerabilities": [
+            "INSD"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-643\\sonar_1.py",
+          "line": "16:5",
+          "snippet": "query = \"./users/user/[@name='\" + username + \"']/location\"",
+          "tainted_variable": "username"
+        },
+        {
+          "rule_id": "ELEMENTTREE-CONFIGURATION-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-643\\sonar_1.py",
+          "line": "2:1",
+          "snippet": "import xml.etree.ElementTree as ET"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-760\\sonar_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "PBKDF2-HMAC-001"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "PBKDF2-HMAC-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-760\\sonar_1.py",
+          "line": "8:12",
+          "snippet": "pbkdf2_hmac('sha256', password, b'D8VxSmTZt2E2YV454mkqAY5e', 100000)"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-827\\sonar_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "LXML-ETREE-003",
+        "XML-PARSER-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF",
+        "SECM"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "LXML-ETREE-003",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-827\\sonar_1.py",
+          "line": "1:1",
+          "snippet": "from lxml import etree"
+        },
+        {
+          "rule_id": "XML-PARSER-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-827\\sonar_1.py",
+          "line": "8:14",
+          "snippet": "etree.XMLParser()"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-943\\sonar_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "BOTO3-CLIENT-003"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "BOTO3-CLIENT-003",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-943\\sonar_1.py",
+          "line": "11:12",
+          "snippet": "DYNAMO_CLIENT.scan",
+          "tainted_variable": "DYNAMO_CLIENT"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-099\\sonar_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS-001-subscript",
+        "REQUEST-ARGS-GET-011",
+        "REQUEST-ARGS-GET-021",
+        "REQUEST-ARGS-GET-023",
+        "REQUEST-ARGS_GET-009",
+        "SEND-FILE-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "CRYF",
+        "INJC",
+        "INSD"
+      ],
+      "findings_count": 6,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-009",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-099\\sonar_1.py",
+          "line": "12:22",
+          "snippet": "\"static/%s\" % file",
+          "tainted_variable": "file"
+        },
+        {
+          "rule_id": "SEND-FILE-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-099\\sonar_1.py",
+          "line": "12:12",
+          "snippet": "send_file(\"static/%s\" % file, as_attachment=True)"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-001-subscript",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-099\\sonar_1.py",
+          "line": "12:22",
+          "snippet": "\"static/%s\" % file",
+          "tainted_variable": "file"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-011",
+          "vulnerabilities": [
+            "INSD"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-099\\sonar_1.py",
+          "line": "12:22",
+          "snippet": "\"static/%s\" % file",
+          "tainted_variable": "file"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-021",
+          "vulnerabilities": [
+            "INSD"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-099\\sonar_1.py",
+          "line": "12:22",
+          "snippet": "\"static/%s\" % file",
+          "tainted_variable": "file"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-023",
+          "vulnerabilities": [
+            "INSD",
+            "INJC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-099\\sonar_1.py",
+          "line": "12:22",
+          "snippet": "\"static/%s\" % file",
+          "tainted_variable": "file"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-113\\sonar_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS-001-subscript",
+        "REQUEST-ARGS-GET-023",
+        "REQUEST-ARGS_GET-009"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "INJC",
+        "INSD"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-009",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-113\\sonar_1.py",
+          "line": "16:33",
+          "snippet": "content_type",
+          "tainted_variable": "content_type"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-001-subscript",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-113\\sonar_1.py",
+          "line": "16:33",
+          "snippet": "content_type",
+          "tainted_variable": "content_type"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-023",
+          "vulnerabilities": [
+            "INSD",
+            "INJC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-113\\sonar_1.py",
+          "line": "16:33",
+          "snippet": "content_type",
+          "tainted_variable": "content_type"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-117\\sonar_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS_GET-008"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-117\\sonar_1.py",
+          "line": "10:36",
+          "snippet": "input",
+          "tainted_variable": "input"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-1204\\sonar_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "AES-CIPHER-002",
+        "CBC-MODE-001"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CBC-MODE-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-1204\\sonar_1.py",
+          "line": "11:27",
+          "snippet": "AES.MODE_CBC"
+        },
+        {
+          "rule_id": "AES-CIPHER-002",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-1204\\sonar_1.py",
+          "line": "12:5",
+          "snippet": "cipher.encrypt(pad(data, AES.block_size))"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-329\\sonar_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CBC-MODE-001",
+        "CIPHER-001"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CBC-MODE-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-329\\sonar_1.py",
+          "line": "10:42",
+          "snippet": "modes.CBC(static_vector)"
+        },
+        {
+          "rule_id": "CIPHER-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-329\\sonar_1.py",
+          "line": "10:14",
+          "snippet": "Cipher(algorithms.AES(key), modes.CBC(static_vector))"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-347\\sonar_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "JWT-DECODE-001",
+        "JWT-DECODE-002-protocols"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "JWT-DECODE-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-347\\sonar_1.py",
+          "line": "8:12",
+          "snippet": "jwt.decode(token, verify=False)"
+        },
+        {
+          "rule_id": "JWT-DECODE-002-protocols",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-347\\sonar_1.py",
+          "line": "8:12",
+          "snippet": "jwt.decode(token, verify=False)"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-379\\sonar_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "ENCODE-DECODE-001",
+        "MKTEMP-001",
+        "WITH-OPEN-001"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "SDIF"
+      ],
+      "findings_count": 4,
+      "findings": [
+        {
+          "rule_id": "ENCODE-DECODE-001",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-379\\sonar_1.py",
+          "line": "12:20",
+          "snippet": "results.encode(\"utf-8\")"
+        },
+        {
+          "rule_id": "MKTEMP-001",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-379\\sonar_1.py",
+          "line": "10:16",
+          "snippet": "tempfile.mktemp()"
+        },
+        {
+          "rule_id": "MKTEMP-001",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-379\\sonar_1.py",
+          "line": "10:16",
+          "snippet": "tempfile.mktemp()"
+        },
+        {
+          "rule_id": "WITH-OPEN-001",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-379\\sonar_1.py",
+          "line": "11:16",
+          "snippet": "open(filename, \"w+\")"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-400\\sonar_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS_GET-008"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-400\\sonar_1.py",
+          "line": "18:15",
+          "snippet": "username",
+          "tainted_variable": "username"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-008",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-400\\sonar_1.py",
+          "line": "18:25",
+          "snippet": "filename",
+          "tainted_variable": "filename"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-113\\sonar_2.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS-GET-010",
+        "REQUEST-ARGS_GET-005"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "INSD"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-005",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-113\\sonar_2.py",
+          "line": "13:5",
+          "snippet": "response.headers['content-type'] = content_type",
+          "tainted_variable": "content_type"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-010",
+          "vulnerabilities": [
+            "INSD"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-113\\sonar_2.py",
+          "line": "13:5",
+          "snippet": "response.headers['content-type'] = content_type",
+          "tainted_variable": "content_type"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-347\\sonar_2.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "JWT-DECODE-001-protocols",
+        "JWT-DECODE-002-protocols"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "JWT-DECODE-001-protocols",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-347\\sonar_2.py",
+          "line": "8:12",
+          "snippet": "jwt.decode(token, key, options={\"verify_signature\": False})"
+        },
+        {
+          "rule_id": "JWT-DECODE-002-protocols",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-347\\sonar_2.py",
+          "line": "8:12",
+          "snippet": "jwt.decode(token, key, options={\"verify_signature\": False})"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-521\\sonar_2.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "DJANGO-003"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "DJANGO-003",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-521\\sonar_2.py",
+          "line": "8:19",
+          "snippet": "'django.db.backends.postgresql'"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-601\\sonar_2.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "FLASK-REDIRECT-001",
+        "REQUEST-ARGS-001-subscript",
+        "REQUEST-ARGS-GET-023",
+        "REQUEST-ARGS_GET-009"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "INJC",
+        "INSD",
+        "SECM"
+      ],
+      "findings_count": 4,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-009",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-601\\sonar_2.py",
+          "line": "12:21",
+          "snippet": "url",
+          "tainted_variable": "url"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-001-subscript",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-601\\sonar_2.py",
+          "line": "12:21",
+          "snippet": "url",
+          "tainted_variable": "url"
+        },
+        {
+          "rule_id": "FLASK-REDIRECT-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-601\\sonar_2.py",
+          "line": "12:12",
+          "snippet": "redirect(url)"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-023",
+          "vulnerabilities": [
+            "INSD",
+            "INJC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-601\\sonar_2.py",
+          "line": "12:21",
+          "snippet": "url",
+          "tainted_variable": "url"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-611\\sonar_2.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "LXML-ETREE-003",
+        "XML-PARSER-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF",
+        "SECM"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "LXML-ETREE-003",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-611\\sonar_2.py",
+          "line": "1:1",
+          "snippet": "from lxml import etree"
+        },
+        {
+          "rule_id": "XML-PARSER-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-611\\sonar_2.py",
+          "line": "8:14",
+          "snippet": "etree.XMLParser(resolve_entities=True)"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-347\\sonar_3.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "JWT-PROCESS-FUNCTION-001"
+      ],
+      "vulnerabilities_summary": [
+        "CRYF"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "JWT-PROCESS-FUNCTION-001",
+          "vulnerabilities": [
+            "CRYF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-347\\sonar_3.py",
+          "line": "8:12",
+          "snippet": "jwt.process_jwt(jwt_token)"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-601\\sonar_3.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-ARGS-001-subscript",
+        "REQUEST-ARGS-GET-011",
+        "REQUEST-ARGS-GET-021",
+        "REQUEST-ARGS_GET-009",
+        "REQUEST-ARGS_GET-013"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "INJC",
+        "INSD"
+      ],
+      "findings_count": 5,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-009",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-601\\sonar_3.py",
+          "line": "13:5",
+          "snippet": "response.headers['Location'] = url",
+          "tainted_variable": "url"
+        },
+        {
+          "rule_id": "REQUEST-ARGS_GET-013",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-601\\sonar_3.py",
+          "line": "13:5",
+          "snippet": "response.headers['Location'] = url",
+          "tainted_variable": "url"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-001-subscript",
+          "vulnerabilities": [
+            "INJC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-601\\sonar_3.py",
+          "line": "13:5",
+          "snippet": "response.headers['Location'] = url",
+          "tainted_variable": "url"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-011",
+          "vulnerabilities": [
+            "INSD"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-601\\sonar_3.py",
+          "line": "13:5",
+          "snippet": "response.headers['Location'] = url",
+          "tainted_variable": "url"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-021",
+          "vulnerabilities": [
+            "INSD"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-601\\sonar_3.py",
+          "line": "13:5",
+          "snippet": "response.headers['Location'] = url",
+          "tainted_variable": "url"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-611\\sonar_3.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "ELEMENT-TREE-001",
+        "LXML-ETREE-003",
+        "XML-PARSER-001"
+      ],
+      "vulnerabilities_summary": [
+        "SDIF",
+        "SECM"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "LXML-ETREE-003",
+          "vulnerabilities": [
+            "SDIF"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-611\\sonar_3.py",
+          "line": "1:1",
+          "snippet": "from lxml import etree"
+        },
+        {
+          "rule_id": "ELEMENT-TREE-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-611\\sonar_3.py",
+          "line": "12:10",
+          "snippet": "etree.XSLTAccessControl(read_network=True, write_network=False)"
+        },
+        {
+          "rule_id": "XML-PARSER-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-611\\sonar_3.py",
+          "line": "9:14",
+          "snippet": "etree.XMLParser(resolve_entities=True)"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-601\\sonar_4.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "REQUEST-001",
+        "REQUEST-ARGS-GET-010",
+        "REQUEST-ARGS_GET-005"
+      ],
+      "vulnerabilities_summary": [
+        "BRAC",
+        "INSD",
+        "SECM"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "REQUEST-ARGS_GET-005",
+          "vulnerabilities": [
+            "BRAC"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-601\\sonar_4.py",
+          "line": "10:5",
+          "snippet": "response['Location'] = url",
+          "tainted_variable": "url"
+        },
+        {
+          "rule_id": "REQUEST-ARGS-GET-010",
+          "vulnerabilities": [
+            "INSD"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-601\\sonar_4.py",
+          "line": "10:5",
+          "snippet": "response['Location'] = url",
+          "tainted_variable": "url"
+        },
+        {
+          "rule_id": "REQUEST-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-601\\sonar_4.py",
+          "line": "10:5",
+          "snippet": "response['Location'] = url",
+          "tainted_variable": "url"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-611\\sonar_4.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "XML-SAX-MAKE-PARSER-001"
+      ],
+      "vulnerabilities_summary": [
+        "SECM"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "XML-SAX-MAKE-PARSER-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-611\\sonar_4.py",
+          "line": "7:14",
+          "snippet": "xml.sax.make_parser()"
+        },
+        {
+          "rule_id": "XML-SAX-MAKE-PARSER-001",
+          "vulnerabilities": [
+            "SECM"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-611\\sonar_4.py",
+          "line": "7:14",
+          "snippet": "xml.sax.make_parser"
+        }
+      ]
+    }
+  ]
+}
