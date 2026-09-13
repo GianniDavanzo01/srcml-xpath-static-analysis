@@ -353,7 +353,7 @@
   "rule_id": "INTEGER-ADDICTION-001",
   "type": "structural",
   "vulnerabilities": ["SDIF"],
-  "forbidden_functions": [
+  "forbidden_function_defs": [
     "integer_addition"
   ],
   "safe_contexts": [
@@ -367,7 +367,7 @@
   "rule_id": "INTEGER-MOLTIPLICATION-001",
   "type": "structural",
   "vulnerabilities": ["SDIF"],
-  "forbidden_functions": [
+  "forbidden_function_defs": [
     "integer_moltiplication"
   ],
   "safe_contexts": [
