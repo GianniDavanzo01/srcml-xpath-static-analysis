@@ -4,7 +4,6 @@
     "type": "taint",
     "vulnerabilities": ["CRYF"],
     "sources": ["request.args.get"],
-    "sanitizers": [],
     "safe_contexts": [
         {
         "type": "condition_matches_xpath",
@@ -706,8 +705,7 @@
       "source": "request.POST.get",
       "source_form": "call"
     }
-  ],
-  "safe_contexts": []
+  ]
 },
 {
   "rule_id": "REQUEST-ARGS-GET-008",

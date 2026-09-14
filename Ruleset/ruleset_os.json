@@ -45,8 +45,7 @@
       "call": ["os.chmod"],
       "forbidden_numbers": ["0", "0000", "0o000", "755", "0o755", "777", "0o777", "0o400", "128", "664", "0o644"]
     }
-  ],
-  "safe_contexts": []
+  ]
  },
  {
   "rule_id": "OS-ENV-GET-001",
@@ -214,7 +213,6 @@
   "sources": [
     "os.environ.get"
   ],
-  "sanitizers": [],
   "safe_contexts": [
     {
         "type": "matches_xpath",
@@ -233,8 +231,7 @@
   ],
   "forbidden_functions": [
     "subprocess.capture_output"
-  ],
-  "safe_contexts": []
+  ]
 },
 {
   "rule_id": "SUBPROCESS-SHELL-001",
@@ -276,8 +273,7 @@
   "forbidden_functions": [
     "mktemp",
     "tempfile.mktemp"
-  ],
-  "safe_contexts": []
+  ]
 },
 {
   "rule_id": "OS-SYSTEM-001",
@@ -290,8 +286,7 @@
       "call": "os.system",
       "arg_contains": ".bin"
     }
-  ],
-  "safe_contexts": []
+  ]
 },
 {
   "rule_id": "OS-SYSTEM-002",

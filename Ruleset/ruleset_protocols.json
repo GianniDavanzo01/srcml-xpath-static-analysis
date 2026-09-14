@@ -73,8 +73,6 @@
   "sources": [
     "boto3.client"
   ],
-  "sanitizers": [],
-  "safe_contexts": [],
   "sinks": [
     {
       "type": "method_call",
@@ -1239,8 +1237,7 @@
   "vulnerabilities": ["BRAC"],
   "xpath_rules": [
     ".//src:expr[./src:name[text()='method'] and ./src:operator[text()='='] and ./src:literal[@type='string'][contains(text(), 'GET') and contains(text(), 'X-Header:') and contains(text(), 'foo')]]"
-  ],
-  "safe_contexts": []
+  ]
 }
 
 ]

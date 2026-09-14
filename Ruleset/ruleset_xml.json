@@ -9,8 +9,7 @@
       "call": ["bind"],
       "args_text_contains": ["'0.0.0.0'", "''"]
     }
-  ],
-  "safe_contexts": []
+  ]
 },
 {
   "rule_id": "PICKLE-FAILURE-001",

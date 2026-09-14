@@ -304,6 +304,9 @@
   "rule_id": "NUMPY-LOAD-001",
   "type": "structural",
   "vulnerabilities": ["INJC"],
+  "required_imports": [
+    "numpy"
+  ],
   "bad_calls": {
     "np.load": {
       "allow_pickle": "True"
@@ -579,8 +582,6 @@
   "sources": [
     "\\{\\s*['\"]__builtins__['\"]\\s*:\\s*None\\s*\\}"
   ],
-  "sanitizers": [],
-  "safe_contexts": [],
   "sinks": [
     {
       "type": "keyword_argument",
@@ -833,7 +834,6 @@
   "vulnerabilities": ["SDIF"],
   "source_form": "regex",
   "sources": ["=\\s*\"1\""],
-  "sanitizers": [],
   "safe_contexts": [
     {
       "type": "rhs_call",

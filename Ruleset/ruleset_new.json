@@ -21,8 +21,7 @@
   "vulnerabilities": [
     "CWE-595"
   ],
-  "reference_comparisons": true,
-  "safe_contexts": []
+  "reference_comparisons": true
 },
 {
   "rule_id": "MISSING-WHILE-INCREMENT",
@@ -40,8 +39,7 @@
   ],
   "xpath_rules": [
     ".//src:while[./src:condition//src:operator[text()='<='] and ./src:condition//src:call[./src:name[text()='len']]]"
-  ],
-  "safe_contexts": []
+  ]
 },
 {
   "rule_id": "CWE-116-REGEX-STRIP-001",
@@ -49,8 +47,7 @@
   "vulnerabilities": ["CWE-116"],
   "xpath_rules": [
     ".//src:while[src:condition//src:operator[text()='!='] and .//src:call[.//src:name[last()][text()='sub']]]"
-  ],
-  "safe_contexts": []
+  ]
 },
 {
   "rule_id": "CWE-462-ALIST-DUPLICATE",
@@ -58,8 +55,7 @@
   "vulnerabilities": ["CWE-462"],
   "xpath_rules": [
     ".//*[self::src:while or self::src:for][.//src:call[.//src:name[text()='append'] and .//src:argument_list//src:tuple] and not(.//src:operator[text()='in' or text()='not in'])]"
-  ],
-  "safe_contexts": []
+  ]
 },
 {
   "rule_id": "TOCTOU-FILE-001",

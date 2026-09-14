@@ -142,8 +142,7 @@
   ],
   "sanitizers": [
     "bool"
-  ],
-  "safe_contexts": []
+  ]
 },
 {
   "rule_id": "QUERY-STRING-001",
@@ -239,7 +238,6 @@
       "type": "flat_call_arg"
     }
   ],
-  "sanitizers": [],
   "safe_contexts": [
     "try",
     "isinstance",
@@ -324,8 +322,7 @@
     "Markup",
     "Markup.unescape",
     "unescape"
-  ],
-  "safe_contexts": []
+  ]
 },
 {
   "rule_id": "EMAIL-REGEX-001",
@@ -335,8 +332,7 @@
   ],
   "bad_assignments": {
     "email_regex": "re.compile(r\"^(.*)@(.*)\\.(.*)$\")"
-  },
-  "safe_contexts": []
+  }
 },
 {
   "rule_id": "CSV-WRITER-001",
@@ -414,9 +410,7 @@
         "print"
       ]
     }
-  ],
-  "sanitizers": [],
-  "safe_contexts": []
+  ]
 },
 {
   "rule_id": "TIME-CLOCK-001",
@@ -427,8 +421,7 @@
   "forbidden_functions": [
     "time.clock",
     "clock"
-  ],
-  "safe_contexts": []
+  ]
 },
 {
   "rule_id": "FUNCTION-001",
@@ -721,9 +714,7 @@
         "required": "True"
       }
     }
-  ],
-  "sanitizers": [],
-  "safe_contexts": []
+  ]
 },
 {
   "rule_id": "YAML-LOAD-001",
@@ -788,7 +779,6 @@
   "sources": [
     "requests.Session"
   ],
-  "sanitizers": [],
   "safe_contexts": [
     {
       "type": "matches_xpath",
@@ -835,8 +825,7 @@
         ".*"
       ]
     }
-  ],
-  "safe_contexts": []
+  ]
 },
 {
   "rule_id": "MINIRACER-EVAL-001",

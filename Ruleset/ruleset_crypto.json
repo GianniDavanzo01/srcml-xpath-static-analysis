@@ -9,8 +9,7 @@
   "rule_id": "HASHLIB-SHA256-001",
   "type": "structural",
   "vulnerabilities": ["CRYF"],
-  "forbidden_functions": ["sha256"],
-  "safe_contexts": []
+  "forbidden_functions": ["sha256"]
  },
  {
   "rule_id": "SSL-METHOD-001",
@@ -20,20 +19,14 @@
     "ssl.SSLv2_METHOD", "ssl.SSLv3_METHOD", "ssl.SSLv23_METHOD", "ssl.TLSv1_METHOD", "ssl.TLSv1_1_METHOD",
     "SSL.SSLv2_METHOD", "SSL.SSLv3_METHOD", "SSL.SSLv23_METHOD", "SSL.TLSv1_METHOD", "SSL.TLSv1_1_METHOD",
     "ssl.PROTOCOL_SSLv2", "ssl.PROTOCOL_SSLv3", "ssl.PROTOCOL_TLSv1"
-  ],
-  "safe_contexts": [],
-  "_open_questions": {
-    "unanchored_regex_replicated": "La regex originale ssl\\.PROTOCOL_(SSLv2|SSLv3|TLSv1(_1)?) non e' ancorata a destra: matcha per sottostringa, quindi anche 'ssl.PROTOCOL_TLSv1_2', 'ssl.PROTOCOL_TLSv1_9' o costanti future non ancora esistenti che iniziano con lo stesso prefisso, oltre a 'ssl.PROTOCOL_SSLv23' (matchata via prefisso 'SSLv2', pur essendo semanticamente una costante diversa: auto-negoziazione, non SSLv2 puro). Tradotto qui con forbidden_name_prefixes per fedelta' comportamentale 1:1 (bug incluso), non con forbidden_names a match esatto come nella prima versione — quella prima versione era piu' restrittiva del tool originale, quindi non era una vera conversione 1:1.",
-    "TLSv1_1_entry_ridondante": "'ssl.PROTOCOL_TLSv1_1' e 'SSL.TLSv1_1_METHOD' restano nella lista solo per tracciabilita' con l'alternanza originale, ma sotto matching a prefisso sono gia' coperte da 'ssl.PROTOCOL_TLSv1' e 'ssl.TLSv1_METHOD' rispettivamente — lasciate esplicite per chiarezza documentale, non perche' necessarie al matching."
-  }
+  ]
 },
 {
   "rule_id": "RANDOM-CHOICE-001",
   "type": "structural",
   "vulnerabilities": ["CRYF"],
   "forbidden_functions": ["choice", "random.choices"],
-  "excluded_functions": ["secrets.choice"],
-  "safe_contexts": []
+  "excluded_functions": ["secrets.choice"]
  },
  {
   "rule_id": "RANDOM-001",
@@ -48,9 +41,7 @@
     "random.sample",
     "random.shuffle",
     "random.seed"
-  ],
-  "excluded_functions": [],
-  "safe_contexts": []
+  ]
  },
  {
   "rule_id": "CBC-MODE-001",
@@ -95,8 +86,7 @@
       "call": ["urandom"], 
       "contains_numbers": ["0", "1", "2", "4", "8", "16", "32"]
     }
-  ],
-  "safe_contexts": []
+  ]
 },
 {
   "rule_id": "EBC-MODE-001",
@@ -107,8 +97,7 @@
   ],
   "forbidden_names": [
     "AES.MODE_ECB"
-  ],
-  "safe_contexts": []
+  ]
 },
 {
   "rule_id": "AES-CIPHER-001",
