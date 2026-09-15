@@ -1,0 +1,47 @@
+[
+{
+  "rule_id": "HTML-INJC-001",
+  "type": "structural",
+  "vulnerabilities": ["INJC"],
+  "xpath_rules": [
+    ".//src:literal[@type='string'][contains(text(), '<mj-text>') and contains(text(), '{') and contains(text(), '}') and contains(text(), '</mj-text>')]"
+  ],
+  "safe_contexts": [
+    {
+      "type": "function_has_call_matching_ast",
+      "call": ["html.escape"]
+    }
+  ]
+},
+{
+  "rule_id": "HTML-PARSER-001",
+  "type": "structural",
+  "vulnerabilities": ["SDIF"],
+  "forbidden_functions": [
+    "HTMLParser"
+  ],
+  "safe_contexts": [
+    {
+      "type": "call_has_kwargs",
+      "call": [
+        "HTMLParser"
+      ],
+      "require": "all",
+      "kwargs": {
+        "tree": "treebuilders.getTreeBuilder(\"dom\")",
+        "namespaceHTMLElements": "False",
+        "strict": "True"
+      }
+    }
+  ]
+},
+{
+  "rule_id": "XLML-HTML-CLEAN-001",
+  "type": "structural",
+  "vulnerabilities": ["SDIF"],
+  "forbidden_functions": [
+    "html.clean.clean_html"
+  ]
+}
+
+]

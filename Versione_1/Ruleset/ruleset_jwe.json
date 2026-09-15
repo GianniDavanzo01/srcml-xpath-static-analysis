@@ -1,0 +1,25 @@
+[
+{
+  "rule_id": "TOKEN-DIM-001",
+  "type": "taint",
+  "vulnerabilities": ["SDIF"],
+  "source_form": "call",
+  "sources": [
+    "jwe.decode"
+  ],
+  "sinks": [
+    {
+      "type": "method_call",
+      "method": "encode"
+    }
+  ],
+  "safe_contexts": [
+    {
+      "type": "condition_matches_xpath",
+      "scope": "function",
+      "xpath": ".//src:call[src:name[text()='len'] and .//src:name[text()='$VAR'] and .//src:name[text()='encode']]"
+    }
+  ]
+}
+
+]

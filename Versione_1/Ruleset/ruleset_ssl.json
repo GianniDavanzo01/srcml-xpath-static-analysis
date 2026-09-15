@@ -1,0 +1,119 @@
+[
+{
+  "rule_id": "CREATE-DEFAULT-CONTEXT-001",
+  "type": "structural",
+  "vulnerabilities": ["IDAF"],
+  "forbidden_functions": [
+    {
+      "type": "call_matches_ast",
+      "call": [
+        "ssl.create_default_context",
+        "SSL.create_default_context"
+      ],
+      "exact_args_count": 0
+    }
+  ]
+},
+{
+  "rule_id": "CERT-001",
+  "type": "structural",
+  "vulnerabilities": ["IDAF"],
+  "bad_assignments": {
+    "verify_mode": "ssl.CERT_NONE"
+  }
+ },
+ {
+  "rule_id": "SET-COOKIE-001-ssl",
+  "type": "structural",
+  "vulnerabilities": ["SECM"],
+  "forbidden_functions": [
+    "set_cookie"
+  ],
+  "safe_contexts": [
+    {
+      "type": "call_with_kwarg",
+      "call": [
+        "set_cookie"
+      ],
+      "kwargs": {
+        "expires": "",
+        "max_age": "",
+        "httponly": "",
+        "secure": "",
+        "samesite": ""
+      }
+    }
+  ]
+},
+{
+  "rule_id": "CHECK-HOSTNAME-001",
+  "type": "structural",
+  "vulnerabilities": ["IDAF"],
+  "bad_assignments": {
+    "check_hostname": "False"
+  }
+},
+{
+  "rule_id": "SSL-WRAP-SOCKET-001",
+  "type": "structural",
+  "vulnerabilities": ["CRYF"],
+  "forbidden_functions": [
+    "ssl.wrap_socket"
+  ]
+},
+{
+  "rule_id": "CREATE-UNVERIFIED-CONTEXT-001",
+  "type": "structural",
+  "vulnerabilities": ["IDAF"],
+  "forbidden_functions": [
+    {
+      "type": "call_matches_ast",
+      "call": ["ssl._create_unverified_context"],
+      "exact_args_count": 0
+    }
+  ],
+  "bad_assignments": {
+    "ctx._create_unverified_context": "True"
+  }
+},
+{
+  "rule_id": "CREATE-STDLIB-CONTEXT-001",
+  "type": "structural",
+  "vulnerabilities": ["IDAF"],
+  "forbidden_functions": [
+    {
+      "type": "call_matches_ast",
+      "call": ["ssl._create_stdlib_context"],
+      "exact_args_count": 0
+    }
+  ]
+},
+{
+  "rule_id": "CONTEXT-001",
+  "type": "structural",
+  "vulnerabilities": ["IDAF"],
+  "forbidden_functions": [
+    "ssl.SSLContext",
+    "SSL.SSLContext",
+    "ssl.Context",
+    "SSL.Context"
+  ],
+  "safe_contexts": [
+    {
+      "type": "current_call_matches_ast",
+      "args_text_contains": ["'tlsv1_2'"]
+    },
+    {
+      "type": "current_call_matches_ast",
+      "args_text_contains": ["ssl.PROTOCOL_TLS"]
+    },
+    {
+      "type": "function_has_call_matching_ast",
+      "call": ["set_verify"],
+      "contains_names": ["SSL.verify_peer"],
+      "contains_numbers": ["1"]
+    }
+  ]
+}
+
+]

@@ -1,0 +1,40 @@
+[
+  {
+    "rule_id": "WEBSOCKET-SERVE-001",
+    "type": "structural",
+    "vulnerabilities": [
+      "SECM"
+    ],
+    "forbidden_functions": [
+      "websockets.serve"
+    ],
+    "safe_contexts": [
+      {
+        "type": "call_has_kwargs",
+        "call": [
+          "websockets.serve",
+          "serve"
+        ],
+        "kwargs": {
+          "compression": "None"
+        }
+      }
+    ]
+  },
+  {
+  "rule_id": "WEBSOCKET-CLOSE-001",
+  "type": "structural",
+  "vulnerabilities": [
+    "SDIF"
+  ],
+  "forbidden_names": [
+    "websocket.WebSocketWSGI"
+  ],
+  "safe_contexts": [
+    {
+      "type": "function_has_method_call",
+      "method": "close"
+    }
+  ]
+}
+]
