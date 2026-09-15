@@ -12,9 +12,18 @@ from pathlib import Path
 from lxml import etree
 from collections import Counter
 
-from common import NS, load_rules, check_required_imports
+# from common import NS, load_rules, check_required_imports
+# from taint_engine import run_taint_rule
+# from structural_engine import run_structural_rule
+
+from common import NS, load_rules, check_required_imports, compile_rules, CompiledRuleset
 from taint_engine import run_taint_rule
-from structural_engine import run_structural_rule
+from structural_engine import run_structural_rule, run_forbidden_functions_indexed, run_forbidden_names_indexed
+from unit_context import UnitContext
+
+from language_adapter import get_adapter
+
+
 
 
 def collect_xml_files(xml_args: list[str] | None, xml_dir: str | None) -> list[Path]:
@@ -54,17 +63,63 @@ def get_units(tree) -> list:
     return root.xpath(".//src:unit[@filename]", namespaces=NS)
 
 
-def analyze_unit(unit_node, rules: list, xml_source: str) -> dict:
-    findings = []
-    for rule in rules:
-        if not check_required_imports(unit_node, rule, NS):
-            continue  
+# def analyze_unit(unit_node, rules: list, xml_source: str) -> dict:
+#     findings = []
+#     for rule in rules:
+#         if not check_required_imports(unit_node, rule, NS):
+#             continue  
 
+#         rule_type = rule.get("type")
+#         if rule_type == "taint":
+#             findings.extend(run_taint_rule(unit_node, rule))
+#         elif rule_type == "structural":
+#             findings.extend(run_structural_rule(unit_node, rule))
+
+# def analyze_unit(unit_node, rules: list, xml_source: str) -> dict:
+#     adapter = get_adapter(unit_node)          # <-- nuovo
+#     imports = adapter.resolve_imports(unit_node, NS)   # risolto una sola volta per file
+
+#     findings = []
+#     for rule in rules:
+#         if not check_required_imports(unit_node, rule, NS, imports):
+#             continue
+#         rule_type = rule.get("type")
+#         if rule_type == "taint":
+#             findings.extend(run_taint_rule(unit_node, rule, adapter, imports))   # <-- firma estesa
+#         elif rule_type == "structural":
+#             findings.extend(run_structural_rule(unit_node, rule, adapter, imports))
+
+#     return {
+#         "source_file": unit_node.get("filename", "Sconosciuto"),
+#         "xml_source": xml_source,
+#         "vulnerable": len(findings) > 0,
+#         "rules_summary": sorted({f.get("rule_id", "UNKNOWN") for f in findings}),
+#         "vulnerabilities_summary": sorted({v for f in findings for v in f.get("vulnerabilities", [])}),
+#         "findings_count": len(findings),
+#         "findings": findings,
+#     }
+
+def analyze_unit(unit_node, compiled, xml_source: str) -> dict:
+    adapter = get_adapter(unit_node)          
+    imports = adapter.resolve_imports(unit_node, NS)
+    
+    ctx = UnitContext(unit_node, adapter)
+    findings = []
+
+    # Esecuzioni ottimizzate
+    run_forbidden_functions_indexed(ctx, compiled, findings, adapter, imports)
+    run_forbidden_names_indexed(ctx, compiled, findings, adapter, imports)
+
+    for rule in compiled.rules:
+        # USA LA TUA FUNZIONE: passa imports=imports
+        if not check_required_imports(unit_node, rule, NS, imports=imports):
+            continue
+            
         rule_type = rule.get("type")
         if rule_type == "taint":
-            findings.extend(run_taint_rule(unit_node, rule))
+            findings.extend(run_taint_rule(unit_node, rule, adapter, imports, ctx=ctx))
         elif rule_type == "structural":
-            findings.extend(run_structural_rule(unit_node, rule))
+            findings.extend(run_structural_rule(unit_node, rule, adapter, imports, ctx=ctx))
 
     return {
         "source_file": unit_node.get("filename", "Sconosciuto"),
@@ -77,22 +132,28 @@ def analyze_unit(unit_node, rules: list, xml_source: str) -> dict:
     }
 
 
-def analyze_file(xml_file: Path, rules: list) -> list:
-    """
-    Analizza un file .xml prodotto da srcML. Ritorna una lista di
-    risultati (un elemento per ciascun file sorgente individuato).
-    """
+def analyze_file(xml_file: Path, compiled: CompiledRuleset) -> list:
     tree = etree.parse(str(xml_file))
     units = get_units(tree)
 
     if not units:
+        # Fallback: nessun <unit filename=...> individuato. Costruiamo comunque
+        # l'adapter corretto leggendo language="..." dalla radice, invece di
+        # lasciare che taint/structural_engine usino il default PythonAdapter
+        # anche su un file Java/C.
+        root = tree.getroot() if hasattr(tree, "getroot") else tree
+        adapter = get_adapter(root)
+        imports = adapter.resolve_imports(root, NS)
+
         findings = []
-        for rule in rules:
+        for rule in compiled:
+            if not check_required_imports(tree, rule, NS, imports):
+                continue
             rule_type = rule.get("type")
             if rule_type == "taint":
-                findings.extend(run_taint_rule(tree, rule))
+                findings.extend(run_taint_rule(tree, rule, adapter, imports))
             elif rule_type == "structural":
-                findings.extend(run_structural_rule(tree, rule))
+                findings.extend(run_structural_rule(tree, rule, adapter, imports))
         return [{
             "source_file": xml_file.name,
             "xml_source": xml_file.name,
@@ -103,7 +164,7 @@ def analyze_file(xml_file: Path, rules: list) -> list:
             "findings": findings,
         }]
 
-    return [analyze_unit(u, rules, xml_source=xml_file.name) for u in units]
+    return [analyze_unit(u, compiled, xml_source=xml_file.name) for u in units]
 
 
 def main():
@@ -118,6 +179,7 @@ def main():
         ap.error("Specificare almeno uno tra --xml e --xml-dir")
 
     rules = load_rules(Path(args.rules))
+    compiled = compile_rules(rules)
     xml_files = collect_xml_files(args.xml, args.xml_dir)
 
     if not xml_files:
@@ -125,7 +187,7 @@ def main():
 
     report = []
     for xml in xml_files:
-        report.extend(analyze_file(xml, rules))
+        report.extend(analyze_file(xml, compiled))
 
     category_counter = Counter()
     total_findings = 0
@@ -158,6 +220,9 @@ def main():
         print(f"Report scritto in {args.output}")
     else:
         print(output_text)
+
+
+    
 
 
 if __name__ == "__main__":

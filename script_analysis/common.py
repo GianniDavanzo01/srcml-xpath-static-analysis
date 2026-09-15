@@ -10,6 +10,8 @@ import json
 import re
 from pathlib import Path
 
+from language_adapter import PythonAdapter
+
 NS = {"src": "http://www.srcML.org/srcML/src", "pos": "http://www.srcML.org/srcML/position"}
 
 
@@ -59,13 +61,14 @@ def node_snippet(node, max_len: int = 140) -> str:
     text = re.sub(r"\s+", " ", text).strip()
     return text[:max_len] + ("…" if len(text) > max_len else "")
 
-
-def get_call_name(call) -> str | None:
-    """Ritorna il nome della funzione/metodo invocato da un nodo src:call, o None."""
+def get_call_name(call, adapter=None, imports=None) -> str | None:
     name_nodes = call.xpath("./src:name", namespaces=NS)
     if not name_nodes:
         return None
-    return "".join(name_nodes[0].itertext()).strip()
+    raw = "".join(name_nodes[0].itertext()).strip()
+    if adapter is not None and imports is not None:
+        return adapter.resolve_call_name(call, NS, imports)
+    return raw
 
 
 def build_finding(rule: dict, node, extra: dict | None = None) -> dict:
@@ -83,12 +86,16 @@ def build_finding(rule: dict, node, extra: dict | None = None) -> dict:
     return finding
 
 
-def is_sanitized(node, sanitizers: list) -> bool:
+
+def is_sanitized(node, sanitizers: list, adapter=None, imports=None) -> bool:
     """Verifica se `node` e' passato come argomento a una delle funzioni sanitizer."""
-    for san in sanitizers:
-        if node.xpath(f"ancestor::src:call[.//src:name[last()][text()='{san}']]", namespaces=NS):
+    call_ancestors = node.xpath("ancestor::src:call", namespaces=NS)
+    for call in call_ancestors:
+        cname = get_call_name(call, adapter, imports)
+        if cname and any(cname == san or cname.endswith(f".{san}") for san in sanitizers):
             return True
     return False
+
 
 
 def source_present(sources: list, text: str, source_form: str | None = None, node=None) -> bool:
@@ -120,7 +127,8 @@ def source_present(sources: list, text: str, source_form: str | None = None, nod
     return False
 
 
-def call_arguments_match_ast(call_node, spec: dict) -> bool:
+# def call_arguments_match_ast(call_node, spec: dict) -> bool:
+def call_arguments_match_ast(call_node, spec: dict, adapter=None, imports=None) -> bool:
     """
     Motore universale AST per validare gli argomenti di una chiamata a funzione.
     Usata sia per cercare chiamate vietate (structural) sia per validare mitigazioni (safe context).
@@ -131,7 +139,8 @@ def call_arguments_match_ast(call_node, spec: dict) -> bool:
         target_calls = [target_calls]
 
     if target_calls:
-        call_name = get_call_name(call_node)
+        # call_name = get_call_name(call_node)
+        call_name = get_call_name(call_node, adapter, imports)
         if not call_name or not any(call_name == c or call_name.endswith(f".{c}") for c in target_calls):
             return False
 
@@ -166,8 +175,14 @@ def call_arguments_match_ast(call_node, spec: dict) -> bool:
     banned_numbers = spec.get("contains_numbers", [])
     if banned_numbers:
         nums = call_node.xpath(".//src:argument_list//src:literal[@type='number']", namespaces=NS)
-        found_nums = ["".join(n.itertext()).strip() for n in nums]
-        if not any(req in found_nums for req in banned_numbers):
+        found_texts = ["".join(n.itertext()).strip() for n in nums]
+        _adapter = adapter or PythonAdapter()
+        found_values = {v for t in found_texts if (v := _adapter.parse_numeric_literal(t)) is not None}
+
+        def _num_ok(req):
+            return req in found_texts or _adapter.parse_numeric_literal(str(req)) in found_values
+
+        if not any(_num_ok(req) for req in banned_numbers):
             return False
 
     args_text_contains = spec.get("args_text_contains", [])
@@ -209,25 +224,19 @@ def is_function_parameter(node) -> bool:
     return node_text in param_names
 
 
-def check_required_imports(unit_node, rule_spec: dict, namespaces: dict) -> bool:
-    """
-    Verifica se il file (rappresentato da unit_node) importa i moduli richiesti dalla regola.
-    """
+def check_required_imports(unit_node, rule_spec: dict, namespaces: dict, imports=None) -> bool:
     required_imports = rule_spec.get("required_imports")
-    
     if not required_imports:
         return True
 
-    xpath_query = ".//src:import//src:name | .//src:import_from/src:name[1]"
-    import_nodes = unit_node.xpath(xpath_query, namespaces=namespaces)
-    
-    imported_modules = {"".join(node.itertext()).replace(" ", "") for node in import_nodes}
+    if imports is not None:
+        imported_modules = {b.canonical_name for b in imports} | {b.canonical_name.split(".")[0] for b in imports}
+    else:
+        xpath_query = ".//src:import//src:name"
+        imported_modules = {"".join(n.itertext()).replace(" ", "")
+                             for n in unit_node.xpath(xpath_query, namespaces=namespaces)}
 
-    for req_import in required_imports:
-        if req_import in imported_modules:
-            return True
-            
-    return False
+    return any(req in imported_modules for req in required_imports)
 
 
 def _pos_key(node) -> tuple:
@@ -259,48 +268,101 @@ def _is_pure_literal_expr(node) -> bool:
     return bool(node.xpath("self::src:literal | .//src:literal", namespaces=NS))
 
 
-def source_arg_is_traceable_literal(call_node, scope_node, arg_index: int = 0) -> bool:
+def find_assignments(scope_node, adapter, var_name: str | None = None) -> list:
     """
-    Verifica se l'argomento POSIZIONALE all'indice `arg_index` (default: il
-    primo) e', direttamente o tramite un'unica assegnazione precedente nello 
-    stesso scope, un letterale puro. Gli altri argomenti/kwargs vengono ignorati.
+    Ritorna gli statement di assegnazione (expr_stmt/decl_stmt) nello scope
+    dato, tramite adapter.is_assignment/get_assignment_lhs_rhs invece di
+    XPath hardcoded su '='. Se var_name e' fornito, filtra solo le
+    assegnazioni il cui LHS e' quella variabile.
+    Ogni elemento ritornato e' una tupla (stmt, lhs_node, rhs_node).
     """
+    out = []
+    for stmt in scope_node.xpath(".//src:expr_stmt | .//src:decl_stmt", namespaces=NS):
+        if not adapter.is_assignment(stmt, NS):
+            continue
+        lhs, rhs = adapter.get_assignment_lhs_rhs(stmt, NS)
+        if lhs is None or not lhs.tag.endswith("name"):
+            continue
+        if var_name is not None and "".join(lhs.itertext()).strip() != var_name:
+            continue
+        out.append((stmt, lhs, rhs))
+    return out
+
+
+def source_arg_is_traceable_literal(call_node, scope_node, arg_index: int = 0, adapter=None) -> bool:
+    adapter = adapter or PythonAdapter()          
     arg_list = call_node.xpath("./src:argument_list", namespaces=NS)
     if not arg_list:
         return True
-
     arguments = arg_list[0].xpath("./src:argument", namespaces=NS)
-
-    def is_kwarg(a):
-        return bool(a.xpath("./src:name[1]", namespaces=NS) and a.xpath("./src:operator[1][text()='=']", namespaces=NS))
-
-    positional = [a for a in arguments if not is_kwarg(a)]
+    positional = [a for a in arguments if not adapter.is_kwarg(a, NS)]   # <-- via adapter, non closure locale
     if arg_index >= len(positional):
-        return False  
-
+        return False
+ 
     target_arg = positional[arg_index]
     expr_nodes = target_arg.xpath("./src:expr", namespaces=NS)
     expr = expr_nodes[0] if expr_nodes else target_arg
     call_key = _pos_key(call_node)
-
     if _is_pure_literal_expr(expr):
         return True
-
+ 
     names = expr.xpath("./src:name[not(src:index)]", namespaces=NS)
     if len(names) != 1 or len(expr) != 1:
         return False
-
     var_name = "".join(names[0].itertext()).strip()
-    candidates = scope_node.xpath(
-        f".//src:expr_stmt[src:expr/src:name[1][text()='{var_name}']"
-        f" and src:expr/src:operator[text()='=']]",
-        namespaces=NS,
-    )
+ 
+    candidates = [stmt for stmt, _, _ in find_assignments(scope_node, adapter, var_name)]
+ 
     prior = [c for c in candidates if _pos_key(c) < call_key]
     if not prior:
         return False
-
     last_assign = max(prior, key=_pos_key)
-    op = last_assign.xpath(".//src:operator[text()='='][1]", namespaces=NS)
-    rhs = op[0].xpath("./following-sibling::*[1]", namespaces=NS) if op else []
-    return bool(rhs and _is_pure_literal_expr(rhs[0]))
+    _, rhs = adapter.get_assignment_lhs_rhs(last_assign, NS)
+    return bool(rhs is not None and _is_pure_literal_expr(rhs))
+
+
+
+# --------------------------------------------------------------------------- #
+# Indice di dispatch per regole
+# --------------------------------------------------------------------------- #
+
+class CompiledRuleset:
+    
+    def __init__(self, rules: list):
+        self.rules = rules
+        self.forbidden_functions_index = {}   # nome -> [(rule, spec), ...]
+        self.forbidden_names_index = {}       # nome -> [rule, ...]
+        self.forbidden_name_prefixes = []     # [(prefix, rule), ...]
+        self.unindexed_forbidden_functions = [] 
+
+        for rule in rules:
+            for spec in rule.get("forbidden_functions", []):
+                if isinstance(spec, str):
+                    self.forbidden_functions_index.setdefault(spec, []).append((rule, spec))
+                elif isinstance(spec, dict):
+                    stype = spec.get("type")
+                    if stype == "exact_name" and spec.get("name"):
+                        self.forbidden_functions_index.setdefault(spec["name"], []).append((rule, spec))
+                    elif stype == "call_matches_ast" and spec.get("call"):
+                        calls = spec.get("call")
+                        if isinstance(calls, str):
+                            calls = [calls]
+                        for c in calls:
+                            self.forbidden_functions_index.setdefault(c, []).append((rule, spec))
+                    else:
+                        self.unindexed_forbidden_functions.append((rule, spec))
+
+            for name in rule.get("forbidden_names", []):
+                self.forbidden_names_index.setdefault(name, []).append(rule)
+
+            for prefix in rule.get("forbidden_name_prefixes", []):
+                self.forbidden_name_prefixes.append((prefix, rule))
+
+    def __iter__(self):
+        return iter(self.rules)
+
+    def __len__(self):
+        return len(self.rules)
+
+def compile_rules(rules: list) -> "CompiledRuleset":
+    return CompiledRuleset(rules)

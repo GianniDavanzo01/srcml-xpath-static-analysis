@@ -9,16 +9,27 @@ Predicati SINK per il motore: sia i pattern semplici basati su stringa
 from common import NS, get_call_name
 
 
-def _sink_string_pattern(uso, pattern_name: str, fstring_nodes: list) -> bool:
+# def _sink_string_pattern(uso, pattern_name: str, fstring_nodes: list) -> bool:
+#     """
+#     Pattern semplici basati solo sul TIPO di utilizzo della variabile,
+#     senza guardare metodo/argomento specifici.
+#     """
+#     if pattern_name == "concat":
+#         op_xpath = (
+#             "preceding-sibling::src:operator[1][text()='+' or text()='%'] | "
+#             "following-sibling::src:operator[1][text()='+' or text()='%']"
+#         )
+#         return bool(uso.xpath(op_xpath, namespaces=NS))
+
+def _sink_string_pattern(uso, pattern_name: str, fstring_nodes: list, adapter=None, imports=None) -> bool:
     """
     Pattern semplici basati solo sul TIPO di utilizzo della variabile,
     senza guardare metodo/argomento specifici.
     """
     if pattern_name == "concat":
-        op_xpath = (
-            "preceding-sibling::src:operator[1][text()='+' or text()='%'] | "
-            "following-sibling::src:operator[1][text()='+' or text()='%']"
-        )
+        ops = adapter.string_concat_operators() if adapter else ["+", "%"]
+        op_xpath = " | ".join([f"preceding-sibling::src:operator[1][text()='{op}']" for op in ops]) + " | " + \
+                   " | ".join([f"following-sibling::src:operator[1][text()='{op}']" for op in ops])
         return bool(uso.xpath(op_xpath, namespaces=NS))
 
     if pattern_name == "fstring":
@@ -43,8 +54,11 @@ def _sink_string_pattern(uso, pattern_name: str, fstring_nodes: list) -> bool:
                     return True
         return False
     
-    if pattern_name == "reassign":                       
-        return bool(uso.xpath("following-sibling::src:operator[1][text()='=']", namespaces=NS))
+    # if pattern_name == "reassign":                       
+    #     return bool(uso.xpath("following-sibling::src:operator[1][text()='=']", namespaces=NS))
+    if pattern_name == "reassign":
+        assign_op = adapter.assignment_operator_token() if adapter else "="
+        return bool(uso.xpath(f"following-sibling::src:operator[1][text()='{assign_op}']", namespaces=NS))
 
     if pattern_name == "return":
         return uso.xpath("boolean(ancestor::src:return[1] and not(ancestor::src:call))", namespaces=NS)
@@ -55,9 +69,10 @@ def _sink_string_pattern(uso, pattern_name: str, fstring_nodes: list) -> bool:
     if pattern_name == "assign_rhs":
         if uso.xpath("ancestor::src:call", namespaces=NS):
             return False
+        assign_op = adapter.assignment_operator_token() if adapter else "="
         is_rhs = bool(uso.xpath(
-            "parent::src:expr[preceding-sibling::src:operator[1][text()='=']] | "
-            "self::src:name[preceding-sibling::src:operator[1][text()='=']]",
+            f"parent::src:expr[preceding-sibling::src:operator[1][text()='{assign_op}']] | "
+            f"self::src:name[preceding-sibling::src:operator[1][text()='{assign_op}']]",
             namespaces=NS,
         ))
         is_in_args = bool(uso.xpath("ancestor::src:argument_list", namespaces=NS))
@@ -66,7 +81,9 @@ def _sink_string_pattern(uso, pattern_name: str, fstring_nodes: list) -> bool:
     return False
 
 
-def _sink_method_call(uso, spec: dict, fstring_nodes: list) -> bool:
+# def _sink_method_call(uso, spec: dict, fstring_nodes: list) -> bool:
+def _sink_method_call(uso, spec: dict, fstring_nodes: list, adapter=None, imports=None) -> bool:
+
     """{"type": "method_call", "method": "endswith", "arg_contains": [".com/"]}
         Cerca l'uso della variabile taintata uso come receiver (chiamante) di uno specifico metodo.
     """
@@ -96,7 +113,8 @@ def _sink_method_call(uso, spec: dict, fstring_nodes: list) -> bool:
     return any(val in args_text for val in arg_contains)
 
 
-def _sink_call_with_var_arg(uso, spec: dict, fstring_nodes: list) -> bool:
+# def _sink_call_with_var_arg(uso, spec: dict, fstring_nodes: list) -> bool:
+def _sink_call_with_var_arg(uso, spec, fstring_nodes, adapter=None, imports=None):
     """{"type": "call_with_var_arg", "call": ["re.sub", "sub"], "literal_contains": ["<script", "javascript:"]}"""
     target_calls = spec.get("call", [])
     if not target_calls:
@@ -106,7 +124,8 @@ def _sink_call_with_var_arg(uso, spec: dict, fstring_nodes: list) -> bool:
     if not call_node:
         return False
 
-    call_name = get_call_name(call_node[0])
+    # call_name = get_call_name(call_node[0])
+    call_name = get_call_name(call_node[0], adapter, imports)
     if call_name is None:
         return False
     if not any(call_name == c or call_name.endswith(f".{c}") for c in target_calls):
@@ -123,7 +142,8 @@ def _sink_call_with_var_arg(uso, spec: dict, fstring_nodes: list) -> bool:
     return any(val in args_text for val in literal_contains)
 
 
-def _sink_flat_call_arg(uso, spec: dict, fstring_nodes: list) -> bool:
+# def _sink_flat_call_arg(uso, spec: dict, fstring_nodes: list) -> bool:
+def _sink_flat_call_arg(uso, spec: dict, fstring_nodes: list, adapter=None, imports=None) -> bool:
     """{"type": "flat_call_arg"}
         Rileva se la variabile taintata è passata come argomento a una call, purché quella call non contenga altre call annidate 
         tra i suoi argomenti (nessuna coppia di parentesi extra oltre a quella della call stessa).
@@ -142,7 +162,9 @@ def _sink_flat_call_arg(uso, spec: dict, fstring_nodes: list) -> bool:
     return not nested_calls
 
 
-def _sink_return_method_call(uso, spec: dict, fstring_nodes: list) -> bool:
+# def _sink_return_method_call(uso, spec: dict, fstring_nodes: list) -> bool:
+def _sink_return_method_call(uso, spec: dict, fstring_nodes: list, adapter=None, imports=None) -> bool:
+
     """{"type": "return_method_call", "method": "match"}"""
     method = spec.get("method")
     if not method:
@@ -164,7 +186,9 @@ def _sink_return_method_call(uso, spec: dict, fstring_nodes: list) -> bool:
     return bool(is_returned)
 
 
-def _sink_receiver_of_method_with_kwarg(uso, spec: dict, fstring_nodes: list) -> bool:
+# def _sink_receiver_of_method_with_kwarg(uso, spec: dict, fstring_nodes: list) -> bool:
+def _sink_receiver_of_method_with_kwarg(uso, spec: dict, fstring_nodes: list, adapter=None, imports=None) -> bool:
+
     """{"type": "receiver_of_method_with_kwarg", "method": "add_argument", "kwargs": {"required": "True"}}"""
     method_name = spec.get("method")
     kwargs = spec.get("kwargs", {})
@@ -197,8 +221,11 @@ def _sink_receiver_of_method_with_kwarg(uso, spec: dict, fstring_nodes: list) ->
     return True
 
 
-def _sink_argument_to(uso, spec: dict, fstring_nodes: list) -> bool:
+# def _sink_argument_to(uso, spec: dict, fstring_nodes: list) -> bool:
+def _sink_argument_to(uso, spec: dict, fstring_nodes: list, adapter=None, imports=None) -> bool:
+
     """{"type": "argument_to", "functions": ["print"]}
+    
         la funzione verifica che uso sia argomento di una call il cui nome è esattamente uno di functions
     """
     functions = spec.get("functions", [])
@@ -218,7 +245,9 @@ def _sink_argument_to(uso, spec: dict, fstring_nodes: list) -> bool:
     return call_name in functions
     
 
-def _sink_method_call_in_if(uso, spec: dict, fstring_nodes: list) -> bool:
+# def _sink_method_call_in_if(uso, spec: dict, fstring_nodes: list) -> bool:
+def _sink_method_call_in_if(uso, spec: dict, fstring_nodes: list, adapter=None, imports=None) -> bool:
+
     """{"type": "method_call_in_if", "method": "locked"}"""
     method = spec.get("method")
     if not method:
@@ -236,7 +265,28 @@ def _sink_method_call_in_if(uso, spec: dict, fstring_nodes: list) -> bool:
     return bool(in_condition)
 
 
-def _sink_keyword_argument(uso, spec: dict, fstring_nodes: list) -> bool:
+# def _sink_keyword_argument(uso, spec: dict, fstring_nodes: list) -> bool:
+    # """{"type": "keyword_argument", "keyword": "env"}"""
+    # keyword = spec.get("keyword")
+    # if not keyword:
+    #     return False
+
+    # parent_arg = uso.xpath("ancestor::src:argument[1]", namespaces=NS)
+    # if parent_arg:
+    #     arg_node = parent_arg[0]
+    #     name_nodes = arg_node.xpath("./src:name[1]", namespaces=NS)
+    #     op_nodes = arg_node.xpath("./src:operator[1]", namespaces=NS)
+        
+    #     if name_nodes and op_nodes:
+    #         kw_name = "".join(name_nodes[0].itertext()).strip()
+    #         op = "".join(op_nodes[0].itertext()).strip()
+            
+    #         if kw_name == keyword and op == "=":
+    #             return True
+                
+    # return False
+
+def _sink_keyword_argument(uso, spec: dict, fstring_nodes: list, adapter=None, imports=None) -> bool:
     """{"type": "keyword_argument", "keyword": "env"}"""
     keyword = spec.get("keyword")
     if not keyword:
@@ -245,41 +295,40 @@ def _sink_keyword_argument(uso, spec: dict, fstring_nodes: list) -> bool:
     parent_arg = uso.xpath("ancestor::src:argument[1]", namespaces=NS)
     if parent_arg:
         arg_node = parent_arg[0]
-        name_nodes = arg_node.xpath("./src:name[1]", namespaces=NS)
-        op_nodes = arg_node.xpath("./src:operator[1]", namespaces=NS)
-        
-        if name_nodes and op_nodes:
+        if adapter and adapter.is_kwarg(arg_node, NS):
+            name_nodes = arg_node.xpath("./src:name[1]", namespaces=NS)
             kw_name = "".join(name_nodes[0].itertext()).strip()
-            op = "".join(op_nodes[0].itertext()).strip()
-            
-            if kw_name == keyword and op == "=":
+            if kw_name == keyword:
                 return True
-                
+
     return False
 
-
-def _sink_subscript_key_assign_rhs(uso, spec: dict, fstring_nodes: list) -> bool:
+# def _sink_subscript_key_assign_rhs(uso, spec: dict, fstring_nodes: list) -> bool:
+def _sink_subscript_key_assign_rhs(uso, spec: dict, fstring_nodes: list, adapter=None, imports=None) -> bool:
+ 
     """{"type": "subscript_key_assign_rhs"}"""
+    assign_op = adapter.assignment_operator_token() if adapter else "="
     rhs_holder = uso.xpath(
-        "ancestor-or-self::*[preceding-sibling::src:operator[1][text()='=']]",
+        f"ancestor-or-self::*[preceding-sibling::src:operator[1][text()='{assign_op}']]",
         namespaces=NS,
     )
     if not rhs_holder or uso.xpath("ancestor::src:argument_list", namespaces=NS):
         return False
-
+ 
     op = rhs_holder[0].xpath("preceding-sibling::src:operator[1]", namespaces=NS)[0]
     lhs_nodes = op.xpath("preceding-sibling::*", namespaces=NS)
     if not lhs_nodes:
         return False
     lhs = lhs_nodes[-1] 
-
+ 
     if not lhs.tag.endswith("name"):
         return False
-
+ 
     return bool(lhs.xpath("./src:index//src:literal[@type='string']", namespaces=NS))
 
+# def _sink_subscript_usage(uso, spec: dict, fstring_nodes: list) -> bool:
+def _sink_subscript_usage(uso, spec: dict, fstring_nodes: list, adapter=None, imports=None) -> bool:
 
-def _sink_subscript_usage(uso, spec: dict, fstring_nodes: list) -> bool:
     """
     Motore universale per i sink basati su subscript.
     Accorpa: assign_or_concat, colon_suffix, return, method_call.
@@ -299,7 +348,17 @@ def _sink_subscript_usage(uso, spec: dict, fstring_nodes: list) -> bool:
         if not op:
             return False
         op_text = "".join(op[0].itertext()).strip()
-        return op_text.endswith("+") or op_text.endswith("=")
+        
+        # Chiediamo i token corretti all'adattatore
+        assign_op = adapter.assignment_operator_token() if adapter else "="
+        concat_ops = adapter.string_concat_operators() if adapter else ["+"]
+        
+        # Verifichiamo se l'operatore finisce con il token di assegnazione (es: "=" o "+=")
+        is_assign = op_text.endswith(assign_op)
+        # Verifichiamo se l'operatore finisce con un token di concatenazione
+        is_concat = any(op_text.endswith(c) for c in concat_ops)
+        
+        return is_assign or is_concat
         
     elif subtype == "colon_suffix":
         if target.xpath("following-sibling::src:operator[1][text()=':']", namespaces=NS):
@@ -321,7 +380,8 @@ def _sink_subscript_usage(uso, spec: dict, fstring_nodes: list) -> bool:
     return False
 
 
-def _sink_matches_xpath(uso, spec: dict, fstring_nodes: list) -> bool:
+# def _sink_matches_xpath(uso, spec: dict, fstring_nodes: list) -> bool:
+def _sink_matches_xpath(uso, spec: dict, fstring_nodes: list, adapter=None, imports=None) -> bool:
     """{"type": "matches_xpath", "xpath": "./src:index and (ancestor::src:argument or ancestor::src:index)"}"""
     xpath_query = spec.get("xpath")
     if not xpath_query:
@@ -348,45 +408,47 @@ SINK_MATCHERS = {
 }
 
 
-def match_sink(uso, sink_spec, fstring_nodes: list) -> bool:
+def match_sink(uso, sink_spec, fstring_nodes: list, adapter=None, imports=None) -> bool:
     """
     Dispatcher potenziato: 
     Supporta pattern semplici (str), tipizzati (dict) e aggiunge un
     filtro globale 'requires_text_any' per validazioni ibride AST+Testo (es. SQLi).
     """
     is_match = False
-    
+
     if isinstance(sink_spec, str):
-        is_match = _sink_string_pattern(uso, sink_spec, fstring_nodes)
-        
+        is_match = _sink_string_pattern(uso, sink_spec, fstring_nodes, adapter, imports)
+
     elif isinstance(sink_spec, dict):
         sink_type = sink_spec.get("type")
-        
+
         simple_patterns = ["concat", "fstring", "call_arg", "method_chain", "colon_suffix", "reassign", "return", "any_use", "assign_rhs"]
         if sink_type in simple_patterns:
-            is_match = _sink_string_pattern(uso, sink_type, fstring_nodes)
+            is_match = _sink_string_pattern(uso, sink_type, fstring_nodes, adapter, imports)
         else:
             matcher = SINK_MATCHERS.get(sink_type)
-            is_match = matcher(uso, sink_spec, fstring_nodes) if matcher else False
+            is_match = matcher(uso, sink_spec, fstring_nodes, adapter, imports) if matcher else False
 
     if not is_match:
         return False
-        
+
     if isinstance(sink_spec, dict) and "requires_text_any" in sink_spec:
         required_keywords = sink_spec["requires_text_any"]
         if required_keywords:
             stmt = uso.xpath("ancestor::src:expr_stmt[1] | ancestor::src:return[1] | ancestor::src:if_stmt[1]", namespaces=NS)
             target_node = stmt[0] if stmt else uso
-            
+
             node_text = "".join(target_node.itertext()).upper()
-            
+
             if not any(kw.upper() in node_text for kw in required_keywords):
                 return False
-                
+
     return True
 
 
-def matches_any_sink(uso, sinks: list, fstring_nodes: list) -> bool:
+# def matches_any_sink(uso, sinks: list, fstring_nodes: list) -> bool:
+def matches_any_sink(uso, sinks, fstring_nodes, adapter=None, imports=None):
     if not sinks:
         return True
-    return any(match_sink(uso, s, fstring_nodes) for s in sinks)
+    # return any(match_sink(uso, s, fstring_nodes) for s in sinks)
+    return any(match_sink(uso, s, fstring_nodes, adapter, imports) for s in sinks)
