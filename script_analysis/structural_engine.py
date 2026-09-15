@@ -12,22 +12,33 @@ from safe_context_matchers import is_in_safe_context
 
 from language_adapter import PythonAdapter
 
-def _forbidden_message_template_render(call, spec: dict) -> bool:
-    """{"type": "message_template_render"}"""
-    call_text = "".join(call.itertext()).replace(" ", "").replace("\n", "")
-    if "MessageTemplate(" not in call_text or ".render(" not in call_text:
+#USATA SOLO DA MESSAGE-TEMPLATE-001 IN RULESET_BUILTIN
+def _forbidden_message_template_render(call, spec: dict, adapter=None, imports=None) -> bool:
+    """{"type": "message_template_render"}
+    Rileva strutturalmente la catena MessageTemplate(...).render(key=value).
+    Le due call sono FRATELLI separati da <operator>.</operator> (non
+    annidate in <name>), perché il receiver è a sua volta una call.
+    """
+    call_name = get_call_name(call, adapter, imports)
+    if not call_name or not (call_name == "render" or call_name.endswith(".render")):
         return False
-        
+
+    receiver_calls = call.xpath("preceding-sibling::src:call[1]", namespaces=NS)
+    if not receiver_calls:
+        return False
+
+    receiver_name = get_call_name(receiver_calls[0], adapter, imports)
+    if not receiver_name or not receiver_name.endswith("MessageTemplate"):
+        return False
+
     arg_list_nodes = call.xpath("./src:argument_list", namespaces=NS)
-    if not arg_list_nodes:
+    if not arg_list_nodes or adapter is None:
         return False
-        
-    args_text = "".join(arg_list_nodes[0].itertext()).replace(" ", "")
-    
-    if re.search(r"[a-zA-Z0-9_]+=[a-zA-Z0-9_]+", args_text):
-        return True
-        
-    return False
+
+    return any(
+        adapter.is_kwarg(arg, NS)
+        for arg in arg_list_nodes[0].xpath("./src:argument", namespaces=NS)
+    )
 
 
 def _run_forbidden_names(tree, rule, findings, adapter, imports):
@@ -127,72 +138,6 @@ def _run_source_operator_usage(tree, rule, findings, adapter, imports):
             break
 
 
-# def _run_weak_key_sizes(tree, rule, findings, adapter, imports):
-#     specs = rule.get("weak_key_sizes", [])
-#     if not specs:
-#         return
-
-#     safe_contexts = rule.get("safe_contexts", [])
-
-#     for name_node in tree.xpath(".//src:name[text()='key_size']", namespaces=NS):
-        
-#         if name_node.xpath("ancestor::src:parameters", namespaces=NS):
-#             continue 
-
-#         nodo_valore = None
-        
-#         op = name_node.xpath("following-sibling::src:operator[1][text()='=']", namespaces=NS)
-#         if op:
-#             nodi_dopo = op[0].xpath("following-sibling::*", namespaces=NS)
-#             if nodi_dopo:
-#                 nodo_valore = nodi_dopo[0]
-#         else:
-#             expr_sibling = name_node.xpath("following-sibling::src:expr[1]", namespaces=NS)
-#             if expr_sibling:
-#                 nodo_valore = expr_sibling[0]
-#             else:
-#                 sibling = name_node.xpath("following-sibling::*[1]", namespaces=NS)
-#                 if sibling and sibling[0].tag.endswith('literal'):
-#                     nodo_valore = sibling[0]
-
-#         if nodo_valore is None:
-#             continue
-
-#         parent_stmt = name_node.xpath("ancestor::*[self::src:expr_stmt or self::src:argument or self::src:keyword][1]", namespaces=NS)
-#         stmt_node = parent_stmt[0] if parent_stmt else name_node
-        
-#         valore_numerico = None
-
-#         lit = nodo_valore.xpath("descendant-or-self::src:literal[@type='number']", namespaces=NS)
-#         if lit:
-#             valore_numerico = adapter.parse_numeric_literal("".join(lit[0].itertext()).strip())
-#         else:
-#             var_nodes = nodo_valore.xpath("descendant-or-self::src:name", namespaces=NS)
-#             if var_nodes:
-#                 var_name = "".join(var_nodes[0].itertext()).strip()
-                
-#                 query_ass = f".//src:name[text()='{var_name}'][following-sibling::src:operator[1][text()='=']]"
-#                 var_assegnazioni = tree.xpath(query_ass, namespaces=NS)
-                
-#                 if var_assegnazioni:
-#                     ultima_ass = var_assegnazioni[-1]
-#                     op_ass = ultima_ass.xpath("following-sibling::src:operator[1]", namespaces=NS)[0]
-#                     fratelli_ass = op_ass.xpath("following-sibling::*", namespaces=NS)
-                    
-#                     if fratelli_ass:
-#                         nodo_valore_ass = fratelli_ass[0]
-#                         lit_ass = nodo_valore_ass.xpath("descendant-or-self::src:literal[@type='number']", namespaces=NS)
-#                         if lit_ass:
-#                             valore_numerico = adapter.parse_numeric_literal("".join(lit_ass[0].itertext()).strip())
-
-#         if valore_numerico is not None:
-#             for spec in specs:
-#                 max_val = spec.get("max_value", 2048)
-#                 if valore_numerico < max_val:
-#                     if is_in_safe_context(stmt_node, safe_contexts,None, adapter, imports):
-#                         continue
-#                     findings.append(build_finding(rule, stmt_node))
-#                     break
 def _run_weak_key_sizes(tree, rule, findings, adapter, imports):
     specs = rule.get("weak_key_sizes", [])
     if not specs:
@@ -408,90 +353,6 @@ def _run_unsafe_file_reads(tree, rule, findings, adapter, imports):
         findings.append(build_finding(rule, w_node))
 
 
-# def _run_local_var_forbidden_calls(tree, rule, findings):
-# def _run_local_var_forbidden_calls(tree, rule, findings, adapter, imports):
-#     """
-#     Rileva chiamate a funzioni pericolose (es. os.chmod) in cui l'argomento
-#     è una variabile locale il cui valore, assegnato in precedenza nello
-#     stesso scope, è un letterale numerico che corrisponde ESATTAMENTE a uno
-#     dei valori vietati.
-#     """
-#     specs = rule.get("local_var_forbidden_calls", [])
-#     if not specs:
-#         return
- 
-#     safe_contexts = rule.get("safe_contexts", [])
- 
-#     for spec in specs:
-#         target_calls = spec.get("call", [])
-#         if isinstance(target_calls, str):
-#             target_calls = [target_calls]
-#         forbidden_nums = set(spec.get("forbidden_numbers", []))
-#         if not target_calls or not forbidden_nums:
-#             continue
- 
-#         for c_node in tree.xpath(".//src:call", namespaces=NS):
-#             # call_name = get_call_name(c_node)
-#             call_name= get_call_name(c_node, adapter, imports)
-#             if not call_name:
-#                 continue
-#             if not any(call_name == tc or call_name.endswith(f".{tc}") for tc in target_calls):
-#                 continue
- 
-#             call_key = _pos_key(c_node)
-#             args = c_node.xpath("./src:argument_list/src:argument", namespaces=NS)
- 
-#             for arg in args:
-#                 names = arg.xpath("./src:expr/src:name | ./src:name", namespaces=NS)
-#                 if len(names) != 1:
-#                     continue
-#                 name_node = names[0]
-#                 if name_node.xpath("./src:index | ./src:name", namespaces=NS):
-#                     continue 
- 
-#                 var_name = "".join(name_node.itertext()).strip()
-#                 if not var_name.isidentifier():
-#                     continue
- 
-#                 scope_candidates = c_node.xpath(
-#                     "ancestor::src:function[1] | ancestor::src:block[1]",
-#                     namespaces=NS,
-#                 )
-#                 scope_node = scope_candidates[0] if scope_candidates else tree
- 
-#                 assigns = scope_node.xpath(
-#                     f".//src:expr_stmt[src:expr/src:name[1][text()='{var_name}']"
-#                     f" and src:expr/src:operator[1][text()='=']]",
-#                     namespaces=NS,
-#                 )
-#                 prior = [a for a in assigns if _pos_key(a) < call_key]
-#                 if not prior:
-#                     continue
-#                 last_assign = max(prior, key=_pos_key)
- 
-#                 op = last_assign.xpath(".//src:operator[text()='='][1]", namespaces=NS)
-#                 if not op:
-#                     continue
-#                 rhs_nodes = op[0].xpath("./following-sibling::*", namespaces=NS)
-#                 if not rhs_nodes:
-#                     continue
- 
-#                 lit = rhs_nodes[0].xpath(
-#                     "descendant-or-self::src:literal[@type='number']", namespaces=NS
-#                 )
-#                 if not lit:
-#                     continue 
- 
-#                 num_text = "".join(lit[0].itertext()).strip()
-#                 if num_text not in forbidden_nums:
-#                     continue
- 
-#                 if is_in_safe_context(c_node, safe_contexts, var_name=var_name, adapter=adapter, imports=imports):
-#                     continue
- 
-#                 finding = build_finding(rule, c_node, extra={"tainted_variable": var_name})
-#                 if finding not in findings:
-#                     findings.append(finding)
 def _run_local_var_forbidden_calls(tree, rule, findings, adapter, imports):
     """
     Rileva chiamate a funzioni pericolose (es. os.chmod) in cui l'argomento
@@ -635,56 +496,36 @@ def run_structural_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) 
                         continue
                     findings.append(build_finding(rule, assign))
 
+
     bad_calls = rule.get("bad_calls", {})
     if bad_calls:
         calls = tree.xpath(".//src:call", namespaces=NS)
         for call in calls:
-            arg_list_nodes = call.xpath("./src:argument_list", namespaces=NS)
-            # call_name = get_call_name(call)
-            call_name= get_call_name(call, adapter, imports)
-            if not call_name or not arg_list_nodes:
+            call_name = get_call_name(call, adapter, imports)
+            if not call_name:
                 continue
-
-            args_text = "".join(arg_list_nodes[0].itertext()).replace(" ", "").replace("\n", "")
 
             for func, kwargs in bad_calls.items():
                 if call_name == func or call_name.endswith(f".{func}"):
-                    is_vulnerable = any(f"{kwarg}={val}" in args_text for kwarg, val in kwargs.items())
+                    is_vulnerable = False
+
+                    for arg in call.xpath("./src:argument_list/src:argument", namespaces=NS):
+                        if adapter.is_kwarg(arg, NS):
+                            name_node = arg.xpath("./src:name[1]", namespaces=NS)
+                            kw_name = "".join(name_node[0].itertext()).strip() if name_node else ""
+
+                            if kw_name in kwargs:
+                                expr_node = arg.xpath("./src:expr[1] | ./src:literal[1]", namespaces=NS)
+                                val_text = adapter.normalize_string_literal(
+                                    "".join(expr_node[0].itertext()).strip()
+                                ) if expr_node else ""
+
+                                if val_text == adapter.normalize_string_literal(kwargs[kw_name]):
+                                    is_vulnerable = True
+                                    break
+
                     if is_vulnerable:
                         findings.append(build_finding(rule, call))
-
-    # forbidden_functions = rule.get("forbidden_functions", [])
-    # if forbidden_functions:
-    #     excluded_functions = rule.get("excluded_functions", [])
-    #     safe_contexts = rule.get("safe_contexts", [])
-
-    #     calls = tree.xpath(".//src:call", namespaces=NS)
-    #     for call in calls:
-    #         if is_in_safe_context(call, safe_contexts, None,adapter, imports):
-    #             continue
-
-    #         # call_name = get_call_name(call)
-    #         call_name= get_call_name(call, adapter, imports)
-    #         if not call_name or call_name in excluded_functions:
-    #             continue
-
-    #         for spec in forbidden_functions:
-    #             if isinstance(spec, str):
-    #                 if call_name == spec or call_name.endswith(f".{spec}"):
-    #                     findings.append(build_finding(rule, call))
-                        
-    #             elif isinstance(spec, dict) and spec.get("type") == "exact_name":
-    #                 if call_name == spec.get("name"):
-    #                     findings.append(build_finding(rule, call))
-
-    #             elif isinstance(spec, dict) and spec.get("type") == "message_template_render":
-    #                 if _forbidden_message_template_render(call, spec):
-    #                     findings.append(build_finding(rule, call))
-                        
-    #             elif isinstance(spec, dict) and spec.get("type") == "call_matches_ast":
-    #                 # if call_arguments_match_ast(call, spec):
-    #                 if call_arguments_match_ast(call, spec, adapter, imports):
-    #                     findings.append(build_finding(rule, call))
 
 
     sensitive_patterns = rule.get("sensitive_var_patterns", [])
@@ -902,7 +743,11 @@ def run_structural_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) 
             func_name = "".join(name_nodes[0].itertext()).strip()
             
             params_nodes = func.xpath(".//src:parameter_list", namespaces=NS)
-            params_text = "".join(params_nodes[0].itertext()).replace(" ", "") if params_nodes else ""
+            # params_text = "".join(params_nodes[0].itertext()).replace(" ", "") if params_nodes else ""
+            param_names = {
+            "".join(n.itertext()).strip()
+            for n in func.xpath(".//src:parameter_list//src:name", namespaces=NS)
+        }
             
             return_nodes = func.xpath(".//src:return", namespaces=NS)
             return_text = "".join(return_nodes[0].itertext()).replace(" ", "").replace("\n", "") if return_nodes else ""
@@ -913,11 +758,13 @@ def run_structural_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) 
                 raw_return_expr = bfd.get("return_expr")
                 target_return = raw_return_expr.replace(" ", "") if raw_return_expr else ""
                 
-                if func_name == target_name and target_param in params_text and target_return in return_text:
+                if func_name == target_name and target_param in param_names and target_return in return_text:
                     if is_in_safe_context(func, safe_contexts, None, adapter, imports):
                         continue
                         
                     findings.append(build_finding(rule, func))
+
+    
 
     bad_param_types = rule.get("bad_param_types", [])
     if bad_param_types:
@@ -925,20 +772,55 @@ def run_structural_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) 
         
         functions = tree.xpath(".//src:function", namespaces=NS)
         for func in functions:
-            params_nodes = func.xpath(".//src:parameter", namespaces=NS)
+            params_nodes = func.xpath("./src:parameter_list/src:parameter", namespaces=NS)
             
             for param in params_nodes:
-                param_text = "".join(param.itertext()).replace(" ", "").replace("\n", "")
+                # Deleghiamo all'adapter l'estrazione strutturale!
+                param_name, type_text = adapter.get_parameter_name_and_type(param, NS)
+                
+                if not type_text:
+                    continue
                 
                 for bad_type in bad_param_types:
-                    target = f":{bad_type}"
-                    if target in param_text:
-                        param_name = param_text.split(":")[0]
-                        
+                    if bad_type in type_text:
                         if is_in_safe_context(func, safe_contexts, var_name=param_name, adapter=adapter, imports=imports):
                             continue
                             
                         findings.append(build_finding(rule, param))
+                        break
+
+    # forbidden_calls_with_kwargs = rule.get("forbidden_calls_with_kwargs", [])
+    # if forbidden_calls_with_kwargs:
+    #     safe_contexts = rule.get("safe_contexts", [])
+        
+    #     calls = tree.xpath(".//src:call", namespaces=NS)
+    #     for call in calls:
+    #         name_nodes = call.xpath("./src:name", namespaces=NS)
+    #         if not name_nodes:
+    #             continue
+            
+    #         call_name = "".join(name_nodes[0].itertext()).replace(" ", "").replace("\n", "")
+            
+    #         arg_nodes = call.xpath("./src:argument_list", namespaces=NS)
+    #         arg_text = "".join(arg_nodes[0].itertext()).replace(" ", "").replace("\n", "") if arg_nodes else ""
+            
+    #         for fcwk in forbidden_calls_with_kwargs:
+    #             target_prefix = fcwk.get("call_prefix")  
+    #             kwargs = fcwk.get("kwargs", {})
+                
+    #             if call_name.startswith(target_prefix):
+                    
+    #                 all_kwargs_match = True
+    #                 for k, v in kwargs.items():
+    #                     if f"{k}={v}" not in arg_text:
+    #                         all_kwargs_match = False
+    #                         break
+                    
+    #                 if all_kwargs_match:
+    #                     if is_in_safe_context(call, safe_contexts, None, adapter, imports):
+    #                         continue
+                            
+    #                     findings.append(build_finding(rule, call))
 
     forbidden_calls_with_kwargs = rule.get("forbidden_calls_with_kwargs", [])
     if forbidden_calls_with_kwargs:
@@ -946,56 +828,65 @@ def run_structural_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) 
         
         calls = tree.xpath(".//src:call", namespaces=NS)
         for call in calls:
-            name_nodes = call.xpath("./src:name", namespaces=NS)
-            if not name_nodes:
+            call_name = get_call_name(call, adapter, imports)
+            if not call_name:
                 continue
-            
-            call_name = "".join(name_nodes[0].itertext()).replace(" ", "").replace("\n", "")
-            
-            arg_nodes = call.xpath("./src:argument_list", namespaces=NS)
-            arg_text = "".join(arg_nodes[0].itertext()).replace(" ", "").replace("\n", "") if arg_nodes else ""
             
             for fcwk in forbidden_calls_with_kwargs:
                 target_prefix = fcwk.get("call_prefix")  
                 kwargs = fcwk.get("kwargs", {})
                 
-                if call_name.startswith(target_prefix):
-                    
+                if call_name == target_prefix or call_name.endswith(f".{target_prefix}"):
                     all_kwargs_match = True
+                    
+                    found_kwargs = {}
+                    for arg in call.xpath("./src:argument_list/src:argument", namespaces=NS):
+                        if adapter.is_kwarg(arg, NS):
+                            name_node = arg.xpath("./src:name[1]", namespaces=NS)
+                            kw_name = "".join(name_node[0].itertext()).strip() if name_node else ""
+                            expr_node = arg.xpath("./src:expr[1] | ./src:literal[1]", namespaces=NS)
+                            val_text = adapter.normalize_string_literal(
+                                "".join(expr_node[0].itertext()).strip()
+                            ) if expr_node else ""
+                            found_kwargs[kw_name] = val_text
+                            
                     for k, v in kwargs.items():
-                        if f"{k}={v}" not in arg_text:
+                        if k not in found_kwargs or found_kwargs[k] != adapter.normalize_string_literal(v):
                             all_kwargs_match = False
                             break
                     
                     if all_kwargs_match:
                         if is_in_safe_context(call, safe_contexts, None, adapter, imports):
                             continue
-                            
                         findings.append(build_finding(rule, call))
-
+    #CONSIDERARE QUESTO è USATO SOLO DA DUE REGOLE ALL'INTERNO DI RULESET_OS-->IN FUTURO POTREBBE ESSERE ABOLITO
     forbidden_calls_with_arg = rule.get("forbidden_calls_with_arg_pattern", [])
     if forbidden_calls_with_arg:
         safe_contexts = rule.get("safe_contexts", [])
-        
+
         calls = tree.xpath(".//src:call", namespaces=NS)
         for call in calls:
-            name_nodes = call.xpath("./src:name", namespaces=NS)
-            if not name_nodes:
+            call_name = get_call_name(call, adapter, imports)
+            if not call_name:
                 continue
-            
-            call_name = "".join(name_nodes[0].itertext()).replace(" ", "").replace("\n", "")
-            
+
             arg_nodes = call.xpath("./src:argument_list", namespaces=NS)
-            arg_text = "".join(arg_nodes[0].itertext()).replace(" ", "").replace("\n", "") if arg_nodes else ""
-            
+            arguments = arg_nodes[0].xpath("./src:argument", namespaces=NS) if arg_nodes else []
+
             for fca in forbidden_calls_with_arg:
-                target_call = fca.get("call")         
+                target_call = fca.get("call")
                 required_substr = fca.get("arg_contains")
-                
-                if call_name == target_call and required_substr in arg_text:
+
+                if call_name != target_call:
+                    continue
+
+                match_found = any(
+                    required_substr in "".join(arg.itertext()).replace(" ", "").replace("\n", "")
+                    for arg in arguments
+                )
+                if match_found:
                     if is_in_safe_context(call, safe_contexts, None, adapter, imports):
                         continue
-                        
                     findings.append(build_finding(rule, call))
 
     forbidden_subscripts = rule.get("forbidden_subscripts", [])
@@ -1095,7 +986,7 @@ def run_forbidden_functions_indexed(ctx, compiled, findings, adapter, imports):
                 if call_name == spec.get("name"):
                     findings.append(build_finding(rule, call))
             elif spec.get("type") == "message_template_render":
-                if _forbidden_message_template_render(call, spec):
+                if _forbidden_message_template_render(call, spec, adapter, imports):
                     findings.append(build_finding(rule, call))
             elif spec.get("type") == "call_matches_ast":
                 if call_arguments_match_ast(call, spec, adapter, imports):
