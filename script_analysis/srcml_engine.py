@@ -23,8 +23,10 @@ from unit_context import UnitContext
 
 from language_adapter import get_adapter
 
+from RuleCompiler import RuleCompiler
 
 
+_COMPILED_RULESETS_CACHE = {}
 
 def collect_xml_files(xml_args: list[str] | None, xml_dir: str | None) -> list[Path]:
     """
@@ -63,31 +65,27 @@ def get_units(tree) -> list:
     return root.xpath(".//src:unit[@filename]", namespaces=NS)
 
 
-# def analyze_unit(unit_node, rules: list, xml_source: str) -> dict:
+# def analyze_unit(unit_node, compiled, xml_source: str) -> dict:
+#     adapter = get_adapter(unit_node)          
+#     imports = adapter.resolve_imports(unit_node, NS)
+    
+#     ctx = UnitContext(unit_node, adapter)
 #     findings = []
-#     for rule in rules:
-#         if not check_required_imports(unit_node, rule, NS):
-#             continue  
 
-#         rule_type = rule.get("type")
-#         if rule_type == "taint":
-#             findings.extend(run_taint_rule(unit_node, rule))
-#         elif rule_type == "structural":
-#             findings.extend(run_structural_rule(unit_node, rule))
+#     # Esecuzioni ottimizzate
+#     run_forbidden_functions_indexed(ctx, compiled, findings, adapter, imports)
+#     run_forbidden_names_indexed(ctx, compiled, findings, adapter, imports)
 
-# def analyze_unit(unit_node, rules: list, xml_source: str) -> dict:
-#     adapter = get_adapter(unit_node)          # <-- nuovo
-#     imports = adapter.resolve_imports(unit_node, NS)   # risolto una sola volta per file
-
-#     findings = []
-#     for rule in rules:
-#         if not check_required_imports(unit_node, rule, NS, imports):
+#     for rule in compiled.rules:
+#         # USA LA TUA FUNZIONE: passa imports=imports
+#         if not check_required_imports(unit_node, rule, NS, imports=imports):
 #             continue
+            
 #         rule_type = rule.get("type")
 #         if rule_type == "taint":
-#             findings.extend(run_taint_rule(unit_node, rule, adapter, imports))   # <-- firma estesa
+#             findings.extend(run_taint_rule(unit_node, rule, adapter, imports, ctx=ctx))
 #         elif rule_type == "structural":
-#             findings.extend(run_structural_rule(unit_node, rule, adapter, imports))
+#             findings.extend(run_structural_rule(unit_node, rule, adapter, imports, ctx=ctx))
 
 #     return {
 #         "source_file": unit_node.get("filename", "Sconosciuto"),
@@ -99,22 +97,35 @@ def get_units(tree) -> list:
 #         "findings": findings,
 #     }
 
-def analyze_unit(unit_node, compiled, xml_source: str) -> dict:
-    adapter = get_adapter(unit_node)          
+def _get_compiled_ruleset(language_name: str, raw_rules: list) -> "CompiledRuleset":
+    """Compila (traduce i tag del catalogo) le regole per un linguaggio, una sola volta, con cache."""
+    if language_name not in _COMPILED_RULESETS_CACHE:
+        catalog_path = Path(f"{language_name}_catalog.json")
+        if catalog_path.exists():
+            compiler = RuleCompiler(str(catalog_path))
+            translated_rules = [compiler.compile(r) for r in raw_rules]
+        else:
+            translated_rules = raw_rules
+        _COMPILED_RULESETS_CACHE[language_name] = compile_rules(translated_rules)
+    return _COMPILED_RULESETS_CACHE[language_name]
+
+
+def analyze_unit(unit_node, raw_rules: list, xml_source: str) -> dict:
+    adapter = get_adapter(unit_node)
     imports = adapter.resolve_imports(unit_node, NS)
-    
+    language_name = getattr(adapter, 'name', 'python').lower()
+
+    compiled = _get_compiled_ruleset(language_name, raw_rules)
+
     ctx = UnitContext(unit_node, adapter)
     findings = []
 
-    # Esecuzioni ottimizzate
     run_forbidden_functions_indexed(ctx, compiled, findings, adapter, imports)
     run_forbidden_names_indexed(ctx, compiled, findings, adapter, imports)
 
     for rule in compiled.rules:
-        # USA LA TUA FUNZIONE: passa imports=imports
         if not check_required_imports(unit_node, rule, NS, imports=imports):
             continue
-            
         rule_type = rule.get("type")
         if rule_type == "taint":
             findings.extend(run_taint_rule(unit_node, rule, adapter, imports, ctx=ctx))
@@ -132,21 +143,20 @@ def analyze_unit(unit_node, compiled, xml_source: str) -> dict:
     }
 
 
-def analyze_file(xml_file: Path, compiled: CompiledRuleset) -> list:
+def analyze_file(xml_file: Path, raw_rules: list) -> list:
     tree = etree.parse(str(xml_file))
     units = get_units(tree)
 
     if not units:
-        # Fallback: nessun <unit filename=...> individuato. Costruiamo comunque
-        # l'adapter corretto leggendo language="..." dalla radice, invece di
-        # lasciare che taint/structural_engine usino il default PythonAdapter
-        # anche su un file Java/C.
         root = tree.getroot() if hasattr(tree, "getroot") else tree
         adapter = get_adapter(root)
         imports = adapter.resolve_imports(root, NS)
+        language_name = getattr(adapter, 'name', 'python').lower()
+
+        compiled = _get_compiled_ruleset(language_name, raw_rules)   # <-- ora compila anche qui
 
         findings = []
-        for rule in compiled:
+        for rule in compiled.rules:
             if not check_required_imports(tree, rule, NS, imports):
                 continue
             rule_type = rule.get("type")
@@ -164,7 +174,7 @@ def analyze_file(xml_file: Path, compiled: CompiledRuleset) -> list:
             "findings": findings,
         }]
 
-    return [analyze_unit(u, compiled, xml_source=xml_file.name) for u in units]
+    return [analyze_unit(u, raw_rules, xml_source=xml_file.name) for u in units]
 
 
 def main():
@@ -178,8 +188,9 @@ def main():
     if not args.xml and not args.xml_dir:
         ap.error("Specificare almeno uno tra --xml e --xml-dir")
 
-    rules = load_rules(Path(args.rules))
-    compiled = compile_rules(rules)
+    # rules = load_rules(Path(args.rules))
+    raw_rules = load_rules(Path(args.rules))
+    # compiled = compile_rules(rules)
     xml_files = collect_xml_files(args.xml, args.xml_dir)
 
     if not xml_files:
@@ -187,7 +198,8 @@ def main():
 
     report = []
     for xml in xml_files:
-        report.extend(analyze_file(xml, compiled))
+        # report.extend(analyze_file(xml, compiled))
+        report.extend(analyze_file(xml, raw_rules))
 
     category_counter = Counter()
     total_findings = 0
@@ -221,8 +233,6 @@ def main():
     else:
         print(output_text)
 
-
-    
 
 
 if __name__ == "__main__":

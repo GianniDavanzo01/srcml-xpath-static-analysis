@@ -473,26 +473,57 @@ def run_structural_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) 
         if not all(req in all_calls for req in rule["required_calls"]):
             return findings
 
+    # bad_assignments = rule.get("bad_assignments", {})
+    # if bad_assignments:
+    #     safe_contexts = rule.get("safe_contexts", []) 
+    #     assign_op = adapter.assignment_operator_token()
+    #     assignments = tree.xpath(f".//src:expr_stmt[.//src:operator[text()='{assign_op}']]", namespaces=NS)
+ 
+    #     for assign in assignments:
+    #         op = assign.xpath(f".//src:operator[text()='{assign_op}'][1]", namespaces=NS)
+    #         if not op:
+    #             continue
+                
+    #         lhs_nodes = op[0].xpath("./preceding-sibling::*", namespaces=NS)
+    #         rhs_nodes = op[0].xpath("./following-sibling::*", namespaces=NS)
+            
+    #         lhs_text = "".join(n.text or "".join(n.itertext()) for n in lhs_nodes).strip()
+    #         rhs_text = "".join(n.text or "".join(n.itertext()) for n in rhs_nodes).strip()
+            
+    #         for attr, val in bad_assignments.items():
+    #             if (lhs_text == attr or lhs_text.endswith(f".{attr}")) and rhs_text == val:
+    #                 if is_in_safe_context(assign, safe_contexts,None, adapter, imports): 
+    #                     continue
+    #                 findings.append(build_finding(rule, assign))
+
     bad_assignments = rule.get("bad_assignments", {})
     if bad_assignments:
         safe_contexts = rule.get("safe_contexts", []) 
-        assign_op = adapter.assignment_operator_token()
-        assignments = tree.xpath(f".//src:expr_stmt[.//src:operator[text()='{assign_op}']]", namespaces=NS)
- 
-        for assign in assignments:
-            op = assign.xpath(f".//src:operator[text()='{assign_op}'][1]", namespaces=NS)
-            if not op:
+        
+        # Troviamo tutti gli statement di assegnazione usando l'adapter
+        expr_stmts = tree.xpath(".//src:expr_stmt", namespaces=NS)
+        
+        for assign in expr_stmts:
+            if not adapter.is_assignment(assign, NS):
                 continue
-                
-            lhs_nodes = op[0].xpath("./preceding-sibling::*", namespaces=NS)
-            rhs_nodes = op[0].xpath("./following-sibling::*", namespaces=NS)
             
-            lhs_text = "".join(n.text or "".join(n.itertext()) for n in lhs_nodes).strip()
-            rhs_text = "".join(n.text or "".join(n.itertext()) for n in rhs_nodes).strip()
+            # Sfruttiamo il metodo nativo del LanguageAdapter!
+            lhs_node, rhs_node = adapter.get_assignment_lhs_rhs(assign, NS)
+            if lhs_node is None or rhs_node is None:
+                continue
+            
+            # Estraiamo il testo della parte sinistra preservando la struttura dei nomi (es. app.debug)
+            lhs_text = "".join(lhs_node.itertext()).strip().replace(" ", "")
+            
+            # Normalizziamo la parte destra usando l'adapter (gestisce apici, booleani, ecc.)
+            rhs_text = "".join(rhs_node.itertext()).strip()
+            
+            rhs_text = adapter.normalize_string_literal(rhs_text)
             
             for attr, val in bad_assignments.items():
+                # Confronto strutturale sicuro
                 if (lhs_text == attr or lhs_text.endswith(f".{attr}")) and rhs_text == val:
-                    if is_in_safe_context(assign, safe_contexts,None, adapter, imports): 
+                    if is_in_safe_context(assign, safe_contexts, None, adapter, imports): 
                         continue
                     findings.append(build_finding(rule, assign))
 

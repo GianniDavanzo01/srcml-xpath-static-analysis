@@ -114,32 +114,82 @@ def _sink_method_call(uso, spec: dict, fstring_nodes: list, adapter=None, import
 
 
 # def _sink_call_with_var_arg(uso, spec: dict, fstring_nodes: list) -> bool:
+# def _sink_call_with_var_arg(uso, spec, fstring_nodes, adapter=None, imports=None):
+#     """{"type": "call_with_var_arg", "call": ["re.sub", "sub"], "literal_contains": ["<script", "javascript:"]}"""
+#     target_calls = spec.get("call", [])
+#     if not target_calls:
+#         return False
+
+#     call_node = uso.xpath("ancestor::src:call[1]", namespaces=NS)
+#     if not call_node:
+#         return False
+
+#     # call_name = get_call_name(call_node[0])
+#     call_name = get_call_name(call_node[0], adapter, imports)
+#     if call_name is None:
+#         return False
+#     if not any(call_name == c or call_name.endswith(f".{c}") for c in target_calls):
+#         return False
+
+#     literal_contains = spec.get("literal_contains", [])
+#     if not literal_contains:
+#         return True
+
+#     arg_list = call_node[0].xpath("./src:argument_list", namespaces=NS)
+#     if not arg_list:
+#         return False
+#     args_text = "".join(arg_list[0].itertext())
+#     return any(val in args_text for val in literal_contains)
+
 def _sink_call_with_var_arg(uso, spec, fstring_nodes, adapter=None, imports=None):
-    """{"type": "call_with_var_arg", "call": ["re.sub", "sub"], "literal_contains": ["<script", "javascript:"]}"""
+    """
+    {"type": "call_with_var_arg", "call": ["re.sub", "sub", "executeQuery"], "literal_contains": ["SELECT"]}
+    """
     target_calls = spec.get("call", [])
     if not target_calls:
         return False
 
-    call_node = uso.xpath("ancestor::src:call[1]", namespaces=NS)
-    if not call_node:
+    # 1. Prendiamo TUTTE le chiamate "padre", "nonno", ecc. per gestire i casi annidati
+    call_nodes = uso.xpath("ancestor::src:call", namespaces=NS)
+    if not call_nodes:
         return False
 
-    # call_name = get_call_name(call_node[0])
-    call_name = get_call_name(call_node[0], adapter, imports)
-    if call_name is None:
-        return False
-    if not any(call_name == c or call_name.endswith(f".{c}") for c in target_calls):
-        return False
+    # 2. Iteriamo dalla chiamata più profonda a quella più esterna
+    for call_node in call_nodes:
+        call_name = get_call_name(call_node, adapter, imports)
+        if call_name is None:
+            continue
+            
+        # È una delle chiamate che stiamo cercando?
+        if not any(call_name == c or call_name.endswith(f".{c}") for c in target_calls):
+            continue
 
-    literal_contains = spec.get("literal_contains", [])
-    if not literal_contains:
-        return True
+        # 3. Definiamo arg_list all'interno del ciclo per questa specifica chiamata
+        arg_list = call_node.xpath("./src:argument_list", namespaces=NS)
+        if not arg_list:
+            continue
+            
+        # Assicuriamoci che 'uso' sia davvero un ARGOMENTO (e non il receiver)
+        if uso not in arg_list[0].iter():
+            continue
 
-    arg_list = call_node[0].xpath("./src:argument_list", namespaces=NS)
-    if not arg_list:
-        return False
-    args_text = "".join(arg_list[0].itertext())
-    return any(val in args_text for val in literal_contains)
+        # 4. Controllo strutturale (AST puro) sui letterali stringa
+        literal_contains = spec.get("literal_contains", [])
+        if not literal_contains:
+            return True 
+
+        # Peschiamo SOLO i letterali di tipo stringa appartenenti a QUESTA argument_list
+        string_literals = arg_list[0].xpath(".//src:literal[@type='string']", namespaces=NS)
+        
+        for literal_node in string_literals:
+            raw_text = "".join(literal_node.itertext())
+            clean_text = adapter.normalize_string_literal(raw_text) if adapter else raw_text
+            
+            # Cerchiamo la parola (es. "SELECT") solo dentro le vere stringhe
+            if any(val in clean_text for val in literal_contains):
+                return True
+
+    return False
 
 
 # def _sink_flat_call_arg(uso, spec: dict, fstring_nodes: list) -> bool:
@@ -221,28 +271,56 @@ def _sink_receiver_of_method_with_kwarg(uso, spec: dict, fstring_nodes: list, ad
     return True
 
 
-# def _sink_argument_to(uso, spec: dict, fstring_nodes: list) -> bool:
-def _sink_argument_to(uso, spec: dict, fstring_nodes: list, adapter=None, imports=None) -> bool:
+# def _sink_argument_to(uso, spec: dict, fstring_nodes: list, adapter=None, imports=None) -> bool:
 
-    """{"type": "argument_to", "functions": ["print"]}
+#     """{"type": "argument_to", "functions": ["print"]}
     
-        la funzione verifica che uso sia argomento di una call il cui nome è esattamente uno di functions
-    """
-    functions = spec.get("functions", [])
-    if not functions:
-        return False
+#         la funzione verifica che uso sia argomento di una call il cui nome è esattamente uno di functions
+#     """
+#     functions = spec.get("functions", [])
+#     if not functions:
+#         return False
 
-    call_node = uso.xpath("ancestor::src:call[1]", namespaces=NS)
-    if not call_node:
-        return False
+#     call_node = uso.xpath("ancestor::src:call[1]", namespaces=NS)
+#     if not call_node:
+#         return False
         
-    call_name_nodes = call_node[0].xpath("./src:name", namespaces=NS)
-    if not call_name_nodes:
-        return False
+#     call_name_nodes = call_node[0].xpath("./src:name", namespaces=NS)
+#     if not call_name_nodes:
+#         return False
         
-    call_name = "".join(call_name_nodes[0].itertext()).replace(" ", "").replace("\n", "")
+#     call_name = "".join(call_name_nodes[0].itertext()).replace(" ", "").replace("\n", "")
     
-    return call_name in functions
+#     return call_name in functions
+
+# def _sink_argument_to(uso, spec: dict, fstring_nodes: list = None, adapter=None, imports=None) -> bool:
+#     """{"type": "argument_to", "functions": ["print"]}
+#     Verifica che il nodo 'uso' sia effettivamente contenuto in un argomento 
+#     di una chiamata presente nella lista 'functions'.
+#     """
+#     functions = spec.get("functions", [])
+#     if not functions:
+#         return False
+
+#     # 1. Trova la call più vicina
+#     call_ancestors = uso.xpath("ancestor::src:call[1]", namespaces=NS)
+#     if not call_ancestors:
+#         return False
+#     call_node = call_ancestors[0]
+
+#     # 2. Verifica strutturale: 'uso' deve trovarsi dentro l'argument_list della call,
+#     #    non nel nodo del nome della call stessa (es. esclude foo(bar) dove uso è 'foo')
+#     arg_list = uso.xpath("ancestor::src:argument_list[1]", namespaces=NS)
+#     if not arg_list or arg_list[0].getparent() is not call_node:
+#         return False
+
+#     # 3. Risoluzione del nome via adapter/imports anziché tramite appiattimento di stringhe
+#     call_name = get_call_name(call_node, adapter, imports)
+#     if not call_name:
+#         return False
+
+#     # 4. Match sul nome completo o con prefisso di modulo/oggetto
+#     return any(call_name == fn or call_name.endswith(f".{fn}") for fn in functions)
     
 
 # def _sink_method_call_in_if(uso, spec: dict, fstring_nodes: list) -> bool:
@@ -395,7 +473,7 @@ SINK_MATCHERS = {
     "call_with_var_arg": _sink_call_with_var_arg,
     "flat_call_arg": _sink_flat_call_arg,
     "return_method_call": _sink_return_method_call,
-    "argument_to": _sink_argument_to,
+    # "argument_to": _sink_argument_to,
     "receiver_of_method_with_kwarg": _sink_receiver_of_method_with_kwarg,
     "method_call_in_if": _sink_method_call_in_if,
     "keyword_argument": _sink_keyword_argument,

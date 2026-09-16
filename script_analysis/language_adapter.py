@@ -143,6 +143,9 @@ class LanguageAdapter(ABC):
     def equality_operator(self) -> str:
         """Operatore testuale usato per il confronto di uguaglianza (es. '==')."""
 
+    @abstractmethod
+    def get_parameter_name_and_type(self, param_node, namespaces):
+            """Estrae nome e tipo da un parametro (<src:parameter>) in Python."""
 
 # ---------------------------------------------------------------------- #
 # Implementazione Python
@@ -308,6 +311,20 @@ class PythonAdapter(LanguageAdapter):
         return "=="
 
 
+
+    def get_parameter_name_and_type(self, param_node, namespaces):
+        """Estrae nome e tipo da un parametro (<src:parameter>) in Python."""
+        # In Python il tipo è dentro l'annotazione
+        type_nodes = param_node.xpath("./src:annotation/src:expr", namespaces=namespaces)
+        type_text = "".join(type_nodes[0].itertext()).strip() if type_nodes else ""
+        
+        
+        name_nodes = param_node.xpath("./src:name[1]", namespaces=namespaces)
+        name_text = "".join(name_nodes[0].itertext()).strip() if name_nodes else ""
+        
+        return name_text, type_text
+
+
 # ---------------------------------------------------------------------- #
 # Implementazione Java
 # ---------------------------------------------------------------------- #
@@ -458,6 +475,12 @@ class JavaAdapter(LanguageAdapter):
 
     def equality_operator(self) -> str:
         return "=="
+
+    def get_parameter_name_and_type(self, param_node, namespaces):
+        # DA COMPLETARE in futuro.
+        # Ritorna una tupla di None per non far crashare lo structural_engine 
+        # quando scompatta i valori (param_name, type_text = ...)
+        return None, None
 
 
 

@@ -155,15 +155,15 @@ def call_arguments_match_ast(call_node, spec: dict, adapter=None, imports=None) 
             if "," in args_text:
                 return False
 
-    if spec.get("require_bare_arg"):
-        if len(arguments) == 0:
-            pass  
-        elif len(arguments) == 1:
-            text = "".join(arguments[0].itertext()).strip()
-            if not re.fullmatch(r"[a-zA-Z0-9_]*", text):
-                return False
-        else:
-            return False
+    # if spec.get("require_bare_arg"):
+    #     if len(arguments) == 0:
+    #         pass  
+    #     elif len(arguments) == 1:
+    #         text = "".join(arguments[0].itertext()).strip()
+    #         if not re.fullmatch(r"[a-zA-Z0-9_]*", text):
+    #             return False
+    #     else:
+    #         return False
 
     required_names = spec.get("contains_names", [])
     if required_names:
@@ -185,21 +185,28 @@ def call_arguments_match_ast(call_node, spec: dict, adapter=None, imports=None) 
         if not any(_num_ok(req) for req in banned_numbers):
             return False
 
-    args_text_contains = spec.get("args_text_contains", [])
-    exact_list_element = spec.get("exact_list_element")
+    banned_booleans = spec.get("contains_booleans", [])
+    if banned_booleans:
+        bools = call_node.xpath(".//src:argument_list//src:literal[@type='boolean']", namespaces=NS)
+        found_bools = ["".join(b.itertext()).strip().lower() for b in bools]
+        if not any(str(req).lower() in found_bools for req in banned_booleans):
+            return False
+
+    # args_text_contains = spec.get("args_text_contains", [])
+    # exact_list_element = spec.get("exact_list_element")
     
-    if args_text_contains or exact_list_element:
-        if not arg_list_nodes:
-            return False
-        args_text = "".join(arg_list_nodes[0].itertext()).replace(" ", "").replace("\n", "").replace("'", '"')
+    # if args_text_contains or exact_list_element:
+    #     if not arg_list_nodes:
+    #         return False
+    #     args_text = "".join(arg_list_nodes[0].itertext()).replace(" ", "").replace("\n", "").replace("'", '"')
         
-        if exact_list_element and f'["{exact_list_element}"]' not in args_text:
-            return False
+    #     if exact_list_element and f'["{exact_list_element}"]' not in args_text:
+    #         return False
             
-        if args_text_contains:
-            clean_targets = [val.replace("'", '"').replace(" ", "") for val in args_text_contains]
-            if not any(t in args_text for t in clean_targets):
-                return False
+    #     if args_text_contains:
+    #         clean_targets = [val.replace("'", '"').replace(" ", "") for val in args_text_contains]
+    #         if not any(t in args_text for t in clean_targets):
+    #             return False
 
     return True
 
@@ -329,13 +336,21 @@ def source_arg_is_traceable_literal(call_node, scope_node, arg_index: int = 0, a
 class CompiledRuleset:
     
     def __init__(self, rules: list):
-        self.rules = rules
+        # Appiattisce eventuali liste annidate per evitare errori di tipo
+        flattened_rules = []
+        for r in rules:
+            if isinstance(r, list):
+                flattened_rules.extend(r)
+            else:
+                flattened_rules.append(r)
+                
+        self.rules = flattened_rules
         self.forbidden_functions_index = {}   # nome -> [(rule, spec), ...]
         self.forbidden_names_index = {}       # nome -> [rule, ...]
         self.forbidden_name_prefixes = []     # [(prefix, rule), ...]
         self.unindexed_forbidden_functions = [] 
 
-        for rule in rules:
+        for rule in self.rules:
             for spec in rule.get("forbidden_functions", []):
                 if isinstance(spec, str):
                     self.forbidden_functions_index.setdefault(spec, []).append((rule, spec))
