@@ -1,0 +1,66 @@
+[
+  {
+  "rule_id": "CWE-022-PATH-TRAVERSAL",
+  "type": "taint",
+  "vulnerabilities": ["CWE-22"],
+  "sources": [
+    {"tag": "http_input"}
+  ],
+  "sinks": [
+    {"tag": "file_system_access"},
+    {"tag": "path_concatenation"}
+  ],
+  "sanitizers": [
+    {"tag": "path_sanitizers"},
+    {"tag": "cast_to_integer"}
+  ]
+},
+{
+  "rule_id": "CWE-078-OS-CMD-INJECTION",
+  "type": "taint",
+  "vulnerabilities": ["CWE-78"],
+  "sources": [
+    {"tag": "http_input"}
+  ],
+  "sinks": [
+    {"tag": "os_command_execution"}
+  ],
+  "sanitizers": [
+    {"tag": "cast_to_integer"},
+    {"tag": "shell_escape_sanitizers"}
+  ]
+},
+{
+  "rule_id": "CWE-489-ACTIVE-DEBUG",
+  "type": "structural",
+  "vulnerabilities": ["CWE-489"],
+  "patterns": [
+    {"tag": "active_debug"}
+  ]
+},
+{
+  "rule_id": "CWE-089-SQLI",
+  "type": "taint",
+  "vulnerabilities": ["Injection"],
+  "sources": [
+    {"tag": "http_input"}
+  ],
+  "sinks": [
+    {"tag": "sql_execution"}
+  ],
+  "safe_contexts": [
+    {"tag": "sql_parameterization"}
+  ]
+},
+  {
+    "rule_id": "CWE-676-Potentially_Dangerous_Function-SOCKET",
+    "type": "structural",
+    "vulnerabilities": ["CWE-676"],
+    "forbidden_functions": [
+      {"tag": "socket_primitives"}
+    ],
+    "safe_contexts": [
+      {"tag": "try_block"}
+    ]
+  }
+]
