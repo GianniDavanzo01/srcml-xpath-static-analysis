@@ -22,8 +22,22 @@
           "createNativeQuery",
           "jdbcTemplate.query"
         ]
-      }
-    ]
+      },
+      {"type": "concat", "requires_text_any": ["SELECT", "DELETE", "UPDATE", "INSERT"]}
+    ],
+    "path_concatenation": [
+      "concat",
+      {"type": "call_with_var_arg", "call": ["get", "resolve"]}
+    ],
+    "os_command_execution": [
+      {"type": "call_with_var_arg", "call": ["exec", "ProcessBuilder"]}
+    ],
+    "file_system_access": [
+      {"type": "call_with_var_arg", "call": [
+        "FileInputStream", "FileOutputStream", "FileReader", "FileWriter", "RandomAccessFile",
+        "newInputStream", "readAllBytes", "write", "delete", "copy", "move",
+        "createNewFile", "File"
+      ]}]
   },
   "forbidden_functions": {
     "socket_primitives": [
@@ -32,18 +46,11 @@
       "socket.getInputStream","socket.getOutputStream","datagramSocket.send","datagramSocket.receive"
     ]
   },
+  "sanitizers":{
+    "cast_to_integer": ["Integer.parseInt", "Integer.valueOf","Long.parseLong","Long.valueOf"],
+    "path_sanitizers": ["getCanonicalPath", "getCanonicalFile", "FilenameUtils.getName"]
+  },
   "safe_contexts": {
-    "cast_to_integer": [
-      {
-        "type": "current_call_matches_ast",
-        "call": [
-          "Integer.parseInt", 
-          "Integer.valueOf",
-          "Long.parseLong",
-          "Long.valueOf"
-        ]
-      }
-    ],
     "try_block": [
       "try"
     ]

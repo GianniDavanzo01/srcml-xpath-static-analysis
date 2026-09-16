@@ -147,6 +147,11 @@ class LanguageAdapter(ABC):
     def get_parameter_name_and_type(self, param_node, namespaces):
             """Estrae nome e tipo da un parametro (<src:parameter>) in Python."""
 
+    @abstractmethod
+    def member_access_operator(self) -> str:
+        """Operatore usato per accedere a metodi e attributi.
+        Python/Java/C#: '.'  -  PHP: '->'"""
+
 # ---------------------------------------------------------------------- #
 # Implementazione Python
 # ---------------------------------------------------------------------- #
@@ -310,8 +315,6 @@ class PythonAdapter(LanguageAdapter):
     def equality_operator(self) -> str:
         return "=="
 
-
-
     def get_parameter_name_and_type(self, param_node, namespaces):
         """Estrae nome e tipo da un parametro (<src:parameter>) in Python."""
         # In Python il tipo è dentro l'annotazione
@@ -324,6 +327,9 @@ class PythonAdapter(LanguageAdapter):
         
         return name_text, type_text
 
+
+    def member_access_operator(self) -> str:
+        return "."
 
 # ---------------------------------------------------------------------- #
 # Implementazione Java
@@ -477,10 +483,18 @@ class JavaAdapter(LanguageAdapter):
         return "=="
 
     def get_parameter_name_and_type(self, param_node, namespaces):
-        # DA COMPLETARE in futuro.
-        # Ritorna una tupla di None per non far crashare lo structural_engine 
-        # quando scompatta i valori (param_name, type_text = ...)
-        return None, None
+        decl = param_node.xpath("./src:decl[1]", namespaces=namespaces)
+        if not decl:
+            return None, None
+        type_nodes = decl[0].xpath("./src:type[1]", namespaces=namespaces)
+        type_text = "".join(type_nodes[0].itertext()).strip() if type_nodes else ""
+        name_nodes = decl[0].xpath("./src:name[1]", namespaces=namespaces)
+        name_text = "".join(name_nodes[0].itertext()).strip() if name_nodes else ""
+        return name_text, type_text
+
+
+    def member_access_operator(self) -> str:
+        return "."
 
 
 

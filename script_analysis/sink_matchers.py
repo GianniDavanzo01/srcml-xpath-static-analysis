@@ -21,29 +21,39 @@ from common import NS, get_call_name
 #         )
 #         return bool(uso.xpath(op_xpath, namespaces=NS))
 
-def _sink_string_pattern(uso, pattern_name: str, fstring_nodes: list, adapter=None, imports=None) -> bool:
+def _sink_string_pattern(uso, pattern_name: str, adapter=None, imports=None, fstring_nodes=None) -> bool:
     """
-    Pattern semplici basati solo sul TIPO di utilizzo della variabile,
-    senza guardare metodo/argomento specifici.
+    Pattern strutturali basati sul TIPO di utilizzo della variabile.
+    Totalmente guidati dal LanguageAdapter.
     """
     if pattern_name == "concat":
+        # Questo andava già bene, ma possiamo renderlo più sicuro
         ops = adapter.string_concat_operators() if adapter else ["+", "%"]
         op_xpath = " | ".join([f"preceding-sibling::src:operator[1][text()='{op}']" for op in ops]) + " | " + \
                    " | ".join([f"following-sibling::src:operator[1][text()='{op}']" for op in ops])
         return bool(uso.xpath(op_xpath, namespaces=NS))
 
     if pattern_name == "fstring":
-        return uso in fstring_nodes
+        # Sfruttiamo la lista pre-calcolata dal tuo taint_engine,
+        # che gestisce correttamente la scomposizione fatta da srcML!
+        if fstring_nodes is not None:
+            return uso in fstring_nodes
+        return False
 
     if pattern_name == "call_arg":
         return bool(uso.xpath("ancestor::src:argument", namespaces=NS))
 
     if pattern_name == "method_chain":
-        has_dot = uso.xpath("following-sibling::src:operator[1][text()='.']", namespaces=NS)
+        # Deleghiamo all'adapter l'operatore di accesso ai membri (es. "." per Python/Java)
+        # NOTA: Devi aggiungere `member_access_operator()` nel tuo LanguageAdapter!
+        member_op = adapter.member_access_operator() if hasattr(adapter, "member_access_operator") else "."
+        has_member_access = uso.xpath(f"following-sibling::src:operator[1][text()='{member_op}']", namespaces=NS)
         is_method_call = uso.xpath("parent::src:name/parent::src:call", namespaces=NS)
-        return bool(has_dot and is_method_call)
+        return bool(has_member_access and is_method_call)
 
     if pattern_name == "colon_suffix":
+        # Questo sembra un pattern molto specifico di Python (es. dizionari o type hinting)
+        # Se è vitale, andrebbe astratto nell'adapter (es. adapter.is_dict_key(uso))
         if uso.xpath("following-sibling::src:operator[1][text()=':']", namespaces=NS):
             return True
         if not uso.xpath("following-sibling::*"):
@@ -54,29 +64,34 @@ def _sink_string_pattern(uso, pattern_name: str, fstring_nodes: list, adapter=No
                     return True
         return False
     
-    # if pattern_name == "reassign":                       
-    #     return bool(uso.xpath("following-sibling::src:operator[1][text()='=']", namespaces=NS))
     if pattern_name == "reassign":
+        # Ok, l'operatore di assegnazione è dinamico
         assign_op = adapter.assignment_operator_token() if adapter else "="
         return bool(uso.xpath(f"following-sibling::src:operator[1][text()='{assign_op}']", namespaces=NS))
 
     if pattern_name == "return":
         return uso.xpath("boolean(ancestor::src:return[1] and not(ancestor::src:call))", namespaces=NS)
     
-    if pattern_name == "any_use":
-        return True
-    
     if pattern_name == "assign_rhs":
         if uso.xpath("ancestor::src:call", namespaces=NS):
             return False
-        assign_op = adapter.assignment_operator_token() if adapter else "="
-        is_rhs = bool(uso.xpath(
-            f"parent::src:expr[preceding-sibling::src:operator[1][text()='{assign_op}']] | "
-            f"self::src:name[preceding-sibling::src:operator[1][text()='{assign_op}']]",
-            namespaces=NS,
-        ))
-        is_in_args = bool(uso.xpath("ancestor::src:argument_list", namespaces=NS))
-        return is_rhs and not is_in_args
+            
+        # MAGIA DELL'ADAPTER: Troviamo il blocco di codice che contiene l'assegnazione
+        assign_stmt = uso.xpath("ancestor::src:expr_stmt | ancestor::src:decl_stmt", namespaces=NS)
+        if not assign_stmt or not adapter:
+            return False
+            
+        # Chiediamo all'adapter di dividere LHS e RHS per noi!
+        lhs, rhs = adapter.get_assignment_lhs_rhs(assign_stmt[0], NS)
+        if rhs is not None:
+            # Controlliamo se il nostro "uso" fa parte del sotto-albero di destra (RHS)
+            # In lxml, iter() attraversa tutti i figli di un nodo.
+            return uso in rhs.iter() or uso == rhs
+            
+        return False
+
+    if pattern_name == "any_use":
+        return True
 
     return False
 
@@ -495,14 +510,14 @@ def match_sink(uso, sink_spec, fstring_nodes: list, adapter=None, imports=None) 
     is_match = False
 
     if isinstance(sink_spec, str):
-        is_match = _sink_string_pattern(uso, sink_spec, fstring_nodes, adapter, imports)
+        is_match = _sink_string_pattern(uso, sink_spec, adapter, imports, fstring_nodes)
 
     elif isinstance(sink_spec, dict):
         sink_type = sink_spec.get("type")
 
         simple_patterns = ["concat", "fstring", "call_arg", "method_chain", "colon_suffix", "reassign", "return", "any_use", "assign_rhs"]
         if sink_type in simple_patterns:
-            is_match = _sink_string_pattern(uso, sink_type, fstring_nodes, adapter, imports)
+            is_match = _sink_string_pattern(uso, sink_type, adapter, imports, fstring_nodes)
         else:
             matcher = SINK_MATCHERS.get(sink_type)
             is_match = matcher(uso, sink_spec, fstring_nodes, adapter, imports) if matcher else False

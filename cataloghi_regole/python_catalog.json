@@ -14,10 +14,10 @@
           {"type": "call_with_var_arg", "call": ["execute","executemany"]},
           { "type": "concat", "requires_text_any": ["SELECT", "DELETE", "UPDATE", "INSERT"] },
           { "type": "fstring", "requires_text_any": ["SELECT", "DELETE", "UPDATE", "INSERT"] }
-      ],
+          ],
       "os_command_execution": [
           {"type": "call_with_var_arg", "call": ["subprocess.run", "subprocess.Popen", "subprocess.call","subprocess.check_output","os.system","os.popen"]}
-      ],
+          ],
       "file_system_access": [
           {
             "type": "call_with_var_arg",
@@ -27,16 +27,27 @@
             "type": "call_with_var_arg",
             "call": ["open", "send_file"]
           }
-        ],
+          ],
       "path_concatenation": [
         "concat",
         "fstring",
         {
-          "type": "argument_to",
-          "functions": ["os.path.join", "join"]
+          "type": "call_with_var_arg",
+          "call": ["os.path.join", "join"]
         }
-    ]
-    },
+        ],
+      "html_output": [
+        {
+          "type": "call_with_var_arg",
+          "call": [
+            "make_response","Response","HttpResponse",
+            "HttpResponseBadRequest","HttpResponseNotFound","HttpResponseForbidden",
+            "Markup","mark_safe","render_template_string"
+          ]
+        }
+        ],
+      "propagation":["concat","fstring","colon_suffix","assign_rhs","call_arg","return"]
+  },
     "forbidden_functions": {
         "socket_primitives": [
         "socket.socket","socket.connect","socket.bind","socket.listen",
@@ -49,7 +60,8 @@
         "html_escape": ["escape", "escape_filter_chars", "escape_rdn"],
         "path_sanitizers": ["secure_filename","os.path.basename","basename"],
         "cast_to_integer": ["int","float"],
-        "shell_escape_sanitizers": ["shlex.quote","quote"]
+        "shell_escape_sanitizers": ["shlex.quote","quote"],
+        "XSS_sanitizers": ["markupsafe.escape", "flask.escape", "escape", "html.escape", "bleach.clean"]
     },
   "safe_contexts": {
     "sql_parameterization": [{"type": "parametrized_query"}],

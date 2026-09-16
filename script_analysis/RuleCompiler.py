@@ -31,17 +31,23 @@ class RuleCompiler:
         # --- NUOVA LOGICA: Espansione dei pattern generici ---
         if "patterns" in concrete_rule:
             for item in concrete_rule.pop("patterns"):
-                if isinstance(item, dict) and "tag" in item:
-                    tag_name = item["tag"]
-                    # Recupera l'intero blocco dal catalogo (es. il dict con xpath_rules e forbidden_calls)
-                    pattern_data = self.catalog.get("patterns", {}).get(tag_name, {})
-                    
-                    # Fonde le chiavi del catalogo dentro la regola concreta
-                    for engine_key, engine_values in pattern_data.items():
-                        if engine_key not in concrete_rule:
-                            concrete_rule[engine_key] = []
-                        if isinstance(engine_values, list):
-                            concrete_rule[engine_key].extend(engine_values)
+                if not (isinstance(item, dict) and "tag" in item):
+                    continue
+                tag_name = item["tag"]
+                pattern_data = self.catalog.get("patterns", {}).get(tag_name)
+                if pattern_data is None:
+                    print(f"[ATTENZIONE] tag '{tag_name}' non trovato nella sezione 'patterns' del catalogo {self.catalog_path}")
+                    continue
+
+                for engine_key, engine_values in pattern_data.items():
+                    if isinstance(engine_values, list):
+                        concrete_rule.setdefault(engine_key, [])
+                        concrete_rule[engine_key].extend(engine_values)
+                    elif isinstance(engine_values, dict):
+                        concrete_rule.setdefault(engine_key, {})
+                        concrete_rule[engine_key].update(engine_values)
+                    else:
+                        concrete_rule[engine_key] = engine_values
         
         # Mappatura delle chiavi della regola JSON alle sezioni del Catalogo
         mapping = {

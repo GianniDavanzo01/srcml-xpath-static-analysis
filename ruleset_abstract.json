@@ -1,5 +1,15 @@
 [
   {
+    "rule_id": "HTTP-INPUT-PROPAGATION",
+    "type": "taint",
+    "vulnerabilities":["Injection"],
+    "sources": [
+      {"tag": "http_input"}
+    ],
+    "sinks":[{"tag":"propagation"}],
+    "sanitizers":["cast_to_integer","html_escape"]
+  },
+  {
   "rule_id": "CWE-022-PATH-TRAVERSAL",
   "type": "taint",
   "vulnerabilities": ["CWE-22"],
@@ -31,12 +41,20 @@
   ]
 },
 {
-  "rule_id": "CWE-489-ACTIVE-DEBUG",
-  "type": "structural",
-  "vulnerabilities": ["CWE-489"],
-  "patterns": [
-    {"tag": "active_debug"}
-  ]
+  "rule_id": "CWE-079-CROSS-SITE-SCRIPTING",
+  "type": "taint",
+  "vulnerabilities": ["CWE-79"],
+  "sources": [
+    {"tag": "http_input"}
+  ],
+  "sinks": [
+    {"tag": "html_output"}
+  ],
+  "sanitizers": [
+    {"tag": "XSS_sanitizers"},
+    {"tag": "cast_to_integer"}
+  ],
+  "safe_contexts": []
 },
 {
   "rule_id": "CWE-089-SQLI",
@@ -50,6 +68,14 @@
   ],
   "safe_contexts": [
     {"tag": "sql_parameterization"}
+  ]
+},
+{
+  "rule_id": "CWE-489-ACTIVE-DEBUG",
+  "type": "structural",
+  "vulnerabilities": ["CWE-489"],
+  "patterns": [
+    {"tag": "active_debug"}
   ]
 },
   {
