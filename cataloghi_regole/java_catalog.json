@@ -1,0 +1,63 @@
+{
+  "sources": {
+    "http_input": [
+      "HttpServletRequest.getParameter",
+      "HttpServletRequest.getParameterValues",
+      "HttpServletRequest.getHeader",
+      "HttpServletRequest.getCookies",
+      "request.getParameter",
+      "request.getHeader"
+    ]
+  },
+  "sinks": {
+    "sql_execution": [
+      {
+        "type": "call_with_var_arg",
+        "call": [
+          "executeQuery",
+          "executeUpdate",
+          "execute",
+          "prepareStatement",
+          "createQuery",
+          "createNativeQuery",
+          "jdbcTemplate.query"
+        ]
+      }
+    ]
+  },
+  "forbidden_functions": {
+    "socket_primitives": [
+      "Socket","ServerSocket","DatagramSocket","SocketChannel",
+      "ServerSocketChannel","socket.connect","serverSocket.bind","serverSocket.accept",
+      "socket.getInputStream","socket.getOutputStream","datagramSocket.send","datagramSocket.receive"
+    ]
+  },
+  "safe_contexts": {
+    "cast_to_integer": [
+      {
+        "type": "current_call_matches_ast",
+        "call": [
+          "Integer.parseInt", 
+          "Integer.valueOf",
+          "Long.parseLong",
+          "Long.valueOf"
+        ]
+      }
+    ],
+    "try_block": [
+      "try"
+    ]
+  },
+  "patterns": {
+    "active_debug": {
+      "forbidden_functions": [
+        {
+          "type": "call_matches_ast",
+          "call": ["setDebug", "enableDebug"],
+          "exact_args_count": 1,
+          "contains_booleans": ["true"]
+        }
+      ]
+    }
+  }
+}

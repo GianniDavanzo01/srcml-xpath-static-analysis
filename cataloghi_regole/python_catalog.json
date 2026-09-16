@@ -1,0 +1,71 @@
+{
+  "sources": {
+    "http_input": [
+      "request.args", "request.GET", "request.POST", "request.files",
+      "request.form", "request.data", "request.headers", "request.params",
+      "request.base_url", "request.authorization", "request.cookies",
+      "request.endpoint", "request.host", "request.host_url", "request.module",
+      "request.path", "request.query_strings", "request.url", "request.values",
+      "request.view_args","input","django.http.HttpRequest.GET", "django.http.HttpRequest.POST"
+    ]
+  },
+    "sinks": {
+      "sql_execution": [
+          {"type": "call_with_var_arg", "call": ["execute","executemany"]},
+          { "type": "concat", "requires_text_any": ["SELECT", "DELETE", "UPDATE", "INSERT"] },
+          { "type": "fstring", "requires_text_any": ["SELECT", "DELETE", "UPDATE", "INSERT"] }
+      ],
+      "os_command_execution": [
+          {"type": "call_with_var_arg", "call": ["subprocess.run", "subprocess.Popen", "subprocess.call","subprocess.check_output","os.system","os.popen"]}
+      ],
+      "file_system_access": [
+          {
+            "type": "call_with_var_arg",
+            "call": ["open", "send_file", "send_static_file", "os.remove", "os.rmdir", "shutil.rmtree"]
+          },
+          {
+            "type": "call_with_var_arg",
+            "call": ["open", "send_file"]
+          }
+        ],
+      "path_concatenation": [
+        "concat",
+        "fstring",
+        {
+          "type": "argument_to",
+          "functions": ["os.path.join", "join"]
+        }
+    ]
+    },
+    "forbidden_functions": {
+        "socket_primitives": [
+        "socket.socket","socket.connect","socket.bind","socket.listen",
+        "socket.accept","socket.send","socket.recv","socket.sendto",
+        "socket.recvfrom","socket.sendmsg","socket.recvmsg","socket.setsockopt",
+        "socket.getsockopt","socket.getsockname","socket.getpeername","socket.shutdown"
+        ]
+  },
+    "sanitizers": {
+        "html_escape": ["escape", "escape_filter_chars", "escape_rdn"],
+        "path_sanitizers": ["secure_filename","os.path.basename","basename"],
+        "cast_to_integer": ["int","float"],
+        "shell_escape_sanitizers": ["shlex.quote","quote"]
+    },
+  "safe_contexts": {
+    "sql_parameterization": [{"type": "parametrized_query"}],
+    "try_block": ["try"]
+  },
+  "patterns": {
+    "active_debug": {
+      "forbidden_calls_with_kwargs": [
+        {
+          "call_prefix": "run",
+          "kwargs": {"debug": "True"}
+        }
+      ],
+      "bad_assignments": {
+        "debug": "True"
+      }
+    }
+  }
+}
