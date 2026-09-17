@@ -1,15 +1,5 @@
 [
   {
-    "rule_id": "HTTP-INPUT-PROPAGATION",
-    "type": "taint",
-    "vulnerabilities":["Injection"],
-    "sources": [
-      {"tag": "http_input"}
-    ],
-    "sinks":[{"tag":"propagation"}],
-    "sanitizers":["cast_to_integer","html_escape"]
-  },
-  {
   "rule_id": "CWE-022-PATH-TRAVERSAL",
   "type": "taint",
   "vulnerabilities": ["CWE-22"],
@@ -71,6 +61,33 @@
   ]
 },
 {
+  "rule_id": "CWE-327-BROKEN-CRYPTO-ALGORITHM",
+  "type": "structural",
+  "vulnerabilities": ["CWE-327"],
+  "forbidden_functions": [
+    {"tag": "weak_ciphers_and_modes"}
+  ]
+},
+{
+  "rule_id": "CWE-328-WEAK-HASH-FUNCTION",
+  "type": "structural",
+  "vulnerabilities": ["CWE-328"],
+  "forbidden_functions": [
+    {"tag": "weak_hash_functions"}
+  ]
+},
+{
+  "rule_id": "CWE-338-WEAK-PRNG",
+  "type": "structural",
+  "vulnerabilities": ["CWE-338"],
+  "forbidden_functions": [
+    {"tag": "weak_prngs"}
+  ],
+  "excluded_functions": [
+    {"tag": "safe_prng_exceptions"}
+  ]
+},
+{
   "rule_id": "CWE-489-ACTIVE-DEBUG",
   "type": "structural",
   "vulnerabilities": ["CWE-489"],
@@ -78,7 +95,23 @@
     {"tag": "active_debug"}
   ]
 },
-  {
+{
+  "rule_id": "CWE-601-OPEN-REDIRECT",
+  "type": "taint",
+  "vulnerabilities": ["CWE-601"],
+  "sources": [
+    "function_parameters",
+    {"tag": "http_input"}
+  ],
+  "sinks": [
+    {"tag": "http_redirect"}
+  ],
+  "sanitizers": [
+    {"tag": "url_validation"}
+  ],
+  "safe_contexts": []
+},
+{
     "rule_id": "CWE-676-Potentially_Dangerous_Function-SOCKET",
     "type": "structural",
     "vulnerabilities": ["CWE-676"],
@@ -88,5 +121,19 @@
     "safe_contexts": [
       {"tag": "try_block"}
     ]
-  }
+},
+{
+  "rule_id": "CWE-918-SSRF",
+  "type": "taint",
+  "vulnerabilities": ["CWE-918"],
+  "sources": [
+    "function_parameters",
+    {"tag": "http_input"}
+  ],
+  "sinks": [
+    {"tag": "http_request"}
+  ],
+  "sanitizers": [],
+  "safe_contexts": []
+}
 ]

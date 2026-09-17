@@ -11,9 +11,7 @@
   },
     "sinks": {
       "sql_execution": [
-          {"type": "call_with_var_arg", "call": ["execute","executemany"]},
-          { "type": "concat", "requires_text_any": ["SELECT", "DELETE", "UPDATE", "INSERT"] },
-          { "type": "fstring", "requires_text_any": ["SELECT", "DELETE", "UPDATE", "INSERT"] }
+          {"type": "call_with_var_arg", "call": ["execute","executemany"]}
           ],
       "os_command_execution": [
           {"type": "call_with_var_arg", "call": ["subprocess.run", "subprocess.Popen", "subprocess.call","subprocess.check_output","os.system","os.popen"]}
@@ -29,12 +27,12 @@
           }
           ],
       "path_concatenation": [
-        "concat",
-        "fstring",
-        {
-          "type": "call_with_var_arg",
-          "call": ["os.path.join", "join"]
-        }
+          {"type": "concat","requires_text_any": ["/", "\\", ".."]},
+          {"type": "fstring","requires_text_any": ["/", "\\", ".."]},
+          {
+            "type": "call_with_var_arg",
+            "call": ["os.path.join", "join"]
+          }
         ],
       "html_output": [
         {
@@ -46,7 +44,27 @@
           ]
         }
         ],
-      "propagation":["concat","fstring","colon_suffix","assign_rhs","call_arg","return"]
+      "http_redirect": [
+      {
+        "type": "call_with_var_arg",
+        "call": [
+          "redirect",
+          "HttpResponseRedirect",
+          "HttpResponsePermanentRedirect",
+          "RedirectResponse"
+        ]
+      }
+    ],
+    "http_request": [
+      {
+        "type": "call_with_var_arg",
+        "call": [
+          "requests.get", "requests.post", 
+          "requests.request","requests.put","urllib.request.urlopen", "urlopen",
+          "httpx.get", "httpx.post","session.get","session.post"
+        ]
+      }
+    ]
   },
     "forbidden_functions": {
         "socket_primitives": [
@@ -54,14 +72,28 @@
         "socket.accept","socket.send","socket.recv","socket.sendto",
         "socket.recvfrom","socket.sendmsg","socket.recvmsg","socket.setsockopt",
         "socket.getsockopt","socket.getsockname","socket.getpeername","socket.shutdown"
+        ],
+        "weak_ciphers_and_modes": ["DES.new", "modes.ECB", "modes.CBC", "padding.PKCS1v15"],
+        "weak_hash_functions": ["md5", "sha1","sha256", "hashlib.new"],
+        "weak_prngs": ["random.randint","random.randrange","random.random","random.uniform",
+          "random.getrandbits","random.sample","random.shuffle","random.seed","choice","random.choices",
+          {
+            "type": "call_matches_ast", 
+            "call": ["urandom"], 
+            "contains_numbers": ["0", "1", "2", "4", "8", "16", "32"]
+          }
         ]
-  },
+    },
+    "excluded_functions": {
+      "safe_prng_exceptions": ["secrets.choice","secrets.randbelow","secrets.randbits"]
+    },
     "sanitizers": {
         "html_escape": ["escape", "escape_filter_chars", "escape_rdn"],
         "path_sanitizers": ["secure_filename","os.path.basename","basename"],
         "cast_to_integer": ["int","float"],
         "shell_escape_sanitizers": ["shlex.quote","quote"],
-        "XSS_sanitizers": ["markupsafe.escape", "flask.escape", "escape", "html.escape", "bleach.clean"]
+        "XSS_sanitizers": ["markupsafe.escape", "flask.escape", "escape", "html.escape", "bleach.clean"],
+        "url_validation": ["url_has_allowed_host_and_scheme","is_safe_url"]
     },
   "safe_contexts": {
     "sql_parameterization": [{"type": "parametrized_query"}],

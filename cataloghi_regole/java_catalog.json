@@ -22,11 +22,10 @@
           "createNativeQuery",
           "jdbcTemplate.query"
         ]
-      },
-      {"type": "concat", "requires_text_any": ["SELECT", "DELETE", "UPDATE", "INSERT"]}
-    ],
+      } 
+      ],
     "path_concatenation": [
-      "concat",
+      {"type": "concat","requires_text_any": ["/", "\\", ".."]},
       {"type": "call_with_var_arg", "call": ["get", "resolve"]}
     ],
     "os_command_execution": [
@@ -37,23 +36,60 @@
         "FileInputStream", "FileOutputStream", "FileReader", "FileWriter", "RandomAccessFile",
         "newInputStream", "readAllBytes", "write", "delete", "copy", "move",
         "createNewFile", "File"
-      ]}]
+      ]}],
+    "html_output": [
+      {
+        "type": "call_with_var_arg",
+        "call": [
+          "getWriter().print", "getWriter().println", "print", "println", "write",
+          "sendError", "RestResponse", "ResponseEntity"
+        ]
+      }
+    ],
+    "http_redirect": [
+      {
+        "type": "call_with_var_arg",
+        "call": [
+          "sendRedirect"
+        ]
+      }
+    ],
+    "http_request": [
+      {
+        "type": "call_with_var_arg",
+        "call": [
+          "HttpURLConnection", "openStream", "RestTemplate.getForObject", 
+          "RestTemplate.postForObject", "WebClient.get", "HttpClient.newHttpClient"
+        ]
+      }
+    ]
   },
   "forbidden_functions": {
     "socket_primitives": [
       "Socket","ServerSocket","DatagramSocket","SocketChannel",
       "ServerSocketChannel","socket.connect","serverSocket.bind","serverSocket.accept",
       "socket.getInputStream","socket.getOutputStream","datagramSocket.send","datagramSocket.receive"
-    ]
+    ],
+    "weak_hash_functions": ["MD5", "SHA-1", "MessageDigest.getInstance"],
+    "weak_ciphers_and_modes": ["DES", "DESede", "RC2", "RC4", "Blowfish", "ECB", "Cipher.getInstance"],
+    "weak_prngs": ["java.util.Random","Math.random","Random"]
+  },
+  "excluded_functions": {
+      "safe_prng_exceptions": ["SecureRandom"]
   },
   "sanitizers":{
     "cast_to_integer": ["Integer.parseInt", "Integer.valueOf","Long.parseLong","Long.valueOf"],
-    "path_sanitizers": ["getCanonicalPath", "getCanonicalFile", "FilenameUtils.getName"]
+    "path_sanitizers": ["getCanonicalPath", "getCanonicalFile", "FilenameUtils.getName"],
+    "shell_escape_sanitizers":[],
+    "html_escape": ["HtmlUtils.htmlEscape","StringEscapeUtils.escapeHtml4","ESAPI.encoder().encodeForHTML"],
+    "XSS_sanitizers": ["HtmlUtils.htmlEscape","StringEscapeUtils.escapeHtml4","ESAPI.encoder().encodeForHTML"],
+    "url_validation": ["UrlValidator"]
   },
   "safe_contexts": {
     "try_block": [
       "try"
-    ]
+    ],
+    "sql_parameterization":[]
   },
   "patterns": {
     "active_debug": {

@@ -813,7 +813,7 @@ def run_structural_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) 
                     continue
                 
                 for bad_type in bad_param_types:
-                    if bad_type in type_text:
+                    if bad_type == type_text:
                         if is_in_safe_context(func, safe_contexts, var_name=param_name, adapter=adapter, imports=imports):
                             continue
                             
@@ -971,11 +971,7 @@ def run_structural_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) 
 
 
 def run_forbidden_functions_indexed(ctx, compiled, findings, adapter, imports):
-    """Sostituisce la sezione 3 di run_structural_rule: un solo giro su
-    ctx.calls con lookup O(1) invece di un giro per ogni regola.
-    (Versione aggiornata con LanguageAdapter per supporto FQDN e tutti i suffissi)"""
     for call in ctx.calls:
-        # 1. Usa l'adattatore per ottenere il nome canonico risolto
         call_name = get_call_name(call, adapter, imports)
         if not call_name:
             continue
@@ -983,24 +979,27 @@ def run_forbidden_functions_indexed(ctx, compiled, findings, adapter, imports):
         seen = set()
         candidates = []
         
-        # 2. Genera TUTTI i suffissi possibili
-        # es: "mysql.connector.connect" -> ["mysql.connector.connect", "connector.connect", "connect"]
         parts = call_name.split('.')
         suffixes = [".".join(parts[i:]) for i in range(len(parts))]
         
-        # 3. Lookup O(1) per tutti i suffissi validi
+        # 1. Ricerca tramite indice (suffissi)
         for suff in suffixes:
             for item in compiled.forbidden_functions_index.get(suff, []):
-                if id(item[1]) not in seen:
-                    seen.add(id(item[1]))
+                rule_obj = item[0]  # item[0] contiene la reference al dizionario della regola
+                
+                # Il filtro agisce sull'ID della regola, evitando duplicati per spec ridondanti
+                if id(rule_obj) not in seen:
+                    seen.add(id(rule_obj))
                     candidates.append(item)
                     
-        # 4. Aggiunta delle regole non indicizzabili
+        # 2. Ricerca tra le funzioni non indicizzate (es. pattern AST complessi)
         for item in compiled.unindexed_forbidden_functions:
-            if id(item[1]) not in seen:
-                seen.add(id(item[1]))
+            rule_obj = item[0]
+            if id(rule_obj) not in seen:
+                seen.add(id(rule_obj))
                 candidates.append(item)
 
+        # 3. Validazione finale ed emissione del finding
         for rule, spec in candidates:
             if not check_required_imports(ctx.unit, rule, NS, imports=imports):
                 continue
@@ -1009,7 +1008,7 @@ def run_forbidden_functions_indexed(ctx, compiled, findings, adapter, imports):
             if is_in_safe_context(call, rule.get("safe_contexts", []), None, adapter, imports):
                 continue
 
-            # 5. Verifica rigorosa del match
+            # Verifica rigorosa del match effettivo
             if isinstance(spec, str):
                 if call_name == spec or call_name.endswith(f".{spec}"):
                     findings.append(build_finding(rule, call))
@@ -1022,7 +1021,6 @@ def run_forbidden_functions_indexed(ctx, compiled, findings, adapter, imports):
             elif spec.get("type") == "call_matches_ast":
                 if call_arguments_match_ast(call, spec, adapter, imports):
                     findings.append(build_finding(rule, call))
-
 
 def run_forbidden_names_indexed(ctx, compiled, findings, adapter, imports):
     """Sostituisce la sezione 7 (forbidden_names esatti) con lookup O(1).

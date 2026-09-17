@@ -21,14 +21,23 @@ class RuleCompiler:
         return expanded
 
     def compile(self, abstract_rule):
-        """Traduce la regola astratta (o una lista di regole) nel formato leggibile dal motore."""
-        # Se riceve una lista di regole, le compila ricorsivamente una per una
         if isinstance(abstract_rule, list):
             return [self.compile(r) for r in abstract_rule]
 
         concrete_rule = abstract_rule.copy()
 
-        # --- NUOVA LOGICA: Espansione dei pattern generici ---
+        mapping = {
+            "sources": "sources",
+            "sinks": "sinks",
+            "forbidden_functions": "forbidden_functions",
+            "excluded_functions": "excluded_functions",
+            "sanitizers": "sanitizers",
+            "safe_contexts": "safe_contexts",
+        }
+        for rule_key, catalog_section in mapping.items():
+            if rule_key in abstract_rule:
+                concrete_rule[rule_key] = self._expand_tags(abstract_rule[rule_key], catalog_section)
+
         if "patterns" in concrete_rule:
             for item in concrete_rule.pop("patterns"):
                 if not (isinstance(item, dict) and "tag" in item):
@@ -36,33 +45,16 @@ class RuleCompiler:
                 tag_name = item["tag"]
                 pattern_data = self.catalog.get("patterns", {}).get(tag_name)
                 if pattern_data is None:
-                    print(f"[ATTENZIONE] tag '{tag_name}' non trovato nella sezione 'patterns' del catalogo {self.catalog_path}")
+                    print(f"[ATTENZIONE] tag '{tag_name}' non trovato in 'patterns' ({self.catalog_path})")
                     continue
-
                 for engine_key, engine_values in pattern_data.items():
                     if isinstance(engine_values, list):
                         concrete_rule.setdefault(engine_key, [])
-                        concrete_rule[engine_key].extend(engine_values)
+                        concrete_rule[engine_key] = concrete_rule[engine_key] + list(engine_values)  # nuova lista, mai extend in-place
                     elif isinstance(engine_values, dict):
                         concrete_rule.setdefault(engine_key, {})
-                        concrete_rule[engine_key].update(engine_values)
+                        concrete_rule[engine_key] = {**concrete_rule[engine_key], **engine_values}   # nuovo dict
                     else:
                         concrete_rule[engine_key] = engine_values
-        
-        # Mappatura delle chiavi della regola JSON alle sezioni del Catalogo
-        mapping = {
-            "sources": "sources",
-            "sinks": "sinks",
-            "forbidden_functions": "forbidden_functions",
-            "sanitizers": "sanitizers",
-            "safe_contexts": "safe_contexts"
-        }
-
-        for rule_key, catalog_section in mapping.items():
-            if rule_key in abstract_rule:
-                concrete_rule[rule_key] = self._expand_tags(
-                    abstract_rule[rule_key], 
-                    catalog_section
-                )
 
         return concrete_rule
