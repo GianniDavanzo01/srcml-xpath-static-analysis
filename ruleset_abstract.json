@@ -1,6 +1,6 @@
 [
   {
-  "rule_id": "CWE-022-PATH-TRAVERSAL",
+  "rule_id": "CWE-22-PATH-TRAVERSAL",
   "type": "taint",
   "vulnerabilities": ["CWE-22"],
   "sources": [
@@ -16,7 +16,7 @@
   ]
 },
 {
-  "rule_id": "CWE-078-OS-CMD-INJECTION",
+  "rule_id": "CWE-78-OS-CMD-INJECTION",
   "type": "taint",
   "vulnerabilities": ["CWE-78"],
   "sources": [
@@ -31,7 +31,7 @@
   ]
 },
 {
-  "rule_id": "CWE-079-CROSS-SITE-SCRIPTING",
+  "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
   "type": "taint",
   "vulnerabilities": ["CWE-79"],
   "sources": [
@@ -47,7 +47,7 @@
   "safe_contexts": []
 },
 {
-  "rule_id": "CWE-089-SQLI",
+  "rule_id": "CWE-89-SQLI",
   "type": "taint",
   "vulnerabilities": ["Injection"],
   "sources": [
@@ -58,6 +58,21 @@
   ],
   "safe_contexts": [
     {"tag": "sql_parameterization"}
+  ]
+},
+{
+  "rule_id": "CWE-95-EVAL-INJECTION",
+  "type": "structural",
+  "vulnerabilities": ["CWE-95"],
+  "forbidden_functions": [{"tag": "dynamic_code_execution"}],
+  "excluded_functions": [{"tag": "eval_false_positive_exceptions"}]
+},
+{
+  "rule_id": "CWE-326-INADEQUATE-ENCRYPTION",
+  "type": "structural",
+  "vulnerabilities": ["CWE-326"],
+  "forbidden_functions": [
+    {"tag": "weak_key_generation"}
   ]
 },
 {
