@@ -17,8 +17,7 @@ from safe_context_matchers import is_in_safe_context
 from language_adapter import PythonAdapter
 
 
-# def run_taint_rule(tree, rule: dict) -> list:
-# def run_taint_rule(tree, rule: dict, adapter=None, imports=None) -> list:
+
 def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> list:
     adapter = adapter or PythonAdapter()
     imports = imports if imports is not None else []
@@ -35,7 +34,7 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
     for direct_name in rule.get("direct_taint_names", []):
         tainted_vars_with_scope.append((direct_name, tree))
 
-    # (Parametri di funzione) AGGIUNTA DALLA REGOLA 24 DEL RULESET V1 ---
+    # (Parametri di funzione)  ---
     if "function_parameters" in sources:
         param_nodes = tree.xpath(".//src:function//src:parameter_list//src:name", namespaces=NS)
         for p_node in param_nodes:
@@ -55,6 +54,11 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
             if adapter.is_assignment(stmt, NS)
         ]
 
+    def _scope_of(stmt):
+        parent_func = stmt.xpath("ancestor::src:function[1]", namespaces=NS)
+        return parent_func[0] if parent_func else tree
+
+    # --- Passo 1: source dirette ---
     for assign in assignments:
         lhs, _ = adapter.get_assignment_lhs_rhs(assign, NS)
         if lhs is None or not lhs.tag.endswith("name"):
@@ -75,11 +79,69 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
                         source_call = c
                         break
 
-                # if source_call is not None and source_arg_is_traceable_literal(source_call, scope_node):
                 if source_call is not None and source_arg_is_traceable_literal(source_call, scope_node, adapter=adapter):
                     continue  # se l'argomento è letterale -> non taintare
 
             tainted_vars_with_scope.append((var_name, scope_node))
+
+    # --- Passo 2: propagazione a catena ---
+    if rule.get("propagate_taint", True):
+        block = sanitizers + adapter.taint_block_functions()
+
+        changed = True
+        guard = 0
+        while changed and guard < 7:  # guard di sicurezza, massimo 7 iterazioni
+            changed = False
+            guard += 1
+
+            tainted_by_scope = {}
+            for name, scope in tainted_vars_with_scope:
+                tainted_by_scope.setdefault(id(scope), set()).add(name)
+
+            for assign in assignments:
+                lhs, rhs = adapter.get_assignment_lhs_rhs(assign, NS)
+                if lhs is None or rhs is None or not lhs.tag.endswith("name"):
+                    continue
+                var_name = "".join(lhs.itertext()).strip()
+                scope_node = _scope_of(assign)
+                already_tainted = tainted_by_scope.get(id(scope_node), set())
+                if var_name in already_tainted:
+                    continue
+
+                # rhs ottenuto tramite l'adapter  è solo il PRIMO fratello dopo l'operatore di assegnazione, dobbiamo coprire tutta l'espressione
+                #ES: "SELECT..." + user_id
+                rhs_all_nodes = rhs.xpath("self::* | following-sibling::*", namespaces=NS)
+
+                propagates = False
+                for rn in rhs_all_nodes:
+                    
+                    for n in rn.xpath("self::src:name | .//src:name", namespaces=NS):
+                        n_text = "".join(n.itertext()).strip()
+                        if n_text in already_tainted and not is_sanitized(n, block, adapter, imports):
+                            propagates = True
+                            break
+                    if propagates:
+                        break
+
+                    # stringhe interpolate nel RHS (query = f"...{user_id}")
+                    for lit in rn.xpath(
+                        "self::src:literal[@type='string'] | .//src:literal[@type='string']",
+                        namespaces=NS,
+                    ):
+                        testo = "".join(lit.itertext())
+                        if adapter.is_interpolated_string(testo):
+                            interpolated_vars = adapter.get_interpolated_variables(testo)
+                            if any(v in already_tainted for v in interpolated_vars) \
+                               and not is_sanitized(lit, block, adapter, imports):
+                                propagates = True
+                                break
+                    if propagates:
+                        break
+
+                if propagates:
+                    tainted_vars_with_scope.append((var_name, scope_node))
+                    tainted_by_scope.setdefault(id(scope_node), set()).add(var_name)
+                    changed = True
 
     if not tainted_vars_with_scope:
         return findings
@@ -114,10 +176,7 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
             print(f"XPath Fallito: .//src:name[text()='{var}' and not(...)]")
         
         fstrings_in_scope = scope_node.xpath(".//src:literal[@type='string']", namespaces=NS)
-        # usi_fstring = [
-        #     fs for fs in fstrings_in_scope
-        #     if re.search(rf"\{{\s*{re.escape(var)}\s*[!:]?.*?\}}", "".join(fs.itertext()))
-        # ]
+
         usi_fstring = []
         for fs in fstrings_in_scope:
             testo = "".join(fs.itertext())
@@ -129,12 +188,6 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
 
         for uso in tutti_gli_usi:
         
-            # parent_assign = uso.xpath(
-            #     "ancestor::src:expr_stmt[src:expr[src:operator[text()='=']]]/src:expr/src:name[1]",
-            #     namespaces=NS,
-            # )
-            # if parent_assign and parent_assign[0] == uso:
-            #     continue
             enclosing_stmt = uso.xpath("ancestor::src:expr_stmt[1] | ancestor::src:decl_stmt[1]", namespaces=NS)
             if enclosing_stmt and adapter.is_assignment(enclosing_stmt[0], NS):
                 lhs, _ = adapter.get_assignment_lhs_rhs(enclosing_stmt[0], NS)

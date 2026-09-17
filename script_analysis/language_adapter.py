@@ -152,6 +152,15 @@ class LanguageAdapter(ABC):
         """Operatore usato per accedere a metodi e attributi.
         Python/Java/C#: '.'  -  PHP: '->'"""
 
+
+    @abstractmethod
+    def taint_block_functions(self) -> list:
+        """Nomi di funzioni/metodi built-in del linguaggio il cui valore di
+        ritorno non può più contenere il contenuto originale di una stringa
+        taintata (es. len, hash, bool in Python restituiscono un tipo
+        completamente diverso dall'input). Un argomento taintato passato a
+        una di queste NON propaga il taint attraverso quella chiamata."""
+
 # ---------------------------------------------------------------------- #
 # Implementazione Python
 # ---------------------------------------------------------------------- #
@@ -331,6 +340,10 @@ class PythonAdapter(LanguageAdapter):
     def member_access_operator(self) -> str:
         return "."
 
+
+    def taint_block_functions(self) -> list:
+        return ["len", "hash", "bool", "isinstance", "id", "type", "int","float"]
+
 # ---------------------------------------------------------------------- #
 # Implementazione Java
 # ---------------------------------------------------------------------- #
@@ -496,6 +509,9 @@ class JavaAdapter(LanguageAdapter):
     def member_access_operator(self) -> str:
         return "."
 
+
+    def taint_block_functions(self) -> list:
+        return ["length", "hashCode", "isEmpty", "equals", "compareTo"]
 
 
 
