@@ -154,6 +154,8 @@ def call_arguments_match_ast(call_node, spec: dict, adapter=None, imports=None) 
             args_text = "".join(arg_list_nodes[0].itertext()) if arg_list_nodes else ""
             if "," in args_text:
                 return False
+            
+            
 
     # if spec.get("require_bare_arg"):
     #     if len(arguments) == 0:
@@ -183,6 +185,22 @@ def call_arguments_match_ast(call_node, spec: dict, adapter=None, imports=None) 
             return req in found_texts or _adapter.parse_numeric_literal(str(req)) in found_values
 
         if not any(_num_ok(req) for req in banned_numbers):
+            return False
+
+    if "arg_less_than" in spec:
+        limit = spec["arg_less_than"]
+        numerics = call_node.xpath(".//src:argument_list//src:literal[@type='number']", namespaces=NS)
+        _adapter = adapter or PythonAdapter()
+        
+        found_less_than_limit = False
+        for num_node in numerics:
+            val_text = "".join(num_node.itertext()).strip()
+            val = _adapter.parse_numeric_literal(val_text)
+            if val is not None and val < limit:
+                found_less_than_limit = True
+                break
+                
+        if not found_less_than_limit:
             return False
 
     banned_booleans = spec.get("contains_booleans", [])
@@ -296,36 +314,36 @@ def find_assignments(scope_node, adapter, var_name: str | None = None) -> list:
     return out
 
 
-def source_arg_is_traceable_literal(call_node, scope_node, arg_index: int = 0, adapter=None) -> bool:
-    adapter = adapter or PythonAdapter()          
-    arg_list = call_node.xpath("./src:argument_list", namespaces=NS)
-    if not arg_list:
-        return True
-    arguments = arg_list[0].xpath("./src:argument", namespaces=NS)
-    positional = [a for a in arguments if not adapter.is_kwarg(a, NS)]   # <-- via adapter, non closure locale
-    if arg_index >= len(positional):
-        return False
+# def source_arg_is_traceable_literal(call_node, scope_node, arg_index: int = 0, adapter=None) -> bool:
+#     adapter = adapter or PythonAdapter()          
+#     arg_list = call_node.xpath("./src:argument_list", namespaces=NS)
+#     if not arg_list:
+#         return True
+#     arguments = arg_list[0].xpath("./src:argument", namespaces=NS)
+#     positional = [a for a in arguments if not adapter.is_kwarg(a, NS)]   # <-- via adapter, non closure locale
+#     if arg_index >= len(positional):
+#         return False
  
-    target_arg = positional[arg_index]
-    expr_nodes = target_arg.xpath("./src:expr", namespaces=NS)
-    expr = expr_nodes[0] if expr_nodes else target_arg
-    call_key = _pos_key(call_node)
-    if _is_pure_literal_expr(expr):
-        return True
+#     target_arg = positional[arg_index]
+#     expr_nodes = target_arg.xpath("./src:expr", namespaces=NS)
+#     expr = expr_nodes[0] if expr_nodes else target_arg
+#     call_key = _pos_key(call_node)
+#     if _is_pure_literal_expr(expr):
+#         return True
  
-    names = expr.xpath("./src:name[not(src:index)]", namespaces=NS)
-    if len(names) != 1 or len(expr) != 1:
-        return False
-    var_name = "".join(names[0].itertext()).strip()
+#     names = expr.xpath("./src:name[not(src:index)]", namespaces=NS)
+#     if len(names) != 1 or len(expr) != 1:
+#         return False
+#     var_name = "".join(names[0].itertext()).strip()
  
-    candidates = [stmt for stmt, _, _ in find_assignments(scope_node, adapter, var_name)]
+#     candidates = [stmt for stmt, _, _ in find_assignments(scope_node, adapter, var_name)]
  
-    prior = [c for c in candidates if _pos_key(c) < call_key]
-    if not prior:
-        return False
-    last_assign = max(prior, key=_pos_key)
-    _, rhs = adapter.get_assignment_lhs_rhs(last_assign, NS)
-    return bool(rhs is not None and _is_pure_literal_expr(rhs))
+#     prior = [c for c in candidates if _pos_key(c) < call_key]
+#     if not prior:
+#         return False
+#     last_assign = max(prior, key=_pos_key)
+#     _, rhs = adapter.get_assignment_lhs_rhs(last_assign, NS)
+#     return bool(rhs is not None and _is_pure_literal_expr(rhs))
 
 
 

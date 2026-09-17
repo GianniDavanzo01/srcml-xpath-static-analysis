@@ -127,6 +127,14 @@
   "safe_contexts": []
 },
 {
+  "rule_id": "CWE-611-XXE",
+  "type": "structural",
+  "vulnerabilities": ["CWE-611"],
+  "forbidden_functions": [
+    {"tag": "unsafe_xml_parsers"}
+  ]
+},
+{
     "rule_id": "CWE-676-Potentially_Dangerous_Function-SOCKET",
     "type": "structural",
     "vulnerabilities": ["CWE-676"],

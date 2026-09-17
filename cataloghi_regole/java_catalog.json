@@ -29,7 +29,7 @@
       {"type": "call_with_var_arg", "call": ["get", "resolve"]}
     ],
     "os_command_execution": [
-      {"type": "call_with_var_arg", "call": ["exec", "ProcessBuilder"]}
+      {"type": "call_with_var_arg", "call": ["exec", "ProcessBuilder","command"]}
     ],
     "file_system_access": [
       {"type": "call_with_var_arg", "call": [
@@ -67,15 +67,41 @@
   "forbidden_functions": {
     "socket_primitives": [
       "Socket","ServerSocket","DatagramSocket","SocketChannel",
-      "ServerSocketChannel","socket.connect","serverSocket.bind","serverSocket.accept",
-      "socket.getInputStream","socket.getOutputStream","datagramSocket.send","datagramSocket.receive"
+      "ServerSocketChannel","Socket.connect","ServerSocket.bind","ServerSocket.accept",
+      "Socket.getInputStream","Socket.getOutputStream","DatagramSocket.send","DatagramSocket.receive"
     ],
     "weak_hash_functions": ["MD5", "SHA-1", "MessageDigest.getInstance"],
     "weak_ciphers_and_modes": ["DES", "DESede", "RC2", "RC4", "Blowfish", "ECB", "Cipher.getInstance"],
-    "weak_prngs": ["java.util.Random","Math.random","Random"]
+    "weak_prngs": ["java.util.Random","Math.random","Random"],
+    "weak_key_generation": [
+      {
+        "type": "call_matches_ast",
+        "call": [
+          "initialize", 
+          "KeyPairGenerator.initialize", 
+          "init", 
+          "KeyGenerator.init"
+        ],
+        "arg_less_than": 2048
+      }
+    ],
+    "dynamic_code_execution": [
+      "ScriptEngine.eval",
+      "GroovyShell.evaluate",
+      "ExpressionParser.parseExpression",
+      "Ognl.getValue",
+      "MVEL.eval"
+    ],
+    "unsafe_xml_parsers": [
+      "DocumentBuilderFactory.newDocumentBuilder",
+      "SAXParserFactory.newSAXParser",
+      "XMLInputFactory.createXMLStreamReader",
+      "SchemaFactory.newSchema"
+    ]
   },
   "excluded_functions": {
-      "safe_prng_exceptions": ["SecureRandom"]
+      "safe_prng_exceptions": ["SecureRandom"],
+      "eval_false_positive_exceptions": []
   },
   "sanitizers":{
     "cast_to_integer": ["Integer.parseInt", "Integer.valueOf","Long.parseLong","Long.valueOf"],
