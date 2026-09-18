@@ -457,37 +457,52 @@ class JavaAdapter(LanguageAdapter):
         return bindings
 
     def resolve_call_name(self, call_node, ns, imports) -> str:
-            name_nodes = call_node.xpath("./src:name", namespaces=ns)
-            if not name_nodes:
-                return None
-                
-            raw_name = "".join(name_nodes[0].itertext()).strip()
-            
-            parts = name_nodes[0].xpath("./src:name", namespaces=ns)
-            ops = name_nodes[0].xpath("./src:operator[text()='.']", namespaces=ns)
-            
-            if len(parts) >= 2 and ops:
-                var_name = "".join(parts[0].itertext()).strip()
-                method_name = "".join(parts[-1].itertext()).strip()
-                
-                # Cerca il nodo di scope più vicino (blocco, funzione, classe o l'intero file unit)
-                # e cerca al suo interno la dichiarazione della variabile
-                xpath_query = (
-                    f"ancestor::*[self::src:block or self::src:function or self::src:class or self::src:unit][1]"
-                    f"//src:decl[src:name[text()='{var_name}']]"
-                )
-                decls = call_node.xpath(xpath_query, namespaces=ns)
-                    
-                if decls:
-                    # Estrae il tipo dal nodo <type><name>
-                    type_nodes = decls[-1].xpath("./src:type//src:name", namespaces=ns)
+        name_nodes = call_node.xpath("./src:name", namespaces=ns)
+        if not name_nodes:
+            return None
+
+        raw_name = "".join(name_nodes[0].itertext()).strip()
+
+        parts = name_nodes[0].xpath("./src:name", namespaces=ns)
+        ops = name_nodes[0].xpath("./src:operator[text()='.']", namespaces=ns)
+
+        if len(parts) >= 2 and ops:
+            var_name = "".join(parts[0].itertext()).strip()
+            method_name = "".join(parts[-1].itertext()).strip()
+
+            xpath_query = (
+                f"ancestor::*[self::src:block or self::src:function or self::src:class or self::src:unit][1]"
+                f"//src:decl[src:name[text()='{var_name}']]"
+            )
+            decls = call_node.xpath(xpath_query, namespaces=ns)
+
+            if decls:
+                decl_node = decls[-1]
+                var_type = None
+                seen = set()
+
+                # Risale attraverso <type ref="prev"/> nelle dichiarazioni multiple
+                # a tipo condiviso (es. 'ScriptEngine a, b, c = ...') finché non
+                # trova il <decl> che possiede davvero il <type>.
+                while decl_node is not None and id(decl_node) not in seen:
+                    seen.add(id(decl_node))
+
+                    type_nodes = decl_node.xpath("./src:type//src:name", namespaces=ns)
                     if type_nodes:
                         var_type = "".join(type_nodes[0].itertext()).strip()
-                        
-                        #  restituisce "ScriptEngine.eval"
-                        return f"{var_type}.{method_name}"
-                        
-            return raw_name
+                        break
+
+                    type_node = decl_node.xpath("./src:type", namespaces=ns)
+                    if type_node and type_node[0].get("ref") == "prev":
+                        prev_decl = decl_node.xpath("preceding-sibling::src:decl[1]", namespaces=ns)
+                        decl_node = prev_decl[0] if prev_decl else None
+                    else:
+                        decl_node = None
+
+                if var_type:
+                    return f"{var_type}.{method_name}"
+
+        return raw_name
 
     def string_formatting_operator_roles(self) -> dict:
         return {"concat": "+"}
