@@ -14,13 +14,15 @@
       {
         "type": "call_with_var_arg",
         "call": [
-          "executeQuery",
-          "executeUpdate",
-          "execute",
-          "prepareStatement",
-          "createQuery",
-          "createNativeQuery",
-          "jdbcTemplate.query"
+          "Statement.executeQuery", "PreparedStatement.executeQuery", "CallableStatement.executeQuery",
+          "Statement.executeUpdate", "PreparedStatement.executeUpdate", "CallableStatement.executeUpdate",
+          "Statement.execute", "PreparedStatement.execute", "CallableStatement.execute",
+          "Connection.prepareStatement",
+          "EntityManager.createQuery", "Session.createQuery",
+          "EntityManager.createNativeQuery",
+          "JdbcTemplate.query",
+          "executeQuery", "executeUpdate", "execute",
+          "prepareStatement", "createQuery", "createNativeQuery", "jdbcTemplate.query"
         ]
       } 
       ],
@@ -112,10 +114,14 @@
     "url_validation": ["UrlValidator"]
   },
   "safe_contexts": {
-    "try_block": [
-      "try"
-    ],
-    "sql_parameterization":[]
+    "try_block": ["try"],
+    "sql_parameterization":[],
+    "safe_permission_defaults": [
+        {
+        "type": "matches_xpath",
+        "xpath": ".//src:call[.//src:name[text()='PosixFilePermissions']]"
+      }
+    ]
   },
   "patterns": {
     "active_debug": {
@@ -127,6 +133,17 @@
           "contains_booleans": ["true"]
         }
       ]
-    }
+    },
+    "insecure_permission_assignment": {
+      "forbidden_functions": [
+          "Files.createTempDirectory",
+          {
+            "type": "call_matches_ast",
+            "call": ["setWritable", "setExecutable", "setReadable"],
+            "exact_args_count": 2,
+            "args_boolean_sequence": ["true", "false"]
+          }
+        ]
+      }
   }
 }

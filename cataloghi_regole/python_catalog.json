@@ -115,7 +115,13 @@
     },
   "safe_contexts": {
     "sql_parameterization": [{"type": "parametrized_query"}],
-    "try_block": ["try"]
+    "try_block": ["try"],
+    "safe_permission_defaults": [
+        {"type": "call_with_kwarg", "call": ["os.makedirs"], "kwargs": {"mode": "0o700"}},
+        {"type": "function_has_call_matching_ast", "call": ["os.chmod", "chmod"], "contains_names": ["stat.S_IRWXU"]},
+        {"type": "function_has_call_matching_ast", "call": ["os.chmod", "chmod"], "contains_names": ["stat.S_IRUSR"]},
+        {"type": "function_has_call_matching_ast", "call": ["os.chmod", "chmod"], "contains_names": ["stat.S_IWUSR"]}
+      ]
   },
   "patterns": {
     "active_debug": {
@@ -128,6 +134,23 @@
       "bad_assignments": {
         "debug": "True"
       }
+    },
+    "insecure_permission_assignment": {
+    "forbidden_functions": [
+      "os.makedirs",
+      "tempfile.mkdtemp",
+      {
+        "type": "call_matches_ast",
+        "call": ["os.chmod"],
+        "contains_numbers": ["0", "0000", "0o000", "755", "0o755", "777", "0o777", "0o400", "128", "664", "0o644"]
+      }
+    ],
+    "local_var_forbidden_calls": [
+      {
+        "call": ["os.chmod"],
+        "forbidden_numbers": ["0", "0000", "0o000", "755", "0o755", "777", "0o777", "0o400", "128", "664", "0o644"]
+      }
+    ]
     }
   }
 }

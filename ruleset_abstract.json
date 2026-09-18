@@ -146,6 +146,17 @@
     ]
 },
 {
+  "rule_id": "CWE-732-INCORRECT-PERMISSION-ASSIGNMENT",
+  "type": "structural",
+  "vulnerabilities": ["CWE-732"],
+  "patterns": [
+    {"tag": "insecure_permission_assignment"}
+  ],
+  "safe_contexts": [
+    {"tag": "safe_permission_defaults"}
+  ]
+},
+{
   "rule_id": "CWE-918-SSRF",
   "type": "taint",
   "vulnerabilities": ["CWE-918"],
