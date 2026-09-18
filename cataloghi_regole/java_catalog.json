@@ -69,11 +69,8 @@
       {
         "type": "call_with_var_arg",
         "call":[
-        "HttpServletResponse.addHeader",
-        "HttpServletResponse.setHeader",
-        "HttpServletResponse.addCookie",
-        "ServerHttpResponse.getHeaders.add",
-        "ServerHttpResponse.getHeaders.set"
+        "HttpServletResponse.addHeader","HttpServletResponse.setHeader","HttpServletResponse.addCookie",
+        "ServerHttpResponse.getHeaders.add","ServerHttpResponse.getHeaders.set"
       ]
     }
   ]
@@ -111,7 +108,20 @@
       "SAXParserFactory.newSAXParser",
       "XMLInputFactory.createXMLStreamReader",
       "SchemaFactory.newSchema"
-    ]
+    ],
+    "unsafe_deserializers": [
+      "ObjectInputStream.readObject","ObjectInputStream.readUnshared",
+      "XMLDecoder.readObject","XStream.fromXML","Yaml.load",
+      "Kryo.readObject","Kryo.readClassAndObject"
+    ],
+    "insecure_temp_functions": [
+      {
+        "type": "call_matches_ast",
+        "call": ["File"],
+        "contains_names": ["java.io.tmpdir"]
+      }
+    ],
+    "insecure_cookie_configuration":["HttpServletResponse.addCookie","Cookie"]
   },
   "excluded_functions": {
       "safe_prng_exceptions": ["SecureRandom"],
@@ -131,10 +141,17 @@
     "sql_parameterization":[],
     "safe_permission_defaults": [
         {
-        "type": "matches_xpath",
-        "xpath": ".//src:call[.//src:name[text()='PosixFilePermissions']]"
-      }
-    ]
+          "type": "matches_xpath",
+          "xpath": ".//src:call[.//src:name[text()='PosixFilePermissions']]"
+        }
+      ],
+    "secure_cookie_contexts": [
+        {
+          "type": "function_has_call_matching_ast",
+          "call": ["setSecure"],
+          "contains_booleans": ["true"]
+        }
+      ]
   },
   "patterns": {
     "active_debug": {

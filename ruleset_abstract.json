@@ -125,11 +125,27 @@
   ]
 },
 {
+  "rule_id": "CWE-377-INSECURE-TEMP-FILE",
+  "type": "structural",
+  "vulnerabilities": ["CWE-377"],
+  "forbidden_functions": [
+    {"tag": "insecure_temp_functions"}
+  ]
+},
+{
   "rule_id": "CWE-489-ACTIVE-DEBUG",
   "type": "structural",
   "vulnerabilities": ["CWE-489"],
   "patterns": [
     {"tag": "active_debug"}
+  ]
+},
+{
+  "rule_id": "CWE-502-DESERIALIZATION",
+  "type": "structural",
+  "vulnerabilities": ["CWE-502"],
+  "forbidden_functions": [
+    {"tag": "unsafe_deserializers"}
   ]
 },
 {
@@ -154,6 +170,17 @@
   "vulnerabilities": ["CWE-611"],
   "forbidden_functions": [
     {"tag": "unsafe_xml_parsers"}
+  ]
+},
+{
+  "rule_id": "CWE-614-SENSITIVE-COOKIE-INSECURE",
+  "type": "structural",
+  "vulnerabilities": ["CWE-614"],
+  "forbidden_functions": [
+    {"tag": "insecure_cookie_configuration"}
+  ],
+  "safe_contexts": [
+    {"tag": "secure_cookie_contexts"}
   ]
 },
 {

@@ -93,22 +93,28 @@
           }
         ],
         "weak_key_generation": [
-      {
-        "type": "call_matches_ast",
-        "call": [
-          "RSA.generate", 
-          "DSA.generate", 
-          "rsa.generate_private_key", 
-          "dsa.generate_private_key"
+          {
+            "type": "call_matches_ast",
+            "call": [
+              "RSA.generate", 
+              "DSA.generate", 
+              "rsa.generate_private_key", 
+              "dsa.generate_private_key"
+            ],
+            "arg_less_than": 2048
+          }
         ],
-        "arg_less_than": 2048
-      }
-    ],
-    "dynamic_code_execution": ["eval", "exec"],
-    "unsafe_xml_parsers": [
-      "xml.sax.make_parser","xml.sax.parse","xml.sax.parseString",
-      "xml.etree.ElementTree.parse","xml.etree.ElementTree.fromstring","xml.dom.minidom.parse","xml.dom.pulldom.parse"
-    ]
+        "dynamic_code_execution": ["eval", "exec"],
+        "unsafe_xml_parsers": [
+          "xml.sax.make_parser","xml.sax.parse","xml.sax.parseString",
+          "xml.etree.ElementTree.parse","xml.etree.ElementTree.fromstring","xml.dom.minidom.parse","xml.dom.pulldom.parse"
+        ],
+        "unsafe_deserializers": [
+          "pickle.load", "pickle.loads","_pickle.load", "_pickle.loads","cPickle.load", "cPickle.loads",
+          "marshal.load", "marshal.loads","shelve.open","yaml.unsafe_load","pandas.read_pickle","numpy.load"
+        ],
+        "insecure_temp_functions": ["tempfile.mktemp","mktemp"],
+        "insecure_cookie_configuration":["set_cookie","response.set_cookie","HttpResponse.set_cookie"]
     },
     "excluded_functions": {
       "safe_prng_exceptions": ["secrets.choice","secrets.randbelow","secrets.randbits"],
@@ -131,6 +137,17 @@
         {"type": "function_has_call_matching_ast", "call": ["os.chmod", "chmod"], "contains_names": ["stat.S_IRWXU"]},
         {"type": "function_has_call_matching_ast", "call": ["os.chmod", "chmod"], "contains_names": ["stat.S_IRUSR"]},
         {"type": "function_has_call_matching_ast", "call": ["os.chmod", "chmod"], "contains_names": ["stat.S_IWUSR"]}
+        ],
+    "secure_cookie_contexts": [
+        {
+          "type": "call_with_kwarg",
+          "call": ["set_cookie", "response.set_cookie", "HttpResponse.set_cookie"],
+          "kwargs": {
+            "secure": "True",
+            "httponly": "True"
+          },
+          "require": "all"
+        }
       ]
   },
   "patterns": {
@@ -146,21 +163,21 @@
       }
     },
     "insecure_permission_assignment": {
-    "forbidden_functions": [
-      "os.makedirs",
-      "tempfile.mkdtemp",
-      {
-        "type": "call_matches_ast",
-        "call": ["os.chmod"],
-        "contains_numbers": ["0", "0000", "0o000", "755", "0o755", "777", "0o777", "0o400", "128", "664", "0o644"]
-      }
-    ],
-    "local_var_forbidden_calls": [
-      {
-        "call": ["os.chmod"],
-        "forbidden_numbers": ["0", "0000", "0o000", "755", "0o755", "777", "0o777", "0o400", "128", "664", "0o644"]
-      }
-    ]
+      "forbidden_functions": [
+        "os.makedirs",
+        "tempfile.mkdtemp",
+        {
+          "type": "call_matches_ast",
+          "call": ["os.chmod"],
+          "contains_numbers": ["0", "0000", "0o000", "755", "0o755", "777", "0o777", "0o400", "128", "664", "0o644"]
+        }
+      ],
+      "local_var_forbidden_calls": [
+        {
+          "call": ["os.chmod"],
+          "forbidden_numbers": ["0", "0000", "0o000", "755", "0o755", "777", "0o777", "0o400", "128", "664", "0o644"]
+        }
+      ]
     },
     "insecure_certificate_validation": {
       "forbidden_calls_with_kwargs": [
@@ -168,7 +185,24 @@
           "call": ["requests.get", "requests.post", "requests.put", "requests.delete", "requests.head", "requests.patch", "requests.request", "session.get", "session.post"],
           "kwargs": {"verify": "False"}
         }
-      ]
+      ],
+      "bad_assignments": {
+        "verify_mode": "ssl.CERT_NONE",
+        "check_hostname": "False"
+      },
+      "forbidden_functions": [
+          "ssl.wrap_socket",
+          {
+            "type": "call_matches_ast",
+            "call": ["ssl._create_unverified_context"],
+            "exact_args_count": 0
+          },
+          {
+            "type": "call_matches_ast",
+            "call": ["ssl._create_stdlib_context"],
+            "exact_args_count": 0
+          }
+        ]
     }
   }
 }
