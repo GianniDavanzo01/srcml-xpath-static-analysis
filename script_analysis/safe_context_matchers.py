@@ -789,44 +789,77 @@ def _safe_context_unit_has_function_def(node, spec: dict, var_name: str | None =
 
 def _safe_context_call_has_kwargs(node, spec: dict, var_name: str | None = None, adapter=None, imports=None) -> bool:
     calls = spec.get("call", [])
+    _adapter = adapter or PythonAdapter()
     
     call_node = node.xpath("ancestor-or-self::src:call[1]", namespaces=NS)
     if not call_node:
         return False
         
-    # call_name = get_call_name(call_node[0])
-    call_name = get_call_name(call_node[0], adapter, imports)
+    call_name = get_call_name(call_node[0], _adapter, imports)
     if call_name is None or not any(call_name == c or call_name.endswith(f".{c}") for c in calls):
         return False
 
-    arg_list = call_node[0].xpath("./src:argument_list", namespaces=NS)
-    if not arg_list:
+    arg_list_nodes = call_node[0].xpath("./src:argument_list", namespaces=NS)
+    if not arg_list_nodes:
         return not spec.get("kwargs") and not spec.get("dict_key") and not spec.get("allowed_values")
         
-    args_text = "".join(arg_list[0].itertext()).replace(" ", "").replace("\n", "").replace("'", '"')
+    arguments = arg_list_nodes[0].xpath("./src:argument", namespaces=NS)
     
+    found_kwargs = {}
+    found_kwarg_nodes = {}
+    for arg in arguments:
+        if _adapter.is_kwarg(arg, NS):
+            name_node = arg.xpath("./src:name[1]", namespaces=NS)
+            if not name_node:
+                continue
+            key_name = "".join(name_node[0].itertext()).strip()
+
+            val_nodes = arg.xpath("./src:expr[1] | ./src:literal[1]", namespaces=NS)
+            if val_nodes:
+                found_kwarg_nodes[key_name] = val_nodes[0]
+                val_text = "".join(val_nodes[0].itertext()).strip()
+                found_kwargs[key_name] = _adapter.normalize_string_literal(val_text)
+
     kwarg_name = spec.get("kwarg")
-    
+
+    # Caso: valore del kwarg e' un dict letterale, richiediamo una coppia chiave/valore specifica
     if kwarg_name and spec.get("dict_key"):
+        value_node = found_kwarg_nodes.get(kwarg_name)
+        if value_node is None:
+            return False
         dict_key = spec.get("dict_key")
         dict_val = spec.get("dict_value")
-        pattern = rf"{kwarg_name}=\{{[^\}}]*\"{dict_key}\":{dict_val}"
-        return bool(re.search(pattern, args_text))
-        
-    if kwarg_name and spec.get("allowed_values"):
-        for val in spec.get("allowed_values", []):
-            target = f'{kwarg_name}=["{val}"]'
-            if target in args_text:
+        # Navigazione strutturale: literal-stringa che rappresenta la chiave,
+        # poi il suo valore tramite l'operatore ':' che lo segue nell'AST.
+        for kl in value_node.xpath(".//src:literal[@type='string']", namespaces=NS):
+            if _adapter.normalize_string_literal("".join(kl.itertext()).strip()) != dict_key:
+                continue
+            colon = kl.xpath("following-sibling::src:operator[1][text()=':']", namespaces=NS)
+            if not colon:
+                continue
+            val_sib = colon[0].xpath("following-sibling::*[1]", namespaces=NS)
+            if val_sib and "".join(val_sib[0].itertext()).strip() == str(dict_val):
                 return True
         return False
-        
+
+    # Caso: valore del kwarg e' una lista letterale, richiediamo uno degli elementi ammessi
+    if kwarg_name and spec.get("allowed_values"):
+        value_node = found_kwarg_nodes.get(kwarg_name)
+        if value_node is None:
+            return False
+        found_elements = {
+            _adapter.normalize_string_literal("".join(e.itertext()).strip())
+            for e in value_node.xpath(".//src:literal[@type='string']", namespaces=NS)
+        }
+        return bool(found_elements & {str(v) for v in spec.get("allowed_values", [])})
+
     kwargs = spec.get("kwargs", {})
     if kwargs:
         require_mode = spec.get("require", "any")
         if require_mode == "all":
-            return all(f"{k}={v}" in args_text for k, v in kwargs.items())
+            return all(found_kwargs.get(k) == _adapter.normalize_string_literal(str(v)) for k, v in kwargs.items())
         else:
-            return any(f"{k}={v}" in args_text for k, v in kwargs.items())
+            return any(found_kwargs.get(k) == _adapter.normalize_string_literal(str(v)) for k, v in kwargs.items())
             
     return True
 
