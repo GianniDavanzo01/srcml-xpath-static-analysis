@@ -372,18 +372,33 @@ def _safe_context_function_has_hmac_sha512_digest(node, spec: dict, var_name: st
 
 def _safe_context_function_has_file_size_check(node, spec: dict, var_name: str | None = None, adapter=None, imports=None) -> bool:
     """{"type": "function_has_file_size_check"}
-        pattern_not di FILE-DIM-001 
+       Verifica se nello scope della funzione esiste un controllo sulla dimensione.
+       Agnostica: ricava le proprietà da `spec` e l'operatore dal LanguageAdapter.
     """
     target = _function_or_unit_scope(node)
     
-    has_file_size = target.xpath(".//src:operator[text()='.']/following-sibling::*[1][self::src:name[text()='file_size']]", namespaces=NS)
-    if has_file_size:
-        return True
-        
+    _adapter = adapter or PythonAdapter()
+    
+    # 1. Recupera l'operatore specifico per il linguaggio (es. '.' per Python/Java)
+    member_op = _adapter.member_access_operator()
+    
+    # 2. Preleva dal catalogo JSON le proprietà/metodi validi (default: ["file_size", "size"])
+    size_properties = spec.get("size_properties", ["file_size", "size"])
+    
+    # 3. Ricerca generica nello scope della funzione
+    for prop in size_properties:
+        xpath_query = f".//src:operator[text()='{member_op}']/following-sibling::*[1][self::src:name[text()='{prop}']]"
+        if target.xpath(xpath_query, namespaces=NS):
+            return True
+            
+    # 4. Ricerca specifica dentro i blocchi condizionali (es. if file.size > 100)
     conditions = target.xpath(".//src:if_stmt//src:condition", namespaces=NS)
     for cond in conditions:
-        if cond.xpath(".//src:operator[text()='.']/following-sibling::*[1][self::src:name[text()='size']]", namespaces=NS):
-            return True
+        for prop in size_properties:
+            xpath_query = f".//src:operator[text()='{member_op}']/following-sibling::*[1][self::src:name[text()='{prop}']]"
+            if cond.xpath(xpath_query, namespaces=NS):
+                return True
+                
     return False
 
 
