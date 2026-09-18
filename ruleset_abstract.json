@@ -43,8 +43,7 @@
   "sanitizers": [
     {"tag": "XSS_sanitizers"},
     {"tag": "cast_to_integer"}
-  ],
-  "safe_contexts": []
+  ]
 },
 {
   "rule_id": "CWE-89-SQLI",

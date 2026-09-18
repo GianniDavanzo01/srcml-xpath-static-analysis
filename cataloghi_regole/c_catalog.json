@@ -1,0 +1,69 @@
+{
+    "sources":{
+        "http_input": [
+            "getenv","recv","recvfrom","read",
+            "fread","fgets","scanf","gets"]
+    },
+    "sinks":{
+        "file_system_access": [
+            {
+                "type": "call_with_var_arg",
+                "call":["fopen","open","remove","unlink","rename","mkdir","rmdir","stat","lstat"]
+            }
+        ],
+        "path_concatenation": [
+            {
+                "type": "call_with_var_arg",
+                "call":["strcat","strncat","sprintf","snprintf"]
+            }
+        ],
+        "os_command_execution": [
+            {
+                "type": "call_with_var_arg",
+                "call": ["system", "popen", "execl", "execlp", "execle", "execv", "execvp", "execvpe", "execve"]
+            }
+        ],
+        "html_output": [
+            {"type": "call_with_var_arg", "call": ["printf", "fprintf", "puts", "fputs"]}
+        ],
+        "sql_execution": [
+            {"type": "call_with_var_arg", "call": ["sqlite3_exec", "sqlite3_prepare", "sqlite3_prepare_v2", "sqlite3_prepare_v3"]}
+        ]
+    },
+    "forbidden_functions":{},
+    "excluded_functions":{},
+    "sanitizers":{
+        "cast_to_integer":["atoi","atol","atoll","strtol","strtoll","strtoul"],
+        "path_sanitizers": ["basename","realpath"],
+        "shell_escape_sanitizers": [],
+        "XSS_sanitizers": []
+    },
+    "safe_contexts":{
+        "sql_parameterization": []
+    },
+    "patterns":{
+        "insecure_certificate_validation": {
+            "forbidden_functions": [
+                {
+                "type": "call_matches_ast",
+                "call": ["SSL_CTX_set_verify", "SSL_set_verify"],
+                "contains_names": ["SSL_VERIFY_NONE"]
+                },
+                {
+                "type": "call_matches_ast",
+                "call": ["curl_easy_setopt"],
+                "exact_args_count": 3,
+                "contains_names": ["CURLOPT_SSL_VERIFYPEER"],
+                "contains_numbers": ["0"]
+                },
+                {
+                "type": "call_matches_ast",
+                "call": ["curl_easy_setopt"],
+                "exact_args_count": 3,
+                "contains_names": ["CURLOPT_SSL_VERIFYHOST"],
+                "contains_numbers": ["0"]
+                }
+            ]
+        }
+    }
+}
