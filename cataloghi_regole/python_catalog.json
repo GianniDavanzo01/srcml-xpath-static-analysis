@@ -104,7 +104,7 @@
             "arg_less_than": 2048
           }
         ],
-        "dynamic_code_execution": ["eval", "exec"],
+        "dynamic_code_execution": ["eval", "exec","zip_importer.exec_module"],
         "unsafe_xml_parsers": [
           "xml.sax.make_parser","xml.sax.parse","xml.sax.parseString",
           "xml.etree.ElementTree.parse","xml.etree.ElementTree.fromstring","xml.dom.minidom.parse","xml.dom.pulldom.parse"
@@ -114,7 +114,8 @@
           "marshal.load", "marshal.loads","shelve.open","yaml.unsafe_load","pandas.read_pickle","numpy.load"
         ],
         "insecure_temp_functions": ["tempfile.mktemp","mktemp"],
-        "insecure_cookie_configuration":["set_cookie","response.set_cookie","HttpResponse.set_cookie"]
+        "insecure_cookie_configuration":["set_cookie","response.set_cookie","HttpResponse.set_cookie"],
+        "resource_heavy_functions":["extract","zipfile.ZipFile","zlib.compress","zlib.decompress","extract_text"]
     },
     "excluded_functions": {
       "safe_prng_exceptions": ["secrets.choice","secrets.randbelow","secrets.randbits"],
@@ -139,16 +140,26 @@
         {"type": "function_has_call_matching_ast", "call": ["os.chmod", "chmod"], "contains_names": ["stat.S_IWUSR"]}
         ],
     "secure_cookie_contexts": [
-        {
-          "type": "call_with_kwarg",
-          "call": ["set_cookie", "response.set_cookie", "HttpResponse.set_cookie"],
-          "kwargs": {
-            "secure": "True",
-            "httponly": "True"
+          {
+            "type": "call_with_kwarg",
+            "call": ["set_cookie", "response.set_cookie", "HttpResponse.set_cookie"],
+            "kwargs": {
+              "secure": "True",
+              "httponly": "True"
+            },
+            "require": "all"
+          }
+        ],
+      "resource_safe_contexts": [
+          {
+            "type": "function_has_file_size_check",
+            "size_properties": ["file_size", "size"]
           },
-          "require": "all"
-        }
-      ]
+          {
+            "type": "condition_matches_xpath",
+            "xpath": ".//src:call[src:name[text()='len']]"
+          }
+        ]
   },
   "patterns": {
     "active_debug": {

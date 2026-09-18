@@ -121,7 +121,8 @@
         "contains_names": ["java.io.tmpdir"]
       }
     ],
-    "insecure_cookie_configuration":["HttpServletResponse.addCookie","Cookie"]
+    "insecure_cookie_configuration":["HttpServletResponse.addCookie","Cookie"],
+    "resource_heavy_functions": ["ZipFile","ZipInputStream","ZipInputStream.getNextEntry","GZIPInputStream"]
   },
   "excluded_functions": {
       "safe_prng_exceptions": ["SecureRandom"],
@@ -146,10 +147,16 @@
         }
       ],
     "secure_cookie_contexts": [
+          {
+            "type": "function_has_call_matching_ast",
+            "call": ["setSecure"],
+            "contains_booleans": ["true"]
+          }
+        ],
+    "resource_safe_contexts": [
         {
-          "type": "function_has_call_matching_ast",
-          "call": ["setSecure"],
-          "contains_booleans": ["true"]
+          "type": "function_has_file_size_check",
+          "size_properties": ["length", "getSize"]
         }
       ]
   },
