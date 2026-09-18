@@ -10,7 +10,7 @@ safe-context o un sanitizer.
 
 import re
 
-from common import NS, build_finding, is_sanitized, source_present, source_arg_is_traceable_literal, get_call_name
+from common import NS, build_finding, is_sanitized, source_present, get_call_name #,source_arg_is_traceable_literal
 from sink_matchers import matches_any_sink
 from safe_context_matchers import is_in_safe_context
 
@@ -70,17 +70,17 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
             parent_func = assign.xpath("ancestor::src:function[1]", namespaces=NS)
             scope_node = parent_func[0] if parent_func else tree
 
-            if rule.get("require_non_literal_source_arg"):
-                source_call = None
-                for c in assign.xpath(".//src:call", namespaces=NS):
-                    # cname = get_call_name(c)
-                    cname = get_call_name(c, adapter, imports)
-                    if cname and any(cname == s or cname.endswith(f".{s}") for s in sources):
-                        source_call = c
-                        break
+            # if rule.get("require_non_literal_source_arg"):
+            #     source_call = None
+            #     for c in assign.xpath(".//src:call", namespaces=NS):
+            #         # cname = get_call_name(c)
+            #         cname = get_call_name(c, adapter, imports)
+            #         if cname and any(cname == s or cname.endswith(f".{s}") for s in sources):
+            #             source_call = c
+            #             break
 
-                if source_call is not None and source_arg_is_traceable_literal(source_call, scope_node, adapter=adapter):
-                    continue  # se l'argomento è letterale -> non taintare
+            #     if source_call is not None and source_arg_is_traceable_literal(source_call, scope_node, adapter=adapter):
+            #         continue  # se l'argomento è letterale -> non taintare
 
             tainted_vars_with_scope.append((var_name, scope_node))
 

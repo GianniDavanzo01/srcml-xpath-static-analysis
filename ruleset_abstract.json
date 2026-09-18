@@ -68,6 +68,20 @@
   "excluded_functions": [{"tag": "eval_false_positive_exceptions"}]
 },
 {
+  "rule_id": "CWE-113-HTTP-RESPONSE-SPLITTING",
+  "type": "taint",
+  "vulnerabilities": ["CWE-113"],
+  "sources": [
+    {"tag": "http_input"}
+  ],
+  "sinks": [
+    {"tag": "http_header_setters"}
+  ],
+  "sanitizers": [
+    {"tag": "crlf_sanitizers"}
+  ]
+},
+{
   "rule_id": "CWE-295-IMPROPER-CERTIFICATE-VALIDATION",
   "type": "structural",
   "vulnerabilities": ["CWE-295"],

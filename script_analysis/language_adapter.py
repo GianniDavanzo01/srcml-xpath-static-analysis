@@ -470,11 +470,19 @@ class JavaAdapter(LanguageAdapter):
             var_name = "".join(parts[0].itertext()).strip()
             method_name = "".join(parts[-1].itertext()).strip()
 
-            xpath_query = (
+            xpath_query_local = (
                 f"ancestor::*[self::src:block or self::src:function or self::src:class or self::src:unit][1]"
                 f"//src:decl[src:name[text()='{var_name}']]"
             )
-            decls = call_node.xpath(xpath_query, namespaces=ns)
+            decls = call_node.xpath(xpath_query_local, namespaces=ns)
+
+            # --- 2. Fallback sui Parametri (Se la variabile non è nel blocco) ---
+            if not decls:
+                xpath_query_param = (
+                    f"ancestor::src:function[1]//src:parameter_list"
+                    f"//src:decl[src:name[text()='{var_name}']]"
+                )
+                decls = call_node.xpath(xpath_query_param, namespaces=ns)
 
             if decls:
                 decl_node = decls[-1]

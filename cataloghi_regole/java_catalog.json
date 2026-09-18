@@ -64,7 +64,19 @@
           "RestTemplate.postForObject", "WebClient.get", "HttpClient.newHttpClient"
         ]
       }
-    ]
+    ],
+    "http_header_setters": [
+      {
+        "type": "call_with_var_arg",
+        "call":[
+        "HttpServletResponse.addHeader",
+        "HttpServletResponse.setHeader",
+        "HttpServletResponse.addCookie",
+        "ServerHttpResponse.getHeaders.add",
+        "ServerHttpResponse.getHeaders.set"
+      ]
+    }
+  ]
   },
   "forbidden_functions": {
     "socket_primitives": [
@@ -111,7 +123,8 @@
     "shell_escape_sanitizers":[],
     "html_escape": ["HtmlUtils.htmlEscape","StringEscapeUtils.escapeHtml4","ESAPI.encoder().encodeForHTML"],
     "XSS_sanitizers": ["HtmlUtils.htmlEscape","StringEscapeUtils.escapeHtml4","ESAPI.encoder().encodeForHTML"],
-    "url_validation": ["UrlValidator"]
+    "url_validation": ["UrlValidator"],
+    "crlf_sanitizers": ["ESAPI.encoder.encodeForHTTPHeader","URLEncoder.encode","StringUtils.replace","StringEscapeUtils.escapeHtml4","encodeForHTTPHeader" ]
   },
   "safe_contexts": {
     "try_block": ["try"],

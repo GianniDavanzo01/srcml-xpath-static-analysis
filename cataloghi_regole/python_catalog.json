@@ -64,6 +64,15 @@
           "httpx.get", "httpx.post","session.get","session.post"
         ]
       }
+    ],
+    "http_header_setters": [
+        {
+        "type": "call_with_var_arg",
+        "call":[
+          "BaseHTTPRequestHandler.send_header","HttpResponse.set_cookie","Response.set_cookie",
+          "flask.Response.set_cookie","django.http.HttpResponse.set_cookie","headers.add","set_cookie"
+        ]
+      }
     ]
   },
     "forbidden_functions": {
@@ -111,7 +120,8 @@
         "cast_to_integer": ["int","float"],
         "shell_escape_sanitizers": ["shlex.quote","quote"],
         "XSS_sanitizers": ["markupsafe.escape", "flask.escape", "escape", "html.escape", "bleach.clean"],
-        "url_validation": ["url_has_allowed_host_and_scheme","is_safe_url"]
+        "url_validation": ["url_has_allowed_host_and_scheme","is_safe_url"],
+        "crlf_sanitizers": ["urllib.parse.quote","urllib.parse.quote_plus","werkzeug.urls.url_quote"]
     },
   "safe_contexts": {
     "sql_parameterization": [{"type": "parametrized_query"}],
