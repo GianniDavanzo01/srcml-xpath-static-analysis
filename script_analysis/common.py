@@ -154,9 +154,27 @@ def call_arguments_match_ast(call_node, spec: dict, adapter=None, imports=None) 
             args_text = "".join(arg_list_nodes[0].itertext()) if arg_list_nodes else ""
             if "," in args_text:
                 return False
-            
-            
 
+    bool_sequence = spec.get("args_boolean_sequence")
+    if bool_sequence:
+        if len(arguments) != len(bool_sequence):
+            return False
+        for arg, expected in zip(arguments, bool_sequence):
+            if expected is None:
+                continue
+            if adapter is not None and adapter.is_kwarg(arg, NS):
+                return False  # kwarg: la posizione nel sorgente non è affidabile
+            bool_lits = arg.xpath(
+                "./src:expr/src:literal[@type='boolean'] | ./src:literal[@type='boolean']",
+                namespaces=NS,
+            )
+            if not bool_lits:
+                return False
+            actual = "".join(bool_lits[0].itertext()).strip().lower()
+            if actual != str(expected).lower():
+                return False
+            
+            
     # if spec.get("require_bare_arg"):
     #     if len(arguments) == 0:
     #         pass  

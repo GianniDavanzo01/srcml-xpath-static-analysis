@@ -420,7 +420,11 @@ def _run_local_var_forbidden_calls(tree, rule, findings, adapter, imports):
                     continue 
  
                 num_text = "".join(lit[0].itertext()).strip()
-                if num_text not in forbidden_nums:
+                parsed_val = adapter.parse_numeric_literal(num_text)
+                if parsed_val is None:
+                    continue
+                forbidden_parsed = {adapter.parse_numeric_literal(n) for n in forbidden_nums}
+                if num_text not in forbidden_nums and parsed_val not in forbidden_parsed:
                     continue
  
                 if is_in_safe_context(c_node, safe_contexts, var_name=var_name, adapter=adapter, imports=imports):
