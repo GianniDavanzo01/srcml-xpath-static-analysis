@@ -127,7 +127,7 @@
     "active_debug": {
       "forbidden_calls_with_kwargs": [
         {
-          "call_prefix": "run",
+          "call": "run",
           "kwargs": {"debug": "True"}
         }
       ],
@@ -151,6 +151,14 @@
         "forbidden_numbers": ["0", "0000", "0o000", "755", "0o755", "777", "0o777", "0o400", "128", "664", "0o644"]
       }
     ]
+    },
+    "insecure_certificate_validation": {
+      "forbidden_calls_with_kwargs": [
+        {
+          "call": ["requests.get", "requests.post", "requests.put", "requests.delete", "requests.head", "requests.patch", "requests.request", "session.get", "session.post"],
+          "kwargs": {"verify": "False"}
+        }
+      ]
     }
   }
 }

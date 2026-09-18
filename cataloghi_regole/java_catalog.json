@@ -144,6 +144,25 @@
             "args_boolean_sequence": ["true", "false"]
           }
         ]
-      }
+      },
+      "insecure_certificate_validation": {
+        "bad_function_defs": [
+          {
+            "name": "verify",
+            "param": "hostname",
+            "return_expr": "true"
+          }
+        ],
+        "forbidden_function_defs": [
+            {
+              "name": "checkClientTrusted",
+              "exact_body": "{}"
+            },
+            {
+              "name": "checkServerTrusted",
+              "exact_body": "{}"
+            }
+          ]
+    }
   }
 }

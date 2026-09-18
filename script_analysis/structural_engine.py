@@ -215,17 +215,16 @@ def _run_forbidden_function_defs(tree, rule, findings, adapter, imports):
     safe_contexts = rule.get("safe_contexts", [])
 
     for spec in specs:
-        exact_body = None
-        max_params = None
-        
         if isinstance(spec, dict):
             target_name = spec.get("name")
             is_async = spec.get("is_async", False)
-            exact_body = spec.get("exact_body")
             max_params = spec.get("max_params")
+            exact_body = spec.get("exact_body")
         elif isinstance(spec, str):
             target_name = spec
             is_async = False
+            max_params = None
+            exact_body = None
         else:
             continue
 
@@ -243,18 +242,23 @@ def _run_forbidden_function_defs(tree, rule, findings, adapter, imports):
                 if len(params) > max_params:
                     continue
                     
-            if exact_body:
-                block = func_node.xpath("./src:block", namespaces=NS)
-                if not block:
+            if exact_body in ["{}", "empty"]:
+                # Ispezioniamo strutturalmente il contenuto del blocco
+                block_content = func_node.xpath("./src:block/src:block_content", namespaces=NS)
+                if not block_content:
                     continue
-                block_text = "".join(block[0].itertext()).replace(" ", "").replace("\n", "").replace(":", "")
-                if block_text != exact_body.replace(" ", ""):
-                    continue
+                
+                # Un blocco è "vuoto" se non ha figli eccetto commenti (o il tag 'pass' di Python)
+                valid_stmts = block_content[0].xpath("./*[not(self::src:comment or self::src:pass)]", namespaces=NS)
+                
+                if len(valid_stmts) > 0:
+                    continue  # Il metodo contiene codice effettivo
 
             if is_in_safe_context(func_node, safe_contexts, None, adapter, imports):
                 continue
 
             findings.append(build_finding(rule, func_node))
+
 
 
 def _run_missing_while_increments(tree, rule, findings, adapter, imports):
@@ -777,27 +781,40 @@ def run_structural_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) 
                 continue
             func_name = "".join(name_nodes[0].itertext()).strip()
             
-            params_nodes = func.xpath(".//src:parameter_list", namespaces=NS)
-            # params_text = "".join(params_nodes[0].itertext()).replace(" ", "") if params_nodes else ""
-            param_names = {
-            "".join(n.itertext()).strip()
-            for n in func.xpath(".//src:parameter_list//src:name", namespaces=NS)
-        }
-            
-            return_nodes = func.xpath(".//src:return", namespaces=NS)
-            return_text = "".join(return_nodes[0].itertext()).replace(" ", "").replace("\n", "") if return_nodes else ""
+            # 1. Estrazione semantica dei parametri delegata all'adapter
+            param_names = set()
+            params_nodes = func.xpath(".//src:parameter_list//src:parameter", namespaces=NS)
+            for param in params_nodes:
+                p_name, _ = adapter.get_parameter_name_and_type(param, NS)
+                if p_name:
+                    param_names.add(p_name)
             
             for bfd in bad_function_defs:
                 target_name = bfd.get("name")
                 target_param = bfd.get("param")
-                raw_return_expr = bfd.get("return_expr")
-                target_return = raw_return_expr.replace(" ", "") if raw_return_expr else ""
                 
-                if func_name == target_name and target_param in param_names and target_return in return_text:
-                    if is_in_safe_context(func, safe_contexts, None, adapter, imports):
-                        continue
-                        
-                    findings.append(build_finding(rule, func))
+                # Ripuliamo l'input del catalogo (trasforma "return true;" in "true")
+                raw_return = bfd.get("return_expr", bfd.get("return_value", ""))
+                target_return = raw_return.replace("return", "").replace(";", "").strip().lower()
+                
+                if func_name == target_name and target_param in param_names:
+                    returns = func.xpath(".//src:block/src:block_content/src:return", namespaces=NS)
+                    match_return = False
+                    
+                    # 2. Validazione strutturale dell'espressione di ritorno
+                    for ret in returns:
+                        expr = ret.xpath("./src:expr", namespaces=NS)
+                        if expr:
+                            # Estraiamo solo l'espressione (es. "true" o "True") e normalizziamo
+                            expr_text = "".join(expr[0].itertext()).strip().lower()
+                            if expr_text == target_return:
+                                match_return = True
+                                break
+                                
+                    if match_return:
+                        if is_in_safe_context(func, safe_contexts, None, adapter, imports):
+                            continue
+                        findings.append(build_finding(rule, func))
 
     
 
@@ -824,39 +841,6 @@ def run_structural_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) 
                         findings.append(build_finding(rule, param))
                         break
 
-    # forbidden_calls_with_kwargs = rule.get("forbidden_calls_with_kwargs", [])
-    # if forbidden_calls_with_kwargs:
-    #     safe_contexts = rule.get("safe_contexts", [])
-        
-    #     calls = tree.xpath(".//src:call", namespaces=NS)
-    #     for call in calls:
-    #         name_nodes = call.xpath("./src:name", namespaces=NS)
-    #         if not name_nodes:
-    #             continue
-            
-    #         call_name = "".join(name_nodes[0].itertext()).replace(" ", "").replace("\n", "")
-            
-    #         arg_nodes = call.xpath("./src:argument_list", namespaces=NS)
-    #         arg_text = "".join(arg_nodes[0].itertext()).replace(" ", "").replace("\n", "") if arg_nodes else ""
-            
-    #         for fcwk in forbidden_calls_with_kwargs:
-    #             target_prefix = fcwk.get("call_prefix")  
-    #             kwargs = fcwk.get("kwargs", {})
-                
-    #             if call_name.startswith(target_prefix):
-                    
-    #                 all_kwargs_match = True
-    #                 for k, v in kwargs.items():
-    #                     if f"{k}={v}" not in arg_text:
-    #                         all_kwargs_match = False
-    #                         break
-                    
-    #                 if all_kwargs_match:
-    #                     if is_in_safe_context(call, safe_contexts, None, adapter, imports):
-    #                         continue
-                            
-    #                     findings.append(build_finding(rule, call))
-
     forbidden_calls_with_kwargs = rule.get("forbidden_calls_with_kwargs", [])
     if forbidden_calls_with_kwargs:
         safe_contexts = rule.get("safe_contexts", [])
@@ -868,10 +852,13 @@ def run_structural_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) 
                 continue
             
             for fcwk in forbidden_calls_with_kwargs:
-                target_prefix = fcwk.get("call_prefix")  
+                targets = fcwk.get("call", [])
+                if isinstance(targets, str):
+                    targets = [targets]
                 kwargs = fcwk.get("kwargs", {})
-                
-                if call_name == target_prefix or call_name.endswith(f".{target_prefix}"):
+
+                is_target = any(call_name == t or call_name.endswith(f".{t}") for t in targets)
+                if is_target:
                     all_kwargs_match = True
                     
                     found_kwargs = {}
@@ -894,6 +881,8 @@ def run_structural_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) 
                         if is_in_safe_context(call, safe_contexts, None, adapter, imports):
                             continue
                         findings.append(build_finding(rule, call))
+
+
     #CONSIDERARE QUESTO è USATO SOLO DA DUE REGOLE ALL'INTERNO DI RULESET_OS-->IN FUTURO POTREBBE ESSERE ABOLITO
     forbidden_calls_with_arg = rule.get("forbidden_calls_with_arg_pattern", [])
     if forbidden_calls_with_arg:
