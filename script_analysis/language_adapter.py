@@ -114,7 +114,6 @@ class LanguageAdapter(ABC):
         dict, e la regola corrispondente resta inattiva senza bisogno di
         toccare il motore."""
 
-    # language_adapter.py, nel contratto astratto
     @abstractmethod
     def negation_operator(self) -> str:
         """Operatore di negazione booleana. Python: 'not' (parola chiave,
@@ -122,7 +121,7 @@ class LanguageAdapter(ABC):
 
     @abstractmethod
     def is_boolean_literal(self, text: str) -> bool:
-        """"""
+        """Scrittura dei letterali booleani del relativo linguaggio"""
 
     @abstractmethod
     def reference_comparison_operators(self) -> list:
@@ -160,6 +159,15 @@ class LanguageAdapter(ABC):
         taintata (es. len, hash, bool in Python restituiscono un tipo
         completamente diverso dall'input). Un argomento taintato passato a
         una di queste NON propaga il taint attraverso quella chiamata."""
+
+    @abstractmethod
+    def taint_propagating_calls(self) -> dict:
+        """Mappa nome_funzione -> indice dell'argomento di OUTPUT (scritto per
+        side-effect, non tramite valore di ritorno). Se un qualsiasi altro
+        argomento della call e' taintato, l'argomento a quell'indice diventa
+        taintato a sua volta. Es. C: sprintf(buf, fmt, tainted) -> buf
+        (indice 0) diventa taintato. Linguaggi senza questo pattern (Python,
+        Java) ritornano un dict vuoto."""
 
 # ---------------------------------------------------------------------- #
 # Implementazione Python
@@ -344,6 +352,11 @@ class PythonAdapter(LanguageAdapter):
     def taint_block_functions(self) -> list:
         return ["len", "hash", "bool", "isinstance", "id", "type", "int","float"]
 
+    def taint_propagating_calls(self) -> dict:
+        # Le stringhe Python sono immutabili: nessuna funzione scrive su un
+        # argomento passato per riferimento come farebbe sprintf in C.
+        return {}
+
 # ---------------------------------------------------------------------- #
 # Implementazione Java
 # ---------------------------------------------------------------------- #
@@ -471,7 +484,7 @@ class JavaAdapter(LanguageAdapter):
             method_name = "".join(parts[-1].itertext()).strip()
 
             xpath_query_local = (
-                f"ancestor::*[self::src:block or self::src:function or self::src:class or self::src:unit][1]"
+                f"ancestor::*[self::src:function or self::src:class or self::src:unit][1]"   # <-- 'src:block' tolto
                 f"//src:decl[src:name[text()='{var_name}']]"
             )
             decls = call_node.xpath(xpath_query_local, namespaces=ns)
@@ -549,6 +562,222 @@ class JavaAdapter(LanguageAdapter):
     def taint_block_functions(self) -> list:
         return ["length", "hashCode", "isEmpty", "equals", "compareTo"]
 
+    def taint_propagating_calls(self) -> dict:
+        # Le String Java sono immutabili; StringBuilder/StringBuffer si
+        # aggiornano tramite valore di ritorno (append restituisce this),
+        # gia' coperto dalla propagazione via assegnazione/metodo standard.
+        return {}
+
+
+# ---------------------------------------------------------------------- #
+# Implementazione C
+# ---------------------------------------------------------------------- #
+
+class CAdapter(LanguageAdapter):
+    name = "c"
+
+    def is_assignment(self, node, ns) -> bool:
+        # Gestisce sia riassegnazioni (expr_stmt) che inizializzazioni (decl_stmt)
+        if node.tag.endswith("expr_stmt"):
+            return bool(node.xpath(".//src:operator[text()='='][1]", namespaces=ns))
+        if node.tag.endswith("decl_stmt"):
+            return bool(node.xpath(".//src:init", namespaces=ns))
+        return False
+
+    def get_assignment_lhs_rhs(self, node, ns):
+        if node.tag.endswith("expr_stmt"):
+            op = node.xpath(".//src:operator[text()='='][1]", namespaces=ns)
+            if not op:
+                return None, None
+            lhs_nodes = op[0].xpath("./preceding-sibling::*", namespaces=ns)
+            rhs_nodes = op[0].xpath("./following-sibling::*", namespaces=ns)
+            return (lhs_nodes[-1] if lhs_nodes else None, rhs_nodes[0] if rhs_nodes else None)
+            
+        if node.tag.endswith("decl_stmt"):
+            decl = node.xpath(".//src:decl[1]", namespaces=ns)
+            if not decl:
+                return None, None
+            lhs = decl[0].xpath("./src:name", namespaces=ns)
+            rhs = decl[0].xpath("./src:init/src:expr | ./src:init/src:decl", namespaces=ns)
+            return (lhs[0] if lhs else None, rhs[0] if rhs else None)
+            
+        return None, None
+
+    def is_kwarg(self, argument_node, ns) -> bool:
+        # Il linguaggio C non supporta keyword arguments
+        return False
+
+    def string_concat_operators(self) -> list:
+        # In C l'operatore '+' su char* esegue aritmetica dei puntatori, non concatenazione
+        return []
+
+    def is_interpolated_string(self, literal_text: str) -> bool:
+        # Il C non ha stringhe interpolate native (si usa sprintf/snprintf)
+        return False
+
+    def get_interpolated_variables(self, literal_text: str) -> list[str]:
+        return []
+
+    def is_none_literal(self, text: str) -> bool:
+        # In C si usa NULL per i puntatori
+        return text.strip() == "NULL"
+
+    def parse_numeric_literal(self, text: str):
+        t = text.strip().lower()
+        # Rimuove i suffissi di tipo (u, l, ll, f)
+        t = re.sub(r'[ulfe]+$', '', t)
+            
+        try:
+            if t.startswith("0x"):
+                return int(t, 16)
+            if t.startswith("0b"):
+                return int(t, 2)
+            if t.startswith("0") and len(t) > 1 and t[1].isdigit():
+                return int(t, 8)
+            return int(t)
+        except ValueError:
+            try:
+                return int(float(t))
+            except ValueError:
+                return None
+
+    def normalize_string_literal(self, text: str) -> str:
+        t = text.strip()
+        # Rimuove prefissi wide-char o utf (L, u8, u, U)
+        t = re.sub(r'^(L|u8|u|U)', '', t)
+        if len(t) >= 2 and t[0] == '"' and t[-1] == '"':
+            t = t[1:-1]
+        return t
+
+    def resolve_imports(self, unit_node, ns) -> list:
+        bindings = []
+        # Per C, srcML usa il namespace cpp per le direttive del preprocessore
+        cpp_ns = {"cpp": "http://www.srcML.org/srcML/cpp"}
+        
+        for inc in unit_node.xpath(".//cpp:include", namespaces=cpp_ns):
+            file_nodes = inc.xpath("./cpp:file", namespaces=cpp_ns)
+            if file_nodes:
+                file_text = "".join(file_nodes[0].itertext()).strip()
+                # Rimuove < > o " " dal nome del file incluso
+                clean_name = file_text.strip('<>"')
+                
+                # In C non ci sono alias, il file importato mappa se stesso globalmente
+                bindings.append(ImportBinding(
+                    local_name=clean_name, 
+                    canonical_name=clean_name, 
+                    is_module=True
+                ))
+        return bindings
+
+    def resolve_call_name(self, call_node, ns, imports) -> str:
+        name_nodes = call_node.xpath("./src:name", namespaces=ns)
+        if not name_nodes:
+            return None
+
+        raw_name = "".join(name_nodes[0].itertext()).strip()
+
+        parts = name_nodes[0].xpath("./src:name", namespaces=ns)
+        ops = name_nodes[0].xpath("./src:operator[text()='.' or text()='->']", namespaces=ns)
+
+        if len(parts) >= 2 and ops:
+            var_name = "".join(parts[0].itertext()).strip()
+            method_name = "".join(parts[-1].itertext()).strip()
+
+            xpath_query_local = (
+                f"ancestor::*[self::src:function or self::src:unit][1]"
+                f"//src:decl[src:name[text()='{var_name}']]"
+            )
+            decls = call_node.xpath(xpath_query_local, namespaces=ns)
+
+            if not decls:
+                xpath_query_param = (
+                    f"ancestor::src:function[1]//src:parameter_list"
+                    f"//src:decl[src:name[text()='{var_name}']]"
+                )
+                decls = call_node.xpath(xpath_query_param, namespaces=ns)
+
+            if decls:
+                decl_node = decls[-1]
+                var_type = None
+                seen = set()
+
+                while decl_node is not None and id(decl_node) not in seen:
+                    seen.add(id(decl_node))
+
+                    type_nodes = decl_node.xpath("./src:type//src:name", namespaces=ns)
+                    if type_nodes:
+                        var_type = "".join(type_nodes[0].itertext()).strip()
+                        break
+
+                    type_node = decl_node.xpath("./src:type", namespaces=ns)
+                    if type_node and type_node[0].get("ref") == "prev":
+                        prev_decl = decl_node.xpath("preceding-sibling::src:decl[1]", namespaces=ns)
+                        decl_node = prev_decl[0] if prev_decl else None
+                    else:
+                        decl_node = None
+
+                if var_type:
+                    return f"{var_type}.{method_name}"
+
+        return raw_name
+
+    def string_formatting_operator_roles(self) -> dict:
+        # Non ci sono operatori di formato nativi inline (si usano funzioni di libreria)
+        return {}
+
+    def negation_operator(self) -> str:
+        return "!"
+
+    def assignment_operator_token(self) -> str:
+        return "="
+
+    def reference_comparison_operators(self) -> list:
+        # In C, == e != confrontano i valori diretti, che per i puntatori sono gli indirizzi di memoria
+        return ["==", "!="]
+
+    def is_boolean_literal(self, text: str) -> bool:
+        return text.strip() in ("true", "false")
+
+    def equality_operator(self) -> str:
+        return "=="
+
+    def get_parameter_name_and_type(self, param_node, namespaces):
+        decl = param_node.xpath("./src:decl[1]", namespaces=namespaces)
+        if not decl:
+            return None, None
+            
+        type_nodes = decl[0].xpath("./src:type[1]", namespaces=namespaces)
+        # Unisce il nome del tipo (es: char) con eventuali modificatori (es: *)
+        type_text = "".join(type_nodes[0].itertext()).strip() if type_nodes else ""
+        type_text = re.sub(r'\s+', ' ', type_text) # Pulisce spazi extra
+        
+        name_nodes = decl[0].xpath("./src:name[1]", namespaces=namespaces)
+        name_text = "".join(name_nodes[0].itertext()).strip() if name_nodes else ""
+        
+        return name_text, type_text
+
+    def member_access_operator(self) -> str:
+        # Operatore base per l'accesso ai membri. L'adapter gestisce esplicitamente 
+        # anche '->' in resolve_call_name.
+        return "."
+
+    def taint_block_functions(self) -> list:
+        # Funzioni C che restituiscono numeri o bool analizzando buffer/stringhe,
+        # interrompendo la propagazione del taint come stringa.
+        return ["strlen", "sizeof", "atoi", "atol", "atof", "strcmp", "strncmp"]
+
+    def taint_propagating_calls(self) -> dict:
+        # Funzioni libc che scrivono il risultato in un buffer passato come
+        # argomento (side-effect), non tramite valore di ritorno: se un
+        # qualsiasi altro argomento e' taintato, il buffer di output lo
+        # diventa a sua volta. Indice = posizione dell'argomento di output.
+        return {
+            "sprintf": 0, "snprintf": 0,
+            "strcpy": 0, "strncpy": 0,
+            "strcat": 0, "strncat": 0,
+            "memcpy": 0,
+        }
+
 
 
 # ---------------------------------------------------------------------- #
@@ -558,6 +787,7 @@ class JavaAdapter(LanguageAdapter):
 ADAPTERS = {
     "python": PythonAdapter(),
     "java": JavaAdapter(),
+    "c": CAdapter(),
 }
 
 

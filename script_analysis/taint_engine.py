@@ -29,6 +29,9 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
     safe_contexts = rule.get("safe_contexts", [])
     sinks = rule.get("sinks", [])
 
+    if not sources or not sinks:
+        return []
+
     tainted_vars_with_scope = []
     
     for direct_name in rule.get("direct_taint_names", []):
@@ -87,6 +90,7 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
     # --- Passo 2: propagazione a catena ---
     if rule.get("propagate_taint", True):
         block = sanitizers + adapter.taint_block_functions()
+        propagating_calls = adapter.taint_propagating_calls()
 
         changed = True
         guard = 0
@@ -97,6 +101,48 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
             tainted_by_scope = {}
             for name, scope in tainted_vars_with_scope:
                 tainted_by_scope.setdefault(id(scope), set()).add(name)
+
+            # --- Propagazione via call che scrivono su un argomento "di
+            # output" invece che tramite il valore di ritorno (es. C:
+            # sprintf(buf, fmt, tainted) -> buf diventa taintato) ---
+            if propagating_calls:
+                scope_nodes = {id(s): s for _, s in tainted_vars_with_scope}
+                for scope_id, scope_node in scope_nodes.items():
+                    already_tainted = tainted_by_scope.get(scope_id, set())
+                    if not already_tainted:
+                        continue
+                    for call in scope_node.xpath(".//src:call", namespaces=NS):
+                        cname = get_call_name(call, adapter, imports)
+                        if cname not in propagating_calls:
+                            continue
+                        out_idx = propagating_calls[cname]
+                        args = call.xpath("./src:argument_list/src:argument", namespaces=NS)
+                        if out_idx >= len(args):
+                            continue
+
+                        out_names = args[out_idx].xpath(".//src:name", namespaces=NS)
+                        if not out_names:
+                            continue
+                        out_var = "".join(out_names[0].itertext()).strip()
+                        if not out_var or out_var in already_tainted:
+                            continue
+
+                        source_found = False
+                        for i, arg in enumerate(args):
+                            if i == out_idx:
+                                continue
+                            for n in arg.xpath(".//src:name", namespaces=NS):
+                                n_text = "".join(n.itertext()).strip()
+                                if n_text in already_tainted and not is_sanitized(n, block, adapter, imports):
+                                    source_found = True
+                                    break
+                            if source_found:
+                                break
+
+                        if source_found:
+                            tainted_vars_with_scope.append((out_var, scope_node))
+                            already_tainted.add(out_var)
+                            changed = True
 
             for assign in assignments:
                 lhs, rhs = adapter.get_assignment_lhs_rhs(assign, NS)
@@ -218,5 +264,6 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
             nodo_snippet = stmt[0] if stmt else uso
 
             findings.append(build_finding(rule, nodo_snippet, extra={"tainted_variable": var}))
+
 
     return findings
