@@ -194,10 +194,9 @@ def call_arguments_match_ast(call_node, spec: dict, adapter=None, imports=None) 
 
     banned_numbers = spec.get("contains_numbers", [])
     if banned_numbers:
-        nums = call_node.xpath(".//src:argument_list//src:literal[@type='number']", namespaces=NS)
-        found_texts = ["".join(n.itertext()).strip() for n in nums]
         _adapter = adapter or PythonAdapter()
-        found_values = {v for t in found_texts if (v := _adapter.parse_numeric_literal(t)) is not None}
+        found_values = {v for _, v in _resolve_numeric_args(call_node, _adapter, NS)}
+        found_texts = [str(v) for v in found_values]
 
         def _num_ok(req):
             return req in found_texts or _adapter.parse_numeric_literal(str(req)) in found_values
@@ -206,18 +205,23 @@ def call_arguments_match_ast(call_node, spec: dict, adapter=None, imports=None) 
             return False
 
     if "arg_less_than" in spec:
-        limit = spec["arg_less_than"]
-        numerics = call_node.xpath(".//src:argument_list//src:literal[@type='number']", namespaces=NS)
+        limit_spec = spec["arg_less_than"]
         _adapter = adapter or PythonAdapter()
-        
-        found_less_than_limit = False
-        for num_node in numerics:
-            val_text = "".join(num_node.itertext()).strip()
-            val = _adapter.parse_numeric_literal(val_text)
-            if val is not None and val < limit:
-                found_less_than_limit = True
-                break
-                
+        found_pairs = _resolve_numeric_args(call_node, _adapter, NS)
+
+        if isinstance(limit_spec, dict):
+            # Forma posizionale: {"index": N, "value": X} -> controlla SOLO
+            # l'argomento all'indice N, non un numero qualsiasi nella call.
+            target_index = limit_spec.get("index")
+            limit = limit_spec.get("value")
+            found_less_than_limit = any(
+                idx == target_index and v < limit for idx, v in found_pairs
+            )
+        else:
+            # Forma scalare originale: qualunque argomento numerico sotto soglia.
+            limit = limit_spec
+            found_less_than_limit = any(v < limit for _, v in found_pairs)
+
         if not found_less_than_limit:
             return False
 
@@ -330,6 +334,53 @@ def find_assignments(scope_node, adapter, var_name: str | None = None) -> list:
             continue
         out.append((stmt, lhs, rhs))
     return out
+
+
+def _resolve_numeric_args(call_node, adapter, ns) -> list:
+    """
+    Numeri trovati negli argomenti di call_node, come coppie (indice, valore):
+    letterali diretti, oppure variabili risolte tramite l'ultima assegnazione
+    precedente nello stesso scope, solo se quell'assegnazione è un letterale
+    numerico puro (nessuna call, nessun'altra variabile in mezzo) - evita di
+    leggere un numero "a caso" dentro un'espressione composta come RHS.
+    L'indice è la posizione dell'ARGOMENTO (non del singolo letterale), utile
+    per validare puntualmente un parametro specifico di una call (es. il
+    secondo argomento di RSA_generate_key_ex, non un esponente qualsiasi).
+    """
+    values = []
+    arg_list = call_node.xpath("./src:argument_list", namespaces=ns)
+    if not arg_list:
+        return values
+
+    call_key = _pos_key(call_node)
+    scope_candidates = call_node.xpath("ancestor::src:function[1] | ancestor::src:unit[1]", namespaces=ns)
+    scope_node = scope_candidates[0] if scope_candidates else call_node
+
+    for idx, arg in enumerate(arg_list[0].xpath("./src:argument", namespaces=ns)):
+        expr_nodes = arg.xpath("./src:expr", namespaces=ns)
+        expr = expr_nodes[0] if expr_nodes else arg
+
+        lits = expr.xpath(".//src:literal[@type='number']", namespaces=ns)
+        for lit in lits:
+            v = adapter.parse_numeric_literal("".join(lit.itertext()).strip())
+            if v is not None:
+                values.append((idx, v))
+
+        names = expr.xpath("./src:name[not(src:index)]", namespaces=ns)
+        if names and not lits and len(names) == 1 and len(list(expr)) == 1:
+            var_name = "".join(names[0].itertext()).strip()
+            prior = [
+                (stmt, rhs) for stmt, _, rhs in find_assignments(scope_node, adapter, var_name)
+                if _pos_key(stmt) < call_key and rhs is not None and _is_pure_literal_expr(rhs)
+            ]
+            if prior:
+                _, rhs = max(prior, key=lambda t: _pos_key(t[0]))
+                for lit in rhs.xpath("descendant-or-self::src:literal[@type='number']", namespaces=ns):
+                    v = adapter.parse_numeric_literal("".join(lit.itertext()).strip())
+                    if v is not None:
+                        values.append((idx, v))
+
+    return values
 
 
 # def source_arg_is_traceable_literal(call_node, scope_node, arg_index: int = 0, adapter=None) -> bool:
