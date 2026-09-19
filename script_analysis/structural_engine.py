@@ -509,7 +509,7 @@ def run_structural_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) 
         safe_contexts = rule.get("safe_contexts", []) 
         
         # Troviamo tutti gli statement di assegnazione usando l'adapter
-        expr_stmts = tree.xpath(".//src:expr_stmt", namespaces=NS)
+        expr_stmts = tree.xpath(".//src:expr_stmt | .//src:decl_stmt", namespaces=NS)
         
         for assign in expr_stmts:
             if not adapter.is_assignment(assign, NS):

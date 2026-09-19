@@ -23,15 +23,42 @@
                 "call": ["system", "popen", "execl", "execlp", "execle", "execv", "execvp", "execvpe", "execve"]
             }
         ],
-        "html_output": [
-            {"type": "call_with_var_arg", "call": ["printf", "fprintf", "puts", "fputs"]}
-        ],
+        "html_output": [],
         "sql_execution": [
             {"type": "call_with_var_arg", "call": ["sqlite3_exec", "sqlite3_prepare", "sqlite3_prepare_v2", "sqlite3_prepare_v3"]}
         ]
     },
-    "forbidden_functions":{},
-    "excluded_functions":{},
+    "forbidden_functions":{
+        "weak_key_generation": [
+                {
+                    "type": "call_matches_ast",
+                    "call": ["RSA_generate_key","DH_generate_parameters"],
+                    "arg_less_than": {"index": 0, "value": 2048}
+                },
+                {
+                    "type": "call_matches_ast",
+                    "call": ["RSA_generate_key_ex", "DH_generate_parameters_ex"],
+                    "arg_less_than": {"index": 1, "value": 2048}
+                }
+        ],
+        "weak_ciphers_and_modes": [
+            "DES_encrypt1", "DES_encrypt2", "DES_encrypt3", "DES_ecb_encrypt",
+            "EVP_des_ecb", "EVP_des_cbc","EVP_rc4", "EVP_rc2_ecb",
+            "RC4","EVP_bf_ecb"
+        ],
+        "weak_hash_functions": [
+            "MD5", "MD5_Init", "MD5_Update", "MD5_Final",
+            "SHA1", "SHA1_Init", "SHA1_Update", "SHA1_Final",
+            "EVP_md5", "EVP_sha1"
+        ],
+        "weak_prngs": [
+            "rand", "srand", "random", "srandom",
+            "drand48", "lrand48", "mrand48", "rand_r"
+        ]
+    },
+    "excluded_functions":{
+        "safe_prng_exceptions": []
+    },
     "sanitizers":{
         "cast_to_integer":["atoi","atol","atoll","strtol","strtoll","strtoul"],
         "path_sanitizers": ["basename","realpath"],
@@ -64,6 +91,13 @@
                 "contains_numbers": ["0"]
                 }
             ]
+        },
+        "active_debug": {
+            "bad_assignments": {
+                "debug": "1",
+                "DEBUG": "1",
+                "debug_mode": "1"
+            }
         }
     }
 }
