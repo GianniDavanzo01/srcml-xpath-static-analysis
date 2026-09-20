@@ -205,6 +205,16 @@
   ]
 },
 {
+  "rule_id": "CWE-798-HARDCODED-CREDENTIALS",
+  "type": "structural",
+  "vulnerabilities": ["CWE-798"],
+  "sensitive_var_patterns": [
+    "password", "passwd", "pwd", "secret",
+    "api_key", "apikey", "access_key", "accesskey",
+    "token", "auth_token", "private_key", "privatekey"
+  ]
+},
+{
   "rule_id": "CWE-918-SSRF",
   "type": "taint",
   "vulnerabilities": ["CWE-918"],

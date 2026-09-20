@@ -597,20 +597,29 @@ def run_structural_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) 
             if name_regex.search(var_name) and not is_in_safe_context(lhs, safe_contexts, None, adapter, imports):
                 findings.append(build_finding(rule, assign))
  
-        conditions = tree.xpath(".//src:if_stmt//src:condition[.//src:operator[text()='==']]", namespaces=NS)
+        conditions = tree.xpath(".//src:if_stmt//src:condition", namespaces=NS)
+        eq_op = adapter.equality_operator()
         for cond in conditions:
-            names = cond.xpath(".//src:name", namespaces=NS)
-            literals = cond.xpath(".//src:literal[@type='string']", namespaces=NS)
-            calls = cond.xpath(".//src:call", namespaces=NS)
-            
-            if not literals or calls:
+            if cond.xpath(".//src:call", namespaces=NS):
                 continue
-                
-            for n in names:
-                var_name = "".join(n.itertext()).strip()
-                if name_regex.search(var_name) and not is_in_safe_context(n, safe_contexts,None, adapter, imports):
-                    findings.append(build_finding(rule, cond))
-                    break
+
+            for op_node in cond.xpath(f".//src:operator[text()='{eq_op}']", namespaces=NS):
+                lhs_nodes = op_node.xpath("preceding-sibling::*[not(self::src:comment)]", namespaces=NS)
+                rhs_nodes = op_node.xpath("following-sibling::*[not(self::src:comment)]", namespaces=NS)
+                if not lhs_nodes or not rhs_nodes:
+                    continue
+
+                for name_side, literal_side in ((lhs_nodes[-1], rhs_nodes[0]), (rhs_nodes[0], lhs_nodes[-1])):
+                    name_nodes = name_side.xpath("self::src:name | .//src:name", namespaces=NS)
+                    literal_nodes = literal_side.xpath(
+                        "self::src:literal[@type='string'] | .//src:literal[@type='string']", namespaces=NS
+                    )
+                    if not name_nodes or not literal_nodes:
+                        continue
+                    var_name = "".join(name_nodes[0].itertext()).strip()
+                    if name_regex.search(var_name) and not is_in_safe_context(name_nodes[0], safe_contexts, None, adapter, imports):
+                        findings.append(build_finding(rule, cond))
+                        break
 
     forbidden_imports = rule.get("forbidden_imports", [])
     if forbidden_imports:

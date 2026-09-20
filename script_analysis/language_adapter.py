@@ -223,18 +223,27 @@ class PythonAdapter(LanguageAdapter):
         return text.strip() == "None"
 
     def parse_numeric_literal(self, text: str):
-        t = text.strip().replace("_", "")
+        t = text.strip()
+        is_hex = t.lower().startswith("0x")
+        is_bin = t.lower().startswith("0b")
+
+        if is_hex or is_bin:
+            # Solo u/l sono suffissi validi qui: mai cifre esadecimali,
+            # quindi rimovibili senza ambiguita' con 'e'/'f'.
+            core = re.sub(r'[ulUL]+$', '', t)
+            try:
+                return int(core, 16 if is_hex else 2)
+            except ValueError:
+                return None
+
+        core = re.sub(r'[ulfeULFE]+$', '', t)
         try:
-            if self.OCTAL_RE.match(t):
-                return int(t, 8)
-            if self.HEX_RE.match(t):
-                return int(t, 16)
-            if self.BIN_RE.match(t):
-                return int(t, 2)
-            return int(t)
+            if core.startswith("0") and len(core) > 1 and core[1:].isdigit():
+                return int(core, 8)
+            return int(core)
         except ValueError:
             try:
-                return int(float(t))
+                return int(float(core))
             except ValueError:
                 return None
 
