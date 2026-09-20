@@ -104,6 +104,17 @@
   ]
 },
 {
+  "rule_id": "CWE-319-CLEARTEXT-TRANSMISSION",
+  "type": "structural",
+  "vulnerabilities": ["CWE-319", "CRYF"],
+  "forbidden_functions": [
+    {"tag": "insecure_network_protocols"}
+  ],
+  "safe_contexts": [
+    {"tag": "starttls_upgrade"}
+  ]
+},
+{
   "rule_id": "CWE-326-INADEQUATE-ENCRYPTION",
   "type": "structural",
   "vulnerabilities": ["CWE-326"],
@@ -240,6 +251,6 @@
   "sinks": [
     {"tag": "http_request"}
   ],
-  "safe_contexts":["curl_non_url_option"]
+  "safe_contexts":[{"tag": "curl_non_url_option"}]
 }
 ]
