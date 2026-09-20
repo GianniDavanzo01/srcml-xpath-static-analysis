@@ -73,7 +73,13 @@
           "flask.Response.set_cookie","django.http.HttpResponse.set_cookie","headers.add","set_cookie"
         ]
       }
-    ]
+    ],
+      "ldap_execution": [
+        {
+          "type": "call_with_var_arg",
+          "call": ["ldap3.Connection.search","ldap_connection.search_s","ldap.search_s","ldap.initialize"]
+        }
+      ]
   },
     "forbidden_functions": {
         "socket_primitives": [
@@ -124,16 +130,17 @@
         "shell_escape_sanitizers": ["shlex.quote","quote"],
         "XSS_sanitizers": ["markupsafe.escape", "flask.escape", "escape", "html.escape", "bleach.clean"],
         "url_validation": ["url_has_allowed_host_and_scheme","is_safe_url"],
-        "crlf_sanitizers": ["urllib.parse.quote","urllib.parse.quote_plus","werkzeug.urls.url_quote"]
+        "crlf_sanitizers": ["urllib.parse.quote","urllib.parse.quote_plus","werkzeug.urls.url_quote"],
+        "ldap_escape_sanitizers":["ldap3.utils.conv.escape_filter_chars","ldap.filter.escape_filter_chars"]
     },
   "safe_contexts": {
     "sql_parameterization": [{"type": "parametrized_query"}],
     "try_block": ["try"],
     "safe_permission_defaults": [
         {"type": "call_with_kwarg", "call": ["os.makedirs"], "kwargs": {"mode": "0o700"}},
-        {"type": "function_has_call_matching_ast", "call": ["os.chmod", "chmod"], "contains_names": ["stat.S_IRWXU"]},
-        {"type": "function_has_call_matching_ast", "call": ["os.chmod", "chmod"], "contains_names": ["stat.S_IRUSR"]},
-        {"type": "function_has_call_matching_ast", "call": ["os.chmod", "chmod"], "contains_names": ["stat.S_IWUSR"]}
+        {"type": "current_call_matches_ast", "call": ["os.chmod", "chmod"], "contains_names": ["stat.S_IRWXU"]},
+        {"type": "current_call_matches_ast", "call": ["os.chmod", "chmod"], "contains_names": ["stat.S_IRUSR"]},
+        {"type": "current_call_matches_ast", "call": ["os.chmod", "chmod"], "contains_names": ["stat.S_IWUSR"]}
         ],
     "secure_cookie_contexts": [
           {

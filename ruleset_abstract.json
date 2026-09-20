@@ -60,6 +60,21 @@
   ]
 },
 {
+  "rule_id": "CWE-90-LDAP-INJECTION",
+  "type": "taint",
+  "vulnerabilities": ["CWE-90"],
+  "sources": [
+    {"tag": "http_input"}
+  ],
+  "sinks": [
+    {"tag": "ldap_execution"}
+  ],
+  "sanitizers": [
+    {"tag": "ldap_escape_sanitizers"},
+    {"tag": "cast_to_integer"}
+  ]
+},
+{
   "rule_id": "CWE-95-EVAL-INJECTION",
   "type": "structural",
   "vulnerabilities": ["CWE-95"],

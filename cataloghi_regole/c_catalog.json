@@ -29,6 +29,12 @@
         ],
         "http_request": [
             {"type": "call_with_var_arg", "call": ["curl_easy_setopt", "curl_easy_perform"]}
+        ],
+        "ldap_execution": [
+            {
+            "type": "call_with_var_arg",
+            "call": ["ldap_search","ldap_search_s","ldap_search_st","ldap_search_ext","ldap_search_ext_s"]
+            }
         ]
     },
     "forbidden_functions":{
@@ -87,7 +93,8 @@
         "cast_to_integer":["atoi","atol","atoll","strtol","strtoll","strtoul"],
         "path_sanitizers": ["basename","realpath"],
         "shell_escape_sanitizers": [],
-        "XSS_sanitizers": []
+        "XSS_sanitizers": [],
+        "ldap_escape_sanitizers": []
     },
     "safe_contexts":{
         "sql_parameterization": [],

@@ -69,11 +69,27 @@
       {
         "type": "call_with_var_arg",
         "call":[
-        "HttpServletResponse.addHeader","HttpServletResponse.setHeader","HttpServletResponse.addCookie",
-        "ServerHttpResponse.getHeaders.add","ServerHttpResponse.getHeaders.set"
-      ]
-    }
-  ]
+        "HttpServletResponse.addHeader","HttpServletResponse.setHeader","HttpServletResponse.addCookie"]
+      },
+      {
+        "type": "call_with_var_arg",
+        "call": [
+          "add",
+          "set"
+        ],
+        "requires_text_any": [
+          "ServerHttpResponse.getHeaders",
+          "getHeaders"
+        ]
+      }
+
+  ],
+  "ldap_execution": [
+      {
+        "type": "call_with_var_arg",
+        "call": ["DirContext.search","InitialDirContext.search","LdapContext.search","InitialLdapContext.search"]
+      }
+    ]
   },
   "forbidden_functions": {
     "socket_primitives": [
@@ -132,7 +148,8 @@
     "html_escape": ["HtmlUtils.htmlEscape","StringEscapeUtils.escapeHtml4","ESAPI.encoder().encodeForHTML"],
     "XSS_sanitizers": ["HtmlUtils.htmlEscape","StringEscapeUtils.escapeHtml4","ESAPI.encoder().encodeForHTML"],
     "url_validation": ["UrlValidator"],
-    "crlf_sanitizers": ["ESAPI.encoder.encodeForHTTPHeader","URLEncoder.encode","StringUtils.replace","StringEscapeUtils.escapeHtml4","encodeForHTTPHeader" ]
+    "crlf_sanitizers": ["encodeForHTTPHeader","URLEncoder.encode","StringUtils.replace","StringEscapeUtils.escapeHtml4","encodeForHTTPHeader" ],
+    "ldap_escape_sanitizers":["encodeForLDAP","encodeForDN","LdapEncoder.filterEncode","LdapEncoder.nameEncode"]
   },
   "safe_contexts": {
     "try_block": ["try"],
