@@ -77,10 +77,10 @@
   },
     "forbidden_functions": {
         "socket_primitives": [
-        "socket.socket","socket.connect","socket.bind","socket.listen",
-        "socket.accept","socket.send","socket.recv","socket.sendto",
-        "socket.recvfrom","socket.sendmsg","socket.recvmsg","socket.setsockopt",
-        "socket.getsockopt","socket.getsockname","socket.getpeername","socket.shutdown"
+          "socket.socket","socket.connect","socket.bind","socket.listen",
+          "socket.accept","socket.send","socket.recv","socket.sendto",
+          "socket.recvfrom","socket.sendmsg","socket.recvmsg","socket.setsockopt",
+          "socket.getsockopt","socket.getsockname","socket.getpeername","socket.shutdown"
         ],
         "weak_ciphers_and_modes": ["DES.new", "modes.ECB", "modes.CBC", "padding.PKCS1v15"],
         "weak_hash_functions": ["md5", "sha1","sha256", "hashlib.new"],
@@ -95,11 +95,7 @@
         "weak_key_generation": [
           {
             "type": "call_matches_ast",
-            "call": [
-              "RSA.generate", 
-              "DSA.generate", 
-              "rsa.generate_private_key", 
-              "dsa.generate_private_key"
+            "call": ["RSA.generate", "DSA.generate", "rsa.generate_private_key", "dsa.generate_private_key"
             ],
             "arg_less_than": 2048
           }
@@ -114,9 +110,9 @@
           "marshal.load", "marshal.loads","shelve.open","yaml.unsafe_load","pandas.read_pickle","numpy.load"
         ],
         "insecure_temp_functions": ["tempfile.mktemp","mktemp"],
-        "insecure_cookie_configuration":["set_cookie","response.set_cookie","HttpResponse.set_cookie"],
-        "resource_heavy_functions":["extract","zipfile.ZipFile","zlib.compress","zlib.decompress","extract_text"]
-    },
+        "insecure_cookie_configuration":["set_cookie","response.set_cookie","HttpResponse.set_cookie"]
+          
+      },
     "excluded_functions": {
       "safe_prng_exceptions": ["secrets.choice","secrets.randbelow","secrets.randbits"],
       "eval_false_positive_exceptions": ["context.eval","ctx.eval"]

@@ -88,10 +88,7 @@
       {
         "type": "call_matches_ast",
         "call": [
-          "initialize", 
-          "KeyPairGenerator.initialize", 
-          "init", 
-          "KeyGenerator.init"
+          "initialize", "KeyPairGenerator.initialize", "init", "KeyGenerator.init"
         ],
         "arg_less_than": 2048
       }
@@ -121,8 +118,8 @@
         "contains_names": ["java.io.tmpdir"]
       }
     ],
-    "insecure_cookie_configuration":["HttpServletResponse.addCookie","Cookie"],
-    "resource_heavy_functions": ["ZipFile","ZipInputStream","ZipInputStream.getNextEntry","GZIPInputStream"]
+    "insecure_cookie_configuration":["HttpServletResponse.addCookie","Cookie"]
+
   },
   "excluded_functions": {
       "safe_prng_exceptions": ["SecureRandom"],

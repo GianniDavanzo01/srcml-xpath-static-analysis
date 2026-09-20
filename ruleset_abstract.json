@@ -132,17 +132,6 @@
   ]
 },
 {
-  "rule_id": "CWE-400-UNCONTROLLED-RESOURCE-CONSUMPTION",
-  "type": "structural",
-  "vulnerabilities": ["CWE-400/CWE-409"],
-  "forbidden_functions": [
-    { "tag": "resource_heavy_functions" }
-  ],
-  "safe_contexts": [
-    { "tag": "resource_safe_contexts" }
-  ]
-},
-{
   "rule_id": "CWE-489-ACTIVE-DEBUG",
   "type": "structural",
   "vulnerabilities": ["CWE-489"],
