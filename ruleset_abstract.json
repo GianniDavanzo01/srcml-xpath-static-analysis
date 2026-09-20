@@ -215,7 +215,6 @@
   "sinks": [
     {"tag": "http_request"}
   ],
-  "sanitizers": [],
-  "safe_contexts": []
+  "safe_contexts":["curl_non_url_option"]
 }
 ]

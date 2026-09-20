@@ -26,6 +26,9 @@
         "html_output": [],
         "sql_execution": [
             {"type": "call_with_var_arg", "call": ["sqlite3_exec", "sqlite3_prepare", "sqlite3_prepare_v2", "sqlite3_prepare_v3"]}
+        ],
+        "http_request": [
+            {"type": "call_with_var_arg", "call": ["curl_easy_setopt", "curl_easy_perform"]}
         ]
     },
     "forbidden_functions":{
@@ -70,6 +73,11 @@
                 "call": ["mg_printf", "MHD_add_response_header", "kore_http_response_header"],
                 "contains_string_containing": ["Set-Cookie"]
             }
+        ],
+        "socket_primitives": [
+            "socket", "connect", "bind", "listen", "accept",
+            "send", "recv", "sendto", "recvfrom", "sendmsg", "recvmsg",
+            "setsockopt", "getsockopt", "getsockname", "getpeername", "shutdown"
         ]
     },
     "excluded_functions":{
@@ -88,7 +96,18 @@
                 "type": "matches_xpath",
                 "xpath": ".//src:call[.//src:name[text()='mg_printf' or text()='MHD_add_response_header' or text()='kore_http_response_header']][.//src:literal[@type='string'][contains(.,'Secure')]][.//src:literal[@type='string'][contains(.,'HttpOnly')]]"
                 }
-            ]
+            ],
+            "try_block": [],
+            "safe_permission_defaults": [
+                {"type": "current_call_matches_ast", "call": ["chmod", "fchmod"], "contains_names": ["S_IRUSR"]},
+                {"type": "current_call_matches_ast", "call": ["chmod", "fchmod"], "contains_names": ["S_IWUSR"]}
+                ],
+                "curl_non_url_option": [
+                    {
+                    "type": "node_matches_xpath",
+                    "xpath": "not(ancestor::src:call[1]//src:argument_list//src:name[text()='CURLOPT_URL'])"
+                    }
+                ]
     },
     "patterns":{
         "insecure_certificate_validation": {
@@ -120,6 +139,21 @@
                 "DEBUG": "1",
                 "debug_mode": "1"
             }
-        }
+        },
+          "insecure_permission_assignment": {
+                "forbidden_functions": [
+                {
+                    "type": "call_matches_ast",
+                    "call": ["chmod", "fchmod"],
+                    "contains_numbers": ["0", "0000", "0755", "0777", "0400", "0644"]
+                },
+                {
+                    "type": "call_matches_ast",
+                    "call": ["open"],
+                    "exact_args_count": 3,
+                    "contains_numbers": ["0777", "0666"]
+                }
+                ]
+            }
     }
 }
