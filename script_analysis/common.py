@@ -174,22 +174,19 @@ def call_arguments_match_ast(call_node, spec: dict, adapter=None, imports=None) 
             if actual != str(expected).lower():
                 return False
             
-            
-    # if spec.get("require_bare_arg"):
-    #     if len(arguments) == 0:
-    #         pass  
-    #     elif len(arguments) == 1:
-    #         text = "".join(arguments[0].itertext()).strip()
-    #         if not re.fullmatch(r"[a-zA-Z0-9_]*", text):
-    #             return False
-    #     else:
-    #         return False
 
     required_names = spec.get("contains_names", [])
     if required_names:
         names = call_node.xpath(".//src:argument_list//src:name", namespaces=NS)
         found_names = ["".join(n.itertext()).strip() for n in names]
         if not all(req in found_names for req in required_names):
+            return False
+
+    substr_targets = spec.get("contains_string_containing", [])
+    if substr_targets:
+        str_lits = call_node.xpath(".//src:argument_list//src:literal[@type='string']", namespaces=NS)
+        found_texts = ["".join(l.itertext()).strip() for l in str_lits]
+        if not any(any(t in txt for txt in found_texts) for t in substr_targets):
             return False
 
     banned_numbers = spec.get("contains_numbers", [])
@@ -231,22 +228,6 @@ def call_arguments_match_ast(call_node, spec: dict, adapter=None, imports=None) 
         found_bools = ["".join(b.itertext()).strip().lower() for b in bools]
         if not any(str(req).lower() in found_bools for req in banned_booleans):
             return False
-
-    # args_text_contains = spec.get("args_text_contains", [])
-    # exact_list_element = spec.get("exact_list_element")
-    
-    # if args_text_contains or exact_list_element:
-    #     if not arg_list_nodes:
-    #         return False
-    #     args_text = "".join(arg_list_nodes[0].itertext()).replace(" ", "").replace("\n", "").replace("'", '"')
-        
-    #     if exact_list_element and f'["{exact_list_element}"]' not in args_text:
-    #         return False
-            
-    #     if args_text_contains:
-    #         clean_targets = [val.replace("'", '"').replace(" ", "") for val in args_text_contains]
-    #         if not any(t in args_text for t in clean_targets):
-    #             return False
 
     return True
 

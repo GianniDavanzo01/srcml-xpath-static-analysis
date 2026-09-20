@@ -54,6 +54,22 @@
         "weak_prngs": [
             "rand", "srand", "random", "srandom",
             "drand48", "lrand48", "mrand48", "rand_r"
+        ],
+        "insecure_temp_functions": ["tmpnam", "tempnam", "mktemp"],
+        "unsafe_xml_parsers": [
+            {
+                "type": "call_matches_ast",
+                "call": ["xmlReadFile", "xmlReadMemory", "xmlReadDoc", "xmlCtxtReadFile", "xmlCtxtReadMemory"],
+                "contains_names": ["XML_PARSE_NOENT", "XML_PARSE_DTDLOAD"]
+            },
+            "xmlSubstituteEntitiesDefault"
+        ],
+        "insecure_cookie_configuration":[
+            {
+                "type": "call_matches_ast",
+                "call": ["mg_printf", "MHD_add_response_header", "kore_http_response_header"],
+                "contains_string_containing": ["Set-Cookie"]
+            }
         ]
     },
     "excluded_functions":{
@@ -66,7 +82,13 @@
         "XSS_sanitizers": []
     },
     "safe_contexts":{
-        "sql_parameterization": []
+        "sql_parameterization": [],
+        "secure_cookie_contexts": [
+                {
+                "type": "matches_xpath",
+                "xpath": ".//src:call[.//src:name[text()='mg_printf' or text()='MHD_add_response_header' or text()='kore_http_response_header']][.//src:literal[@type='string'][contains(.,'Secure')]][.//src:literal[@type='string'][contains(.,'HttpOnly')]]"
+                }
+            ]
     },
     "patterns":{
         "insecure_certificate_validation": {
