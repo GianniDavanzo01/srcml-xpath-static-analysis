@@ -223,27 +223,18 @@ class PythonAdapter(LanguageAdapter):
         return text.strip() == "None"
 
     def parse_numeric_literal(self, text: str):
-        t = text.strip()
-        is_hex = t.lower().startswith("0x")
-        is_bin = t.lower().startswith("0b")
-
-        if is_hex or is_bin:
-            # Solo u/l sono suffissi validi qui: mai cifre esadecimali,
-            # quindi rimovibili senza ambiguita' con 'e'/'f'.
-            core = re.sub(r'[ulUL]+$', '', t)
-            try:
-                return int(core, 16 if is_hex else 2)
-            except ValueError:
-                return None
-
-        core = re.sub(r'[ulfeULFE]+$', '', t)
+        t = text.strip().replace("_", "")
         try:
-            if core.startswith("0") and len(core) > 1 and core[1:].isdigit():
-                return int(core, 8)
-            return int(core)
+            if self.OCTAL_RE.match(t):
+                return int(t, 8)
+            if self.HEX_RE.match(t):
+                return int(t, 16)
+            if self.BIN_RE.match(t):
+                return int(t, 2)
+            return int(t)
         except ValueError:
             try:
-                return int(float(core))
+                return int(float(t))
             except ValueError:
                 return None
 
@@ -421,23 +412,30 @@ class JavaAdapter(LanguageAdapter):
         return text.strip() == "null"
 
     def parse_numeric_literal(self, text: str):
-        t = text.strip().replace("_", "").lower()
-        # Rimuove i suffissi di tipo di Java (float, long, double)
-        if t.endswith(('f', 'l', 'd')):
-            t = t[:-1]
-            
+        t = text.strip().replace("_", "")
+        is_hex = t.lower().startswith("0x")
+        is_bin = t.lower().startswith("0b")
+
+        if is_hex or is_bin:
+            # In Java l'unico suffisso valido su hex/bin e' 'L' (long); mai
+            # una cifra esadecimale, quindi rimovibile senza ambiguita'.
+            core = re.sub(r'[lL]+$', '', t)
+            try:
+                return int(core, 16 if is_hex else 2)
+            except ValueError:
+                return None
+
+        core = t
+        if core.lower().endswith(('f', 'l', 'd')):
+            core = core[:-1]
         try:
-            if t.startswith("0x"):
-                return int(t, 16)
-            if t.startswith("0b"):
-                return int(t, 2)
             # In Java i numeri che iniziano per 0 (es: 0755) sono ottali!
-            if t.startswith("0") and len(t) > 1 and t[1].isdigit():
-                return int(t, 8)
-            return int(t)
+            if core.startswith("0") and len(core) > 1 and core[1:].isdigit():
+                return int(core, 8)
+            return int(core)
         except ValueError:
             try:
-                return int(float(t))
+                return int(float(core))
             except ValueError:
                 return None
 
@@ -632,21 +630,27 @@ class CAdapter(LanguageAdapter):
         return text.strip() == "NULL"
 
     def parse_numeric_literal(self, text: str):
-        t = text.strip().lower()
-        # Rimuove i suffissi di tipo (u, l, ll, f)
-        t = re.sub(r'[ulfe]+$', '', t)
-            
+        t = text.strip()
+        is_hex = t.lower().startswith("0x")
+        is_bin = t.lower().startswith("0b")
+
+        if is_hex or is_bin:
+            # Solo u/l sono suffissi validi qui: mai cifre esadecimali,
+            # quindi rimovibili senza ambiguita' con 'e'/'f'.
+            core = re.sub(r'[ulUL]+$', '', t)
+            try:
+                return int(core, 16 if is_hex else 2)
+            except ValueError:
+                return None
+
+        core = re.sub(r'[ulfeULFE]+$', '', t)
         try:
-            if t.startswith("0x"):
-                return int(t, 16)
-            if t.startswith("0b"):
-                return int(t, 2)
-            if t.startswith("0") and len(t) > 1 and t[1].isdigit():
-                return int(t, 8)
-            return int(t)
+            if core.startswith("0") and len(core) > 1 and core[1:].isdigit():
+                return int(core, 8)
+            return int(core)
         except ValueError:
             try:
-                return int(float(t))
+                return int(float(core))
             except ValueError:
                 return None
 
