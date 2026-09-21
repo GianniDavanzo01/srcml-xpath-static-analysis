@@ -10,7 +10,7 @@ safe-context o un sanitizer.
 
 import re
 
-from common import NS, build_finding, is_sanitized, source_present, get_call_name #,source_arg_is_traceable_literal
+from common import NS, build_finding, is_sanitized, source_present, get_call_name 
 from sink_matchers import matches_any_sink
 from safe_context_matchers import is_in_safe_context
 
@@ -67,28 +67,29 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
         return parent_func[0] if parent_func else tree
 
     # --- Passo 1: source dirette ---
+    # for assign in assignments:
+    #     lhs, _ = adapter.get_assignment_lhs_rhs(assign, NS)
+    #     if lhs is None or not lhs.tag.endswith("name"):
+    #         continue
+    #     var_name = "".join(lhs.itertext()).strip()
+    #     assign_text = "".join(assign.itertext())
+    #     if source_present(sources, assign_text, source_form):
+
+    #         parent_func = assign.xpath("ancestor::src:function[1]", namespaces=NS)
+    #         scope_node = parent_func[0] if parent_func else tree
+
+    #         tainted_vars_with_scope.append((var_name, scope_node))
+
     for assign in assignments:
-        lhs, _ = adapter.get_assignment_lhs_rhs(assign, NS)
+        lhs, rhs = adapter.get_assignment_lhs_rhs(assign, NS)
         if lhs is None or not lhs.tag.endswith("name"):
             continue
         var_name = "".join(lhs.itertext()).strip()
-        assign_text = "".join(assign.itertext())
-        if source_present(sources, assign_text, source_form):
+
+        if rhs is not None and source_present(sources, rhs, source_form, adapter=adapter, imports=imports):
 
             parent_func = assign.xpath("ancestor::src:function[1]", namespaces=NS)
             scope_node = parent_func[0] if parent_func else tree
-
-            # if rule.get("require_non_literal_source_arg"):
-            #     source_call = None
-            #     for c in assign.xpath(".//src:call", namespaces=NS):
-            #         # cname = get_call_name(c)
-            #         cname = get_call_name(c, adapter, imports)
-            #         if cname and any(cname == s or cname.endswith(f".{s}") for s in sources):
-            #             source_call = c
-            #             break
-
-            #     if source_call is not None and source_arg_is_traceable_literal(source_call, scope_node, adapter=adapter):
-            #         continue  # se l'argomento è letterale -> non taintare
 
             tainted_vars_with_scope.append((var_name, scope_node))
 

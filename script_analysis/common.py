@@ -96,18 +96,18 @@ def is_sanitized(node, sanitizers: list, adapter=None, imports=None) -> bool:
             return True
     return False
 
-
-
-def source_present(sources: list, text: str, source_form: str | None = None, node=None) -> bool:
+def source_present(sources: list, rhs_node, source_form: str | None = None,
+                    node=None, adapter=None, imports=None) -> bool:
     """
-    Richiede un confine di parola subito prima del source, per evitare match su suffissi di identificatori.
-    source_form (opzionale): vincola la FORMA SINTATTICA con cui la source deve
-    comparire subito dopo il prefisso:
-    - "call": richiede '(' subito dopo il prefisso.
-    - "subscript": richiede '[' subito dopo.
-    - "regex": la regola specifica che la source è una regex cruda.
+    Verifica se una delle source compare nel RHS (rhs_node) in forma
+    strutturale, navigando l'AST invece di fare match testuale su una
+    stringa appiattita.
+    source_form (opzionale):
+    - "call": la source deve essere il nome di una <src:call> dentro rhs_node.
+    - "subscript": la source deve essere un <src:name> seguito da <src:index>.
+    - "regex": la source è una regex cruda, valutata sul testo di rhs_node.
+    - assente: basta che la source compaia come <src:name>, in qualunque forma.
     """
-    suffix = {"call": r"\(", "subscript": r"\["}.get(source_form)
     for source in sources:
         if source == "function_parameters":
             if node is not None and is_function_parameter(node):
@@ -115,15 +115,32 @@ def source_present(sources: list, text: str, source_form: str | None = None, nod
             continue
 
         if source_form == "regex":
+            text = "".join(rhs_node.itertext())
             if re.search(source, text):
                 return True
             continue
 
-        pattern = rf"\b{re.escape(source)}"
-        if suffix:
-            pattern += rf"(?:\.[a-zA-Z_]\w*)?\s*{suffix}"
-        if re.search(pattern, text):
-            return True
+        if source_form == "call":
+            for call in rhs_node.xpath(".//src:call | self::src:call", namespaces=NS):
+                cname = get_call_name(call, adapter, imports)
+                if cname and (cname == source or cname.endswith(f".{source}")):
+                    return True
+            continue
+
+        if source_form == "subscript":
+            for outer_name in rhs_node.xpath(".//src:name[src:index] | self::src:name[src:index]", namespaces=NS):
+                parts = outer_name.xpath("./src:name", namespaces=NS)
+                dotted = ".".join("".join(p.itertext()).strip() for p in parts) if parts else (outer_name.text or "").strip()
+                if dotted == source or dotted.endswith(f".{source}"):
+                    return True
+            continue
+
+        # nessuna forma specificata: il nome compare ovunque, invocato o no
+        for name_node in rhs_node.xpath(".//src:name | self::src:name", namespaces=NS):
+            name_text = "".join(name_node.itertext()).strip()
+            if name_text == source or name_text.endswith(f".{source}") or name_text.startswith(f"{source}."):
+                return True
+
     return False
 
 
@@ -149,10 +166,6 @@ def call_arguments_match_ast(call_node, spec: dict, adapter=None, imports=None) 
     if "exact_args_count" in spec:
         if len(arguments) != spec["exact_args_count"]:
             return False
-        if spec.get("no_commas_in_args"):
-            args_text = "".join(arg_list_nodes[0].itertext()) if arg_list_nodes else ""
-            if "," in args_text:
-                return False
 
     bool_sequence = spec.get("args_boolean_sequence")
     if bool_sequence:
@@ -388,38 +401,6 @@ def _resolve_numeric_args(call_node, adapter, ns) -> list:
                         values.append((idx, v))
 
     return values
-
-
-# def source_arg_is_traceable_literal(call_node, scope_node, arg_index: int = 0, adapter=None) -> bool:
-#     adapter = adapter or PythonAdapter()          
-#     arg_list = call_node.xpath("./src:argument_list", namespaces=NS)
-#     if not arg_list:
-#         return True
-#     arguments = arg_list[0].xpath("./src:argument", namespaces=NS)
-#     positional = [a for a in arguments if not adapter.is_kwarg(a, NS)]   # <-- via adapter, non closure locale
-#     if arg_index >= len(positional):
-#         return False
- 
-#     target_arg = positional[arg_index]
-#     expr_nodes = target_arg.xpath("./src:expr", namespaces=NS)
-#     expr = expr_nodes[0] if expr_nodes else target_arg
-#     call_key = _pos_key(call_node)
-#     if _is_pure_literal_expr(expr):
-#         return True
- 
-#     names = expr.xpath("./src:name[not(src:index)]", namespaces=NS)
-#     if len(names) != 1 or len(expr) != 1:
-#         return False
-#     var_name = "".join(names[0].itertext()).strip()
- 
-#     candidates = [stmt for stmt, _, _ in find_assignments(scope_node, adapter, var_name)]
- 
-#     prior = [c for c in candidates if _pos_key(c) < call_key]
-#     if not prior:
-#         return False
-#     last_assign = max(prior, key=_pos_key)
-#     _, rhs = adapter.get_assignment_lhs_rhs(last_assign, NS)
-#     return bool(rhs is not None and _is_pure_literal_expr(rhs))
 
 
 
