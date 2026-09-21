@@ -89,6 +89,12 @@
         "type": "call_with_var_arg",
         "call": ["DirContext.search","InitialDirContext.search","LdapContext.search","InitialLdapContext.search"]
       }
+    ],
+    "csv_writing": [
+      {
+        "type": "call_with_var_arg",
+        "call": ["printRecord","writeNext","writeAll"]
+      }
     ]
   },
   "forbidden_functions": {

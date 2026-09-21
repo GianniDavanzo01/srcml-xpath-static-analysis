@@ -35,6 +35,13 @@
             "type": "call_with_var_arg",
             "call": ["ldap_search","ldap_search_s","ldap_search_st","ldap_search_ext","ldap_search_ext_s"]
             }
+        ],
+        "csv_writing": [
+            {
+                "type": "call_with_var_arg",
+                "call": ["fprintf", "fputs"],
+                "literal_contains": [".csv", "csv", "CSV"]
+            }
         ]
     },
     "forbidden_functions":{

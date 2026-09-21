@@ -79,6 +79,16 @@
           "type": "call_with_var_arg",
           "call": ["ldap3.Connection.search","ldap_connection.search_s","ldap.search_s","ldap.initialize"]
         }
+      ],
+      "csv_writing": [
+        {
+          "type": "call_with_var_arg",
+          "call": [
+            "writerow",
+            "writerows",
+            "to_csv"
+          ]
+        }
       ]
   },
     "forbidden_functions": {

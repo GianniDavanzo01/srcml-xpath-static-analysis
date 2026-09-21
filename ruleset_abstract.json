@@ -272,5 +272,17 @@
     {"tag": "http_request"}
   ],
   "safe_contexts":[{"tag": "curl_non_url_option"}]
+},
+{
+  "rule_id": "CWE-1236-CSV-INJECTION",
+  "type": "taint",
+  "vulnerabilities": ["CWE-1236"],
+  "sources": [
+    {"tag": "http_input"}
+  ],
+  "sinks": [
+    {"tag": "csv_writing"}
+  ],
+  "sanitizers":[]
 }
 ]
