@@ -127,7 +127,6 @@ def source_present(sources: list, text: str, source_form: str | None = None, nod
     return False
 
 
-# def call_arguments_match_ast(call_node, spec: dict) -> bool:
 def call_arguments_match_ast(call_node, spec: dict, adapter=None, imports=None) -> bool:
     """
     Motore universale AST per validare gli argomenti di una chiamata a funzione.
@@ -174,12 +173,39 @@ def call_arguments_match_ast(call_node, spec: dict, adapter=None, imports=None) 
             if actual != str(expected).lower():
                 return False
             
-
+    #Richiede esattamente i nomi indicati
     required_names = spec.get("contains_names", [])
     if required_names:
         names = call_node.xpath(".//src:argument_list//src:name", namespaces=NS)
         found_names = ["".join(n.itertext()).strip() for n in names]
+
+        # Estende la ricerca dentro le stringhe interpolate (es. f-string):
+        # srcML non le scompone in <src:name> figli, quindi senza questo un
+        # nome usato solo dentro un'interpolazione sarebbe invisibile qui.
+        if adapter is not None:
+            str_lits = call_node.xpath(".//src:argument_list//src:literal[@type='string']", namespaces=NS)
+            for lit in str_lits:
+                testo = "".join(lit.itertext())
+                if adapter.is_interpolated_string(testo):
+                    found_names.extend(adapter.get_interpolated_variables(testo))
+
         if not all(req in found_names for req in required_names):
+            return False
+
+    #Richiede almeno uno dei nomi indicati (CWE-532)
+    required_names_any = spec.get("contains_any_name", [])
+    if required_names_any:
+        names = call_node.xpath(".//src:argument_list//src:name", namespaces=NS)
+        found_names = ["".join(n.itertext()).strip() for n in names]
+
+        if adapter is not None:
+            str_lits = call_node.xpath(".//src:argument_list//src:literal[@type='string']", namespaces=NS)
+            for lit in str_lits:
+                testo = "".join(lit.itertext())
+                if adapter.is_interpolated_string(testo):
+                    found_names.extend(adapter.get_interpolated_variables(testo))
+
+        if not any(req in found_names for req in required_names_any):
             return False
 
     substr_targets = spec.get("contains_string_containing", [])
