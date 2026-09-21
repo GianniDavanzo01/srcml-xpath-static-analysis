@@ -3,10 +3,10 @@ from common import NS
 class UnitContext:
     __slots__ = (
         "unit", "calls", "names", "strings", "imports_nodes",
-        "assignments", "conditions", "_itertext_cache",
+        "assignments", "conditions", "_itertext_cache","catalog"
     )
 
-    def __init__(self, unit, adapter):
+    def __init__(self, unit, adapter, catalog=None):
         self.unit = unit
         self.calls = unit.xpath(".//src:call", namespaces=NS)
         self.names = unit.xpath(".//src:name", namespaces=NS)
@@ -20,6 +20,7 @@ class UnitContext:
         ]
         
         self._itertext_cache = {}
+        self.catalog = catalog or {}
 
     def text_of(self, node) -> str:
         key = id(node)

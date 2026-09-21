@@ -117,7 +117,13 @@ def analyze_unit(unit_node, raw_rules: list, xml_source: str) -> dict:
 
     compiled = _get_compiled_ruleset(language_name, raw_rules)
 
-    ctx = UnitContext(unit_node, adapter)
+    catalog_obj = {}
+    catalog_path = Path(f"{language_name}_catalog.json")
+    if catalog_path.exists():
+        with open(catalog_path, 'r', encoding='utf-8') as f:
+            catalog_obj = json.load(f)
+
+    ctx = UnitContext(unit_node, adapter, catalog=catalog_obj)
     findings = []
 
     run_forbidden_functions_indexed(ctx, compiled, findings, adapter, imports)

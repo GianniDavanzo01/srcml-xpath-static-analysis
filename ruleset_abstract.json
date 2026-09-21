@@ -1,5 +1,17 @@
 [
   {
+  "rule_id": "STRUCTURAL-INJECTION",
+  "type": "structural",
+  "vulnerabilities": ["Injection"],
+  "source_concats": [
+    {"source": {"tag": "http_input"}}
+  ],
+  "source_percent_formats": [
+    {"source": {"tag": "http_input"}}
+  ],
+  "sanitizers": ["cast_to_integer"]
+},
+  {
   "rule_id": "CWE-22-PATH-TRAVERSAL",
   "type": "taint",
   "vulnerabilities": ["CWE-22"],
