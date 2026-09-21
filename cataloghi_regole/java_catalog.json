@@ -103,9 +103,7 @@
     "weak_key_generation": [
       {
         "type": "call_matches_ast",
-        "call": [
-          "initialize", "KeyPairGenerator.initialize", "init", "KeyGenerator.init"
-        ],
+        "call": ["KeyPairGenerator.initialize", "KeyGenerator.init"],
         "arg_less_than": 2048
       }
     ],
@@ -134,7 +132,17 @@
         "contains_names": ["java.io.tmpdir"]
       }
     ],
-    "insecure_cookie_configuration":["HttpServletResponse.addCookie","Cookie"]
+    "insecure_cookie_configuration":["HttpServletResponse.addCookie","Cookie"],
+    "insecure_network_protocols": ["FTPClient","TelnetClient","POP3Client"],
+    "logging_calls_with_sensitive_content": [
+      {
+        "type": "call_matches_ast",
+        "call": ["logging.debug", "logging.info", "logging.warning", "logging.error",
+                  "logger.debug", "logger.info", "logger.warning", "logger.error"],
+        "contains_any_name": ["password", "Password", "pwd", "secret", "Secret",
+                            "token", "Token", "api_key", "apikey", "private_key"]
+      }
+    ]
 
   },
   "excluded_functions": {
@@ -171,6 +179,12 @@
         {
           "type": "function_has_file_size_check",
           "size_properties": ["length", "getSize"]
+        }
+      ],
+      "starttls_upgrade": [
+        {
+          "type": "function_has_call_matching_ast",
+          "call": ["execTLS"]
         }
       ]
   },
@@ -214,6 +228,7 @@
               "exact_body": "{}"
             }
           ]
-    }
+    },
+    "unsafe_deserialization_kwargs":{}
   }
 }

@@ -84,6 +84,27 @@
             "socket", "connect", "bind", "listen", "accept",
             "send", "recv", "sendto", "recvfrom", "sendmsg", "recvmsg",
             "setsockopt", "getsockopt", "getsockname", "getpeername", "shutdown"
+        ],
+        "insecure_network_protocols": [
+            {
+            "type": "call_matches_ast",
+            "call": ["curl_easy_setopt"],
+            "contains_names": ["CURLOPT_URL"],
+            "contains_string_containing": ["http://", "ftp://", "telnet://"]
+            },
+            {
+            "type": "call_matches_ast",
+            "call": ["curl_easy_setopt"],
+            "contains_names": ["CURLOPT_USE_SSL"]
+            }
+        ],
+        "logging_calls_with_sensitive_content": [
+            {
+                "type": "call_matches_ast",
+                "call": ["printf", "fprintf", "syslog"],
+                "contains_any_name": ["password", "Password", "pwd", "secret", "Secret",
+                            "token", "Token", "api_key", "apikey", "private_key"]
+            }
         ]
     },
     "excluded_functions":{
@@ -113,6 +134,18 @@
                     {
                     "type": "node_matches_xpath",
                     "xpath": "not(ancestor::src:call[1]//src:argument_list//src:name[text()='CURLOPT_URL'])"
+                    }
+                ],
+                "starttls_upgrade": [
+                    {
+                    "type": "function_has_call_matching_ast",
+                    "call": ["curl_easy_setopt"],
+                    "contains_names": ["CURLOPT_USE_SSL", "CURLUSESSL_ALL"]
+                    },
+                    {
+                    "type": "function_has_call_matching_ast",
+                    "call": ["curl_easy_setopt"],
+                    "contains_names": ["CURLOPT_USE_SSL", "CURLUSESSL_TRY"]
                     }
                 ]
     },
@@ -149,18 +182,19 @@
         },
           "insecure_permission_assignment": {
                 "forbidden_functions": [
-                {
-                    "type": "call_matches_ast",
-                    "call": ["chmod", "fchmod"],
-                    "contains_numbers": ["0", "0000", "0755", "0777", "0400", "0644"]
-                },
-                {
-                    "type": "call_matches_ast",
-                    "call": ["open"],
-                    "exact_args_count": 3,
-                    "contains_numbers": ["0777", "0666"]
-                }
+                    {
+                        "type": "call_matches_ast",
+                        "call": ["chmod", "fchmod"],
+                        "contains_numbers": ["0", "0000", "0755", "0777", "0400", "0644"]
+                    },
+                    {
+                        "type": "call_matches_ast",
+                        "call": ["open"],
+                        "exact_args_count": 3,
+                        "contains_numbers": ["0777", "0666"]
+                    }
                 ]
-            }
+            },
+            "unsafe_deserialization_kwargs":{}
     }
 }
