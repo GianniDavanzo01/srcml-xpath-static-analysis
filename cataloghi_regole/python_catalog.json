@@ -150,7 +150,7 @@
         "cast_to_integer": ["int","float"],
         "shell_escape_sanitizers": ["shlex.quote","quote"],
         "XSS_sanitizers": ["markupsafe.escape", "flask.escape", "escape", "html.escape", "bleach.clean"],
-        "url_validation": ["url_has_allowed_host_and_scheme","is_safe_url"],
+        "url_encode_sanitizers": ["urllib.parse.quote", "urllib.parse.quote_plus"],
         "crlf_sanitizers": ["urllib.parse.quote","urllib.parse.quote_plus","werkzeug.urls.url_quote"],
         "ldap_escape_sanitizers":["ldap3.utils.conv.escape_filter_chars","ldap.filter.escape_filter_chars"]
     },
@@ -188,6 +188,22 @@
           {
             "type": "function_has_call_matching_ast",
             "call": ["starttls"]
+          }
+        ],
+        "url_validation": [
+          {
+            "type": "condition_matches_xpath",
+            "scope": "enclosing",
+            "xpath": ".//src:call[.//src:name[text()='is_safe_url' or text()='url_has_allowed_host_and_scheme']][.//src:argument_list//src:name[text()='$VAR']]"
+          }
+        ],
+        "allowlist_validation": [
+          {
+            "type": "membership_check",
+            "scope": "enclosing",
+            "require_var_left": true,
+            "right_is_bare_identifier": true,
+            "allowed_negation": [false]
           }
         ]
   },

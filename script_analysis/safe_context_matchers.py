@@ -633,9 +633,13 @@ def _safe_context_binary_comparison(node, spec: dict, var_name: str | None = Non
 
 
 def _safe_context_membership_check(node, spec: dict, var_name: str | None = None, adapter=None, imports=None) -> bool:
-    """{"type": "membership_check", "scope": "enclosing", "operators": ["in", "not in"]}
-        Verifica controlli di appartenenza (in / not in).
+    """{"type": "membership_check", "scope": "enclosing"}
+        Versione agnostica e basata sull'AST per il controllo di appartenenza (Allowlist).
+        Elimina il flattening in stringhe e de-lega la semantica al LanguageAdapter.
     """
+    if not adapter:
+        return False
+
     search_scope = spec.get("scope", "function")
     target_for_assignments = _function_or_unit_scope(node)
     
@@ -644,86 +648,74 @@ def _safe_context_membership_check(node, spec: dict, var_name: str | None = None
     else:
         conditions = target_for_assignments.xpath(".//src:if_stmt//src:condition", namespaces=NS)
         
-    operators = spec.get("operators", ["in", "not in"])
-    left_exact = spec.get("left_exact", [])
-    left_contains = spec.get("left_contains", [])
-    right_exact = spec.get("right_exact", [])
-    right_starts_with = spec.get("right_starts_with", [])
-    
     require_var_left = spec.get("require_var_left", False)
     require_var_right = spec.get("require_var_right", False)
+    left_exact = spec.get("left_exact", [])
+    right_exact = spec.get("right_exact", [])
     right_is_bare_identifier = spec.get("right_is_bare_identifier", False)
-    
-    require_any_call = spec.get("require_any_call", False)
     require_collection_assignment = spec.get("require_collection_assignment", False)
+    
+    # Sostituisce l'hardcoding ["in", "not in"] con una specifica booleana generale
+    allowed_negation = spec.get("allowed_negation", [True, False]) 
 
+    # 1. Analisi delle assegnazioni di collezioni (Totalmente guidata dai tag AST)
     if require_collection_assignment:
-        assign_op = adapter.assignment_operator_token() if adapter else "="
+        assign_op = adapter.assignment_operator_token()
         assignments = target_for_assignments.xpath(f".//src:expr_stmt[.//src:operator[text()='{assign_op}']]", namespaces=NS)
+        
         has_coll_assign = False
         for assign in assignments:
-            op = assign.xpath(f".//src:operator[text()='{assign_op}'][1]", namespaces=NS)
-            if op:
-                rhs_nodes = op[0].xpath("./following-sibling::*[not(self::src:comment)]", namespaces=NS)
-                rhs_text = "".join("".join(n.itertext()) for n in rhs_nodes).replace(" ", "").replace("\n", "")
-                if rhs_text.startswith("[") or rhs_text.startswith("{") or rhs_text.startswith("("):
-                    has_coll_assign = True
-                    break
+            # L'adapter analizza i tag specifici del linguaggio (es. <src:list> in Python, <src:array> in Java)
+            if adapter.is_collection_assignment(assign, NS):
+                has_coll_assign = True
+                break
         if not has_coll_assign:
             return False
 
+    # 2. Analisi Strutturale delle Condizioni
     for cond in conditions:
-        if require_any_call:
-            cond_text = "".join(cond.itertext()).replace(" ", "")
-            if "any(" not in cond_text:
+        # L'adapter identifica il costrutto ('in' per Python, '.contains()' per Java, array interation per C)
+        # Ritorna una lista di dizionari: {"lhs": nodo, "rhs": nodo, "is_negated": bool}
+        membership_relations = adapter.extract_membership_relations(cond, NS)
+        
+        for relation in membership_relations:
+            lhs_node = relation.get("lhs")
+            rhs_node = relation.get("rhs")
+            is_negated = relation.get("is_negated", False)
+            
+            if is_negated not in allowed_negation:
                 continue
 
-        in_ops = cond.xpath(".//src:operator[text()='in']", namespaces=NS)
-        for op_node in in_ops:
-            prev_nodes = op_node.xpath("./preceding-sibling::*[not(self::src:comment)]", namespaces=NS)
-            is_not_in = False
-            
-            if prev_nodes:
-                last_prev = prev_nodes[-1]
-                if last_prev.tag.endswith("operator") and "".join(last_prev.itertext()).strip() == "not":
-                    is_not_in = True
-                    prev_nodes = prev_nodes[:-1]
-
-            current_op = "not in" if is_not_in else "in"
-            
-            if operators and current_op not in operators:
-                continue
-
-            lhs_nodes = prev_nodes
-            rhs_nodes = op_node.xpath("./following-sibling::*[not(self::src:comment)]", namespaces=NS)
-
-            lhs_text = "".join("".join(n.itertext()) for n in lhs_nodes).replace(" ", "").replace("\n", "")
-            rhs_text = "".join("".join(n.itertext()) for n in rhs_nodes).replace(" ", "").replace("\n", "")
-
+            # --- LATO SINISTRO (LHS) ---
             left_ok = True
             if require_var_left and var_name:
-                if not re.search(rf"(^|[^a-zA-Z0-9_]){re.escape(var_name)}$", lhs_text):
+                # Ricerca nativa XPath sul tag nome, elimina la necessità delle regex
+                if not lhs_node.xpath(f"descendant-or-self::src:name[text()='{var_name}']", namespaces=NS):
                     left_ok = False
-            if left_exact and not any(t == lhs_text for t in left_exact):
-                left_ok = False
-            if left_contains and not any(c in lhs_text for c in left_contains):
-                left_ok = False
+                    
+            if left_exact:
+                # Estrae in modo sicuro solo i valori letterali, ignorando commenti o token spuri
+                lhs_values = [n.text for n in lhs_node.xpath("descendant-or-self::src:name | descendant-or-self::src:literal", namespaces=NS) if n.text]
+                if not any(val in left_exact for val in lhs_values):
+                    left_ok = False
 
+            # --- LATO DESTRO (RHS) ---
             right_ok = True
             if require_var_right and var_name:
-                if not re.search(rf"^{re.escape(var_name)}([^a-zA-Z0-9_]|$)", rhs_text):
-                    right_ok = False
-            if right_exact and not any(t == rhs_text for t in right_exact):
-                right_ok = False
-            if right_starts_with and not any(rhs_text.startswith(c) for c in right_starts_with):
-                right_ok = False
-
-            if right_is_bare_identifier:
-                if not re.fullmatch(r"[a-zA-Z_]\w*", rhs_text):
+                if not rhs_node.xpath(f"descendant-or-self::src:name[text()='{var_name}']", namespaces=NS):
                     right_ok = False
                     
-            if right_exact and not any(t == rhs_text for t in right_exact):
-                right_ok = False
+            if right_exact:
+                rhs_values = [n.text for n in rhs_node.xpath("descendant-or-self::src:name | descendant-or-self::src:literal", namespaces=NS) if n.text]
+                if not any(val in right_exact for val in rhs_values):
+                    right_ok = False
+
+            if right_is_bare_identifier:
+                # Verifica AST rigorosa: ammette esattamente UN tag <src:name> e NESSUN costrutto complesso
+                names = rhs_node.xpath("descendant-or-self::src:name", namespaces=NS)
+                complex_tags = rhs_node.xpath("descendant-or-self::src:call | descendant-or-self::src:index | descendant-or-self::src:operator", namespaces=NS)
+                if len(names) != 1 or len(complex_tags) > 0:
+                    right_ok = False
 
             if left_ok and right_ok:
                 return True
@@ -964,7 +956,6 @@ def _safe_context_call_in_try_with_kwarg(node, spec: dict, var_name: str | None 
 
 def _safe_context_csv_injection_sanitizer(node, spec: dict, var_name: str | None = None, adapter=None, imports=None) -> bool:
     """{"type": "csv_injection_sanitizer"}
-    pattern not: EXCEL-INJC-001
     """
     target = _function_or_unit_scope(node)
     candidates = target.xpath(

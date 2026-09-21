@@ -169,6 +169,19 @@ class LanguageAdapter(ABC):
         (indice 0) diventa taintato. Linguaggi senza questo pattern (Python,
         Java) ritornano un dict vuoto."""
 
+
+    @abstractmethod
+    def extract_membership_relations(self, condition_node, ns) -> list[dict]:
+        """Estrae i nodi LHS, RHS e lo stato di negazione per le condizioni di appartenenza 
+        (es. 'x in y' in Python, 'y.contains(x)' in Java).
+        Ritorna una lista di dict: [{"lhs": node, "rhs": node, "is_negated": bool}]"""
+
+    @abstractmethod
+    def is_collection_assignment(self, assignment_node, ns) -> bool:
+        """True se il lato destro dell'assegnazione inizializza una collezione
+        nativa (lista, array, dizionario, set).
+        Python: [1,2,3], {1,2,3}. Java/C: {1,2,3}."""
+
 # ---------------------------------------------------------------------- #
 # Implementazione Python
 # ---------------------------------------------------------------------- #
@@ -356,6 +369,50 @@ class PythonAdapter(LanguageAdapter):
         # Le stringhe Python sono immutabili: nessuna funzione scrive su un
         # argomento passato per riferimento come farebbe sprintf in C.
         return {}
+
+
+    def extract_membership_relations(self, condition_node, ns) -> list[dict]:
+        relations = []
+        # srcML raggruppa nativamente sia 'in' che 'not in' in un singolo nodo <operator>
+        membership_ops = condition_node.xpath(".//src:operator[text()='in' or text()='not in']", namespaces=ns)
+        
+        for op_node in membership_ops:
+            op_text = "".join(op_node.itertext()).strip()
+            is_negated = (op_text == "not in")
+            
+            # LHS: Il nodo precedente (tipicamente un <name> o un <expr>)
+            prev_nodes = op_node.xpath("./preceding-sibling::*[not(self::src:comment)]", namespaces=ns)
+            if not prev_nodes:
+                continue
+            lhs_node = prev_nodes[-1]
+            
+            # RHS: Il nodo successivo (es. un <name>, <array>, o <tuple>)
+            rhs_nodes = op_node.xpath("./following-sibling::*[not(self::src:comment)]", namespaces=ns)
+            if not rhs_nodes:
+                continue
+            rhs_node = rhs_nodes[0]
+            
+            relations.append({
+                "lhs": lhs_node,
+                "rhs": rhs_node,
+                "is_negated": is_negated
+            })
+            
+        return relations
+
+    def is_collection_assignment(self, assignment_node, ns) -> bool:
+        op = assignment_node.xpath(".//src:operator[text()='='][1]", namespaces=ns)
+        if not op:
+            return False
+            
+        rhs = op[0].xpath("./following-sibling::*[not(self::src:comment)][1]", namespaces=ns)
+        if not rhs:
+            return False
+            
+        rhs_node = rhs[0]
+        # Adattato ai tag reali di srcML per Python: <array> e <dictionary>
+        tag = rhs_node.tag.split('}')[-1] if '}' in rhs_node.tag else rhs_node.tag
+        return tag in ("array", "dictionary", "set")
 
 # ---------------------------------------------------------------------- #
 # Implementazione Java
@@ -575,6 +632,48 @@ class JavaAdapter(LanguageAdapter):
         # gia' coperto dalla propagazione via assegnazione/metodo standard.
         return {}
 
+    def extract_membership_relations(self, condition_node, ns) -> list[dict]:
+        relations = []
+        contains_calls = condition_node.xpath(".//src:call[.//src:name[last()][text()='contains']]", namespaces=ns)
+        
+        for call_node in contains_calls:
+            # RHS (es. 'lista' in lista.contains)
+            rhs_nodes = call_node.xpath("./src:name/src:name[1]", namespaces=ns)
+            
+            # LHS (es. 'x' passato come argomento)
+            lhs_nodes = call_node.xpath("./src:argument_list/src:argument/src:expr/*[1]", namespaces=ns)
+            
+            if not rhs_nodes or not lhs_nodes:
+                continue
+                
+            # Identifica l'operatore '!' che si trova prima della <call>
+            is_negated = False
+            prev_sibling = call_node.xpath("preceding-sibling::src:operator[1]", namespaces=ns)
+            if prev_sibling and "".join(prev_sibling[0].itertext()).strip() == "!":
+                is_negated = True
+                
+            relations.append({
+                "lhs": lhs_nodes[0],
+                "rhs": rhs_nodes[0],
+                "is_negated": is_negated
+            })
+            
+        return relations
+
+    def is_collection_assignment(self, assignment_node, ns) -> bool:
+        # Array initializer (es. int[] arr = {1, 2, 3};) -> srcML usa <block>
+        init_block = assignment_node.xpath(".//src:init/src:expr/src:block", namespaces=ns)
+        if init_block:
+            return True
+            
+        # Inizializzazioni tramite 'new' (es. new ArrayList<>(Arrays.asList(...)))
+        new_obj = assignment_node.xpath(".//src:init/src:expr/src:call[.//src:name[text()='new']]", namespaces=ns)
+        if new_obj:
+            text = "".join(new_obj[0].itertext()).strip()
+            if "List" in text or "Set" in text or "Collection" in text or "Array" in text:
+                return True
+                
+        return False
 
 # ---------------------------------------------------------------------- #
 # Implementazione C
@@ -790,6 +889,19 @@ class CAdapter(LanguageAdapter):
             "strcat": 0, "strncat": 0,
             "memcpy": 0,
         }
+
+    def extract_membership_relations(self, condition_node, ns) -> list[dict]:
+        # Il linguaggio C non ha un costrutto 'in' o un metodo '.contains()' nativo.
+        # L'analisi di membership richiede funzioni custom (es. strchr per stringhe)
+        # o iterazioni su array. Riconoscerlo in una singola condizione non è fattibile in modo generico.
+        return []
+
+    def is_collection_assignment(self, assignment_node, ns) -> bool:
+        # Inizializzazione di array statici (es. int arr[] = {1, 2, 3};)
+        init_block = assignment_node.xpath(".//src:init/src:expr/src:block", namespaces=ns)
+        if init_block:
+            return True
+        return False
 
 
 

@@ -159,9 +159,9 @@
     "cast_to_integer": ["Integer.parseInt", "Integer.valueOf","Long.parseLong","Long.valueOf"],
     "path_sanitizers": ["getCanonicalPath", "getCanonicalFile", "FilenameUtils.getName"],
     "shell_escape_sanitizers":[],
-    "html_escape": ["HtmlUtils.htmlEscape","StringEscapeUtils.escapeHtml4","ESAPI.encoder().encodeForHTML"],
-    "XSS_sanitizers": ["HtmlUtils.htmlEscape","StringEscapeUtils.escapeHtml4","ESAPI.encoder().encodeForHTML"],
-    "url_validation": ["UrlValidator"],
+    "html_escape": ["HtmlUtils.htmlEscape","StringEscapeUtils.escapeHtml4","encodeForHTML"],
+    "XSS_sanitizers": ["HtmlUtils.htmlEscape","StringEscapeUtils.escapeHtml4","encodeForHTML"],
+    "url_encode_sanitizers": ["URLEncoder.encode"],
     "crlf_sanitizers": ["encodeForHTTPHeader","URLEncoder.encode","StringUtils.replace","StringEscapeUtils.escapeHtml4","encodeForHTTPHeader" ],
     "ldap_escape_sanitizers":["encodeForLDAP","encodeForDN","LdapEncoder.filterEncode","LdapEncoder.nameEncode"]
   },
@@ -191,6 +191,22 @@
         {
           "type": "function_has_call_matching_ast",
           "call": ["execTLS"]
+        }
+      ],
+      "url_validation": [
+        {
+          "type": "condition_matches_xpath",
+          "scope": "enclosing",
+          "xpath": ".//src:call[.//src:name[last()][text()='isValid']][.//src:argument_list//src:name[text()='$VAR']]"
+        }
+      ],
+      "allowlist_validation": [
+        {
+          "type": "membership_check",
+          "scope": "enclosing",
+          "require_var_left": true,
+          "right_is_bare_identifier": true,
+          "allowed_negation": [false]
         }
       ]
   },

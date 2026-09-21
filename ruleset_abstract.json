@@ -13,6 +13,9 @@
   "sanitizers": [
     {"tag": "path_sanitizers"},
     {"tag": "cast_to_integer"}
+  ],
+  "safe_contexts": [
+    {"tag": "allowlist_validation"}
   ]
 },
 {
@@ -28,6 +31,9 @@
   "sanitizers": [
     {"tag": "cast_to_integer"},
     {"tag": "shell_escape_sanitizers"}
+  ],
+  "safe_contexts": [
+    {"tag": "allowlist_validation"}
   ]
 },
 {
@@ -204,10 +210,8 @@
   "sinks": [
     {"tag": "http_redirect"}
   ],
-  "sanitizers": [
-    {"tag": "url_validation"}
-  ],
-  "safe_contexts": []
+  "sanitizers": [{"tag": "cast_to_integer"},{"tag": "url_encode_sanitizers"}],
+  "safe_contexts": [{"tag": "url_validation"}]
 },
 {
   "rule_id": "CWE-611-XXE",
@@ -235,9 +239,7 @@
     "forbidden_functions": [
       {"tag": "socket_primitives"}
     ],
-    "safe_contexts": [
-      {"tag": "try_block"}
-    ]
+    "safe_contexts": []
 },
 {
   "rule_id": "CWE-732-INCORRECT-PERMISSION-ASSIGNMENT",
@@ -271,7 +273,7 @@
   "sinks": [
     {"tag": "http_request"}
   ],
-  "safe_contexts":[{"tag": "curl_non_url_option"}]
+  "safe_contexts":[{"tag": "curl_non_url_option"},{"tag": "allowlist_validation"}]
 },
 {
   "rule_id": "CWE-1236-CSV-INJECTION",

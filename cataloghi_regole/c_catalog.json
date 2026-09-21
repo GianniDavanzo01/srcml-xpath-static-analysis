@@ -154,7 +154,8 @@
                     "call": ["curl_easy_setopt"],
                     "contains_names": ["CURLOPT_USE_SSL", "CURLUSESSL_TRY"]
                     }
-                ]
+                ],
+                "allowlist_validation": []
     },
     "patterns":{
         "insecure_certificate_validation": {
