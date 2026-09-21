@@ -89,6 +89,9 @@
             "to_csv"
           ]
         }
+      ],
+      "exception_stringify_calls": [
+        {"type": "call_with_var_arg", "call": ["str", "repr", "format"]}
       ]
   },
     "forbidden_functions": {

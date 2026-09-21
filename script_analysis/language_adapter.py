@@ -182,6 +182,13 @@ class LanguageAdapter(ABC):
         nativa (lista, array, dizionario, set).
         Python: [1,2,3], {1,2,3}. Java/C: {1,2,3}."""
 
+    @abstractmethod
+    def find_exception_bindings(self, tree, ns) -> list:
+        """Ritorna una lista di tuple (nome_variabile, scope_node) - una per
+        ogni blocco except/catch che lega l'eccezione catturata a un nome.
+        Lo scope_node e' il blocco di codice del catch, cosi' la variabile
+        viene considerata taintata SOLO li' dentro, non in tutta la funzione."""
+
 # ---------------------------------------------------------------------- #
 # Implementazione Python
 # ---------------------------------------------------------------------- #
@@ -413,6 +420,19 @@ class PythonAdapter(LanguageAdapter):
         # Adattato ai tag reali di srcML per Python: <array> e <dictionary>
         tag = rhs_node.tag.split('}')[-1] if '}' in rhs_node.tag else rhs_node.tag
         return tag in ("array", "dictionary", "set")
+
+
+    def find_exception_bindings(self, tree, ns) -> list:
+        bindings = []
+        for catch in tree.xpath(".//src:catch", namespaces=ns):
+            alias_names = catch.xpath("./src:alias//src:name", namespaces=ns)
+            if not alias_names:
+                continue   # 'except Exception:' senza 'as e' -> nessuna variabile da tracciare
+            var_name = "".join(alias_names[0].itertext()).strip()
+            block = catch.xpath("./src:block[1]", namespaces=ns)
+            if block:
+                bindings.append((var_name, block[0]))
+        return bindings
 
 # ---------------------------------------------------------------------- #
 # Implementazione Java
@@ -675,6 +695,19 @@ class JavaAdapter(LanguageAdapter):
                 
         return False
 
+
+    def find_exception_bindings(self, tree, ns) -> list:
+        bindings = []
+        for catch in tree.xpath(".//src:catch", namespaces=ns):
+            param_names = catch.xpath("./src:parameter_list/src:parameter/src:decl/src:name[1]", namespaces=ns)
+            if not param_names:
+                continue
+            var_name = "".join(param_names[0].itertext()).strip()
+            block = catch.xpath("./src:block[1]", namespaces=ns)
+            if block:
+                bindings.append((var_name, block[0]))
+        return bindings
+
 # ---------------------------------------------------------------------- #
 # Implementazione C
 # ---------------------------------------------------------------------- #
@@ -903,6 +936,9 @@ class CAdapter(LanguageAdapter):
             return True
         return False
 
+    def find_exception_bindings(self, tree, ns) -> list:
+        return []   # il C non ha un meccanismo di eccezioni: CWE-209 in questa forma
+                # (variabile d'eccezione -> risposta HTTP) non è applicabile
 
 
 # ---------------------------------------------------------------------- #

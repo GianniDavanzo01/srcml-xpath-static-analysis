@@ -48,6 +48,11 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
                 tainted_vars_with_scope.append((param_name, scope_node))
     # ---------------------------------------------------------
 
+    
+    if "exception_variable" in sources:
+        for var_name, scope_node in adapter.find_exception_bindings(tree, NS):
+            tainted_vars_with_scope.append((var_name, scope_node))
+
 
     if ctx is not None:
         assignments = ctx.assignments

@@ -95,6 +95,11 @@
         "type": "call_with_var_arg",
         "call": ["printRecord","writeNext","writeAll"]
       }
+    ],
+    "exception_stringify_calls": [
+      {"type": "method_call", "method": "getMessage"},
+      {"type": "method_call", "method": "toString"},
+      {"type": "method_call", "method": "getLocalizedMessage"}
     ]
   },
   "forbidden_functions": {
