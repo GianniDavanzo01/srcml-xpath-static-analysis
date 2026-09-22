@@ -131,64 +131,6 @@ def _safe_context_function_has_method_call(node, spec: dict, var_name: str | Non
     return False
 
 
-def _safe_context_whitelist_membership_then_run(node, spec: dict, var_name: str | None = None, adapter=None, imports=None) -> bool:
-    """{"type": "whitelist_membership_then_run", "call": ["subprocess.run"]}
-        Rileva: node si trova dentro un if_stmt la cui condizione contiene un
-        controllo di membership generico (un operatore 'in'). E che nel proprio corpo contiene
-        una chiamata a una delle funzioni indicate con un argomento che usa
-        subscript (es. "if X in Y: subprocess.run(Z[...])
-    """
-    calls = spec.get("call", [])
-    if_stmt = node.xpath("ancestor::src:if_stmt[1]", namespaces=NS)
-    if not if_stmt:
-        return False
-    if_stmt = if_stmt[0]
- 
-    condition = if_stmt.xpath("./src:condition", namespaces=NS)
-    if not condition:
-        return False
-    cond_text = "".join(condition[0].itertext())
-    if not re.search(r"\bin\b", cond_text):
-        return False
- 
-    for call_node in if_stmt.xpath(".//src:call", namespaces=NS):
-        # cname = get_call_name(call_node)
-        cname= get_call_name(call_node, adapter, imports)
-        if cname and any(cname == c or cname.endswith(f".{c}") for c in calls):
-            arg_list = call_node.xpath("./src:argument_list", namespaces=NS)
-            if arg_list and "[" in "".join(arg_list[0].itertext()):
-                return True
-    return False
-
-
-def _safe_context_function_calls_and_call_has_kwarg(node, spec: dict, var_name: str | None = None, adapter=None, imports=None) -> bool:
-    """{"type": "function_calls_and_call_has_kwarg", "function_call": "default_backend", "kwarg": "backend"}
-        Rileva: la chiamata vietata possiede uno specifico parametro nominato (kwarg)
-        E all'interno della stessa funzione (o file) è presente una chiamata a un'altra 
-        funzione specifica.
-    """
-    target_func = spec.get("function_call")
-    target_kwarg = spec.get("kwarg")
-    
-    if not target_func or not target_kwarg:
-        return False
-        
-    arg_list = node.xpath("./src:argument_list", namespaces=NS)
-    if not arg_list:
-        return False
-    args_text = "".join(arg_list[0].itertext()).replace(" ", "").replace("\n", "")
-    if f"{target_kwarg}=" not in args_text:
-        return False
-        
-    scope = _function_or_unit_scope(node)
-    calls = scope.xpath(".//src:call", namespaces=NS)
-    for c in calls:
-        # cname = get_call_name(c)
-        cname= get_call_name(c, adapter, imports)
-        if cname and (cname == target_func or cname.endswith(f".{target_func}")):
-            return True
-            
-    return False
 
 
 def _safe_context_args_contain_string_literal(node, spec: dict, var_name: str | None = None, adapter=None, imports=None) -> bool:
@@ -250,55 +192,6 @@ def _safe_context_in_function_name(node, spec: dict, var_name: str | None = None
     return False
 
 
-def _safe_context_file_has_header_check(node, spec: dict, var_name: str | None = None, adapter=None, imports=None) -> bool:
-    """{"type": "file_has_header_check"}
-        pattern_not di HTTP-SERVER-003
-    """
-    unit = node.xpath("ancestor::src:unit[1]", namespaces=NS)
-    target = unit[0] if unit else node
-    
-    conditions = target.xpath(".//src:if_stmt//src:condition", namespaces=NS)
-    for cond in conditions:
-        cond_text = "".join(cond.itertext()).replace(" ", "").replace('"', "'")
-        if "'Transfer-Encoding'in" in cond_text and ".header" in cond_text:
-            return True
-        if "'Content-Lenght'in" in cond_text and ".header" in cond_text:
-            return True
-        if "'Content-Length'in" in cond_text and ".header" in cond_text:
-            return True
-            
-    calls = target.xpath(".//src:call", namespaces=NS)
-    has_te_get = False
-    has_cl_get = False
-    
-    for c in calls:
-        # cname = get_call_name(c)
-        cname= get_call_name(c, adapter, imports)
-        if cname and cname.endswith(".get"):
-            args = c.xpath("./src:argument_list", namespaces=NS)
-            if args:
-                arg_text = "".join(args[0].itertext()).replace(" ", "").replace('"', "'")
-                if "'Transfer-Encoding'" in arg_text:
-                    has_te_get = True
-                if "'Content-Length'" in arg_text:
-                    has_cl_get = True
-                    
-    return has_te_get and has_cl_get
-
-
-def _safe_context_function_has_overflow_check(node, spec: dict, var_name: str | None = None, adapter=None, imports=None) -> bool:
-    """{"type": "function_has_overflow_check", "operator": "-"}"""
-    operator = spec.get("operator", "-")
-    target_text = f"a>0andb>0anda>(2**31-1){operator}b"
-    target = _function_or_unit_scope(node)
-    
-    conditions = target.xpath(".//src:if_stmt//src:condition", namespaces=NS)
-    for cond in conditions:
-        text = "".join(cond.itertext()).replace(" ", "")
-        if target_text in text:
-            return True
-    return False
-
 
 def _safe_context_args_do_not_contain_call(node, spec: dict, var_name: str | None = None, adapter=None, imports=None) -> bool:
     """{"type": "args_do_not_contain_call", "call": "redirect"}
@@ -357,19 +250,6 @@ def _safe_context_function_is_not(node, spec: dict, var_name: str | None = None,
     return False
 
 
-def _safe_context_function_has_hmac_sha512_digest(node, spec: dict, var_name: str | None = None, adapter=None, imports=None) -> bool:
-    """{"type": "function_has_hmac_sha512_digest"}
-        pattern_not di HMAC-NEW-001
-    """
-    target = _function_or_unit_scope(node)
-    calls = target.xpath(".//src:call", namespaces=NS)
-    for c in calls:
-        c_text = "".join(c.itertext()).replace(" ", "").replace("\n", "")
-        if re.search(r"hmac\.new\(.*hashlib\.sha512\)\.(digest|hexdigest)\(", c_text):
-            return True
-    return False
-
-
 def _safe_context_function_has_file_size_check(node, spec: dict, var_name: str | None = None, adapter=None, imports=None) -> bool:
     """{"type": "function_has_file_size_check"}
        Verifica se nello scope della funzione esiste un controllo sulla dimensione.
@@ -402,85 +282,6 @@ def _safe_context_function_has_file_size_check(node, spec: dict, var_name: str |
     return False
 
 
-def _safe_context_file_has_logger_info_add(node, spec: dict, var_name: str | None = None, adapter=None, imports=None) -> bool:
-    """{"type": "file_has_logger_info_add"}
-        pattern_not di LOGORU-LOGGER-001
-    """
-    unit = node.xpath("ancestor::src:unit[1]", namespaces=NS)
-    target = unit[0] if unit else node
-    
-    calls = target.xpath(".//src:call", namespaces=NS)
-    for c in calls:
-        # cname = get_call_name(c)
-        cname= get_call_name(c, adapter, imports)
-        if cname and (cname == "logger.add" or cname.endswith(".logger.add") or cname == "add"):
-            arg_list = c.xpath("./src:argument_list", namespaces=NS)
-            if not arg_list:
-                continue
-            args_text = "".join(arg_list[0].itertext()).replace(" ", "").replace("'", '"')
-            if 'level="INFO"' in args_text:
-                return True
-    return False
-
-
-def _safe_context_args_contain_masking(node, spec: dict, var_name: str | None = None, adapter=None, imports=None) -> bool:
-    """{"type": "args_contain_masking"}
-        Verifica se negli argomenti della chiamata è presente un offuscamento tramite
-        stringa di asterischi e funzione len().
-    """
-    node_text = "".join(node.itertext())
-    pattern = r"['\"]\*['\"]\s*\*?\s*len\("
-    return bool(re.search(pattern, node_text))
-
-
-def _safe_context_unit_has_os_path_join_and_commonprefix(node, spec: dict, var_name: str | None = None, adapter=None, imports=None) -> bool:
-    """{"type": "unit_has_os_path_join_and_commonprefix"}"""
-    target = _function_or_unit_scope(node)
-    text = "".join(target.itertext()).replace(" ", "")
-    return "os.path.join(" in text and "os.path.commonprefix(" in text
-
-
-def _safe_context_unit_has_os_path_abspath_and_commonpath(node, spec: dict, var_name: str | None = None, adapter=None, imports=None) -> bool:
-    """{"type": "unit_has_os_path_abspath_and_commonpath"}"""
-    target = _function_or_unit_scope(node)
-    text = "".join(target.itertext())
-    return "os.path.abspath(" in text and "os.path.commonpath(" in text
-
-
-def _safe_context_unit_has_os_path_abspath_and_startswith(node, spec: dict, var_name: str | None = None, adapter=None, imports=None) -> bool:
-    """{"type": "unit_has_os_path_abspath_and_startswith"}"""
-    target = _function_or_unit_scope(node)
-    text = "".join(target.itertext())
-    return "os.path.abspath(" in text and ".startswith(" in text
-
-
-# def _safe_context_var_truthiness_check(node, spec: dict, var_name: str | None = None, adapter=None, imports=None) -> bool:
-#     """{"type": "var_truthiness_check", "scope": "enclosing" | "function" | "file"}
-#         Rileva i check di truthiness (es. 'if not var')
-#     """
-#     if not var_name:
-#         return False
-        
-#     search_scope = spec.get("scope", "enclosing")
-    
-#     if search_scope == "enclosing":
-#         conditions = node.xpath("ancestor::src:if_stmt/src:condition", namespaces=NS)
-#     elif search_scope in ("file", "unit"):
-#         unit_node = node.xpath("ancestor::src:unit[1]", namespaces=NS)
-#         target = unit_node[0] if unit_node else _function_or_unit_scope(node)
-#         conditions = target.xpath(".//src:if_stmt//src:condition", namespaces=NS)
-#     else: 
-#         target = _function_or_unit_scope(node)
-#         conditions = target.xpath(".//src:if_stmt//src:condition", namespaces=NS)
-        
-#     for cond in conditions:
-#         text = "".join(cond.itertext()).replace(" ", "").replace("\n", "")
-#         if f"not{var_name}" in text:
-#             return True
-#         if f"{var_name}isNone" in text:
-#             return True
-            
-#     return False
 
 def _safe_context_var_truthiness_check(node, spec: dict, var_name=None, adapter=None, imports=None) -> bool:
     """{"type": "var_truthiness_check", "scope": "enclosing" | "function" | "file"}
@@ -730,51 +531,6 @@ def _safe_context_membership_check(node, spec: dict, var_name: str | None = None
     return False
 
 
-def _safe_context_url_validation(node, spec: dict, var_name: str | None = None, adapter=None, imports=None) -> bool:
-    """{"type": "url_validation", "require": "both" | "any" | "netloc_in"}
-        Verifica controlli su attributi URL (scheme, netloc).
-    """
-    if not var_name:
-        return False
-        
-    search_scope = spec.get("scope", "function") 
-    target = _function_or_unit_scope(node)
-    require_mode = spec.get("require", "both")
-    
-    if require_mode == "netloc_in":
-        in_ops = target.xpath(".//src:operator[text()='in']", namespaces=NS)
-        for op_node in in_ops:
-            prev_nodes = op_node.xpath("./preceding-sibling::*[not(self::src:comment)]", namespaces=NS)
-            if prev_nodes:
-                last_prev = prev_nodes[-1]
-                if last_prev.tag.endswith("operator") and "".join(last_prev.itertext()).strip() == "not":
-                    prev_nodes = prev_nodes[:-1]
-            
-            lhs_text = "".join("".join(n.itertext()) for n in prev_nodes).replace(" ", "").replace("\n", "")
-            
-            if re.search(rf"(^|[^a-zA-Z0-9_]){re.escape(var_name)}\.netloc$", lhs_text):
-                return True
-        return False
-
-    if search_scope == "enclosing":
-        conditions = node.xpath("ancestor::src:if_stmt/src:condition", namespaces=NS)
-    else:
-        conditions = target.xpath(".//src:if_stmt//src:condition", namespaces=NS)
-        
-    for cond in conditions:
-        cond_nodes = cond.xpath(".//*[not(self::src:comment)]", namespaces=NS)
-        cond_text = "".join("".join(n.itertext()) for n in cond_nodes).replace(" ", "").replace("\n", "")
-        
-        has_scheme = bool(re.search(rf"(^|[^a-zA-Z0-9_]){re.escape(var_name)}\.scheme($|[^a-zA-Z0-9_])", cond_text))
-        has_netloc = bool(re.search(rf"(^|[^a-zA-Z0-9_]){re.escape(var_name)}\.netloc($|[^a-zA-Z0-9_])", cond_text))
-        
-        if require_mode == "both" and has_scheme and has_netloc:
-            return True
-        elif require_mode == "any" and (has_scheme or has_netloc):
-            return True
-            
-    return False
-
 
 def _safe_context_unit_has_function_def(node, spec: dict, var_name: str | None = None, adapter=None, imports=None) -> bool:
     """{"type": "unit_has_function_def", "name": "sanitize_git_reference"}"""
@@ -961,41 +717,6 @@ def _safe_context_call_in_try_with_kwarg(node, spec: dict, var_name: str | None 
     return any(f"{kwarg}={v}" in args_text for v in values)
 
 
-def _safe_context_csv_injection_sanitizer(node, spec: dict, var_name: str | None = None, adapter=None, imports=None) -> bool:
-    """{"type": "csv_injection_sanitizer"}
-    """
-    target = _function_or_unit_scope(node)
-    candidates = target.xpath(
-        ".//src:expr_stmt | .//src:return | .//src:expr[not(ancestor::src:expr_stmt) and not(ancestor::src:return)]",
-        namespaces=NS,
-    )
-    for stmt in candidates:
-        text = "".join(stmt.itertext())
-
-        has_isinstance_str = bool(
-            stmt.xpath(".//src:call[.//src:name[text()='isinstance']][.//src:name[text()='str']]", namespaces=NS)
-        )
-        has_startswith_eq = bool(
-            stmt.xpath(
-                ".//src:call[.//src:name[last()][text()='startswith']]"
-                "[.//src:literal[@type='string'][contains(text(),'=')]]",
-                namespaces=NS,
-            )
-        )
-
-        has_fstring = False
-        if adapter:
-            has_fstring = any(
-                adapter.is_interpolated_string("".join(lit.itertext()).strip())
-                for lit in stmt.xpath(".//src:literal[@type='string']", namespaces=NS)
-            )
-
-        if has_isinstance_str and has_startswith_eq and has_fstring:
-            return True
-
-    return False
-
-
 def _safe_context_try_after_source(node, spec: dict, var_name: str | None = None, adapter=None, imports=None) -> bool:
     """{"type": "try_after_source"}
         sicuro SOLO se il <try> che racchiude l'uso non racchiude anche l'assegnazione della source
@@ -1024,30 +745,19 @@ SAFE_CONTEXT_MATCHERS = {
     "rhs_call": _safe_context_rhs_call,
     "lower_ne_literal": _safe_context_lower_ne_literal,
     "function_has_method_call": _safe_context_function_has_method_call,
-    "whitelist_membership_then_run": _safe_context_whitelist_membership_then_run,
-    "function_calls_and_call_has_kwarg": _safe_context_function_calls_and_call_has_kwarg,
     "args_contain_string_literal": _safe_context_args_contain_string_literal,
     "args_contain_call_with_literal_arg": _safe_context_args_contain_call_with_literal_arg,
     "in_function_name": _safe_context_in_function_name,
-    "file_has_header_check": _safe_context_file_has_header_check,
-    "function_has_overflow_check": _safe_context_function_has_overflow_check,
     "args_do_not_contain_call": _safe_context_args_do_not_contain_call,
     "function_calls_method_on_var": _safe_context_function_calls_method_on_var,
     "function_is_not": _safe_context_function_is_not,
-    "function_has_hmac_sha512_digest": _safe_context_function_has_hmac_sha512_digest,
     "function_has_file_size_check": _safe_context_function_has_file_size_check,
-    "file_has_logger_info_add": _safe_context_file_has_logger_info_add,
-    "args_contain_masking": _safe_context_args_contain_masking,
-    "unit_has_os_path_join_and_commonprefix": _safe_context_unit_has_os_path_join_and_commonprefix,
-    "unit_has_os_path_abspath_and_commonpath": _safe_context_unit_has_os_path_abspath_and_commonpath,
-    "unit_has_os_path_abspath_and_startswith": _safe_context_unit_has_os_path_abspath_and_startswith,
     "var_truthiness_check": _safe_context_var_truthiness_check,
     "var_has_attribute": _safe_context_var_has_attribute,
     "binary_comparison": _safe_context_binary_comparison,
     "current_call_matches_ast": _safe_context_current_call_matches,
     "function_has_call_matching_ast": _safe_context_function_has_call_matching,
     "membership_check": _safe_context_membership_check,
-    "url_validation": _safe_context_url_validation,
     "condition_matches_xpath": _safe_context_condition_matches_xpath,
     "matches_xpath": _safe_context_matches_xpath,
     "node_matches_xpath": _safe_context_node_matches_xpath,
@@ -1060,7 +770,6 @@ SAFE_CONTEXT_MATCHERS = {
     "function_has_call_with_var_arg": _safe_context_function_has_call_with_var_arg,
     "try_after_source": _safe_context_try_after_source,
     "call_in_try_with_kwarg": _safe_context_call_in_try_with_kwarg,
-    "csv_injection_sanitizer": _safe_context_csv_injection_sanitizer,
 }
 
 
