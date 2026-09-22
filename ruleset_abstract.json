@@ -9,9 +9,20 @@
   "source_percent_formats": [
     {"source": {"tag": "http_input"}}
   ],
+  "source_comparisons": [
+    {"source": {"tag": "http_input"}}
+  ],
   "sanitizers": ["cast_to_integer"]
 },
-  {
+{
+  "rule_id": "CWE-20-UNSAFE-DICT-ACCESS",
+  "description":"Applicabile solo a Python",
+  "type": "structural",
+  "vulnerabilities": ["CWE-20"],
+  "patterns": [{"tag": "unsafe_dict_access"}],
+  "safe_contexts": [{"tag": "try_block"}, {"tag": "if_block"}]
+},
+{
   "rule_id": "CWE-22-PATH-TRAVERSAL",
   "type": "taint",
   "vulnerabilities": ["CWE-22"],
@@ -111,6 +122,18 @@
   ],
   "sanitizers": [
     {"tag": "crlf_sanitizers"}
+  ]
+},
+{
+  "rule_id": "CWE-129-IMPROPER-ARRAY-INDEX-VALIDATION",
+  "type": "structural",
+  "description":"Applicabile solo a Java e C",
+  "vulnerabilities": ["CWE-129"],
+  "patterns": [
+    {"tag": "unsafe_array_access"}
+  ],
+  "safe_contexts": [
+    {"tag": "bounds_checked_array_access"}
   ]
 },
 {
@@ -283,6 +306,12 @@
     "api_key", "apikey", "access_key", "accesskey",
     "token", "auth_token", "private_key", "privatekey"
   ]
+},
+{
+  "rule_id": "CWE-835-LOOP-WITH-UNREACHABLE-EXIT",
+  "type": "structural",
+  "vulnerabilities": ["CWE-835"],
+  "missing_while_increments": [{}]
 },
 {
   "rule_id": "CWE-918-SSRF",

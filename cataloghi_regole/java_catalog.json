@@ -172,6 +172,7 @@
   },
   "safe_contexts": {
     "try_block": ["try"],
+    "if_block": ["if"],
     "sql_parameterization":[],
     "safe_permission_defaults": [
         {
@@ -213,6 +214,10 @@
           "right_is_bare_identifier": true,
           "allowed_negation": [false]
         }
+      ],
+      "bounds_checked_array_access": [
+        {"type": "binary_comparison", "operators": ["<", "<="], "left_exact": ["$VAR"]},
+        {"type": "binary_comparison", "operators": ["<", "<="], "right_exact": ["$VAR"]}
       ]
   },
   "patterns": {
@@ -256,6 +261,10 @@
             }
           ]
     },
-    "unsafe_deserialization_kwargs":{}
+    "unsafe_deserialization_kwargs":{},
+    "unsafe_dict_access":{},
+    "unsafe_array_access": {
+      "forbidden_subscripts": ["args"]
+    }
   }
 }

@@ -1,12 +1,12 @@
 {
   "sources": {
     "http_input": [
-      "request.args", "request.GET", "request.POST", "request.files",
+      "request.args","request.args.get", "request.GET", "request.POST", "request.files",
       "request.form", "request.data", "request.headers", "request.params",
       "request.base_url", "request.authorization", "request.cookies",
       "request.endpoint", "request.host", "request.host_url", "request.module",
       "request.path", "request.query_strings", "request.url", "request.values",
-      "request.view_args","input","django.http.HttpRequest.GET", "django.http.HttpRequest.POST"
+      "request.view_args","django.http.HttpRequest.GET", "django.http.HttpRequest.POST","input"
     ]
   },
     "sinks": {
@@ -160,6 +160,7 @@
   "safe_contexts": {
     "sql_parameterization": [{"type": "parametrized_query"}],
     "try_block": ["try"],
+    "if_block": ["if"],
     "safe_permission_defaults": [
         {"type": "call_with_kwarg", "call": ["os.makedirs"], "kwargs": {"mode": "0o700"}},
         {"type": "current_call_matches_ast", "call": ["os.chmod", "chmod"], "contains_names": ["stat.S_IRWXU"]},
@@ -208,7 +209,8 @@
             "right_is_bare_identifier": true,
             "allowed_negation": [false]
           }
-        ]
+        ],
+        "bounds_checked_array_access":{}
   },
   "patterns": {
     "active_debug": {
@@ -230,12 +232,6 @@
           "type": "call_matches_ast",
           "call": ["os.chmod"],
           "contains_numbers": ["0", "0000", "0o000", "755", "0o755", "777", "0o777", "0o400", "128", "664", "0o644"]
-        }
-      ],
-      "local_var_forbidden_calls": [
-        {
-          "call": ["os.chmod"],
-          "forbidden_numbers": ["0", "0000", "0o000", "755", "0o755", "777", "0o777", "0o400", "128", "664", "0o644"]
         }
       ]
     },
@@ -266,6 +262,10 @@
     },
     "unsafe_deserialization_kwargs":{
       "forbidden_calls_with_kwargs":[{"call": ["numpy.load"], "kwargs": {"allow_pickle": "True"}}]
-    }
+    },
+    "unsafe_dict_access": {
+      "forbidden_subscripts": ["request.form", "request.args", "os.environ"]
+    },
+    "unsafe_array_access":{}
   }
 }

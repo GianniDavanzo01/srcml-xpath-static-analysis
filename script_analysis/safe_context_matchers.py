@@ -600,14 +600,21 @@ def _safe_context_binary_comparison(node, spec: dict, var_name: str | None = Non
     """{"type": "binary_comparison", "operators": ["<"], "left_exact": ["size"], "right_exact": ["0"]}
         Verifica un confronto binario all'interno di un if_stmt.
         Sfrutta l'AST per separare lato sinistro (LHS) e destro (RHS), ignorando i commenti.
+        left_exact/right_exact/... possono contenere il placeholder "$VAR",
+        sostituito dinamicamente con var_name (es. la variabile usata come
+        indice in un accesso subscript), per confronti legati al contesto.
     """
     target = _function_or_unit_scope(node)
     operators = spec.get("operators", [])
-    left_exact = spec.get("left_exact", [])
-    left_contains = spec.get("left_contains", [])
-    right_exact = spec.get("right_exact", [])
-    right_contains = spec.get("right_contains", [])
-    
+
+    def _resolve(values):
+        return [v.replace("$VAR", var_name) if var_name else v for v in values]
+
+    left_exact = _resolve(spec.get("left_exact", []))
+    left_contains = _resolve(spec.get("left_contains", []))
+    right_exact = _resolve(spec.get("right_exact", []))
+    right_contains = _resolve(spec.get("right_contains", []))
+
     conditions = target.xpath(".//src:if_stmt//src:condition", namespaces=NS)
     for cond in conditions:
         for op_val in operators:
@@ -615,18 +622,18 @@ def _safe_context_binary_comparison(node, spec: dict, var_name: str | None = Non
             for op_node in ops:
                 lhs_nodes = op_node.xpath("./preceding-sibling::*[not(self::src:comment)]", namespaces=NS)
                 rhs_nodes = op_node.xpath("./following-sibling::*[not(self::src:comment)]", namespaces=NS)
-                
+
                 lhs_text = "".join("".join(n.itertext()) for n in lhs_nodes).replace(" ", "").replace("\n", "")
                 rhs_text = "".join("".join(n.itertext()) for n in rhs_nodes).replace(" ", "").replace("\n", "")
-                
+
                 left_ok = True
                 if left_exact or left_contains:
                     left_ok = (lhs_text in left_exact) or any(c in lhs_text for c in left_contains)
-                    
+
                 right_ok = True
                 if right_exact or right_contains:
                     right_ok = (rhs_text in right_exact) or any(c in rhs_text for c in right_contains)
-                    
+
                 if left_ok and right_ok:
                     return True
     return False

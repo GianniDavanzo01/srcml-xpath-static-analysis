@@ -133,6 +133,7 @@
                 }
             ],
             "try_block": [],
+            "if_block": ["if"],
             "safe_permission_defaults": [
                 {"type": "current_call_matches_ast", "call": ["chmod", "fchmod"], "contains_names": ["S_IRUSR"]},
                 {"type": "current_call_matches_ast", "call": ["chmod", "fchmod"], "contains_names": ["S_IWUSR"]}
@@ -155,7 +156,11 @@
                     "contains_names": ["CURLOPT_USE_SSL", "CURLUSESSL_TRY"]
                     }
                 ],
-                "allowlist_validation": []
+                "allowlist_validation": [],
+                "bounds_checked_array_access": [
+                    {"type": "binary_comparison", "operators": ["<", "<="], "left_exact": ["$VAR"]},
+                    {"type": "binary_comparison", "operators": ["<", "<="], "right_exact": ["$VAR"]}
+                ]
     },
     "patterns":{
         "insecure_certificate_validation": {
@@ -203,6 +208,10 @@
                     }
                 ]
             },
-            "unsafe_deserialization_kwargs":{}
+            "unsafe_deserialization_kwargs":{},
+            "unsafe_dict_access":{},
+            "unsafe_array_access": {
+                "forbidden_subscripts": ["argv"]
+            }
     }
 }
