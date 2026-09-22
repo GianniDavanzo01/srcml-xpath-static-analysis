@@ -210,7 +210,21 @@
             "allowed_negation": [false]
           }
         ],
-        "bounds_checked_array_access":{}
+        "file_extension_validation": [
+          {
+            "type": "receiver_of_method_with_arg",
+            "method": "endswith",
+            "arg_value": ".png" 
+          }
+        ],
+        "bounds_checked_array_access":{},
+        "manual_string_sanitization": [
+          {
+            "type": "function_has_method_call",
+            "method": "replace",
+            "args_contain": [";", "&"]
+          }
+        ]
   },
   "patterns": {
     "active_debug": {

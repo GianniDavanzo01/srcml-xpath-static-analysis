@@ -215,9 +215,23 @@
           "allowed_negation": [false]
         }
       ],
+      "file_extension_validation": [
+        {
+          "type": "receiver_of_method_with_arg",
+          "method": "endsWith", 
+          "arg_value": ".png"
+        }
+      ],
       "bounds_checked_array_access": [
         {"type": "binary_comparison", "operators": ["<", "<="], "left_exact": ["$VAR"]},
         {"type": "binary_comparison", "operators": ["<", "<="], "right_exact": ["$VAR"]}
+      ],
+      "manual_string_sanitization":[
+        {
+          "type": "function_has_method_call",
+          "method": "replace",
+          "args_contain": [";", "&"]
+        }
       ]
   },
   "patterns": {

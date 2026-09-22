@@ -38,7 +38,8 @@
     {"tag": "cast_to_integer"}
   ],
   "safe_contexts": [
-    {"tag": "allowlist_validation"}
+    {"tag": "allowlist_validation"},
+    {"tag": "file_extension_validation"}
   ]
 },
 {
@@ -56,7 +57,8 @@
     {"tag": "shell_escape_sanitizers"}
   ],
   "safe_contexts": [
-    {"tag": "allowlist_validation"}
+    {"tag": "allowlist_validation"},
+    {"tag": "manual_string_sanitization"}
   ]
 },
 {

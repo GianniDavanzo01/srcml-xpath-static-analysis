@@ -157,10 +157,12 @@
                     }
                 ],
                 "allowlist_validation": [],
+                "file_extension_validation":[],
                 "bounds_checked_array_access": [
                     {"type": "binary_comparison", "operators": ["<", "<="], "left_exact": ["$VAR"]},
                     {"type": "binary_comparison", "operators": ["<", "<="], "right_exact": ["$VAR"]}
-                ]
+                ],
+                "manual_string_sanitization":[]
     },
     "patterns":{
         "insecure_certificate_validation": {
