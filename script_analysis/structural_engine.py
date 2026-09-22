@@ -12,130 +12,6 @@ from safe_context_matchers import is_in_safe_context
 
 from language_adapter import PythonAdapter
 
-#USATA SOLO DA MESSAGE-TEMPLATE-001 IN RULESET_BUILTIN
-def _forbidden_message_template_render(call, spec: dict, adapter=None, imports=None) -> bool:
-    """{"type": "message_template_render"}
-    Rileva strutturalmente la catena MessageTemplate(...).render(key=value).
-    Le due call sono FRATELLI separati da <operator>.</operator> (non
-    annidate in <name>), perché il receiver è a sua volta una call.
-    """
-    call_name = get_call_name(call, adapter, imports)
-    if not call_name or not (call_name == "render" or call_name.endswith(".render")):
-        return False
-
-    receiver_calls = call.xpath("preceding-sibling::src:call[1]", namespaces=NS)
-    if not receiver_calls:
-        return False
-
-    receiver_name = get_call_name(receiver_calls[0], adapter, imports)
-    if not receiver_name or not receiver_name.endswith("MessageTemplate"):
-        return False
-
-    arg_list_nodes = call.xpath("./src:argument_list", namespaces=NS)
-    if not arg_list_nodes or adapter is None:
-        return False
-
-    return any(
-        adapter.is_kwarg(arg, NS)
-        for arg in arg_list_nodes[0].xpath("./src:argument", namespaces=NS)
-    )
-
-
-def _run_forbidden_names(tree, rule, findings, adapter, imports):
-    exact = rule.get("forbidden_names", [])
-    prefixes = rule.get("forbidden_name_prefixes", [])
-    if not exact and not prefixes:
-        return
-    safe_contexts = rule.get("safe_contexts", [])
-    for name_node in tree.xpath(".//src:name", namespaces=NS):
-        full_text = "".join(name_node.itertext()).strip()
-        hit = full_text in exact or any(full_text.startswith(p) for p in prefixes)
-        if hit:
-            if is_in_safe_context(name_node, safe_contexts, None, adapter, imports):
-                continue
-            findings.append(build_finding(rule, name_node))
-
-
-# def _run_source_operator_usage(tree, rule, findings, adapter, imports):
-#     """
-#     Motore unificato per source_comparisons (==), source_concats e source_percent_formats.
-#     Gli operatori vengono chiesti all'adapter per RUOLO SEMANTICO, non per
-#     posizione: se un linguaggio non ha un ruolo, quella categoria di regola
-#     resta semplicemente inattiva per lui.
-#     """
-#     op_roles = adapter.string_formatting_operator_roles()
-#     eq_op = adapter.equality_operator() if hasattr(adapter, "equality_operator") else "=="
-
-#     mappings = {"source_comparisons": {"operator": eq_op}}
-#     if "concat" in op_roles:
-#         mappings["source_concats"] = {"operator": op_roles["concat"]}
-#     if "percent_format" in op_roles:
-#         mappings["source_percent_formats"] = {"operator": op_roles["percent_format"]}
-    
-#     active_specs = []
-#     target_ops = set()
-    
-#     for json_key, behavior in mappings.items():
-#         specs = rule.get(json_key, [])
-#         for spec in specs:
-#             enriched_spec = spec.copy()
-#             enriched_spec["operator"] = behavior["operator"]
-#             active_specs.append(enriched_spec)
-#             target_ops.add(behavior["operator"])
-            
-#     if not active_specs:
-#         return
-
-#     sanitizers = rule.get("sanitizers", [])
-#     safe_contexts = rule.get("safe_contexts", [])
-    
-#     op_xpath = " or ".join([f"text()='{op}'" for op in target_ops])
-#     exprs = tree.xpath(f".//src:expr[.//src:operator[{op_xpath}]]", namespaces=NS)
-
-#     for expr in exprs:
-#         expr_text = "".join(expr.itertext())
-
-#         for spec in active_specs:
-#             source = spec.get("source")
-#             form = spec.get("source_form", rule.get("source_form"))
-#             operator = spec.get("operator")
-            
-#             if not source:
-#                 continue
-
-#             suffix = {"call": r"\(", "subscript": r"\["}.get(form)
-#             pattern = rf"\b{re.escape(source)}"
-#             if suffix:
-#                 pattern += rf"(?:\.[a-zA-Z_]\w*)?\s*{suffix}"
-
-#             match = re.search(pattern, expr_text)
-#             if not match:
-#                 continue
-
-#             has_before = bool(re.search(rf"{re.escape(operator)}\s*$", expr_text[:match.start()]))
-#             has_after = operator in expr_text[match.end():]
-            
-#             if not (has_before or has_after):
-#                 continue
-
-#             #Verifica Safe Contexts strutturali
-#             if is_in_safe_context(expr, safe_contexts, None, adapter, imports):
-#                 continue
-
-#             # Verifica Sanitizers applicati come funzioni
-#             is_escaped = False
-#             for san in sanitizers:
-#                 escape_pattern = rf"{re.escape(san)}\s*\(\s*{re.escape(source)}"
-                
-#                 if re.search(escape_pattern, expr_text):
-#                     is_escaped = True
-#                     break
-                    
-#             if is_escaped:
-#                 continue
-
-#             findings.append(build_finding(rule, expr))
-#             break
 
 def _run_source_operator_usage(tree, rule, findings, adapter, imports, catalog=None):
     catalog = catalog or {}
@@ -256,74 +132,6 @@ def _run_source_operator_usage(tree, rule, findings, adapter, imports, catalog=N
             # Esci dal ciclo op_node se hai già flaggato l'intera espressione
             break
 
-def _run_weak_key_sizes(tree, rule, findings, adapter, imports):
-    specs = rule.get("weak_key_sizes", [])
-    if not specs:
-        return
- 
-    safe_contexts = rule.get("safe_contexts", [])
- 
-    for name_node in tree.xpath(".//src:name[text()='key_size']", namespaces=NS):
-        
-        if name_node.xpath("ancestor::src:parameters", namespaces=NS):
-            continue 
- 
-        nodo_valore = None
-        
-        assign_op = adapter.assignment_operator_token()
-        op = name_node.xpath(f"following-sibling::src:operator[1][text()='{assign_op}']", namespaces=NS)
-        if op:
-            nodi_dopo = op[0].xpath("following-sibling::*", namespaces=NS)
-            if nodi_dopo:
-                nodo_valore = nodi_dopo[0]
-        else:
-            expr_sibling = name_node.xpath("following-sibling::src:expr[1]", namespaces=NS)
-            if expr_sibling:
-                nodo_valore = expr_sibling[0]
-            else:
-                sibling = name_node.xpath("following-sibling::*[1]", namespaces=NS)
-                if sibling and sibling[0].tag.endswith('literal'):
-                    nodo_valore = sibling[0]
- 
-        if nodo_valore is None:
-            continue
- 
-        parent_stmt = name_node.xpath("ancestor::*[self::src:expr_stmt or self::src:argument or self::src:keyword][1]", namespaces=NS)
-        stmt_node = parent_stmt[0] if parent_stmt else name_node
-        
-        valore_numerico = None
- 
-        lit = nodo_valore.xpath("descendant-or-self::src:literal[@type='number']", namespaces=NS)
-        if lit:
-            valore_numerico = adapter.parse_numeric_literal("".join(lit[0].itertext()).strip())
-        else:
-            var_nodes = nodo_valore.xpath("descendant-or-self::src:name", namespaces=NS)
-            if var_nodes:
-                var_name = "".join(var_nodes[0].itertext()).strip()
-                
-                query_ass = f".//src:name[text()='{var_name}'][following-sibling::src:operator[1][text()='{assign_op}']]"
-                var_assegnazioni = tree.xpath(query_ass, namespaces=NS)
-                
-                if var_assegnazioni:
-                    ultima_ass = var_assegnazioni[-1]
-                    op_ass = ultima_ass.xpath("following-sibling::src:operator[1]", namespaces=NS)[0]
-                    fratelli_ass = op_ass.xpath("following-sibling::*", namespaces=NS)
-                    
-                    if fratelli_ass:
-                        nodo_valore_ass = fratelli_ass[0]
-                        lit_ass = nodo_valore_ass.xpath("descendant-or-self::src:literal[@type='number']", namespaces=NS)
-                        if lit_ass:
-                            valore_numerico = adapter.parse_numeric_literal("".join(lit_ass[0].itertext()).strip())
- 
-        if valore_numerico is not None:
-            for spec in specs:
-                max_val = spec.get("max_value", 2048)
-                if valore_numerico < max_val:
-                    if is_in_safe_context(stmt_node, safe_contexts,None, adapter, imports):
-                        continue
-                    findings.append(build_finding(rule, stmt_node))
-                    break
-
 
 def _run_forbidden_function_defs(tree, rule, findings, adapter, imports):
     specs = rule.get("forbidden_function_defs", [])
@@ -383,178 +191,94 @@ def _run_missing_while_increments(tree, rule, findings, adapter, imports):
     specs = rule.get("missing_while_increments", [])
     if not specs:
         return
- 
+
     safe_contexts = rule.get("safe_contexts", [])
     while_nodes = tree.xpath(".//src:while", namespaces=NS)
- 
+
     for w_node in while_nodes:
         cond = w_node.xpath("./src:condition//src:operator[text()='<']", namespaces=NS)
         if not cond:
             continue
-        
+
         op_node = cond[0]
         lhs_nodes = op_node.xpath("./preceding-sibling::*[not(self::src:comment)]", namespaces=NS)
         if not lhs_nodes:
             continue
-            
+
         var_name = "".join(lhs_nodes[-1].itertext()).strip()
         if not var_name.isidentifier():
             continue
- 
+
         block = w_node.xpath("./src:block", namespaces=NS)
         if not block:
             continue
- 
+
         aug_assign = block[0].xpath(
-            f".//src:expr[src:name[1][text()='{var_name}'] and src:operator[1][text()='+=']]", 
+            f".//src:expr[src:name[1][text()='{var_name}'] and src:operator[1][text()='+=']]",
             namespaces=NS
         )
- 
+
         assign_op = adapter.assignment_operator_token()
-        concat_op = adapter.string_formatting_operator_roles().get("concat")
-        exp_assign = []
-        if concat_op:
-            exp_assign = block[0].xpath(
-                f".//src:expr[src:name[1][text()='{var_name}'] and src:operator[1][text()='{assign_op}']"
-                f" and .//src:name[text()='{var_name}'] and .//src:operator[text()='{concat_op}']]",
-                namespaces=NS
-            )
- 
+        exp_assign = block[0].xpath(
+            f".//src:expr[src:name[1][text()='{var_name}'] and src:operator[1][text()='{assign_op}']"
+            f" and .//src:name[text()='{var_name}'] and .//src:operator[text()='+']]",   # '+' hardcoded, universale
+            namespaces=NS
+        )
+
         has_increment = bool(aug_assign or exp_assign)
- 
+
         if not has_increment:
             if is_in_safe_context(w_node, safe_contexts, None, adapter, imports):
                 continue
             findings.append(build_finding(rule, w_node))
 
 
-def _run_unsafe_file_reads(tree, rule, findings, adapter, imports):
-    specs = rule.get("unsafe_file_reads", [])
-    if not specs:
-        return
+# def _run_unsafe_file_reads(tree, rule, findings, adapter, imports):
+#     specs = rule.get("unsafe_file_reads", [])
+#     if not specs:
+#         return
 
-    safe_contexts = rule.get("safe_contexts", [])
-    with_nodes = tree.xpath(".//src:with", namespaces=NS)
+#     safe_contexts = rule.get("safe_contexts", [])
+#     with_nodes = tree.xpath(".//src:with", namespaces=NS)
 
-    for w_node in with_nodes:
-        with_text = "".join(w_node.itertext())
+#     for w_node in with_nodes:
+#         with_text = "".join(w_node.itertext())
 
-        if not re.search(r"\bopen\s*\(", with_text) or not re.search(r"\bas\b", with_text):
-            continue
+#         if not re.search(r"\bopen\s*\(", with_text) or not re.search(r"\bas\b", with_text):
+#             continue
 
-        if not re.search(r"\.read\s*\(", with_text):
-            continue
+#         if not re.search(r"\.read\s*\(", with_text):
+#             continue
 
-        open_calls = w_node.xpath(".//src:call[.//src:name[text()='open']]", namespaces=NS)
-        if not open_calls:
-            continue
+#         open_calls = w_node.xpath(".//src:call[.//src:name[text()='open']]", namespaces=NS)
+#         if not open_calls:
+#             continue
 
-        arg_list = open_calls[0].xpath("./src:argument_list", namespaces=NS)
-        if not arg_list:
-            continue
+#         arg_list = open_calls[0].xpath("./src:argument_list", namespaces=NS)
+#         if not arg_list:
+#             continue
 
-        first_arg = arg_list[0].xpath("./src:argument[1]", namespaces=NS)
-        if not first_arg:
-            continue
+#         first_arg = arg_list[0].xpath("./src:argument[1]", namespaces=NS)
+#         if not first_arg:
+#             continue
 
-        arg_text_clean = "".join(first_arg[0].itertext()).strip()
+#         arg_text_clean = "".join(first_arg[0].itertext()).strip()
         
-        literal_nodes = first_arg[0].xpath("./src:literal[@type='string']", namespaces=NS)
-        is_pure_literal = bool(literal_nodes) and len(first_arg[0]) == 1 and \
-            "".join(literal_nodes[0].itertext()).strip() == arg_text_clean
-        if is_pure_literal:
-            continue
+#         literal_nodes = first_arg[0].xpath("./src:literal[@type='string']", namespaces=NS)
+#         is_pure_literal = bool(literal_nodes) and len(first_arg[0]) == 1 and \
+#             "".join(literal_nodes[0].itertext()).strip() == arg_text_clean
+#         if is_pure_literal:
+#             continue
 
-        var_name = arg_text_clean
-        if not var_name:
-            continue
+#         var_name = arg_text_clean
+#         if not var_name:
+#             continue
 
-        if is_in_safe_context(w_node, safe_contexts, var_name=var_name, adapter=adapter, imports=imports):
-            continue
+#         if is_in_safe_context(w_node, safe_contexts, var_name=var_name, adapter=adapter, imports=imports):
+#             continue
 
-        findings.append(build_finding(rule, w_node))
+#         findings.append(build_finding(rule, w_node))
 
-
-def _run_local_var_forbidden_calls(tree, rule, findings, adapter, imports):
-    """
-    Rileva chiamate a funzioni pericolose (es. os.chmod) in cui l'argomento
-    è una variabile locale il cui valore, assegnato in precedenza nello
-    stesso scope, è un letterale numerico che corrisponde ESATTAMENTE a uno
-    dei valori vietati.
-    """
-    specs = rule.get("local_var_forbidden_calls", [])
-    if not specs:
-        return
- 
-    safe_contexts = rule.get("safe_contexts", [])
- 
-    for spec in specs:
-        target_calls = spec.get("call", [])
-        if isinstance(target_calls, str):
-            target_calls = [target_calls]
-        forbidden_nums = set(spec.get("forbidden_numbers", []))
-        if not target_calls or not forbidden_nums:
-            continue
- 
-        for c_node in tree.xpath(".//src:call", namespaces=NS):
-            # call_name = get_call_name(c_node)
-            call_name= get_call_name(c_node, adapter, imports)
-            if not call_name:
-                continue
-            if not any(call_name == tc or call_name.endswith(f".{tc}") for tc in target_calls):
-                continue
- 
-            call_key = _pos_key(c_node)
-            args = c_node.xpath("./src:argument_list/src:argument", namespaces=NS)
- 
-            for arg in args:
-                names = arg.xpath("./src:expr/src:name | ./src:name", namespaces=NS)
-                if len(names) != 1:
-                    continue
-                name_node = names[0]
-                if name_node.xpath("./src:index | ./src:name", namespaces=NS):
-                    continue 
- 
-                var_name = "".join(name_node.itertext()).strip()
-                if not var_name.isidentifier():
-                    continue
- 
-                scope_candidates = c_node.xpath(
-                    "ancestor::src:function[1] | ancestor::src:block[1]",
-                    namespaces=NS,
-                )
-                scope_node = scope_candidates[0] if scope_candidates else tree
- 
-                assigns = [stmt for stmt, _, _ in find_assignments(scope_node, adapter, var_name)]
-                prior = [a for a in assigns if _pos_key(a) < call_key]
-                if not prior:
-                    continue
-                last_assign = max(prior, key=_pos_key)
- 
-                _, rhs = adapter.get_assignment_lhs_rhs(last_assign, NS)
-                if rhs is None:
-                    continue
- 
-                lit = rhs.xpath(
-                    "descendant-or-self::src:literal[@type='number']", namespaces=NS
-                )
-                if not lit:
-                    continue 
- 
-                num_text = "".join(lit[0].itertext()).strip()
-                parsed_val = adapter.parse_numeric_literal(num_text)
-                if parsed_val is None:
-                    continue
-                forbidden_parsed = {adapter.parse_numeric_literal(n) for n in forbidden_nums}
-                if num_text not in forbidden_nums and parsed_val not in forbidden_parsed:
-                    continue
- 
-                if is_in_safe_context(c_node, safe_contexts, var_name=var_name, adapter=adapter, imports=imports):
-                    continue
- 
-                finding = build_finding(rule, c_node, extra={"tainted_variable": var_name})
-                if finding not in findings:
-                    findings.append(finding)
  
 
 
@@ -788,8 +512,6 @@ def run_structural_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) 
                 if c.xpath("ancestor::src:argument | ancestor::src:parameter", namespaces=NS):
                     findings.append(build_finding(rule, c))
 
-    # if rule.get("forbidden_names") or rule.get("forbidden_name_prefixes"):
-    #     _run_forbidden_names(tree, rule, findings, adapter, imports)
 
     forbidden_returns = rule.get("forbidden_returns", [])
     if forbidden_returns:
@@ -803,11 +525,7 @@ def run_structural_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) 
                 if spec.get("type") == "fstring":
                     fstrings = ret.xpath(".//src:literal[@type='string']", namespaces=NS)
                     has_fstring_with_interpolation = False
-                    # for fs in fstrings:
-                    #     fs_text = "".join(fs.itertext()).strip()
-                    #     if fs_text.startswith("f") and "{" in fs_text:
-                    #         has_fstring_with_interpolation = True
-                    #         break
+
                     for fs in fstrings:
                         fs_text = "".join(fs.itertext()).strip()
                         if adapter and adapter.is_interpolated_string(fs_text):
@@ -833,9 +551,6 @@ def run_structural_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) 
                         
                     findings.append(build_finding(rule, ret))
                     break 
-
-    if rule.get("weak_key_sizes"):
-        _run_weak_key_sizes(tree, rule, findings, adapter, imports)
 
     if rule.get("forbidden_function_defs"):
         _run_forbidden_function_defs(tree, rule, findings, adapter, imports)
@@ -985,50 +700,40 @@ def run_structural_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) 
                         findings.append(build_finding(rule, call))
 
 
-    #CONSIDERARE QUESTO è USATO SOLO DA DUE REGOLE ALL'INTERNO DI RULESET_OS-->IN FUTURO POTREBBE ESSERE ABOLITO
-    forbidden_calls_with_arg = rule.get("forbidden_calls_with_arg_pattern", [])
-    if forbidden_calls_with_arg:
-        safe_contexts = rule.get("safe_contexts", [])
-
-        calls = tree.xpath(".//src:call", namespaces=NS)
-        for call in calls:
-            call_name = get_call_name(call, adapter, imports)
-            if not call_name:
-                continue
-
-            arg_nodes = call.xpath("./src:argument_list", namespaces=NS)
-            arguments = arg_nodes[0].xpath("./src:argument", namespaces=NS) if arg_nodes else []
-
-            for fca in forbidden_calls_with_arg:
-                target_call = fca.get("call")
-                required_substr = fca.get("arg_contains")
-
-                if call_name != target_call:
-                    continue
-
-                match_found = any(
-                    required_substr in "".join(arg.itertext()).replace(" ", "").replace("\n", "")
-                    for arg in arguments
-                )
-                if match_found:
-                    if is_in_safe_context(call, safe_contexts, None, adapter, imports):
-                        continue
-                    findings.append(build_finding(rule, call))
-
     forbidden_subscripts = rule.get("forbidden_subscripts", [])
     if forbidden_subscripts:
         safe_contexts = rule.get("safe_contexts", [])
         
+        # Cerca tutti i nodi che hanno un accesso tramite indice (es. dict[chiave] o array[i])
         for node in tree.xpath(".//src:name[src:index]", namespaces=NS):
-            node_text = "".join(node.itertext()).replace(" ", "").replace("\n", "")
-            base_name = node_text.split("[")[0]
+            if node.xpath("ancestor::src:parameter", namespaces=NS):
+                continue
             
+            # Estraiamo il nome dell'oggetto a cui si sta accedendo usando l'AST puro
+            parts = node.xpath("./src:name", namespaces=NS)
+            if parts:
+                # Gestisce nomi concatenati come 'request.form'
+                op = adapter.member_access_operator() if adapter else "."
+                base_name = op.join("".join(p.itertext()).strip() for p in parts)
+            else:
+                # Gestisce nomi singoli come 'environ'
+                base_name = (node.text or "").strip()
+
+            index_var = None
+            index_expr = node.xpath("./src:index/src:expr", namespaces=NS)
+            if index_expr:
+                idx_names = index_expr[0].xpath("./src:name", namespaces=NS)
+                if len(idx_names) == 1 and len(list(index_expr[0])) == 1:
+                    index_var = "".join(idx_names[0].itertext()).strip()
+                
+            # Verifica se l'oggetto a cui si accede è nella blacklist
             for subscript in forbidden_subscripts:
                 if base_name == subscript or base_name.endswith(f".{subscript}"):
-                    if is_in_safe_context(node, safe_contexts, var_name=None, adapter=adapter, imports=imports):
+                    if is_in_safe_context(node, safe_contexts, var_name=index_var, adapter=adapter, imports=imports):
                         break
                     findings.append(build_finding(rule, node))
                     break
+
     
     if rule.get("forbidden_asserts"):
         safe_contexts = rule.get("safe_contexts", [])
@@ -1041,11 +746,8 @@ def run_structural_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) 
     if rule.get("missing_while_increments"):
         _run_missing_while_increments(tree, rule, findings, adapter, imports)
 
-    if rule.get("unsafe_file_reads"):
-        _run_unsafe_file_reads(tree, rule, findings, adapter, imports)
-
-    if rule.get("local_var_forbidden_calls"):
-        _run_local_var_forbidden_calls(tree, rule, findings, adapter, imports)
+    # if rule.get("unsafe_file_reads"):
+    #     _run_unsafe_file_reads(tree, rule, findings, adapter, imports)
 
     if rule.get("reference_comparisons"):
         _run_reference_comparisons(tree, rule, findings, adapter, imports)
@@ -1111,9 +813,6 @@ def run_forbidden_functions_indexed(ctx, compiled, findings, adapter, imports):
                     findings.append(build_finding(rule, call))
             elif spec.get("type") == "exact_name":
                 if call_name == spec.get("name"):
-                    findings.append(build_finding(rule, call))
-            elif spec.get("type") == "message_template_render":
-                if _forbidden_message_template_render(call, spec, adapter, imports):
                     findings.append(build_finding(rule, call))
             elif spec.get("type") == "call_matches_ast":
                 if call_arguments_match_ast(call, spec, adapter, imports):
