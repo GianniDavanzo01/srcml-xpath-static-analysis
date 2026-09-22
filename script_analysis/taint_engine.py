@@ -66,20 +66,6 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
         parent_func = stmt.xpath("ancestor::src:function[1]", namespaces=NS)
         return parent_func[0] if parent_func else tree
 
-    # --- Passo 1: source dirette ---
-    # for assign in assignments:
-    #     lhs, _ = adapter.get_assignment_lhs_rhs(assign, NS)
-    #     if lhs is None or not lhs.tag.endswith("name"):
-    #         continue
-    #     var_name = "".join(lhs.itertext()).strip()
-    #     assign_text = "".join(assign.itertext())
-    #     if source_present(sources, assign_text, source_form):
-
-    #         parent_func = assign.xpath("ancestor::src:function[1]", namespaces=NS)
-    #         scope_node = parent_func[0] if parent_func else tree
-
-    #         tainted_vars_with_scope.append((var_name, scope_node))
-
     for assign in assignments:
         lhs, rhs = adapter.get_assignment_lhs_rhs(assign, NS)
         if lhs is None or not lhs.tag.endswith("name"):
@@ -201,31 +187,49 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
     # Cerca gli utilizzi SOLO all'interno dello Scope calcolato
     for var, scope_node in tainted_vars_with_scope:
         
-        try:
-            if "'" in var:
-                xpath_query = (
-                    f'.//src:name[.="{var}" and not('
-                    f'parent::src:argument'
-                    f' and parent::src:argument/src:name[1]=self::node()'
-                    f' and following-sibling::text()[1][contains(., "=")]'
-                    f')]'
-                )
-            else:
-                xpath_query = (
-                    f".//src:name[.='{var}' and not("
-                    f"parent::src:argument"
-                    f" and parent::src:argument/src:name[1]=self::node()"
-                    f" and following-sibling::text()[1][contains(., '=')]"
-                    f")]"
-                )
+        # try:
+        #     if "'" in var:
+        #         xpath_query = (
+        #             f'.//src:name[.="{var}" and not('
+        #             f'parent::src:argument'
+        #             f' and parent::src:argument/src:name[1]=self::node()'
+        #             f' and following-sibling::text()[1][contains(., "=")]'
+        #             f')]'
+        #         )
+        #     else:
+        #         xpath_query = (
+        #             f".//src:name[.='{var}' and not("
+        #             f"parent::src:argument"
+        #             f" and parent::src:argument/src:name[1]=self::node()"
+        #             f" and following-sibling::text()[1][contains(., '=')]"
+        #             f")]"
+        #         )
             
-            usi_diretti = scope_node.xpath(xpath_query, namespaces=NS)
+        #     usi_diretti = scope_node.xpath(xpath_query, namespaces=NS)
 
-        except Exception as e:
-            print("\n--- [DEBUG XPATH CRASH DETECTED] ---")
-            print(f"Rule ID      : {rule.get('rule_id')}")
-            print(f"Valore di var: {repr(var)}")
-            print(f"XPath Fallito: .//src:name[text()='{var}' and not(...)]")
+        # except Exception as e:
+        #     print("\n--- [DEBUG XPATH CRASH DETECTED] ---")
+        #     print(f"Rule ID      : {rule.get('rule_id')}")
+        #     print(f"Valore di var: {repr(var)}")
+        #     print(f"XPath Fallito: .//src:name[text()='{var}' and not(...)]")
+
+
+        usi_potenziali = scope_node.xpath(".//src:name[text()=$v]", namespaces=NS, v=var)
+        
+        usi_diretti = []
+        for uso in usi_potenziali:
+            
+            # 2. Riproduciamo ESATTAMENTE l'intento dell'XPath originale:
+            # Scartiamo il nodo se è il nome sinistro di un keyword argument (kwarg)
+            parent_arg = uso.xpath("parent::src:argument", namespaces=NS)
+            if parent_arg and adapter.is_kwarg(parent_arg[0], NS):
+                
+                # Verifichiamo se 'uso' è la CHIAVE (il primo nome) o il VALORE
+                name_node = parent_arg[0].xpath("./src:name[1]", namespaces=NS)
+                if name_node and name_node[0] is uso:
+                    continue  # Corrisponde all'esclusione XPath! Lo ignoriamo.
+                    
+            usi_diretti.append(uso)
         
         fstrings_in_scope = scope_node.xpath(".//src:literal[@type='string']", namespaces=NS)
 
