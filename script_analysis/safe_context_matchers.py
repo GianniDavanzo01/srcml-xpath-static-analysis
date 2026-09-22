@@ -40,19 +40,52 @@ def _function_or_unit_scope(node):
     return parent_func[0] if parent_func else node.xpath("ancestor::src:unit[1]", namespaces=NS)[0]
 
 
+# def _safe_context_parametrized_query(node, spec: dict, var_name: str | None = None, adapter=None, imports=None) -> bool:
+#     call_node = node.xpath("ancestor::src:call[.//src:name[last()][text()='execute']][1]", namespaces=NS)
+#     if not call_node:
+#         return False
+
+#     arg_list = call_node[0].xpath("./src:argument_list", namespaces=NS)
+#     if not arg_list:
+#         return False
+
+#     args_text = "".join(arg_list[0].itertext())
+#     has_placeholder = "%s" in args_text or "?" in args_text
+#     has_param_tuple = bool(arg_list[0].xpath(".//src:argument[position()>1]", namespaces=NS))
+#     return has_placeholder and has_param_tuple
+
 def _safe_context_parametrized_query(node, spec: dict, var_name: str | None = None, adapter=None, imports=None) -> bool:
-    call_node = node.xpath("ancestor::src:call[.//src:name[last()][text()='execute']][1]", namespaces=NS)
+    """{"type": "parametrized_query", "method": "execute", "placeholders": ["%s", "?"]}"""
+    # Configurabilità tramite JSON (default per compatibilità col codice Python legacy)
+    target_method = spec.get("method", "execute")
+    placeholders = spec.get("placeholders", ["%s", "?"])
+    
+    # 1. Trova la chiamata al metodo di esecuzione
+    call_node = node.xpath(f"ancestor::src:call[.//src:name[last()][text()='{target_method}']][1]", namespaces=NS)
     if not call_node:
         return False
 
     arg_list = call_node[0].xpath("./src:argument_list", namespaces=NS)
     if not arg_list:
         return False
+        
+    # 2. Verifica strutturale: ci deve essere più di un argomento (es. execute(query, parametri))
+    arguments = arg_list[0].xpath("./src:argument", namespaces=NS)
+    if len(arguments) < 2:
+        return False
 
-    args_text = "".join(arg_list[0].itertext())
-    has_placeholder = "%s" in args_text or "?" in args_text
-    has_param_tuple = bool(arg_list[0].xpath(".//src:argument[position()>1]", namespaces=NS))
-    return has_placeholder and has_param_tuple
+    _adapter = adapter or PythonAdapter()
+    
+    # 3. Cerca i placeholder ESCLUSIVAMENTE all'interno dei letterali stringa reali
+    for lit in arg_list[0].xpath(".//src:literal[@type='string']", namespaces=NS):
+        lit_text = "".join(lit.itertext()).strip()
+        normalized_lit = _adapter.normalize_string_literal(lit_text)
+        
+        # Verifica se uno dei placeholder è presente nella stringa SQL normalizzata
+        if any(p in normalized_lit for p in placeholders):
+            return True
+            
+    return False
 
 
 def _safe_context_receiver_of_method(node, spec: dict, var_name: str | None = None, adapter=None, imports=None) -> bool:
@@ -87,22 +120,6 @@ def _safe_context_rhs_call(node, spec: dict, var_name: str | None = None, adapte
         if cn and any(cn == t or cn.endswith(f".{t}") for t in calls):
             return True
     return False
-
-
-def _safe_context_lower_ne_literal(node, spec: dict, var_name: str | None = None, adapter=None, imports=None) -> bool:
-    call = node.xpath("ancestor-or-self::src:call[1]", namespaces=NS)
-    if not call:
-        return False
-    # cname = get_call_name(call[0])
-    cname= get_call_name(call[0],adapter,imports)
-    if cname != "lower" and not (cname and cname.endswith(".lower")):
-        return False
-    cmp = call[0].xpath(
-        "following-sibling::src:operator[1][text()='!=']"
-        "/following-sibling::src:literal[1][@type='string']",
-        namespaces=NS,
-    )
-    return bool(cmp)
 
 
 def _safe_context_function_has_method_call(node, spec: dict, var_name: str | None = None, adapter=None, imports=None) -> bool:
@@ -213,24 +230,24 @@ def _safe_context_args_do_not_contain_call(node, spec: dict, var_name: str | Non
     return True
 
 
-def _safe_context_function_calls_method_on_var(node, spec: dict, var_name: str | None = None, adapter=None, imports=None) -> bool:
-    """{"type": "function_calls_method_on_var", "method": "set_handle_timeout"}"""
-    if not var_name:
-        return False
+# def _safe_context_function_calls_method_on_var(node, spec: dict, var_name: str | None = None, adapter=None, imports=None) -> bool:
+#     """{"type": "function_calls_method_on_var", "method": "set_handle_timeout"}"""
+#     if not var_name:
+#         return False
         
-    method_name = spec.get("method")
-    if not method_name:
-        return False
+#     method_name = spec.get("method")
+#     if not method_name:
+#         return False
         
-    target_str = f"{var_name}.{method_name}("
-    target = _function_or_unit_scope(node)
+#     target_str = f"{var_name}.{method_name}("
+#     target = _function_or_unit_scope(node)
     
-    calls = target.xpath(".//src:call", namespaces=NS)
-    for call in calls:
-        call_text = "".join(call.itertext()).replace(" ", "")
-        if target_str in call_text:
-            return True
-    return False
+#     calls = target.xpath(".//src:call", namespaces=NS)
+#     for call in calls:
+#         call_text = "".join(call.itertext()).replace(" ", "")
+#         if target_str in call_text:
+#             return True
+#     return False
 
 
 def _safe_context_function_is_not(node, spec: dict, var_name: str | None = None, adapter=None, imports=None) -> bool:
@@ -534,29 +551,29 @@ def _safe_context_membership_check(node, spec: dict, var_name: str | None = None
 
 
 
-def _safe_context_unit_has_function_def(node, spec: dict, var_name: str | None = None, adapter=None, imports=None) -> bool:
-    """{"type": "unit_has_function_def", "name": "sanitize_git_reference"}"""
-    target_name = spec.get("name")
-    param_contains = spec.get("param_contains", "")
-    if not target_name:
-        return False
+# def _safe_context_unit_has_function_def(node, spec: dict, var_name: str | None = None, adapter=None, imports=None) -> bool:
+#     """{"type": "unit_has_function_def", "name": "sanitize_git_reference"}"""
+#     target_name = spec.get("name")
+#     param_contains = spec.get("param_contains", "")
+#     if not target_name:
+#         return False
         
-    unit = node.xpath("ancestor-or-self::src:unit[1]", namespaces=NS)
-    if not unit:
-        return False
+#     unit = node.xpath("ancestor-or-self::src:unit[1]", namespaces=NS)
+#     if not unit:
+#         return False
         
-    functions = unit[0].xpath(f".//src:function[src:name[text()='{target_name}']]", namespaces=NS)
-    for func in functions:
-        if not param_contains:
-            return True
+#     functions = unit[0].xpath(f".//src:function[src:name[text()='{target_name}']]", namespaces=NS)
+#     for func in functions:
+#         if not param_contains:
+#             return True
             
-        params = func.xpath(".//src:parameter_list", namespaces=NS)
-        if params:
-            p_text = "".join(params[0].itertext()).replace(" ", "").replace("\n", "")
-            if param_contains in p_text:
-                return True
+#         params = func.xpath(".//src:parameter_list", namespaces=NS)
+#         if params:
+#             p_text = "".join(params[0].itertext()).replace(" ", "").replace("\n", "")
+#             if param_contains in p_text:
+#                 return True
                 
-    return False
+#     return False
 
 
 def _safe_context_call_has_kwargs(node, spec: dict, var_name: str | None = None, adapter=None, imports=None) -> bool:
@@ -740,12 +757,11 @@ SAFE_CONTEXT_MATCHERS = {
     "parametrized_query": _safe_context_parametrized_query,
     "receiver_of_method": _safe_context_receiver_of_method,
     "rhs_call": _safe_context_rhs_call,
-    "lower_ne_literal": _safe_context_lower_ne_literal,
     "function_has_method_call": _safe_context_function_has_method_call,
     "args_contain_string_literal": _safe_context_args_contain_string_literal,
     "in_function_name": _safe_context_in_function_name,
     "args_do_not_contain_call": _safe_context_args_do_not_contain_call,
-    "function_calls_method_on_var": _safe_context_function_calls_method_on_var,
+    # "function_calls_method_on_var": _safe_context_function_calls_method_on_var,
     "function_is_not": _safe_context_function_is_not,
     "function_has_file_size_check": _safe_context_function_has_file_size_check,
     "var_truthiness_check": _safe_context_var_truthiness_check,
@@ -757,7 +773,7 @@ SAFE_CONTEXT_MATCHERS = {
     "condition_matches_xpath": _safe_context_condition_matches_xpath,
     "matches_xpath": _safe_context_matches_xpath,
     "node_matches_xpath": _safe_context_node_matches_xpath,
-    "unit_has_function_def": _safe_context_unit_has_function_def,
+    # "unit_has_function_def": _safe_context_unit_has_function_def,
     "call_has_kwargs": _safe_context_call_has_kwargs,
     "call_with_kwarg": _safe_context_call_has_kwargs,
     "call_with_dict_kwarg": _safe_context_call_has_kwargs, 
