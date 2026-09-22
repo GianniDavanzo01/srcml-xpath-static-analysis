@@ -106,28 +106,55 @@ def _safe_context_lower_ne_literal(node, spec: dict, var_name: str | None = None
 
 
 def _safe_context_function_has_method_call(node, spec: dict, var_name: str | None = None, adapter=None, imports=None) -> bool:
-    """{"type": "function_has_method_call", "method": "replace", "args_contain": ["';'", "'&'"]}"""
+    """{"type": "function_has_method_call", "method": "replace", "args_contain": [";", "&"]}"""
     method = spec.get("method")
     args_contain = spec.get("args_contain", [])
     
-    if not method:
+    if not method or not args_contain:
         return False
         
+    _adapter = adapter or PythonAdapter()
+        
     target_node = _function_or_unit_scope(node)
+    
+    # 1. Trova tutte le chiamate che riguardano il metodo specificato (es. replace) nello scope
     calls = target_node.xpath(
-        f".//src:call[.//src:operator[text()='.']/following-sibling::src:name[1][text()='{method}']]", 
+        f".//src:call[./src:name//src:name[text()='{method}'] or ./src:name[text()='{method}']]", 
         namespaces=NS
     )
     
+    found_literals = set()
     for c in calls:
+        # 2. Controllo di pertinenza tramite Method Chaining:
+        # Verifichiamo se var_name è presente nell'intera espressione (<src:expr>) che racchiude la chiamata,
+        # coprendo così sia la chiamata iniziale che le successive concatenate con il punto (.)
+        if var_name:
+            enclosing_expr = c.xpath("ancestor::src:expr[1]", namespaces=NS)
+            if enclosing_expr:
+                expr_names = enclosing_expr[0].xpath(".//src:name", namespaces=NS)
+                variable_matched = any("".join(n.itertext()).strip() == var_name for n in expr_names)
+                if not variable_matched:
+                    continue
+            else:
+                continue
+                
+        # 3. Estrazione sicura dei letterali stringa dagli argomenti
         arg_list = c.xpath("./src:argument_list", namespaces=NS)
         if not arg_list:
             continue
             
-        args_text = "".join(arg_list[0].itertext()).replace(" ", "").replace('"', "'")
-        if all(arg.replace('"', "'").replace(" ", "") in args_text for arg in args_contain):
-            return True
-            
+        arguments = arg_list[0].xpath("./src:argument", namespaces=NS)
+        for arg in arguments:
+            literals = arg.xpath(".//src:literal[@type='string']", namespaces=NS)
+            for lit in literals:
+                lit_text = "".join(lit.itertext()).strip()
+                normalized_val = _adapter.normalize_string_literal(lit_text)
+                found_literals.add(normalized_val)
+                
+    # 4. Verifica finale: l'insieme globale dei caratteri neutralizzati copre tutto ciò che è richiesto?
+    if all(required_arg in found_literals for required_arg in args_contain):
+        return True
+        
     return False
 
 
@@ -153,31 +180,6 @@ def _safe_context_args_contain_string_literal(node, spec: dict, var_name: str | 
             
     return True
             
-    return True
-
-
-def _safe_context_args_contain_call_with_literal_arg(node, spec: dict, var_name: str | None = None, adapter=None, imports=None) -> bool:
-    """{"type": "args_contain_call_with_literal_arg", "call": "encode", "literal": "utf-8"}"""
-    target_call = spec.get("call")
-    literal_val = spec.get("literal", "")
-    if not target_call:
-        return False
-
-    for nc in node.xpath(".//src:argument_list//src:call", namespaces=NS):
-        # nc_name = get_call_name(nc)
-        nc_name= get_call_name(nc, adapter,imports)
-        if not nc_name or not (nc_name == target_call or nc_name.endswith(f".{target_call}")):
-            continue
-        if not literal_val:
-            return True
-        arg_list = nc.xpath("./src:argument_list", namespaces=NS)
-        if not arg_list:
-            continue
-        args_text = "".join(arg_list[0].itertext()).replace(" ", "").replace("'", "").replace('"', "")
-        if literal_val.replace(" ", "").strip("'\"") in args_text:
-            return True
-    return False
-
 
 def _safe_context_in_function_name(node, spec: dict, var_name: str | None = None, adapter=None, imports=None) -> bool:
     """{"type": "in_function_name", "name": "is_valid_pkcs1v15_padding"}
@@ -639,32 +641,49 @@ def _safe_context_receiver_of_method_with_arg(node, spec: dict, var_name: str | 
     target_method = spec.get("method")
     target_arg = spec.get("arg_value")
     
-    if not target_method or not target_arg:
+    if not target_method or not target_arg or not var_name:
         return False
 
-    method_nodes = node.xpath(
-        "following-sibling::src:operator[1][text()='.']/following-sibling::src:name[1]",
-        namespaces=NS,
-    )
+    _adapter = adapter or PythonAdapter()
+    op = _adapter.member_access_operator() if hasattr(_adapter, "member_access_operator") else "."
+
+    # 1. Guarda all'insù: cerchiamo in tutte le condizioni IF che racchiudono il nodo vulnerabile
+    conditions = node.xpath("ancestor::src:if_stmt//src:condition", namespaces=NS)
     
-    if not method_nodes or "".join(method_nodes[0].itertext()).strip() != target_method:
-        return False
+    for cond in conditions:
+        # 2. Cerchiamo la nostra variabile infetta dentro la condizione
+        var_nodes = cond.xpath(f".//src:name[text()='{var_name}']", namespaces=NS)
         
-    call_node = node.xpath("ancestor::src:call[1]", namespaces=NS)
-    if not call_node:
-        return False
-        
-    arg_list = call_node[0].xpath("./src:argument_list", namespaces=NS)
-    if not arg_list:
-        return False
-        
-    args_text = "".join(arg_list[0].itertext()).replace(" ", "").replace("\n", "").replace('"', "'")
-    normalized_target = target_arg.replace(" ", "").replace('"', "'")
-    
-    if not normalized_target.startswith("'"):
-        normalized_target = f"'{normalized_target}'"
-        
-    return normalized_target in args_text
+        for v_node in var_nodes:
+            # 3. Verifichiamo se la variabile è il chiamante del metodo richiesto (es. nome_file.endswith)
+            method_nodes = v_node.xpath(
+                f"following-sibling::src:operator[1][text()='{op}']/following-sibling::src:name[1]",
+                namespaces=NS,
+            )
+            
+            if method_nodes and "".join(method_nodes[0].itertext()).strip() == target_method:
+                
+                # 4. Troviamo la chiamata associata a questo metodo
+                call_node = v_node.xpath("ancestor::src:call[1]", namespaces=NS)
+                if not call_node:
+                    continue
+                    
+                arg_list = call_node[0].xpath("./src:argument_list", namespaces=NS)
+                if not arg_list:
+                    continue
+                    
+                # 5. Analisi pura dell'AST per gli argomenti (estraiamo i literal)
+                arguments = arg_list[0].xpath("./src:argument", namespaces=NS)
+                for arg in arguments:
+                    literals = arg.xpath(".//src:literal[@type='string']", namespaces=NS)
+                    for lit in literals:
+                        lit_text = "".join(lit.itertext()).strip()
+                        normalized_lit = _adapter.normalize_string_literal(lit_text)
+                        
+                        if normalized_lit == target_arg:
+                            return True
+                            
+    return False
 
 
 def _safe_context_function_has_call_with_var_arg(node, spec: dict, var_name: str | None = None, adapter=None, imports=None) -> bool:
@@ -693,28 +712,6 @@ def _safe_context_function_has_call_with_var_arg(node, spec: dict, var_name: str
 
     return False
 
-
-def _safe_context_call_in_try_with_kwarg(node, spec: dict, var_name: str | None = None, adapter=None, imports=None) -> bool:
-    """{"type": "call_in_try_with_kwarg", "kwarg": "check", "values": ["True", "true"]}
-        Sicuro solo se ENTRAMBE le condizioni sono vere: la call è dentro un
-        blocco try, E possiede il kwarg con uno dei valori indicati.
-    """
-    kwarg = spec.get("kwarg")
-    values = spec.get("values", [])
-    if not kwarg:
-        return False
-
-    call_node = node if node.tag.endswith("call") else node.xpath("ancestor-or-self::src:call[1]", namespaces=NS)
-    call_node = call_node[0] if isinstance(call_node, list) else call_node
-    if call_node is None or not call_node.xpath("ancestor::src:try", namespaces=NS):
-        return False
-
-    arg_list = call_node.xpath("./src:argument_list", namespaces=NS)
-    if not arg_list:
-        return False
-    args_text = "".join(arg_list[0].itertext()).replace(" ", "").replace("\n", "")
-
-    return any(f"{kwarg}={v}" in args_text for v in values)
 
 
 def _safe_context_try_after_source(node, spec: dict, var_name: str | None = None, adapter=None, imports=None) -> bool:
@@ -746,7 +743,6 @@ SAFE_CONTEXT_MATCHERS = {
     "lower_ne_literal": _safe_context_lower_ne_literal,
     "function_has_method_call": _safe_context_function_has_method_call,
     "args_contain_string_literal": _safe_context_args_contain_string_literal,
-    "args_contain_call_with_literal_arg": _safe_context_args_contain_call_with_literal_arg,
     "in_function_name": _safe_context_in_function_name,
     "args_do_not_contain_call": _safe_context_args_do_not_contain_call,
     "function_calls_method_on_var": _safe_context_function_calls_method_on_var,
@@ -769,7 +765,6 @@ SAFE_CONTEXT_MATCHERS = {
     "receiver_of_method_with_arg": _safe_context_receiver_of_method_with_arg,
     "function_has_call_with_var_arg": _safe_context_function_has_call_with_var_arg,
     "try_after_source": _safe_context_try_after_source,
-    "call_in_try_with_kwarg": _safe_context_call_in_try_with_kwarg,
 }
 
 
