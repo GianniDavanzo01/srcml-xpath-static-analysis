@@ -353,36 +353,6 @@ def run_structural_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) 
                     findings.append(build_finding(rule, assign))
 
 
-    bad_calls = rule.get("bad_calls", {})
-    if bad_calls:
-        calls = tree.xpath(".//src:call", namespaces=NS)
-        for call in calls:
-            call_name = get_call_name(call, adapter, imports)
-            if not call_name:
-                continue
-
-            for func, kwargs in bad_calls.items():
-                if call_name == func or call_name.endswith(f".{func}"):
-                    is_vulnerable = False
-
-                    for arg in call.xpath("./src:argument_list/src:argument", namespaces=NS):
-                        if adapter.is_kwarg(arg, NS):
-                            name_node = arg.xpath("./src:name[1]", namespaces=NS)
-                            kw_name = "".join(name_node[0].itertext()).strip() if name_node else ""
-
-                            if kw_name in kwargs:
-                                expr_node = arg.xpath("./src:expr[1] | ./src:literal[1]", namespaces=NS)
-                                val_text = adapter.normalize_string_literal(
-                                    "".join(expr_node[0].itertext()).strip()
-                                ) if expr_node else ""
-
-                                if val_text == adapter.normalize_string_literal(kwargs[kw_name]):
-                                    is_vulnerable = True
-                                    break
-
-                    if is_vulnerable:
-                        findings.append(build_finding(rule, call))
-
 
     sensitive_patterns = rule.get("sensitive_var_patterns", [])
     if sensitive_patterns:
@@ -504,15 +474,6 @@ def run_structural_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) 
                         findings.append(build_finding(rule, imp))
                         break
 
-    inline_sources = rule.get("inline_source_as_arg", [])
-    if inline_sources:
-        for c in tree.xpath(".//src:call", namespaces=NS):
-            # if get_call_name(c) in inline_sources:
-            if  get_call_name(c, adapter, imports) in inline_sources:
-                if c.xpath("ancestor::src:argument | ancestor::src:parameter", namespaces=NS):
-                    findings.append(build_finding(rule, c))
-
-
     forbidden_returns = rule.get("forbidden_returns", [])
     if forbidden_returns:
         safe_contexts = rule.get("safe_contexts", [])
@@ -536,56 +497,9 @@ def run_structural_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) 
                         break
 
 
-    bad_returns = rule.get("bad_returns", [])
-    if bad_returns:
-        safe_contexts = rule.get("safe_contexts", [])
-        
-        return_nodes = tree.xpath(".//src:return", namespaces=NS)
-        for ret in return_nodes:
-            ret_text = "".join(ret.itertext()).replace(" ", "")
-            
-            for target in bad_returns:
-                if target in ret_text:
-                    if is_in_safe_context(ret, safe_contexts, None, adapter, imports):
-                        continue
-                        
-                    findings.append(build_finding(rule, ret))
-                    break 
-
     if rule.get("forbidden_function_defs"):
         _run_forbidden_function_defs(tree, rule, findings, adapter, imports)
 
-    forbidden_conditions = rule.get("forbidden_conditions", [])
-    if forbidden_conditions:
-        safe_contexts = rule.get("safe_contexts", [])
-        
-        conditions = tree.xpath(".//src:if_stmt//src:condition", namespaces=NS)
-        for cond in conditions:
-            cond_text = "".join(cond.itertext()).replace(" ", "").replace("\n", "")
-            
-            for fc in forbidden_conditions:
-                target = fc.replace(" ", "")
-                if target in cond_text:
-                    if is_in_safe_context(cond, safe_contexts, None, adapter, imports):
-                        continue
-                        
-                    findings.append(build_finding(rule, cond))
-
-    forbidden_expressions = rule.get("forbidden_expressions", [])
-    if forbidden_expressions:
-        safe_contexts = rule.get("safe_contexts", [])
-        
-        exprs = tree.xpath(".//src:expr", namespaces=NS)
-        for expr in exprs:
-            expr_text = "".join(expr.itertext()).replace(" ", "").replace("\n", "")
-            
-            for fe in forbidden_expressions:
-                target = fe.replace(" ", "")
-                if target in expr_text:
-                    if is_in_safe_context(expr, safe_contexts, None, adapter, imports):
-                        continue
-                        
-                    findings.append(build_finding(rule, expr))
 
     bad_function_defs = rule.get("bad_function_defs", [])
     if bad_function_defs:
@@ -634,7 +548,6 @@ def run_structural_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) 
                         findings.append(build_finding(rule, func))
 
     
-
     bad_param_types = rule.get("bad_param_types", [])
     if bad_param_types:
         safe_contexts = rule.get("safe_contexts", [])
