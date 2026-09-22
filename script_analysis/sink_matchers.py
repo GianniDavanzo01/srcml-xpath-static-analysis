@@ -9,17 +9,6 @@ Predicati SINK per il motore: sia i pattern semplici basati su stringa
 from common import NS, get_call_name
 
 
-# def _sink_string_pattern(uso, pattern_name: str, fstring_nodes: list) -> bool:
-#     """
-#     Pattern semplici basati solo sul TIPO di utilizzo della variabile,
-#     senza guardare metodo/argomento specifici.
-#     """
-#     if pattern_name == "concat":
-#         op_xpath = (
-#             "preceding-sibling::src:operator[1][text()='+' or text()='%'] | "
-#             "following-sibling::src:operator[1][text()='+' or text()='%']"
-#         )
-#         return bool(uso.xpath(op_xpath, namespaces=NS))
 
 def _sink_string_pattern(uso, pattern_name: str, adapter=None, imports=None, fstring_nodes=None) -> bool:
     """
@@ -526,15 +515,18 @@ def match_sink(uso, sink_spec, fstring_nodes: list, adapter=None, imports=None) 
         return False
 
     if isinstance(sink_spec, dict) and "requires_text_any" in sink_spec:
-        required_keywords = sink_spec["requires_text_any"]
-        if required_keywords:
-            stmt = uso.xpath("ancestor::src:expr_stmt[1] | ancestor::src:return[1] | ancestor::src:if_stmt[1]", namespaces=NS)
-            target_node = stmt[0] if stmt else uso
+            required_keywords = sink_spec["requires_text_any"]
+            if required_keywords:
+                # Riprendiamo l'XPath originale pulito (che restituisce sicuramente una lista)
+                stmt = uso.xpath("ancestor::src:expr_stmt | ancestor::src:return | ancestor::src:if_stmt", namespaces=NS)
+                
+                # usiamo [-1] per prendere l'elemento più vicino/interno
+                target_node = stmt[-1] if stmt else uso
 
-            node_text = "".join(target_node.itertext()).upper()
+                node_text = "".join(target_node.itertext()).upper()
 
-            if not any(kw.upper() in node_text for kw in required_keywords):
-                return False
+                if not any(kw.upper() in node_text for kw in required_keywords):
+                    return False
 
     return True
 
