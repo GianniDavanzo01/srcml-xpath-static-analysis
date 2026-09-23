@@ -2,7 +2,7 @@
 sink_matchers.py
 ----------------
 Predicati SINK per il motore: sia i pattern semplici basati su stringa
-(concat/fstring/call_arg/method_chain/colon_suffix/...) sia quelli tipizzati
+(concat/fstring/call_arg/method_chain/...) sia quelli tipizzati
 (oggetto {"type": "..."}), con il relativo registro e dispatcher.
 """
 
@@ -44,18 +44,6 @@ def _sink_string_pattern(uso, pattern_name: str, adapter=None, imports=None, fst
         is_method_call = uso.xpath("parent::src:name/parent::src:call", namespaces=NS)
         
         return bool(has_member_access and is_method_call)
-    if pattern_name == "colon_suffix":
-        # Questo sembra un pattern molto specifico di Python (es. dizionari o type hinting)
-        # Se è vitale, andrebbe astratto nell'adapter (es. adapter.is_dict_key(uso))
-        if uso.xpath("following-sibling::src:operator[1][text()=':']", namespaces=NS):
-            return True
-        if not uso.xpath("following-sibling::*"):
-            parent = uso.getparent()
-            if parent is not None and parent.tag.endswith("}expr"):
-                tail = (parent.tail or "").strip()
-                if tail.startswith(":"):
-                    return True
-        return False
     
     if pattern_name == "reassign":
         # Ok, l'operatore di assegnazione è dinamico
@@ -244,40 +232,6 @@ def _sink_return_method_call(uso, spec: dict, fstring_nodes: list, adapter=None,
     return bool(is_returned)
 
 
-# def _sink_receiver_of_method_with_kwarg(uso, spec: dict, fstring_nodes: list) -> bool:
-def _sink_receiver_of_method_with_kwarg(uso, spec: dict, fstring_nodes: list, adapter=None, imports=None) -> bool:
-
-    """{"type": "receiver_of_method_with_kwarg", "method": "add_argument", "kwargs": {"required": "True"}}"""
-    method_name = spec.get("method")
-    kwargs = spec.get("kwargs", {})
-    if not method_name or not kwargs:
-        return False
-
-    call_node = uso.xpath("ancestor::src:call[1]", namespaces=NS)
-    if not call_node:
-        return False
-        
-    call_name_nodes = call_node[0].xpath("./src:name", namespaces=NS)
-    if not call_name_nodes:
-        return False
-    
-    call_name_text = "".join(call_name_nodes[0].itertext()).replace(" ", "").replace("\n", "")
-    if not call_name_text.endswith(f".{method_name}"):
-        return False
-        
-    arg_list_nodes = call_node[0].xpath("./src:argument_list", namespaces=NS)
-    if not arg_list_nodes:
-        return False
-        
-    arg_text = "".join(arg_list_nodes[0].itertext()).replace(" ", "").replace("\n", "")
-    
-    for k, v in kwargs.items():
-        target = f"{k}={v}"
-        if target not in arg_text:
-            return False
-            
-    return True
-
 
 # def _sink_argument_to(uso, spec: dict, fstring_nodes: list, adapter=None, imports=None) -> bool:
 
@@ -417,7 +371,7 @@ def _sink_subscript_usage(uso, spec: dict, fstring_nodes: list, adapter=None, im
 
     """
     Motore universale per i sink basati su subscript.
-    Accorpa: assign_or_concat, colon_suffix, return, method_call.
+    Accorpa: assign_or_concat, return, method_call.
     """
     if not uso.xpath("following-sibling::src:index[1]", namespaces=NS):
         return False
@@ -445,17 +399,7 @@ def _sink_subscript_usage(uso, spec: dict, fstring_nodes: list, adapter=None, im
         is_concat = any(op_text.endswith(c) for c in concat_ops)
         
         return is_assign or is_concat
-        
-    elif subtype == "colon_suffix":
-        if target.xpath("following-sibling::src:operator[1][text()=':']", namespaces=NS):
-            return True
-        if not target.xpath("following-sibling::*"):
-            parent = target.getparent()
-            if parent is not None and parent.tag.endswith("}expr"):
-                tail = (parent.tail or "").strip()
-                if tail.startswith(":"):
-                    return True
-        return False
+
         
     elif subtype == "return":
         return bool(target.xpath("boolean(ancestor::src:return[1] and not(ancestor::src:call))", namespaces=NS))
@@ -482,12 +426,10 @@ SINK_MATCHERS = {
     "flat_call_arg": _sink_flat_call_arg,
     "return_method_call": _sink_return_method_call,
     # "argument_to": _sink_argument_to,
-    "receiver_of_method_with_kwarg": _sink_receiver_of_method_with_kwarg,
     "method_call_in_if": _sink_method_call_in_if,
     "keyword_argument": _sink_keyword_argument,
     "subscript_key_assign_rhs": _sink_subscript_key_assign_rhs,
     "subscript_assign_or_concat": _sink_subscript_usage,
-    "subscript_colon_suffix": _sink_subscript_usage,
     "subscript_return": _sink_subscript_usage,              
     "subscript_method_call": _sink_subscript_usage,
     "matches_xpath": _sink_matches_xpath,
@@ -508,7 +450,7 @@ def match_sink(uso, sink_spec, fstring_nodes: list, adapter=None, imports=None) 
     elif isinstance(sink_spec, dict):
         sink_type = sink_spec.get("type")
 
-        simple_patterns = ["concat", "fstring", "call_arg", "method_chain", "colon_suffix", "reassign", "return", "any_use", "assign_rhs"]
+        simple_patterns = ["concat", "fstring", "call_arg", "method_chain", "reassign", "return", "any_use", "assign_rhs"]
         if sink_type in simple_patterns:
             is_match = _sink_string_pattern(uso, sink_type, adapter, imports, fstring_nodes)
         else:
