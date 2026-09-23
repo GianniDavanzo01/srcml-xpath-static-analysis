@@ -34,7 +34,7 @@ def _sink_string_pattern(uso, pattern_name: str, adapter=None, imports=None, fst
 
     if pattern_name == "method_chain":
         # 1. Recupera la lista degli operatori dall'adapter (es. ["."] o [".", "->"])
-        ops = adapter.member_access_operators()
+        ops = adapter.member_access_operator()
         
         # 2. Costruisce la condizione OR per l'XPath
         ops_xpath = " or ".join(f"text()='{op}'" for op in ops)
@@ -77,7 +77,6 @@ def _sink_string_pattern(uso, pattern_name: str, adapter=None, imports=None, fst
     return False
 
 
-# def _sink_method_call(uso, spec: dict, fstring_nodes: list) -> bool:
 def _sink_method_call(uso, spec: dict, fstring_nodes: list, adapter=None, imports=None) -> bool:
 
     """{"type": "method_call", "method": "endswith", "arg_contains": [".com/"]}
@@ -87,10 +86,14 @@ def _sink_method_call(uso, spec: dict, fstring_nodes: list, adapter=None, import
     if not method:
         return False
 
+    ops = adapter.member_access_operator() if adapter else ["."]
+    ops_xpath = " or ".join(f"text()='{op}'" for op in ops)
+
     method_nodes = uso.xpath(
-        "following-sibling::src:operator[1][text()='.']/following-sibling::src:name[1]",
+        f"following-sibling::src:operator[1][{ops_xpath}]/following-sibling::src:name[1]",
         namespaces=NS,
     )
+
     if not method_nodes or "".join(method_nodes[0].itertext()).strip() != method:
         return False
 
@@ -208,7 +211,6 @@ def _sink_flat_call_arg(uso, spec: dict, fstring_nodes: list, adapter=None, impo
     return not nested_calls
 
 
-# def _sink_return_method_call(uso, spec: dict, fstring_nodes: list) -> bool:
 def _sink_return_method_call(uso, spec: dict, fstring_nodes: list, adapter=None, imports=None) -> bool:
 
     """{"type": "return_method_call", "method": "match"}"""
@@ -216,10 +218,14 @@ def _sink_return_method_call(uso, spec: dict, fstring_nodes: list, adapter=None,
     if not method:
         return False
 
+    ops = adapter.member_access_operator() if adapter else ["."]
+    ops_xpath = " or ".join(f"text()='{op}'" for op in ops)
+
     method_nodes = uso.xpath(
-        "following-sibling::src:operator[1][text()='.']/following-sibling::src:name[1]",
+        f"following-sibling::src:operator[1][{ops_xpath}]/following-sibling::src:name[1]",
         namespaces=NS,
     )
+
     if not method_nodes or "".join(method_nodes[0].itertext()).strip() != method:
         return False
 
@@ -285,7 +291,6 @@ def _sink_return_method_call(uso, spec: dict, fstring_nodes: list, adapter=None,
 #     return any(call_name == fn or call_name.endswith(f".{fn}") for fn in functions)
     
 
-# def _sink_method_call_in_if(uso, spec: dict, fstring_nodes: list) -> bool:
 def _sink_method_call_in_if(uso, spec: dict, fstring_nodes: list, adapter=None, imports=None) -> bool:
 
     """{"type": "method_call_in_if", "method": "locked"}"""
@@ -293,10 +298,14 @@ def _sink_method_call_in_if(uso, spec: dict, fstring_nodes: list, adapter=None, 
     if not method:
         return False
 
+    ops = adapter.member_access_operator() if adapter else ["."]
+    ops_xpath = " or ".join(f"text()='{op}'" for op in ops)
+
     method_nodes = uso.xpath(
-        "following-sibling::src:operator[1][text()='.']/following-sibling::src:name[1]",
+        f"following-sibling::src:operator[1][{ops_xpath}]/following-sibling::src:name[1]",
         namespaces=NS,
     )
+
     if not method_nodes or "".join(method_nodes[0].itertext()).strip() != method:
         return False
 
@@ -366,7 +375,6 @@ def _sink_subscript_key_assign_rhs(uso, spec: dict, fstring_nodes: list, adapter
  
     return bool(lhs.xpath("./src:index//src:literal[@type='string']", namespaces=NS))
 
-# def _sink_subscript_usage(uso, spec: dict, fstring_nodes: list) -> bool:
 def _sink_subscript_usage(uso, spec: dict, fstring_nodes: list, adapter=None, imports=None) -> bool:
 
     """
@@ -405,7 +413,9 @@ def _sink_subscript_usage(uso, spec: dict, fstring_nodes: list, adapter=None, im
         return bool(target.xpath("boolean(ancestor::src:return[1] and not(ancestor::src:call))", namespaces=NS))
         
     elif subtype == "method_call":
-        return bool(target.xpath("following-sibling::src:operator[1][text()='.']", namespaces=NS))
+        ops = adapter.member_access_operators() if adapter else ["."]
+        ops_xpath = " or ".join(f"text()='{op}'" for op in ops)
+        return bool(target.xpath(f"following-sibling::src:operator[1][{ops_xpath}]", namespaces=NS))
         
     return False
 
