@@ -183,8 +183,6 @@ def _safe_context_function_has_method_call(node, spec: dict, var_name: str | Non
     return False
 
 
-
-
 def _safe_context_args_contain_string_literal(node, spec: dict, var_name: str | None = None, adapter=None, imports=None) -> bool:
     arg_list = node.xpath("./src:argument_list", namespaces=NS)
     if not arg_list:
@@ -217,27 +215,6 @@ def _safe_context_in_function_name(node, spec: dict, var_name: str | None = None
         if name_nodes and "".join(name_nodes[0].itertext()).strip() == target:
             return True
     return False
-
-
-
-# def _safe_context_function_calls_method_on_var(node, spec: dict, var_name: str | None = None, adapter=None, imports=None) -> bool:
-#     """{"type": "function_calls_method_on_var", "method": "set_handle_timeout"}"""
-#     if not var_name:
-#         return False
-        
-#     method_name = spec.get("method")
-#     if not method_name:
-#         return False
-        
-#     target_str = f"{var_name}.{method_name}("
-#     target = _function_or_unit_scope(node)
-    
-#     calls = target.xpath(".//src:call", namespaces=NS)
-#     for call in calls:
-#         call_text = "".join(call.itertext()).replace(" ", "")
-#         if target_str in call_text:
-#             return True
-#     return False
 
 
 def _safe_context_function_has_file_size_check(node, spec: dict, var_name: str | None = None, adapter=None, imports=None) -> bool:
@@ -582,31 +559,6 @@ def _safe_context_membership_check(node, spec: dict, var_name: str | None = None
 
 
 
-# def _safe_context_unit_has_function_def(node, spec: dict, var_name: str | None = None, adapter=None, imports=None) -> bool:
-#     """{"type": "unit_has_function_def", "name": "sanitize_git_reference"}"""
-#     target_name = spec.get("name")
-#     param_contains = spec.get("param_contains", "")
-#     if not target_name:
-#         return False
-        
-#     unit = node.xpath("ancestor-or-self::src:unit[1]", namespaces=NS)
-#     if not unit:
-#         return False
-        
-#     functions = unit[0].xpath(f".//src:function[src:name[text()='{target_name}']]", namespaces=NS)
-#     for func in functions:
-#         if not param_contains:
-#             return True
-            
-#         params = func.xpath(".//src:parameter_list", namespaces=NS)
-#         if params:
-#             p_text = "".join(params[0].itertext()).replace(" ", "").replace("\n", "")
-#             if param_contains in p_text:
-#                 return True
-                
-#     return False
-
-
 def _safe_context_call_has_kwargs(node, spec: dict, var_name: str | None = None, adapter=None, imports=None) -> bool:
     calls = spec.get("call", [])
     _adapter = adapter or PythonAdapter()
@@ -658,8 +610,11 @@ def _safe_context_call_has_kwargs(node, spec: dict, var_name: str | None = None,
             if not colon:
                 continue
             val_sib = colon[0].xpath("following-sibling::*[1]", namespaces=NS)
-            if val_sib and "".join(val_sib[0].itertext()).strip() == str(dict_val):
-                return True
+            if val_sib:
+                raw_val = "".join(val_sib[0].itertext()).strip()
+                normalized_val = _adapter.normalize_string_literal(raw_val)
+                if normalized_val == str(dict_val):
+                    return True
         return False
 
     # Caso: valore del kwarg e' una lista letterale, richiediamo uno degli elementi ammessi
@@ -776,7 +731,8 @@ def _safe_context_try_after_source(node, spec: dict, var_name: str | None = None
     _adapter = adapter or PythonAdapter()
     for assign, _, _ in find_assignments(scope, _adapter, var_name):
         assign_try = assign.xpath("ancestor::src:try[1]", namespaces=NS)
-        if assign_try and assign_try[0] is try_node:
+        # if assign_try and assign_try[0] is try_node:
+        if assign_try and assign_try[0] == try_node:
             return False
     return True
 
@@ -788,7 +744,6 @@ SAFE_CONTEXT_MATCHERS = {
     "function_has_method_call": _safe_context_function_has_method_call,
     "args_contain_string_literal": _safe_context_args_contain_string_literal,
     "in_function_name": _safe_context_in_function_name,
-    # "function_calls_method_on_var": _safe_context_function_calls_method_on_var,
     "function_has_file_size_check": _safe_context_function_has_file_size_check,
     "var_truthiness_check": _safe_context_var_truthiness_check,
     "var_has_attribute": _safe_context_var_has_attribute,
@@ -799,7 +754,6 @@ SAFE_CONTEXT_MATCHERS = {
     "condition_matches_xpath": _safe_context_condition_matches_xpath,
     "matches_xpath": _safe_context_matches_xpath,
     "node_matches_xpath": _safe_context_node_matches_xpath,
-    # "unit_has_function_def": _safe_context_unit_has_function_def,
     "call_has_kwargs": _safe_context_call_has_kwargs,
     "call_with_kwarg": _safe_context_call_has_kwargs,
     "call_with_dict_kwarg": _safe_context_call_has_kwargs, 
