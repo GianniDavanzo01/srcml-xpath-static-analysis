@@ -303,18 +303,18 @@ def _safe_context_function_has_file_size_check(node, spec: dict, var_name: str |
 
 
 def _safe_context_var_truthiness_check(node, spec: dict, var_name=None, adapter=None, imports=None) -> bool:
-    """{"type": "var_truthiness_check", "scope": "enclosing" | "function" | "file"}
-        Rileva i check di truthiness (es. 'if not var' in Python, 'if (!var)'
-        in C/Java) o di confronto col letterale nullo del linguaggio
-        (es. 'if var is None' in Python, 'if (var == null)' in Java/C).
-    """
+    """{"type": "var_truthiness_check", "scope": "enclosing", "require_state": "truthy"}
+    "require_state": "truthy" quando il codice vulnerabile si trova all'interno del blocco if
+    l'esecuzione avviene solo se la condizione è vera, la condizione deve esplicitamente affermare che il dato esiste ed è valido (non è nullo).
+    "require_state": "falsy" quando il codice vulnerabile si trova fuori e dopo il blocco if"""
     if not var_name:
         return False
 
     search_scope = spec.get("scope", "enclosing")
+    required_state = spec.get("require_state", "truthy" if search_scope == "enclosing" else "any")
 
     if search_scope == "enclosing":
-        conditions = node.xpath("ancestor::src:if_stmt/src:condition", namespaces=NS)
+        conditions = node.xpath("ancestor::src:if_stmt//src:condition", namespaces=NS)
     elif search_scope in ("file", "unit"):
         unit_node = node.xpath("ancestor::src:unit[1]", namespaces=NS)
         target = unit_node[0] if unit_node else _function_or_unit_scope(node)
@@ -323,27 +323,58 @@ def _safe_context_var_truthiness_check(node, spec: dict, var_name=None, adapter=
         target = _function_or_unit_scope(node)
         conditions = target.xpath(".//src:if_stmt//src:condition", namespaces=NS)
 
-    neg_op = adapter.negation_operator() if adapter else "not"
+    _adapter = adapter or PythonAdapter()
+    neg_op = _adapter.negation_operator()
+
+    null_ops = _adapter.null_comparison_operators()
+    falsy_ops = null_ops["falsy"]
+    truthy_ops = null_ops["truthy"]
+
+    all_ops = falsy_ops + truthy_ops
+    xpath_op_condition = " or ".join(f"text()='{op}'" for op in all_ops)
 
     for cond in conditions:
-        text = "".join(cond.itertext()).replace(" ", "").replace("\n", "")
+        # --- A. Controllo Booleano Unario (es. !var o not var) ---
+        negations = cond.xpath(f".//src:operator[text()='{neg_op}']", namespaces=NS)
+        for nop in negations:
+            next_node = nop.xpath("./following-sibling::*[not(self::src:comment)][1]", namespaces=NS)
+            if next_node and next_node[0].tag.endswith("name"):
+                if "".join(next_node[0].itertext()).strip() == var_name:
+                    if required_state in ("falsy", "any"):
+                        return True
 
-        # Check di truthiness: 'not var' (Python) / '!var' (C/Java)
-        if f"{neg_op}{var_name}" in text:
-            return True
+        # --- B. Controllo Esplicito con Null (es. var == null, var != null) ---
+        equality_ops = cond.xpath(f".//src:operator[{xpath_op_condition}]", namespaces=NS)
+        for eq_op in equality_ops:
+            op_text = "".join(eq_op.itertext()).strip()
+            lhs = eq_op.xpath("./preceding-sibling::*[not(self::src:comment)][1]", namespaces=NS)
+            rhs = eq_op.xpath("./following-sibling::*[not(self::src:comment)][1]", namespaces=NS)
 
-        # Confronto var <is|==> <letterale nullo del linguaggio>
-        name_nodes = cond.xpath(f".//src:name[text()='{var_name}']", namespaces=NS)
-        for n in name_nodes:
-            rhs = n.xpath(
-                "following-sibling::src:operator[1][text()='is' or text()='==']"
-                "/following-sibling::*[1]",
-                namespaces=NS,
-            )
-            if rhs:
-                rhs_text = "".join(rhs[0].itertext()).strip()
-                if adapter and adapter.is_none_literal(rhs_text):
+            if not lhs or not rhs:
+                continue
+
+            lhs_text = "".join(lhs[0].itertext()).strip()
+            rhs_text = "".join(rhs[0].itertext()).strip()
+
+            is_null_check = (lhs_text == var_name and _adapter.is_none_literal(rhs_text)) or \
+                            (_adapter.is_none_literal(lhs_text) and rhs_text == var_name)
+
+            if is_null_check:
+                if required_state == "truthy" and op_text in truthy_ops:
                     return True
+                if required_state == "falsy" and op_text in falsy_ops:
+                    return True
+                if required_state == "any":
+                    return True
+
+        # --- C. Controllo Booleano nudo (es. if var:) ---
+        if required_state in ("truthy", "any"):
+            expr_children = cond.xpath("./src:expr", namespaces=NS)
+            if len(expr_children) == 1:
+                bare_names = expr_children[0].xpath("./src:name", namespaces=NS)
+                if len(bare_names) == 1 and len(list(expr_children[0])) == 1:
+                    if "".join(bare_names[0].itertext()).strip() == var_name:
+                        return True
 
     return False
 
@@ -434,18 +465,34 @@ def _safe_context_binary_comparison(node, spec: dict, var_name: str | None = Non
     left_contains = _resolve(spec.get("left_contains", []))
     right_exact = _resolve(spec.get("right_exact", []))
     right_contains = _resolve(spec.get("right_contains", []))
+    
+    _adapter = adapter or PythonAdapter()
 
     conditions = target.xpath(".//src:if_stmt//src:condition", namespaces=NS)
     for cond in conditions:
         for op_val in operators:
             ops = cond.xpath(f".//src:operator[text()='{op_val}']", namespaces=NS)
             for op_node in ops:
-                lhs_nodes = op_node.xpath("./preceding-sibling::*[not(self::src:comment)]", namespaces=NS)
-                rhs_nodes = op_node.xpath("./following-sibling::*[not(self::src:comment)]", namespaces=NS)
+                # 1. ISOLAMENTO STRUTTURALE: Prendiamo ESATTAMENTE il nodo precedente e successivo
+                lhs_nodes = op_node.xpath("./preceding-sibling::*[not(self::src:comment)][1]", namespaces=NS)
+                rhs_nodes = op_node.xpath("./following-sibling::*[not(self::src:comment)][1]", namespaces=NS)
+                
+                if not lhs_nodes or not rhs_nodes:
+                    continue
+                    
+                # 2. ESTRAZIONE INTELLIGENTE: Deleghiamo all'adapter se è una stringa,
+                # compattiamo solo se è un nome di variabile o un numero.
+                def _extract_operand_text(operand_node):
+                    if operand_node.tag.endswith("literal") and operand_node.get("type") == "string":
+                        lit_text = "".join(operand_node.itertext()).strip()
+                        return _adapter.normalize_string_literal(lit_text)
+                        
+                    return "".join(operand_node.itertext()).replace(" ", "").replace("\n", "")
 
-                lhs_text = "".join("".join(n.itertext()) for n in lhs_nodes).replace(" ", "").replace("\n", "")
-                rhs_text = "".join("".join(n.itertext()) for n in rhs_nodes).replace(" ", "").replace("\n", "")
+                lhs_text = _extract_operand_text(lhs_nodes[0])
+                rhs_text = _extract_operand_text(rhs_nodes[0])
 
+                # 3. VERIFICA
                 left_ok = True
                 if left_exact or left_contains:
                     left_ok = (lhs_text in left_exact) or any(c in lhs_text for c in left_contains)
@@ -456,6 +503,7 @@ def _safe_context_binary_comparison(node, spec: dict, var_name: str | None = Non
 
                 if left_ok and right_ok:
                     return True
+                    
     return False
 
 

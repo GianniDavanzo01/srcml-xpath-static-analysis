@@ -222,6 +222,20 @@
   ]
 },
 {
+  "rule_id": "CWE-476-NULL-POINTER-DEREFERENCE",
+  "type": "taint",
+  "vulnerabilities": ["CWE-476"],
+  "sources": [
+    {"tag": "nullable_returning_calls"}
+  ],
+  "sinks": [
+    {"type": "any_use"}
+  ],
+  "safe_contexts": [
+    {"tag": "null_checked"}
+  ]
+},
+{
   "rule_id": "CWE-489-ACTIVE-DEBUG",
   "type": "structural",
   "vulnerabilities": ["CWE-489"],

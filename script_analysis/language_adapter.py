@@ -201,6 +201,17 @@ class LanguageAdapter(ABC):
         """Cerca la dichiarazione (locale o parametro) di var_name nello scope
     di name_node e ritorna il tipo dichiarato (es. 'char *'), o None se non
     trovato. Usato solo dai linguaggi con requires_pointer_type_for_reference_comparison() = True."""
+
+
+
+
+    @abstractmethod
+    def null_comparison_operators(self) -> dict:
+        """
+        Restituisce gli operatori usati per i confronti col null divisi per semantica.
+        - 'falsy': verificano che la variabile SIA nulla (es. ==, is)
+        - 'truthy': verificano che la variabile NON SIA nulla (es. !=, is not)
+        """
 # ---------------------------------------------------------------------- #
 # Implementazione Python
 # ---------------------------------------------------------------------- #
@@ -451,6 +462,12 @@ class PythonAdapter(LanguageAdapter):
 
     def resolve_variable_type(self, name_node, var_name, ns) -> str | None:
         return None
+
+    def null_comparison_operators(self) -> dict:
+        return {
+            "falsy": ["==", "is"],
+            "truthy": ["!=", "is not"]
+        }
 
 # ---------------------------------------------------------------------- #
 # Implementazione Java
@@ -732,6 +749,13 @@ class JavaAdapter(LanguageAdapter):
     def resolve_variable_type(self, name_node, var_name, ns) -> str | None:
         return None
 
+
+    def null_comparison_operators(self) -> dict:
+        return {
+            "falsy": ["=="],
+            "truthy": ["!="]
+        }
+
 # ---------------------------------------------------------------------- #
 # Implementazione C
 # ---------------------------------------------------------------------- #
@@ -994,6 +1018,13 @@ class CAdapter(LanguageAdapter):
             prev_decl = decl_node.xpath("preceding-sibling::src:decl[1]", namespaces=ns)
             decl_node = prev_decl[0] if prev_decl else None
         return None
+
+
+    def null_comparison_operators(self) -> dict:
+        return {
+            "falsy": ["=="],
+            "truthy": ["!="]
+        }
 
 
 # ---------------------------------------------------------------------- #
