@@ -138,7 +138,11 @@ def source_present(sources: list, rhs_node, source_form: str | None = None,
         # nessuna forma specificata: il nome compare ovunque, invocato o no
         for name_node in rhs_node.xpath(".//src:name | self::src:name", namespaces=NS):
             name_text = "".join(name_node.itertext()).strip()
-            if name_text == source or name_text.endswith(f".{source}") or name_text.startswith(f"{source}."):
+
+            #Bisogna eliminare le parentesi per fare match sul nome della funzione
+            clean_name = name_text.split('[')[0].split('(')[0].strip()
+
+            if clean_name == source or clean_name.endswith(f".{source}") or clean_name.startswith(f"{source}."):
                 return True
 
     return False

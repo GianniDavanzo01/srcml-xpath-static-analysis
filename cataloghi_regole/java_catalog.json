@@ -7,7 +7,8 @@
       "HttpServletRequest.getCookies",
       "request.getParameter",
       "request.getHeader"
-    ]
+    ],
+     "nullable_returning_calls": ["System.getenv", "Map.get", "Optional.orElse"]
   },
   "sinks": {
     "sql_execution": [
@@ -232,6 +233,13 @@
           "method": "replace",
           "args_contain": [";", "&"]
         }
+      ],
+      "null_checked": [
+        {"type": "var_truthiness_check", "scope": "enclosing", "require_state": "truthy"}
+      ],
+      "safe_metadata_extraction": [
+        {"type": "receiver_of_method", "method": "getSize"},
+        {"type": "receiver_of_method", "method": "getContentType"}
       ]
   },
   "patterns": {
@@ -278,7 +286,7 @@
     "unsafe_deserialization_kwargs":{},
     "unsafe_dict_access":{},
     "unsafe_array_access": {
-      "forbidden_subscripts": ["args"]
+      "forbidden_subscripts": ["args","array","buffer"]
     }
   }
 }

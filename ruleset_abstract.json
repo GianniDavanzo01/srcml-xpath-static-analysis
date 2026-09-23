@@ -39,7 +39,8 @@
   ],
   "safe_contexts": [
     {"tag": "allowlist_validation"},
-    {"tag": "file_extension_validation"}
+    {"tag": "file_extension_validation"},
+    {"tag": "safe_metadata_extraction"}
   ]
 },
 {

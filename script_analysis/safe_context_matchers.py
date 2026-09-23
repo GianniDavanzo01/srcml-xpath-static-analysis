@@ -91,14 +91,22 @@ def _safe_context_parametrized_query(node, spec: dict, var_name: str | None = No
 def _safe_context_receiver_of_method(node, spec: dict, var_name: str | None = None, adapter=None, imports=None) -> bool:
     """{"type": "receiver_of_method", "method": "replace"}
     Rileva: la variabile taintata è il chiamante di un metodo specifico.
-    Es: VAR.replace(...) rende il contesto sicuro, ma stringa.replace(VAR) no.
     """
     target_method = spec.get("method")
     if not target_method:
         return False
 
+    _adapter = adapter or PythonAdapter()
+    
+    # 1. Recupera la lista degli operatori (es. ["."] o [".", "->"])
+    ops = _adapter.member_access_operator()
+    
+    # 2. Costruisce la condizione OR per l'XPath
+    ops_xpath = " or ".join(f"text()='{op}'" for op in ops)
+
+    # 3. Inserisce la condizione dinamica nell'XPath
     method_nodes = node.xpath(
-        "following-sibling::src:operator[1][text()='.']/following-sibling::src:name[1]",
+        f"following-sibling::src:operator[1][{ops_xpath}]/following-sibling::src:name[1]",
         namespaces=NS,
     )
     
@@ -212,24 +220,6 @@ def _safe_context_in_function_name(node, spec: dict, var_name: str | None = None
 
 
 
-def _safe_context_args_do_not_contain_call(node, spec: dict, var_name: str | None = None, adapter=None, imports=None) -> bool:
-    """{"type": "args_do_not_contain_call", "call": "redirect"}
-    Rende il contesto sicuro se la funzione target NON è presente tra gli argomenti.
-    """
-    target = spec.get("call")
-    if not target:
-        return True
-        
-    calls_in_args = node.xpath("./src:argument_list//src:call", namespaces=NS)
-    for c in calls_in_args:
-        c_name_nodes = c.xpath("./src:name", namespaces=NS)
-        if c_name_nodes:
-            cname = "".join(c_name_nodes[0].itertext()).replace(" ", "")
-            if cname == target or cname.endswith(f".{target}"):
-                return False
-    return True
-
-
 # def _safe_context_function_calls_method_on_var(node, spec: dict, var_name: str | None = None, adapter=None, imports=None) -> bool:
 #     """{"type": "function_calls_method_on_var", "method": "set_handle_timeout"}"""
 #     if not var_name:
@@ -250,51 +240,35 @@ def _safe_context_args_do_not_contain_call(node, spec: dict, var_name: str | Non
 #     return False
 
 
-def _safe_context_function_is_not(node, spec: dict, var_name: str | None = None, adapter=None, imports=None) -> bool:
-    """{"type": "function_is_not", "name": "encode_structured_data"}"""
-    target_func = spec.get("name")
-    if not target_func:
-        return False
-        
-    parent_func = node.xpath("ancestor::src:function[1]", namespaces=NS)
-    if not parent_func:
-        return True 
-
-    name_nodes = parent_func[0].xpath("./src:name", namespaces=NS)
-    if name_nodes:
-        func_name = "".join(name_nodes[0].itertext()).strip()
-        if func_name != target_func:
-            return True
-            
-    return False
-
-
 def _safe_context_function_has_file_size_check(node, spec: dict, var_name: str | None = None, adapter=None, imports=None) -> bool:
     """{"type": "function_has_file_size_check"}
        Verifica se nello scope della funzione esiste un controllo sulla dimensione.
-       Agnostica: ricava le proprietà da `spec` e l'operatore dal LanguageAdapter.
+       Agnostica: ricava le proprietà da `spec` e gli operatori dal LanguageAdapter.
     """
     target = _function_or_unit_scope(node)
     
     _adapter = adapter or PythonAdapter()
     
-    # 1. Recupera l'operatore specifico per il linguaggio (es. '.' per Python/Java)
-    member_op = _adapter.member_access_operator()
+    # 1. Recupera la lista degli operatori (es. ["."] o [".", "->"])
+    ops = _adapter.member_access_operator()
     
-    # 2. Preleva dal catalogo JSON le proprietà/metodi validi (default: ["file_size", "size"])
+    # 2. Costruisce la condizione OR per l'XPath
+    ops_xpath = " or ".join(f"text()='{op}'" for op in ops)
+    
+    # 3. Preleva dal catalogo JSON le proprietà/metodi validi (default: ["file_size", "size"])
     size_properties = spec.get("size_properties", ["file_size", "size"])
     
-    # 3. Ricerca generica nello scope della funzione
+    # 4. Ricerca generica nello scope della funzione
     for prop in size_properties:
-        xpath_query = f".//src:operator[text()='{member_op}']/following-sibling::*[1][self::src:name[text()='{prop}']]"
+        xpath_query = f".//src:operator[{ops_xpath}]/following-sibling::*[1][self::src:name[text()='{prop}']]"
         if target.xpath(xpath_query, namespaces=NS):
             return True
             
-    # 4. Ricerca specifica dentro i blocchi condizionali (es. if file.size > 100)
+    # 5. Ricerca specifica dentro i blocchi condizionali (es. if file.size > 100)
     conditions = target.xpath(".//src:if_stmt//src:condition", namespaces=NS)
     for cond in conditions:
         for prop in size_properties:
-            xpath_query = f".//src:operator[text()='{member_op}']/following-sibling::*[1][self::src:name[text()='{prop}']]"
+            xpath_query = f".//src:operator[{ops_xpath}]/following-sibling::*[1][self::src:name[text()='{prop}']]"
             if cond.xpath(xpath_query, namespaces=NS):
                 return True
                 
@@ -437,8 +411,17 @@ def _safe_context_var_has_attribute(node, spec: dict, var_name: str | None = Non
     if not attr:
         return False
 
+    _adapter = adapter or PythonAdapter()
+    
+    # 1. Recupera la lista degli operatori (es. ["."] o [".", "->"])
+    ops = _adapter.member_access_operator()
+    
+    # 2. Costruisce la condizione OR per l'XPath
+    ops_xpath = " or ".join(f"text()='{op}'" for op in ops)
+
+    # 3. Inserisce la condizione dinamica nell'XPath
     attr_nodes = node.xpath(
-        "following-sibling::src:operator[1][text()='.']/following-sibling::src:name[1]",
+        f"following-sibling::src:operator[1][{ops_xpath}]/following-sibling::src:name[1]",
         namespaces=NS,
     )
     
@@ -710,25 +693,23 @@ def _safe_context_receiver_of_method_with_arg(node, spec: dict, var_name: str | 
         return False
 
     _adapter = adapter or PythonAdapter()
-    op = _adapter.member_access_operator() if hasattr(_adapter, "member_access_operator") else "."
+    
+    ops = _adapter.member_access_operator()
+    ops_xpath = " or ".join(f"text()='{op}'" for op in ops)
 
-    # 1. Guarda all'insù: cerchiamo in tutte le condizioni IF che racchiudono il nodo vulnerabile
     conditions = node.xpath("ancestor::src:if_stmt//src:condition", namespaces=NS)
     
     for cond in conditions:
-        # 2. Cerchiamo la nostra variabile infetta dentro la condizione
         var_nodes = cond.xpath(f".//src:name[text()='{var_name}']", namespaces=NS)
         
         for v_node in var_nodes:
-            # 3. Verifichiamo se la variabile è il chiamante del metodo richiesto (es. nome_file.endswith)
             method_nodes = v_node.xpath(
-                f"following-sibling::src:operator[1][text()='{op}']/following-sibling::src:name[1]",
+                f"following-sibling::src:operator[1][{ops_xpath}]/following-sibling::src:name[1]",
                 namespaces=NS,
             )
             
             if method_nodes and "".join(method_nodes[0].itertext()).strip() == target_method:
                 
-                # 4. Troviamo la chiamata associata a questo metodo
                 call_node = v_node.xpath("ancestor::src:call[1]", namespaces=NS)
                 if not call_node:
                     continue
@@ -737,7 +718,6 @@ def _safe_context_receiver_of_method_with_arg(node, spec: dict, var_name: str | 
                 if not arg_list:
                     continue
                     
-                # 5. Analisi pura dell'AST per gli argomenti (estraiamo i literal)
                 arguments = arg_list[0].xpath("./src:argument", namespaces=NS)
                 for arg in arguments:
                     literals = arg.xpath(".//src:literal[@type='string']", namespaces=NS)
@@ -808,9 +788,7 @@ SAFE_CONTEXT_MATCHERS = {
     "function_has_method_call": _safe_context_function_has_method_call,
     "args_contain_string_literal": _safe_context_args_contain_string_literal,
     "in_function_name": _safe_context_in_function_name,
-    "args_do_not_contain_call": _safe_context_args_do_not_contain_call,
     # "function_calls_method_on_var": _safe_context_function_calls_method_on_var,
-    "function_is_not": _safe_context_function_is_not,
     "function_has_file_size_check": _safe_context_function_has_file_size_check,
     "var_truthiness_check": _safe_context_var_truthiness_check,
     "var_has_attribute": _safe_context_var_has_attribute,
@@ -833,16 +811,18 @@ SAFE_CONTEXT_MATCHERS = {
 
 
 def match_safe_context(node, ctx_spec, var_name: str | None = None, adapter=None, imports=None) -> bool:
-    """Dispatcher: ctx_spec puo' essere una stringa o un dict tipizzato."""
+    """Dispatcher: ctx_spec puo' essere un dict tipizzato o una stringa (scorciatoia strutturale)."""
+    
+    # 1. Shorthand Strutturale (es. "try", "while", "if_stmt")
+    # Cerca esclusivamente il tag XML corrispondente tra gli ancestor.
     if isinstance(ctx_spec, str):
-        if node.xpath(f"ancestor::src:{ctx_spec}", namespaces=NS):
-            return True
-        if node.xpath(f"ancestor::src:if_stmt[.//src:call//src:name[text()='{ctx_spec}']]", namespaces=NS):
-            return True
-        return False
+        return bool(node.xpath(f"ancestor::src:{ctx_spec}", namespaces=NS))
+        
+    # 2. Matcher Tipizzato (es. {"type": "var_truthiness_check", ...})
     if isinstance(ctx_spec, dict):
         matcher = SAFE_CONTEXT_MATCHERS.get(ctx_spec.get("type"))
         return matcher(node, ctx_spec, var_name, adapter, imports) if matcher else False
+        
     return False
 
 

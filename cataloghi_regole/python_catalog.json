@@ -7,7 +7,8 @@
       "request.endpoint", "request.host", "request.host_url", "request.module",
       "request.path", "request.query_strings", "request.url", "request.values",
       "request.view_args","django.http.HttpRequest.GET", "django.http.HttpRequest.POST","input"
-    ]
+    ],
+    "nullable_returning_calls": ["re.match", "re.search", "re.fullmatch", "dict.get", "os.environ.get"]
   },
     "sinks": {
       "sql_execution": [
@@ -224,6 +225,14 @@
             "method": "replace",
             "args_contain": [";", "&"]
           }
+        ],
+        "null_checked": [
+          {"type": "var_truthiness_check", "scope": "enclosing", "require_state": "truthy"}
+        ],
+        "safe_metadata_extraction": [
+          {"type": "var_has_attribute", "attribute": "size"},
+          {"type": "var_has_attribute", "attribute": "content_length"},
+          {"type": "var_has_attribute", "attribute": "content_type"}
         ]
   },
   "patterns": {

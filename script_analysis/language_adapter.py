@@ -147,7 +147,7 @@ class LanguageAdapter(ABC):
             """Estrae nome e tipo da un parametro (<src:parameter>)."""
 
     @abstractmethod
-    def member_access_operator(self) -> str:
+    def member_access_operator(self) -> list:
         """Operatore usato per accedere a metodi e attributi.
         Python/Java/C#: '.'  -  PHP: '->'"""
 
@@ -388,8 +388,8 @@ class PythonAdapter(LanguageAdapter):
         return name_text, type_text
 
 
-    def member_access_operator(self) -> str:
-        return "."
+    def member_access_operator(self) -> list:
+        return ["."]
 
 
     def taint_block_functions(self) -> list:
@@ -674,8 +674,8 @@ class JavaAdapter(LanguageAdapter):
         return name_text, type_text
 
 
-    def member_access_operator(self) -> str:
-        return "."
+    def member_access_operator(self) -> list:
+        return ["."]
 
 
     def taint_block_functions(self) -> list:
@@ -949,10 +949,10 @@ class CAdapter(LanguageAdapter):
         
         return name_text, type_text
 
-    def member_access_operator(self) -> str:
+    def member_access_operator(self) -> list:
         # Operatore base per l'accesso ai membri. L'adapter gestisce esplicitamente 
-        # anche '->' in resolve_call_name.
-        return "."
+        
+        return [".", "->"]
 
     def taint_block_functions(self) -> list:
         # Funzioni C che restituiscono numeri o bool analizzando buffer/stringhe,

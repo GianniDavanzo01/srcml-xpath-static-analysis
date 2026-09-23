@@ -33,13 +33,17 @@ def _sink_string_pattern(uso, pattern_name: str, adapter=None, imports=None, fst
         return bool(uso.xpath("ancestor::src:argument", namespaces=NS))
 
     if pattern_name == "method_chain":
-        # Deleghiamo all'adapter l'operatore di accesso ai membri (es. "." per Python/Java)
-        # NOTA: Devi aggiungere `member_access_operator()` nel tuo LanguageAdapter!
-        member_op = adapter.member_access_operator() if hasattr(adapter, "member_access_operator") else "."
-        has_member_access = uso.xpath(f"following-sibling::src:operator[1][text()='{member_op}']", namespaces=NS)
+        # 1. Recupera la lista degli operatori dall'adapter (es. ["."] o [".", "->"])
+        ops = adapter.member_access_operators()
+        
+        # 2. Costruisce la condizione OR per l'XPath
+        ops_xpath = " or ".join(f"text()='{op}'" for op in ops)
+        
+        # 3. Valuta l'accesso usando la condizione dinamica
+        has_member_access = uso.xpath(f"following-sibling::src:operator[1][{ops_xpath}]", namespaces=NS)
         is_method_call = uso.xpath("parent::src:name/parent::src:call", namespaces=NS)
+        
         return bool(has_member_access and is_method_call)
-
     if pattern_name == "colon_suffix":
         # Questo sembra un pattern molto specifico di Python (es. dizionari o type hinting)
         # Se è vitale, andrebbe astratto nell'adapter (es. adapter.is_dict_key(uso))

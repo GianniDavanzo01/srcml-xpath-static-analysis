@@ -635,9 +635,10 @@ def run_structural_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) 
             # Estraiamo il nome dell'oggetto a cui si sta accedendo usando l'AST puro
             parts = node.xpath("./src:name", namespaces=NS)
             if parts:
-                # Gestisce nomi concatenati come 'request.form'
-                op = adapter.member_access_operator() if adapter else "."
-                base_name = op.join("".join(p.itertext()).strip() for p in parts)
+                # NORMALIZZAZIONE AGNOSTICA: 
+                # Ignoriamo l'operatore reale (., ->, ::) e uniamo i pezzi sempre col punto.
+                # 'request->form' (C) e 'request.form' (Python) diventano internamente 'request.form'.
+                base_name = ".".join("".join(p.itertext()).strip() for p in parts)
             else:
                 # Gestisce nomi singoli come 'environ'
                 base_name = (node.text or "").strip()
@@ -651,6 +652,7 @@ def run_structural_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) 
                 
             # Verifica se l'oggetto a cui si accede è nella blacklist
             for subscript in forbidden_subscripts:
+                # Ora questo controllo con il punto funzionerà perfettamente per ogni linguaggio!
                 if base_name == subscript or base_name.endswith(f".{subscript}"):
                     if is_in_safe_context(node, safe_contexts, var_name=index_var, adapter=adapter, imports=imports):
                         break

@@ -2,7 +2,9 @@
     "sources":{
         "http_input": [
             "getenv","recv","recvfrom","read",
-            "fread","fgets","scanf","gets"]
+            "fread","fgets","scanf","gets"],
+        
+            "nullable_returning_calls": ["malloc", "calloc", "realloc", "fopen", "getenv"]
     },
     "sinks":{
         "file_system_access": [
@@ -138,13 +140,13 @@
                 {"type": "current_call_matches_ast", "call": ["chmod", "fchmod"], "contains_names": ["S_IRUSR"]},
                 {"type": "current_call_matches_ast", "call": ["chmod", "fchmod"], "contains_names": ["S_IWUSR"]}
                 ],
-                "curl_non_url_option": [
+            "curl_non_url_option": [
                     {
                     "type": "node_matches_xpath",
                     "xpath": "not(ancestor::src:call[1]//src:argument_list//src:name[text()='CURLOPT_URL'])"
                     }
                 ],
-                "starttls_upgrade": [
+            "starttls_upgrade": [
                     {
                     "type": "function_has_call_matching_ast",
                     "call": ["curl_easy_setopt"],
@@ -156,13 +158,21 @@
                     "contains_names": ["CURLOPT_USE_SSL", "CURLUSESSL_TRY"]
                     }
                 ],
-                "allowlist_validation": [],
-                "file_extension_validation":[],
-                "bounds_checked_array_access": [
+            "allowlist_validation": [],
+            "file_extension_validation":[],
+            "bounds_checked_array_access": [
                     {"type": "binary_comparison", "operators": ["<", "<="], "left_exact": ["$VAR"]},
                     {"type": "binary_comparison", "operators": ["<", "<="], "right_exact": ["$VAR"]}
                 ],
-                "manual_string_sanitization":[]
+            "manual_string_sanitization":[],
+            "null_checked": [
+                    {"type": "var_truthiness_check", "scope": "enclosing", "require_state": "truthy"}
+                ],
+                "safe_metadata_extraction": [
+                    {"type": "var_has_attribute", "attribute": "size"},
+                    {"type": "var_has_attribute", "attribute": "length"},
+                    {"type": "var_has_attribute", "attribute": "st_size"} 
+                ]
     },
     "patterns":{
         "insecure_certificate_validation": {
@@ -213,7 +223,7 @@
             "unsafe_deserialization_kwargs":{},
             "unsafe_dict_access":{},
             "unsafe_array_access": {
-                "forbidden_subscripts": ["argv"]
+                "forbidden_subscripts": ["argv","array","buffer"]
             }
     }
 }
