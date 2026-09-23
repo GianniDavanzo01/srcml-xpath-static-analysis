@@ -144,7 +144,7 @@ class LanguageAdapter(ABC):
 
     @abstractmethod
     def get_parameter_name_and_type(self, param_node, namespaces):
-            """Estrae nome e tipo da un parametro (<src:parameter>) in Python."""
+            """Estrae nome e tipo da un parametro (<src:parameter>)."""
 
     @abstractmethod
     def member_access_operator(self) -> str:
@@ -189,6 +189,18 @@ class LanguageAdapter(ABC):
         Lo scope_node e' il blocco di codice del catch, cosi' la variabile
         viene considerata taintata SOLO li' dentro, non in tutta la funzione."""
 
+
+    @abstractmethod
+    def requires_pointer_type_for_reference_comparison(self) -> bool:
+        """True se reference_comparison_operators() è ambiguo senza conoscere
+            il tipo degli operandi (C: '==' vale sia per interi sia per puntatori).
+            Python/Java: False, l'operatore da solo è già inequivocabile."""
+
+    @abstractmethod
+    def resolve_variable_type(self, name_node, var_name, ns) -> str | None:
+        """Cerca la dichiarazione (locale o parametro) di var_name nello scope
+    di name_node e ritorna il tipo dichiarato (es. 'char *'), o None se non
+    trovato. Usato solo dai linguaggi con requires_pointer_type_for_reference_comparison() = True."""
 # ---------------------------------------------------------------------- #
 # Implementazione Python
 # ---------------------------------------------------------------------- #
@@ -433,6 +445,12 @@ class PythonAdapter(LanguageAdapter):
             if block:
                 bindings.append((var_name, block[0]))
         return bindings
+
+    def requires_pointer_type_for_reference_comparison(self) -> bool:
+        return False
+
+    def resolve_variable_type(self, name_node, var_name, ns) -> str | None:
+        return None
 
 # ---------------------------------------------------------------------- #
 # Implementazione Java
@@ -708,6 +726,12 @@ class JavaAdapter(LanguageAdapter):
                 bindings.append((var_name, block[0]))
         return bindings
 
+    def requires_pointer_type_for_reference_comparison(self) -> bool:
+        return False
+
+    def resolve_variable_type(self, name_node, var_name, ns) -> str | None:
+        return None
+
 # ---------------------------------------------------------------------- #
 # Implementazione C
 # ---------------------------------------------------------------------- #
@@ -939,6 +963,37 @@ class CAdapter(LanguageAdapter):
     def find_exception_bindings(self, tree, ns) -> list:
         return []   # il C non ha un meccanismo di eccezioni: CWE-209 in questa forma
                 # (variabile d'eccezione -> risposta HTTP) non è applicabile
+
+
+    def requires_pointer_type_for_reference_comparison(self) -> bool:
+        return True   # == in C è ambiguo (numerico vs puntatore) senza sapere il tipo
+
+    def resolve_variable_type(self, name_node, var_name, ns) -> str | None:
+        """Cerca la dichiarazione (locale o parametro) di var_name e ritorna
+        il suo tipo dichiarato, es. 'char *'."""
+        xpath_query_local = (
+            f"ancestor::*[self::src:function or self::src:unit][1]"
+            f"//src:decl[src:name[text()='{var_name}']]"
+        )
+        decls = name_node.xpath(xpath_query_local, namespaces=ns)
+        if not decls:
+            xpath_query_param = (
+                f"ancestor::src:function[1]//src:parameter_list//src:decl[src:name[text()='{var_name}']]"
+            )
+            decls = name_node.xpath(xpath_query_param, namespaces=ns)
+        if not decls:
+            return None
+
+        decl_node = decls[-1]
+        seen = set()
+        while decl_node is not None and id(decl_node) not in seen:
+            seen.add(id(decl_node))
+            type_nodes = decl_node.xpath("./src:type", namespaces=ns)
+            if type_nodes and type_nodes[0].get("ref") != "prev":
+                return "".join(type_nodes[0].itertext()).strip()
+            prev_decl = decl_node.xpath("preceding-sibling::src:decl[1]", namespaces=ns)
+            decl_node = prev_decl[0] if prev_decl else None
+        return None
 
 
 # ---------------------------------------------------------------------- #

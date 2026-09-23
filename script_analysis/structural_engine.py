@@ -281,7 +281,6 @@ def _run_missing_while_increments(tree, rule, findings, adapter, imports):
 
  
 
-
 def _run_reference_comparisons(tree, rule, findings, adapter, imports):
     ref_ops = adapter.reference_comparison_operators()
     if not ref_ops:
@@ -290,8 +289,10 @@ def _run_reference_comparisons(tree, rule, findings, adapter, imports):
     safe_contexts = rule.get("safe_contexts", [])
     op_xpath = " or ".join(f"text()='{op}'" for op in ref_ops)
     operators = tree.xpath(f".//src:operator[{op_xpath}]", namespaces=NS)
+    needs_pointer_check = adapter.requires_pointer_type_for_reference_comparison()
 
     for op in operators:
+        lhs_nodes = op.xpath("./preceding-sibling::*[not(self::src:comment)]", namespaces=NS)
         rhs_nodes = op.xpath("./following-sibling::*[not(self::src:comment)]", namespaces=NS)
         if not rhs_nodes:
             continue
@@ -300,6 +301,15 @@ def _run_reference_comparisons(tree, rule, findings, adapter, imports):
 
         if adapter.is_none_literal(rhs_text) or adapter.is_boolean_literal(rhs_text):
             continue
+
+        if needs_pointer_check:
+            if not lhs_nodes:
+                continue
+            lhs_text = "".join(lhs_nodes[-1].itertext()).strip()
+            lhs_type = adapter.resolve_variable_type(op, lhs_text, NS)
+            rhs_type = adapter.resolve_variable_type(op, rhs_text, NS)
+            if not (lhs_type and "*" in lhs_type and rhs_type and "*" in rhs_type):
+                continue   # non entrambi puntatori -> confronto numerico legittimo, non segnalare
 
         if is_in_safe_context(op, safe_contexts, None, adapter, imports):
             continue

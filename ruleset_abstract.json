@@ -247,6 +247,12 @@
   ]
 },
 {
+  "rule_id": "CWE-595-COMPARISON-OF-OBJECT-REFERENCES",
+  "type": "structural",
+  "vulnerabilities": ["CWE-595"],
+  "reference_comparisons": true
+},
+{
   "rule_id": "CWE-601-OPEN-REDIRECT",
   "type": "taint",
   "vulnerabilities": ["CWE-601"],
