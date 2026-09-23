@@ -108,8 +108,14 @@ def _sink_method_call(uso, spec: dict, fstring_nodes: list, adapter=None, import
     if not arg_list:
         return False
 
-    args_text = "".join(arg_list[0].itertext())
-    return any(val in args_text for val in arg_contains)
+    string_literals = arg_list[0].xpath(".//src:literal[@type='string']", namespaces=NS)
+    for literal_node in string_literals:
+        raw_text = "".join(literal_node.itertext())
+        clean_text = adapter.normalize_string_literal(raw_text) if adapter else raw_text
+        if any(val in clean_text for val in arg_contains):
+            return True
+            
+    return False
 
 
 # def _sink_call_with_var_arg(uso, spec: dict, fstring_nodes: list) -> bool:
@@ -413,7 +419,7 @@ def _sink_subscript_usage(uso, spec: dict, fstring_nodes: list, adapter=None, im
         return bool(target.xpath("boolean(ancestor::src:return[1] and not(ancestor::src:call))", namespaces=NS))
         
     elif subtype == "method_call":
-        ops = adapter.member_access_operators() if adapter else ["."]
+        ops = adapter.member_access_operator() if adapter else ["."]
         ops_xpath = " or ".join(f"text()='{op}'" for op in ops)
         return bool(target.xpath(f"following-sibling::src:operator[1][{ops_xpath}]", namespaces=NS))
         
@@ -470,18 +476,39 @@ def match_sink(uso, sink_spec, fstring_nodes: list, adapter=None, imports=None) 
     if not is_match:
         return False
 
-    if isinstance(sink_spec, dict) and "requires_text_any" in sink_spec:
+    if isinstance(sink_spec, dict):
+        # 1. FILTRO TESTUALE GLOBALE (Cerca ovunque: metodi, variabili, codice)
+        # Ideale per regole Java come: "requires_text_any": ["getHeaders"]
+        if "requires_text_any" in sink_spec:
             required_keywords = sink_spec["requires_text_any"]
             if required_keywords:
-                # Riprendiamo l'XPath originale pulito (che restituisce sicuramente una lista)
                 stmt = uso.xpath("ancestor::src:expr_stmt | ancestor::src:return | ancestor::src:if_stmt", namespaces=NS)
-                
-                # usiamo [-1] per prendere l'elemento più vicino/interno
                 target_node = stmt[-1] if stmt else uso
-
                 node_text = "".join(target_node.itertext()).upper()
 
                 if not any(kw.upper() in node_text for kw in required_keywords):
+                    return False
+
+        # 2. FILTRO SUI LETTERALI (Cerca SOLO nelle stringhe hardcodate)
+        # Ideale per Path Traversal o SQLi: "requires_literal_any": ["/", "..", "SELECT"]
+        if "requires_literal_any" in sink_spec:
+            required_literals = sink_spec["requires_literal_any"]
+            if required_literals:
+                stmt = uso.xpath("ancestor::src:expr_stmt | ancestor::src:return | ancestor::src:if_stmt", namespaces=NS)
+                target_node = stmt[-1] if stmt else uso
+                
+                string_literals = target_node.xpath(".//src:literal[@type='string']", namespaces=NS)
+                keyword_found = False
+                
+                for lit in string_literals:
+                    raw_text = "".join(lit.itertext())
+                    clean_text = (adapter.normalize_string_literal(raw_text) if adapter else raw_text).upper()
+                    
+                    if any(kw.upper() in clean_text for kw in required_literals):
+                        keyword_found = True
+                        break
+                        
+                if not keyword_found:
                     return False
 
     return True
