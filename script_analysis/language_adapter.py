@@ -621,6 +621,14 @@ class JavaAdapter(LanguageAdapter):
                 )
                 decls = call_node.xpath(xpath_query_param, namespaces=ns)
 
+            # 3. fallback: campi della classe che racchiude (se la call e' dentro un metodo)
+            if not decls:
+                xpath_query_field = (
+                    f"ancestor::src:class[1]/src:block/src:decl_stmt"
+                    f"/src:decl[src:name[text()='{var_name}']]"
+                )
+                decls = call_node.xpath(xpath_query_field, namespaces=ns)
+
             if decls:
                 decl_node = decls[-1]
                 var_type = None
@@ -646,7 +654,6 @@ class JavaAdapter(LanguageAdapter):
 
                 if var_type:
                     return f"{var_type}.{method_name}"
-
         return raw_name
 
     def string_formatting_operator_roles(self) -> dict:
