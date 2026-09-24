@@ -65,38 +65,6 @@ def get_units(tree) -> list:
     return root.xpath(".//src:unit[@filename]", namespaces=NS)
 
 
-# def analyze_unit(unit_node, compiled, xml_source: str) -> dict:
-#     adapter = get_adapter(unit_node)          
-#     imports = adapter.resolve_imports(unit_node, NS)
-    
-#     ctx = UnitContext(unit_node, adapter)
-#     findings = []
-
-#     # Esecuzioni ottimizzate
-#     run_forbidden_functions_indexed(ctx, compiled, findings, adapter, imports)
-#     run_forbidden_names_indexed(ctx, compiled, findings, adapter, imports)
-
-#     for rule in compiled.rules:
-#         # USA LA TUA FUNZIONE: passa imports=imports
-#         if not check_required_imports(unit_node, rule, NS, imports=imports):
-#             continue
-            
-#         rule_type = rule.get("type")
-#         if rule_type == "taint":
-#             findings.extend(run_taint_rule(unit_node, rule, adapter, imports, ctx=ctx))
-#         elif rule_type == "structural":
-#             findings.extend(run_structural_rule(unit_node, rule, adapter, imports, ctx=ctx))
-
-#     return {
-#         "source_file": unit_node.get("filename", "Sconosciuto"),
-#         "xml_source": xml_source,
-#         "vulnerable": len(findings) > 0,
-#         "rules_summary": sorted({f.get("rule_id", "UNKNOWN") for f in findings}),
-#         "vulnerabilities_summary": sorted({v for f in findings for v in f.get("vulnerabilities", [])}),
-#         "findings_count": len(findings),
-#         "findings": findings,
-#     }
-
 def _get_compiled_ruleset(language_name: str, raw_rules: list) -> "CompiledRuleset":
     """Compila (traduce i tag del catalogo) le regole per un linguaggio, una sola volta, con cache."""
     if language_name not in _COMPILED_RULESETS_CACHE:
