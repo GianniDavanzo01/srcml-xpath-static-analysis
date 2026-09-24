@@ -108,6 +108,8 @@ def source_present(sources: list, rhs_node, source_form: str | None = None,
     - "regex": la source è una regex cruda, valutata sul testo di rhs_node.
     - assente: basta che la source compaia come <src:name>, in qualunque forma.
     """
+    op = adapter.member_access_operator()[0] if adapter and adapter.member_access_operator() else "."
+
     for source in sources:
         if source == "function_parameters":
             if node is not None and is_function_parameter(node):
@@ -130,7 +132,7 @@ def source_present(sources: list, rhs_node, source_form: str | None = None,
         if source_form == "subscript":
             for outer_name in rhs_node.xpath(".//src:name[src:index] | self::src:name[src:index]", namespaces=NS):
                 parts = outer_name.xpath("./src:name", namespaces=NS)
-                dotted = ".".join("".join(p.itertext()).strip() for p in parts) if parts else (outer_name.text or "").strip()
+                dotted = op.join("".join(p.itertext()).strip() for p in parts) if parts else (outer_name.text or "").strip()
                 if dotted == source or dotted.endswith(f".{source}"):
                     return True
             continue

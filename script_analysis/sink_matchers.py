@@ -118,34 +118,6 @@ def _sink_method_call(uso, spec: dict, fstring_nodes: list, adapter=None, import
     return False
 
 
-# def _sink_call_with_var_arg(uso, spec: dict, fstring_nodes: list) -> bool:
-# def _sink_call_with_var_arg(uso, spec, fstring_nodes, adapter=None, imports=None):
-#     """{"type": "call_with_var_arg", "call": ["re.sub", "sub"], "literal_contains": ["<script", "javascript:"]}"""
-#     target_calls = spec.get("call", [])
-#     if not target_calls:
-#         return False
-
-#     call_node = uso.xpath("ancestor::src:call[1]", namespaces=NS)
-#     if not call_node:
-#         return False
-
-#     # call_name = get_call_name(call_node[0])
-#     call_name = get_call_name(call_node[0], adapter, imports)
-#     if call_name is None:
-#         return False
-#     if not any(call_name == c or call_name.endswith(f".{c}") for c in target_calls):
-#         return False
-
-#     literal_contains = spec.get("literal_contains", [])
-#     if not literal_contains:
-#         return True
-
-#     arg_list = call_node[0].xpath("./src:argument_list", namespaces=NS)
-#     if not arg_list:
-#         return False
-#     args_text = "".join(arg_list[0].itertext())
-#     return any(val in args_text for val in literal_contains)
-
 def _sink_call_with_var_arg(uso, spec, fstring_nodes, adapter=None, imports=None):
     """
     {"type": "call_with_var_arg", "call": ["re.sub", "sub", "executeQuery"], "literal_contains": ["SELECT"]}
@@ -243,58 +215,6 @@ def _sink_return_method_call(uso, spec: dict, fstring_nodes: list, adapter=None,
     
     return bool(is_returned)
 
-
-
-# def _sink_argument_to(uso, spec: dict, fstring_nodes: list, adapter=None, imports=None) -> bool:
-
-#     """{"type": "argument_to", "functions": ["print"]}
-    
-#         la funzione verifica che uso sia argomento di una call il cui nome è esattamente uno di functions
-#     """
-#     functions = spec.get("functions", [])
-#     if not functions:
-#         return False
-
-#     call_node = uso.xpath("ancestor::src:call[1]", namespaces=NS)
-#     if not call_node:
-#         return False
-        
-#     call_name_nodes = call_node[0].xpath("./src:name", namespaces=NS)
-#     if not call_name_nodes:
-#         return False
-        
-#     call_name = "".join(call_name_nodes[0].itertext()).replace(" ", "").replace("\n", "")
-    
-#     return call_name in functions
-
-# def _sink_argument_to(uso, spec: dict, fstring_nodes: list = None, adapter=None, imports=None) -> bool:
-#     """{"type": "argument_to", "functions": ["print"]}
-#     Verifica che il nodo 'uso' sia effettivamente contenuto in un argomento 
-#     di una chiamata presente nella lista 'functions'.
-#     """
-#     functions = spec.get("functions", [])
-#     if not functions:
-#         return False
-
-#     # 1. Trova la call più vicina
-#     call_ancestors = uso.xpath("ancestor::src:call[1]", namespaces=NS)
-#     if not call_ancestors:
-#         return False
-#     call_node = call_ancestors[0]
-
-#     # 2. Verifica strutturale: 'uso' deve trovarsi dentro l'argument_list della call,
-#     #    non nel nodo del nome della call stessa (es. esclude foo(bar) dove uso è 'foo')
-#     arg_list = uso.xpath("ancestor::src:argument_list[1]", namespaces=NS)
-#     if not arg_list or arg_list[0].getparent() is not call_node:
-#         return False
-
-#     # 3. Risoluzione del nome via adapter/imports anziché tramite appiattimento di stringhe
-#     call_name = get_call_name(call_node, adapter, imports)
-#     if not call_name:
-#         return False
-
-#     # 4. Match sul nome completo o con prefisso di modulo/oggetto
-#     return any(call_name == fn or call_name.endswith(f".{fn}") for fn in functions)
     
 
 def _sink_method_call_in_if(uso, spec: dict, fstring_nodes: list, adapter=None, imports=None) -> bool:
@@ -320,26 +240,6 @@ def _sink_method_call_in_if(uso, spec: dict, fstring_nodes: list, adapter=None, 
     return bool(in_condition)
 
 
-# def _sink_keyword_argument(uso, spec: dict, fstring_nodes: list) -> bool:
-    # """{"type": "keyword_argument", "keyword": "env"}"""
-    # keyword = spec.get("keyword")
-    # if not keyword:
-    #     return False
-
-    # parent_arg = uso.xpath("ancestor::src:argument[1]", namespaces=NS)
-    # if parent_arg:
-    #     arg_node = parent_arg[0]
-    #     name_nodes = arg_node.xpath("./src:name[1]", namespaces=NS)
-    #     op_nodes = arg_node.xpath("./src:operator[1]", namespaces=NS)
-        
-    #     if name_nodes and op_nodes:
-    #         kw_name = "".join(name_nodes[0].itertext()).strip()
-    #         op = "".join(op_nodes[0].itertext()).strip()
-            
-    #         if kw_name == keyword and op == "=":
-    #             return True
-                
-    # return False
 
 def _sink_keyword_argument(uso, spec: dict, fstring_nodes: list, adapter=None, imports=None) -> bool:
     """{"type": "keyword_argument", "keyword": "env"}"""
@@ -441,7 +341,6 @@ SINK_MATCHERS = {
     "call_with_var_arg": _sink_call_with_var_arg,
     "flat_call_arg": _sink_flat_call_arg,
     "return_method_call": _sink_return_method_call,
-    # "argument_to": _sink_argument_to,
     "method_call_in_if": _sink_method_call_in_if,
     "keyword_argument": _sink_keyword_argument,
     "subscript_key_assign_rhs": _sink_subscript_key_assign_rhs,

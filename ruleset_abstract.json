@@ -75,7 +75,8 @@
   "sanitizers": [
     {"tag": "XSS_sanitizers"},
     {"tag": "cast_to_integer"}
-  ]
+  ],
+  "safe_contexts": [{"tag": "allowlist_validation"}]
 },
 {
   "rule_id": "CWE-89-SQLI",
@@ -87,6 +88,7 @@
   "sinks": [
     {"tag": "sql_execution"}
   ],
+  "sanitizers": [{"tag": "cast_to_integer"}],
   "safe_contexts": [
     {"tag": "sql_parameterization"}
   ]
@@ -104,14 +106,16 @@
   "sanitizers": [
     {"tag": "ldap_escape_sanitizers"},
     {"tag": "cast_to_integer"}
-  ]
+  ],
+  "safe_contexts": [{"tag": "allowlist_validation"}]
 },
 {
   "rule_id": "CWE-95-EVAL-INJECTION",
   "type": "structural",
   "vulnerabilities": ["CWE-95"],
   "forbidden_functions": [{"tag": "dynamic_code_execution"}],
-  "excluded_functions": [{"tag": "eval_false_positive_exceptions"}]
+  "excluded_functions": [{"tag": "eval_false_positive_exceptions"}],
+  "safe_contexts": [{"type": "all_args_are_literals"}]
 },
 {
   "rule_id": "CWE-113-HTTP-RESPONSE-SPLITTING",
@@ -125,7 +129,8 @@
   ],
   "sanitizers": [
     {"tag": "crlf_sanitizers"}
-  ]
+  ],
+  "safe_contexts": [{"tag": "allowlist_validation"}]
 },
 {
   "rule_id": "CWE-129-IMPROPER-ARRAY-INDEX-VALIDATION",
@@ -201,7 +206,8 @@
   "vulnerabilities": ["CWE-328"],
   "forbidden_functions": [
     {"tag": "weak_hash_functions"}
-  ]
+  ],
+  "safe_contexts":[{"type":"non_security_hash_usage"}]
 },
 {
   "rule_id": "CWE-338-WEAK-PRNG",
@@ -287,7 +293,8 @@
   "vulnerabilities": ["CWE-611"],
   "forbidden_functions": [
     {"tag": "unsafe_xml_parsers"}
-  ]
+  ],
+  "safe_contexts":[{"tag":"xxe_safe_configuration"}]
 },
 {
   "rule_id": "CWE-614-SENSITIVE-COOKIE-INSECURE",
@@ -307,7 +314,7 @@
     "forbidden_functions": [
       {"tag": "socket_primitives"}
     ],
-    "safe_contexts": []
+    "safe_contexts": [{"type": "all_args_are_literals"}]
 },
 {
   "rule_id": "CWE-732-INCORRECT-PERMISSION-ASSIGNMENT",

@@ -8,7 +8,7 @@ con il relativo registro e dispatcher.
 
 import re
 
-from common import NS, get_call_name, call_arguments_match_ast, find_assignments
+from common import NS, get_call_name, call_arguments_match_ast, find_assignments,_pos_key
 
 from language_adapter import PythonAdapter
 
@@ -184,21 +184,42 @@ def _safe_context_function_has_method_call(node, spec: dict, var_name: str | Non
 
 
 def _safe_context_args_contain_string_literal(node, spec: dict, var_name: str | None = None, adapter=None, imports=None) -> bool:
-    arg_list = node.xpath("./src:argument_list", namespaces=NS)
-    if not arg_list:
+    # 1. Ricerca sicura: partiamo sempre dal nodo Call che racchiude l'istruzione
+    call_nodes = node.xpath("ancestor-or-self::src:call[1]", namespaces=NS)
+    if not call_nodes:
         return False
         
-    if arg_list[0].xpath(".//src:name", namespaces=NS):
+    arg_lists = call_nodes[0].xpath("./src:argument_list", namespaces=NS)
+    if not arg_lists:
         return False
         
-    string_literals = arg_list[0].xpath(".//src:literal[@type='string']", namespaces=NS)
+    # 2. Controllo granulare delle variabili (ignorando le chiavi dei kwargs)
+    arguments = arg_lists[0].xpath("./src:argument", namespaces=NS)
+    for arg in arguments:
+        names = arg.xpath(".//src:name", namespaces=NS)
+        if names:
+            if adapter and hasattr(adapter, 'is_kwarg') and adapter.is_kwarg(arg, NS):
+                # Se è un kwarg e ha più di un nome, significa che anche il valore è una variabile
+                if len(names) > 1:
+                    return False
+            else:
+                # E' un argomento posizionale che contiene una variabile
+                return False
+                
+        # (Opzionale ma consigliato) Blocchiamo anche funzioni annidate: es. eval("1", request.get())
+        if arg.xpath(".//src:call", namespaces=NS):
+            return False
+
+    # 3. Requisito base: ci DEVE essere almeno una stringa letterale
+    string_literals = arg_lists[0].xpath(".//src:literal[@type='string']", namespaces=NS)
     if not string_literals:
         return False
 
-
+    # 4. Deleghiamo il controllo dell'interpolazione all'adapter passando il NODO
     for literal in string_literals:
-        testo_stringa = "".join(literal.itertext()).strip()
-        if adapter and adapter.is_interpolated_string(testo_stringa):
+        # L'adapter gestirà l'estrazione testuale o l'analisi dei sottonodi
+        testo = "".join(literal.itertext())
+        if adapter and adapter.is_interpolated_string(testo):
             return False
             
     return True
@@ -737,6 +758,129 @@ def _safe_context_try_after_source(node, spec: dict, var_name: str | None = None
     return True
 
 
+def _safe_context_var_falsy_guard_clause(node, spec: dict, var_name=None, adapter=None, imports=None) -> bool:
+    if not var_name:
+        return False
+
+    _adapter = adapter or PythonAdapter()
+    neg_op = _adapter.negation_operator()
+    null_ops = _adapter.null_comparison_operators()
+    falsy_ops = null_ops["falsy"]
+
+    scope = _function_or_unit_scope(node)
+    all_if_stmts = scope.xpath(".//src:if_stmt", namespaces=NS)
+    node_key = _pos_key(node)
+
+    def _adjacent_is_and(boundary_node, direction: str) -> bool:
+        """Vero se il fratello immediatamente prima/dopo boundary_node e' l'operatore 'and'."""
+        axis = "preceding-sibling" if direction == "prev" else "following-sibling"
+        adj = boundary_node.xpath(f"./{axis}::*[not(self::src:comment)][1]", namespaces=NS)
+        return bool(adj) and "".join(adj[0].itertext()).strip() == "and"
+
+    for if_stmt in all_if_stmts:
+        if _pos_key(if_stmt) >= node_key:
+            continue
+
+        cond = if_stmt.xpath("./src:if/src:condition", namespaces=NS)
+        if not cond:
+            continue
+        cond = cond[0]
+
+        block = if_stmt.xpath("./src:if/src:block[1]", namespaces=NS)
+        exits_flow = block and block[0].xpath(
+            ".//src:return[not(ancestor::src:function)] | .//src:raise[not(ancestor::src:function)] | "
+            ".//src:continue[not(ancestor::src:function)] | .//src:break[not(ancestor::src:function)]",
+            namespaces=NS
+        )
+        if not exits_flow:
+            continue
+
+        # --- Condizione falsy: negazione (not var) ---
+        for nop in cond.xpath(f".//src:operator[text()='{neg_op}']", namespaces=NS):
+            next_node = nop.xpath("./following-sibling::*[not(self::src:comment)][1]", namespaces=NS)
+            if next_node and next_node[0].tag.endswith("name"):
+                if "".join(next_node[0].itertext()).strip() == var_name:
+                    #scarta se "not var" e' congiunto in AND con altro -->anche se fosse True che la variabile è nulla 
+                    #se l'altra condizione è False non si entra nell'if e si rischia di eseguire un operazione con la variabile nulla.
+                    if _adjacent_is_and(nop, "prev") or _adjacent_is_and(next_node[0], "next"):
+                        continue
+                    return True
+
+        # --- Condizione falsy: confronto esplicito (var is None) ---
+        for eq_op in cond.xpath(".//src:operator", namespaces=NS):
+            op_text = "".join(eq_op.itertext()).strip()
+            if op_text not in falsy_ops:
+                continue
+            lhs = eq_op.xpath("./preceding-sibling::*[not(self::src:comment)][1]", namespaces=NS)
+            rhs = eq_op.xpath("./following-sibling::*[not(self::src:comment)][1]", namespaces=NS)
+            if not lhs or not rhs:
+                continue
+            lhs_text = "".join(lhs[0].itertext()).strip()
+            rhs_text = "".join(rhs[0].itertext()).strip()
+            if (lhs_text == var_name and _adapter.is_none_literal(rhs_text)) or \
+               (_adapter.is_none_literal(lhs_text) and rhs_text == var_name):
+                # NUOVO: scarta se "var is None" e' congiunto in AND con altro
+                if _adjacent_is_and(lhs[0], "prev") or _adjacent_is_and(rhs[0], "next"):
+                    continue
+                return True
+
+    return False
+
+
+def _safe_context_all_args_are_literals(node, spec: dict, var_name=None, adapter=None, imports=None) -> bool:
+    """
+    {"type": "all_args_are_literals"}
+    Verifica strutturalmente che tutti gli argomenti di una chiamata siano
+    esclusivamente letterali, rifiutando qualsiasi variabile, chiamata a
+    funzione o stringa con interpolazione (es. f-string Python, cioe' una
+    stringa letterale che pero' incorpora una variabile al suo interno).
+    """
+    # 1. Identifica la chiamata nell'AST
+    call_nodes = node.xpath("ancestor-or-self::src:call[1]", namespaces=NS)
+    if not call_nodes:
+        return False
+
+    arg_lists = call_nodes[0].xpath("./src:argument_list", namespaces=NS)
+    if not arg_lists:
+        return True  # Chiamata senza argomenti (es. func()), non c'e' input dinamico
+
+    # 2. Iterazione strutturale sui singoli argomenti (nodi <src:argument>)
+    arguments = arg_lists[0].xpath("./src:argument", namespaces=NS)
+
+    for arg in arguments:
+        # A. Controllo chiamate annidate: se esiste un nodo <src:call> e' subito dinamico
+        if arg.xpath(".//src:call", namespaces=NS):
+            return False
+
+        # B. Estrazione dei nodi variabile (<src:name>)
+        names = arg.xpath(".//src:name", namespaces=NS)
+
+        # C. Valutazione logica basata esclusivamente sul conteggio dei nodi
+        if names:
+            # Deleghiamo all'adapter (Indipendenza dal Linguaggio) la verifica del Keyword Argument
+            if adapter and adapter.is_kwarg(arg, NS):
+                # Strutturalmente, in un kwarg il primo <src:name> e' la chiave (es. 'timeout' in timeout=5)
+                # Se c'e' PIU' di un <src:name>, significa che anche il valore assegnato e' una variabile.
+                if len(names) > 1:
+                    return False
+            else:
+                # Se non e' un kwarg, la presenza di QUALSIASI <src:name> indica
+                # l'uso di una variabile posizionale.
+                return False
+
+        # D. Controllo interpolazione: una f-string e' un <src:literal> "opaco"
+        if adapter:
+            string_literals = arg.xpath(".//src:literal[@type='string']", namespaces=NS)
+            for lit in string_literals:
+                testo = "".join(lit.itertext())
+                if adapter.is_interpolated_string(testo):
+                    return False
+
+    # Se arriviamo qui, gli argomenti contengono solo nodi <src:literal> non
+    # interpolati o nodi strutturali innocui (come <src:operator> per creare
+    # tuple o liste).
+    return True
+
 SAFE_CONTEXT_MATCHERS = {
     "parametrized_query": _safe_context_parametrized_query,
     "receiver_of_method": _safe_context_receiver_of_method,
@@ -761,6 +905,8 @@ SAFE_CONTEXT_MATCHERS = {
     "receiver_of_method_with_arg": _safe_context_receiver_of_method_with_arg,
     "function_has_call_with_var_arg": _safe_context_function_has_call_with_var_arg,
     "try_after_source": _safe_context_try_after_source,
+    "var_falsy_guard_clause":_safe_context_var_falsy_guard_clause,
+    "all_args_are_literals": _safe_context_all_args_are_literals,
 }
 
 

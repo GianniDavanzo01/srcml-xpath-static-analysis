@@ -8,7 +8,7 @@
       "request.getParameter",
       "request.getHeader"
     ],
-     "nullable_returning_calls": ["System.getenv", "Map.get", "Optional.orElse"]
+     "nullable_returning_calls": ["System.getenv", "Map.get", "Optional.orElse","pattern.matcher"]
   },
   "sinks": {
     "sql_execution": [
@@ -28,7 +28,7 @@
       } 
       ],
     "path_concatenation": [
-      {"type": "concat","requires_text_any": ["/", "\\", ".."]},
+      {"type": "concat","requires_literal_any": ["/", "\\", ".."]},
       {"type": "call_with_var_arg", "call": ["get", "resolve"]}
     ],
     "os_command_execution": [
@@ -235,11 +235,15 @@
         }
       ],
       "null_checked": [
-        {"type": "var_truthiness_check", "scope": "enclosing", "require_state": "truthy"}
+        {"type": "var_truthiness_check", "scope": "enclosing", "require_state": "truthy"},
+        {"type": "var_falsy_guard_clause"}
       ],
       "safe_metadata_extraction": [
         {"type": "receiver_of_method", "method": "getSize"},
         {"type": "receiver_of_method", "method": "getContentType"}
+      ],
+      "xxe_safe_configuration": [
+        {"type": "function_has_call_matching_ast", "call": ["setFeature"], "contains_string_containing": ["disallow-doctype-decl"]}
       ]
   },
   "patterns": {

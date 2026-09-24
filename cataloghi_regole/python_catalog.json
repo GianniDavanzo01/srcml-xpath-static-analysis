@@ -28,8 +28,8 @@
           }
           ],
       "path_concatenation": [
-          {"type": "concat","requires_text_any": ["/", "\\", ".."]},
-          {"type": "fstring","requires_text_any": ["/", "\\", ".."]},
+          {"type": "concat","requires_literal_any": ["/", "\\", ".."]},
+          {"type": "fstring","requires_literal_any": ["/", "\\", ".."]},
           {
             "type": "call_with_var_arg",
             "call": ["os.path.join", "join"]
@@ -100,7 +100,7 @@
           "socket.socket","socket.connect","socket.bind","socket.listen",
           "socket.accept","socket.send","socket.recv","socket.sendto",
           "socket.recvfrom","socket.sendmsg","socket.recvmsg","socket.setsockopt",
-          "socket.getsockopt","socket.getsockname","socket.getpeername","socket.shutdown"
+          "socket.getsockopt","socket.getsockname","socket.getpeername","socket.shutdown","socket.create_connection","socket.create_server"
         ],
         "weak_ciphers_and_modes": ["DES.new", "modes.ECB", "modes.CBC", "padding.PKCS1v15"],
         "weak_hash_functions": ["md5", "sha1","sha256", "hashlib.new"],
@@ -179,6 +179,9 @@
             "require": "all"
           }
         ],
+      "non_security_hash_usage": [
+          {"type": "call_with_kwarg", "call": ["md5", "sha1", "hashlib.new"], "kwargs": {"usedforsecurity": "False"}}
+        ],
       "resource_safe_contexts": [
           {
             "type": "function_has_file_size_check",
@@ -218,7 +221,7 @@
             "arg_value": ".png" 
           }
         ],
-        "bounds_checked_array_access":{},
+        "bounds_checked_array_access":[],
         "manual_string_sanitization": [
           {
             "type": "function_has_method_call",
@@ -227,12 +230,16 @@
           }
         ],
         "null_checked": [
-          {"type": "var_truthiness_check", "scope": "enclosing", "require_state": "truthy"}
+          {"type": "var_truthiness_check", "scope": "enclosing", "require_state": "truthy"},
+          {"type": "var_falsy_guard_clause"}
         ],
         "safe_metadata_extraction": [
           {"type": "var_has_attribute", "attribute": "size"},
           {"type": "var_has_attribute", "attribute": "content_length"},
           {"type": "var_has_attribute", "attribute": "content_type"}
+        ],
+        "xxe_safe_configuration": [
+          {"type": "call_with_kwarg", "call": ["XMLParser"], "kwargs": {"resolve_entities": "False"}}
         ]
   },
   "patterns": {

@@ -166,7 +166,8 @@
                 ],
             "manual_string_sanitization":[],
             "null_checked": [
-                    {"type": "var_truthiness_check", "scope": "enclosing", "require_state": "truthy"}
+                    {"type": "var_truthiness_check", "scope": "enclosing", "require_state": "truthy"},
+                    {"type": "var_falsy_guard_clause"}
                 ],
                 "safe_metadata_extraction": [
                     {"type": "var_has_attribute", "attribute": "size"},

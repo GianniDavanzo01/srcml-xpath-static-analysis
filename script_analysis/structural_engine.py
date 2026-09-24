@@ -89,10 +89,18 @@ def _run_source_operator_usage(tree, rule, findings, adapter, imports, catalog=N
                         break
                         
                 # CASO 2: La sorgente è una variabile o proprietà (es. request.data)
-                # Estraiamo in modo sicuro il testo dai nodi name ignorando i tag intermedi
+                # Estraiamo in modo sicuro il testo dai nodi name ignorando i tag intermedi.
+                # Per ciascun candidato ricostruiamo il nome puntato solo dai <name> figli
+                # diretti (escludendo eventuali <index>), cosi' un subscript come
+                # request.args['id'] non contamina il confronto col contenuto tra [ ].
                 names = sibling.xpath("descendant-or-self::src:name", namespaces=NS)
                 for n in names:
-                    n_text = "".join(n.itertext()).replace(" ", "")
+                    op = adapter.member_access_operator()[0] if adapter and adapter.member_access_operator() else "."
+                    parts = n.xpath("./src:name", namespaces=NS)
+                    if parts:
+                        n_text = op.join("".join(p.itertext()).strip() for p in parts)
+                    else:
+                        n_text = "".join(n.itertext()).replace(" ", "")
                     if n_text in source_names:
                         match_found = True
                         matched_source = n_text
