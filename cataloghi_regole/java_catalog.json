@@ -161,7 +161,16 @@
         "contains_any_name": ["password", "Password", "pwd", "secret", "Secret",
                             "token", "Token", "api_key", "apikey", "private_key"]
       }
-    ]
+    ],
+    "obsolete_functions": ["Thread.stop", "Thread.suspend", "Thread.resume", "Runtime.exec"],
+    "weak_password_hashing": [
+        {
+          "type": "call_matches_ast",
+          "call": ["MessageDigest.getInstance"],
+          "contains_string_containing": ["MD5", "SHA-1"],
+          "contains_any_name": ["password", "passwd", "pwd"]
+        }
+      ]
 
   },
   "excluded_functions": {

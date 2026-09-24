@@ -170,6 +170,17 @@
   ]
 },
 {
+  "rule_id": "CWE-259-HARDCODED-PASSWORD",
+  "type": "structural",
+  "vulnerabilities": ["CWE-259"],
+  "sensitive_var_patterns": [
+    "password", "passwd", "pwd", "pass",
+    "secretkey", "secret_key",
+    "credential", "credentials",
+    "passphrase", "pass_phrase"
+  ]
+},
+{
   "rule_id": "CWE-295-IMPROPER-CERTIFICATE-VALIDATION",
   "type": "structural",
   "vulnerabilities": ["CWE-295"],
@@ -261,6 +272,12 @@
   ]
 },
 {
+  "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+  "type": "structural",
+  "vulnerabilities": ["CWE-477"],
+  "forbidden_functions": [{"tag": "obsolete_functions"}]
+},
+{
   "rule_id": "CWE-489-ACTIVE-DEBUG",
   "type": "structural",
   "vulnerabilities": ["CWE-489"],
@@ -335,6 +352,13 @@
     "safe_contexts": [{"type": "all_args_are_literals"}]
 },
 {
+  "rule_id": "CWE-703-IMPROPER-EXCEPTION-HANDLING",
+  "type": "structural",
+  "description": "Applicabile a Python e Java (linguaggi con gestione eccezioni strutturata)",
+  "vulnerabilities": ["CWE-703"],
+  "empty_catch_blocks": true
+},
+{
   "rule_id": "CWE-732-INCORRECT-PERMISSION-ASSIGNMENT",
   "type": "structural",
   "vulnerabilities": ["CWE-732"],
@@ -360,6 +384,12 @@
   "type": "structural",
   "vulnerabilities": ["CWE-835"],
   "missing_while_increments": [{}]
+},
+{
+  "rule_id": "CWE-916-WEAK-PASSWORD-HASH",
+  "type": "structural",
+  "vulnerabilities": ["CWE-916"],
+  "forbidden_functions": [{"tag": "weak_password_hashing"}]
 },
 {
   "rule_id": "CWE-918-SSRF",

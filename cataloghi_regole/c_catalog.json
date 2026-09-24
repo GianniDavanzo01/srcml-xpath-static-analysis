@@ -120,7 +120,16 @@
                 "contains_any_name": ["password", "Password", "pwd", "secret", "Secret",
                             "token", "Token", "api_key", "apikey", "private_key"]
             }
-        ]
+        ],
+        "obsolete_functions": ["gets", "strtok", "scanf", "sprintf", "strcpy", "strcat"],
+        "weak_password_hashing": [
+            "crypt",
+            {
+                "type": "call_matches_ast",
+                "call": ["MD5", "SHA1"],
+                "contains_any_name": ["password", "passwd", "pwd"]
+            }
+            ]
     },
     "excluded_functions":{
         "safe_prng_exceptions": []

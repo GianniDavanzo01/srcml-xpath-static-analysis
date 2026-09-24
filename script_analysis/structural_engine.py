@@ -177,16 +177,16 @@ def _run_forbidden_function_defs(tree, rule, findings, adapter, imports):
                     continue
                     
             if exact_body in ["{}", "empty"]:
-                # Ispezioniamo strutturalmente il contenuto del blocco
                 block_content = func_node.xpath("./src:block/src:block_content", namespaces=NS)
                 if not block_content:
                     continue
-                
-                # Un blocco è "vuoto" se non ha figli eccetto commenti (o il tag 'pass' di Python)
-                valid_stmts = block_content[0].xpath("./*[not(self::src:comment or self::src:pass)]", namespaces=NS)
-                
+
+                valid_stmts = block_content[0].xpath(
+                    "./*[not(self::src:comment or self::src:pass or self::src:return[not(src:expr)])]",
+                    namespaces=NS
+                )
                 if len(valid_stmts) > 0:
-                    continue  # Il metodo contiene codice effettivo
+                    continue
 
             if is_in_safe_context(func_node, safe_contexts, None, adapter, imports):
                 continue
@@ -323,6 +323,33 @@ def _run_reference_comparisons(tree, rule, findings, adapter, imports):
             continue
 
         findings.append(build_finding(rule, op))
+
+
+
+def _run_empty_catch_blocks(tree, rule, findings, adapter, imports):
+    if not rule.get("empty_catch_blocks"):
+        return
+
+    safe_contexts = rule.get("safe_contexts", [])
+    catches = tree.xpath(".//src:catch", namespaces=NS)
+
+    for catch in catches:
+        block_content = catch.xpath("./src:block/src:block_content", namespaces=NS)
+        if not block_content:
+            continue
+
+        # Stesso criterio già usato per i corpi funzione vuoti:
+        # nessun figlio reale a parte commenti (e 'pass' per Python)
+        valid_stmts = block_content[0].xpath(
+            "./*[not(self::src:comment or self::src:pass)]", namespaces=NS
+        )
+        if len(valid_stmts) > 0:
+            continue  # il blocco fa QUALCOSA: logging, re-raise, cleanup, ecc.
+
+        if is_in_safe_context(catch, safe_contexts, None, adapter, imports):
+            continue
+
+        findings.append(build_finding(rule, catch))
 
 
 def run_structural_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> list:
@@ -467,10 +494,6 @@ def run_structural_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) 
                     if has_fstring_with_interpolation:
                         findings.append(build_finding(rule, ret))
                         break
-
-
-    if rule.get("forbidden_function_defs"):
-        _run_forbidden_function_defs(tree, rule, findings, adapter, imports)
 
 
     bad_function_defs = rule.get("bad_function_defs", [])
@@ -630,8 +653,14 @@ def run_structural_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) 
                 continue
             findings.append(build_finding(rule, ass_node))
 
+    if rule.get("forbidden_function_defs"):
+        _run_forbidden_function_defs(tree, rule, findings, adapter, imports)
+
     if rule.get("missing_while_increments"):
         _run_missing_while_increments(tree, rule, findings, adapter, imports)
+
+    if rule.get("empty_catch_blocks"):
+        _run_empty_catch_blocks(tree, rule, findings, adapter, imports)
 
     # if rule.get("unsafe_file_reads"):
     #     _run_unsafe_file_reads(tree, rule, findings, adapter, imports)
