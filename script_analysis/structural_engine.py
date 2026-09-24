@@ -428,69 +428,23 @@ def run_structural_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) 
 
     forbidden_imports = rule.get("forbidden_imports", [])
     if forbidden_imports:
-        excluded_imports = rule.get("excluded_imports", [])
-        required_safe_calls = rule.get("required_safe_calls", [])
         safe_contexts = rule.get("safe_contexts", [])
         
-        file_is_safe = False
-        if required_safe_calls:
-            all_calls = tree.xpath(".//src:call", namespaces=NS)
-            for call_node in all_calls:
-                # call_name = get_call_name(call_node)
-                call_name= get_call_name(call_node, adapter, imports)
-                if not call_name:
+        # 'imports' è la lista di ImportBinding già calcolata dall'adapter!
+        for binding in imports:
+            # Controlla se il nome canonico importato (es. 'pickle') è tra quelli vietati
+            is_forbidden = any(
+                binding.canonical_name == bad or binding.canonical_name.startswith(f"{bad}.")
+                for bad in forbidden_imports
+            )
+            
+            if is_forbidden:
+                # Se c'è un'eccezione valida, perdona questo import
+                if is_in_safe_context(binding.node, safe_contexts, None, adapter, imports):
                     continue
-                arg_list_nodes = call_node.xpath("./src:argument_list", namespaces=NS)
-                args_text = "".join(arg_list_nodes[0].itertext()).replace(" ", "").replace("\n", "") if arg_list_nodes else ""
-                
-                for safe_spec in required_safe_calls:
-                    target_calls = safe_spec.get("call", [])
-                    target_kwargs = safe_spec.get("kwargs", {})
-                    if any(call_name == c or call_name.endswith(f".{c}") for c in target_calls):
-                        if all(f"{k}={v}" in args_text for k, v in target_kwargs.items()):
-                            file_is_safe = True
-                            break
-                if file_is_safe:
-                    break
-        
-        if not file_is_safe:
-            import_nodes = tree.xpath(".//src:import", namespaces=NS)
-            for imp in import_nodes:
-                imp_text = "".join(imp.itertext()).replace(" ", "").replace("\n", "")
-                
-                is_excluded = False
-                for excl in excluded_imports:
-                    clean_excl = excl.replace(" ", "")
-                    target_excl_import = f"import{clean_excl}"
-                    target_excl_from = ""
-                    if "." in clean_excl:
-                        parts = clean_excl.rsplit('.', 1)
-                        target_excl_from = f"from{parts[0]}import{parts[1]}"
                     
-                    if target_excl_import in imp_text or (target_excl_from and target_excl_from in imp_text) or clean_excl in imp_text:
-                        is_excluded = True
-                        break
-                        
-                if is_excluded:
-                    continue
-
-                for bad_import in forbidden_imports:
-                    clean_bad = bad_import.replace(" ", "")
-                    target_import = f"import{clean_bad}"
-                    target_from = ""
-                    
-                    parts = None
-                    if "." in clean_bad:
-                        parts = clean_bad.rsplit('.', 1)
-                        target_from = f"from{parts[0]}import{parts[1]}"
-                    
-                    match_from_multiple = parts and f"from{parts[0]}import" in imp_text and parts[1] in imp_text
-                    
-                    if target_import in imp_text or (target_from and target_from in imp_text) or match_from_multiple:
-                        if is_in_safe_context(imp, safe_contexts,None, adapter, imports):
-                            continue
-                        findings.append(build_finding(rule, imp))
-                        break
+                # Usiamo il nodo salvato per indicare la riga esatta
+                findings.append(build_finding(rule, binding.node))
 
     forbidden_returns = rule.get("forbidden_returns", [])
     if forbidden_returns:

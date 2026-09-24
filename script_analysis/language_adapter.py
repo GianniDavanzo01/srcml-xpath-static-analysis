@@ -22,6 +22,8 @@ import re
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 
+from lxml import etree
+
 
 @dataclass
 class ImportBinding:
@@ -33,6 +35,7 @@ class ImportBinding:
     local_name: str
     canonical_name: str
     is_module: bool = True  # False se il binding punta a una funzione/simbolo, non a un modulo intero
+    node: etree._Element = None
 
 
 class LanguageAdapter(ABC):
@@ -312,7 +315,7 @@ class PythonAdapter(LanguageAdapter):
                     canonical = f"{module}.{symbol}" if module else symbol
                     alias_nodes = n.xpath("following-sibling::src:alias[1]//src:name", namespaces=ns)
                     local = "".join(alias_nodes[0].itertext()).strip() if alias_nodes else symbol
-                    bindings.append(ImportBinding(local_name=local, canonical_name=canonical, is_module=False))
+                    bindings.append(ImportBinding(local_name=local, canonical_name=canonical, is_module=False, node=imp))
  
             else:
                 # import MODULO [as alias] [, MODULO2 [as alias2]]
@@ -323,7 +326,7 @@ class PythonAdapter(LanguageAdapter):
                         continue
                     alias_nodes = n.xpath("following-sibling::src:alias[1]//src:name", namespaces=ns)
                     local = "".join(alias_nodes[0].itertext()).strip() if alias_nodes else canonical.split(".")[0]
-                    bindings.append(ImportBinding(local_name=local, canonical_name=canonical))
+                    bindings.append(ImportBinding(local_name=local, canonical_name=canonical,node=imp))
  
         return bindings
 
@@ -575,7 +578,8 @@ class JavaAdapter(LanguageAdapter):
                 bindings.append(ImportBinding(
                     local_name="*", 
                     canonical_name=full_name[:-2], 
-                    is_module=True
+                    is_module=True,
+                    node=imp
                 ))
             else:
                 # import java.util.List; -> local: List, canonical: java.util.List
@@ -583,7 +587,8 @@ class JavaAdapter(LanguageAdapter):
                 bindings.append(ImportBinding(
                     local_name=local_name, 
                     canonical_name=full_name, 
-                    is_module=False
+                    is_module=False,
+                    node=imp
                 ))
                 
         return bindings
@@ -858,7 +863,8 @@ class CAdapter(LanguageAdapter):
                 bindings.append(ImportBinding(
                     local_name=clean_name, 
                     canonical_name=clean_name, 
-                    is_module=True
+                    is_module=True,
+                    node=inc
                 ))
         return bindings
 
