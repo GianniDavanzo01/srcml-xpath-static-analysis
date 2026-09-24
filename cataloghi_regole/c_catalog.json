@@ -4,7 +4,7 @@
             "getenv","recv","recvfrom","read",
             "fread","fgets","scanf","gets"],
         
-            "nullable_returning_calls": ["malloc", "calloc", "realloc", "fopen", "getenv"]
+        "nullable_returning_calls": ["malloc", "calloc", "realloc", "fopen", "getenv"]
     },
     "sinks":{
         "file_system_access": [
@@ -43,6 +43,12 @@
                 "type": "call_with_var_arg",
                 "call": ["fprintf", "fputs"],
                 "literal_contains": [".csv", "csv", "CSV"]
+            }
+        ],
+        "logging_functions":[
+            {
+                "type":"call_with_var_arg",
+                "call":["syslog", "vsyslog", "fprintf"]
             }
         ]
     },
@@ -118,6 +124,15 @@
     },
     "excluded_functions":{
         "safe_prng_exceptions": []
+    },
+    "forbidden_imports": {
+        "weak_crypto_modules": ["openssl/md5.h", "openssl/des.h"]
+    },
+    "xpath_rules":{
+        "off_by_one_loop_condition": [
+            ".//src:while[.//src:condition//src:operator[text()='<='] and .//src:condition//src:call[.//src:name[text()='strlen']]]",
+            ".//src:while[.//src:condition//src:operator[text()='<='] and .//src:condition//src:sizeof]"
+        ]
     },
     "sanitizers":{
         "cast_to_integer":["atoi","atol","atoll","strtol","strtoll","strtoul"],

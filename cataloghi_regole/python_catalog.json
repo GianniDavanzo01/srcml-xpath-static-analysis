@@ -93,6 +93,12 @@
       ],
       "exception_stringify_calls": [
         {"type": "call_with_var_arg", "call": ["str", "repr", "format"]}
+      ],
+      "logging_functions": [
+        {
+          "type":"call_with_var_arg",
+          "call":["logging.info", "logging.warning", "logging.error", "logging.debug","logger.info", "logger.error"]
+        }
       ]
   },
     "forbidden_functions": {
@@ -143,10 +149,15 @@
           }
         ]
       },
-
     "excluded_functions": {
       "safe_prng_exceptions": ["secrets.choice","secrets.randbelow","secrets.randbits"],
       "eval_false_positive_exceptions": ["context.eval","ctx.eval"]
+    },
+    "forbidden_imports":{
+      "weak_crypto_modules": ["md5", "Crypto.Cipher.DES"]
+    },
+    "xpath_rules":{
+      "off_by_one_loop_condition":[".//src:while[./src:condition//src:operator[text()='<='] and ./src:condition//src:call[./src:name[text()='len']]]"]
     },
     "sanitizers": {
         "html_escape": ["escape", "escape_filter_chars", "escape_rdn"],

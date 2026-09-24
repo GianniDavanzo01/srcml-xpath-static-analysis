@@ -101,6 +101,13 @@
       {"type": "method_call", "method": "getMessage"},
       {"type": "method_call", "method": "toString"},
       {"type": "method_call", "method": "getLocalizedMessage"}
+    ],
+    "logging_functions": [
+      {
+        "type": "call_with_var_arg",
+        "call": ["Logger.info", "Logger.error", "Logger.warn", "Logger.warning",
+                  "System.out.println", "System.err.println"]
+      }
     ]
   },
   "forbidden_functions": {
@@ -160,6 +167,15 @@
   "excluded_functions": {
       "safe_prng_exceptions": ["SecureRandom"],
       "eval_false_positive_exceptions": []
+  },
+  "forbidden_imports": {
+    "weak_crypto_modules": ["org.apache.commons.codec.digest.DigestUtils"]
+  },
+  "xpath_rules":{
+      "off_by_one_loop_condition": [
+        ".//src:while[./src:condition//src:operator[text()='<='] and ./src:condition//src:name[text()='length']]",
+        ".//src:while[.//src:condition//src:operator[text()='<='] and .//src:condition//src:call[.//src:name[text()='size']]]"
+    ]
   },
   "sanitizers":{
     "cast_to_integer": ["Integer.parseInt", "Integer.valueOf","Long.parseLong","Long.valueOf"],

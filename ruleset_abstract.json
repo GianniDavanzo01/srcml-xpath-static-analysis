@@ -133,6 +133,21 @@
   "safe_contexts": [{"tag": "allowlist_validation"}]
 },
 {
+  "rule_id": "CWE-117-LOG-INJECTION",
+  "type": "taint",
+  "vulnerabilities": ["CWE-117"],
+  "sources": [
+    {"tag": "http_input"}
+  ],
+  "sinks": [
+    {"tag": "logging_functions"}
+  ],
+  "sanitizers": [
+    {"tag": "crlf_sanitizers"},
+    {"tag": "cast_to_integer"}
+  ]
+},
+{
   "rule_id": "CWE-129-IMPROPER-ARRAY-INDEX-VALIDATION",
   "type": "structural",
   "description":"Applicabile solo a Java e C",
@@ -196,6 +211,9 @@
   "rule_id": "CWE-327-BROKEN-CRYPTO-ALGORITHM",
   "type": "structural",
   "vulnerabilities": ["CWE-327"],
+  "forbidden_imports": [
+    {"tag": "weak_crypto_modules"}
+  ],
   "forbidden_functions": [
     {"tag": "weak_ciphers_and_modes"}
   ]
