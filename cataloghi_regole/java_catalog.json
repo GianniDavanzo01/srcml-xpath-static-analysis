@@ -8,7 +8,12 @@
       "request.getParameter",
       "request.getHeader"
     ],
-     "nullable_returning_calls": ["System.getenv", "Map.get", "Optional.orElse","pattern.matcher"]
+    "cli_input": [
+        "System.getenv","System.getProperty",
+        "Scanner.nextLine","Scanner.next",
+        "Console.readLine","Console.readPassword"
+    ],
+    "nullable_returning_calls": ["System.getenv", "Map.get", "Optional.orElse","pattern.matcher"]
   },
   "sinks": {
     "sql_execution": [
@@ -28,60 +33,70 @@
       } 
       ],
     "path_concatenation": [
-      {"type": "concat","requires_literal_any": ["/", "\\", ".."]},
-      {"type": "call_with_var_arg", "call": ["get", "resolve"]}
+        {
+          "type": "concat",
+          "requires_literal_any": ["/", "\\", ".."],
+          "requires_text_any": ["File", "Path", "Paths", "FileInputStream", "FileOutputStream", "Reader", "Writer"]
+        },
+        {
+          "type": "call_with_var_arg",
+          "call": ["Paths.get", "Path.of"]
+        },
+        {
+          "type": "call_with_var_arg",
+          "call": ["resolve", "resolveSibling"],
+          "requires_text_any": ["Path", "FileSystem"]
+        }
     ],
     "os_command_execution": [
       {"type": "call_with_var_arg", "call": ["exec", "ProcessBuilder","command"]}
     ],
     "file_system_access": [
-      {"type": "call_with_var_arg", "call": [
-        "FileInputStream", "FileOutputStream", "FileReader", "FileWriter", "RandomAccessFile",
-        "newInputStream", "readAllBytes", "write", "delete", "copy", "move",
-        "createNewFile", "File"
+      {"type": "call_with_var_arg", 
+      "call": ["FileInputStream", "FileOutputStream", "FileReader", "FileWriter", "RandomAccessFile",
+              "newInputStream", "readAllBytes", "write", "delete", "copy", "move",
+              "createNewFile", "File"
       ]}],
-    "html_output": [
-      {
-        "type": "call_with_var_arg",
-        "call": [
-          "getWriter().print", "getWriter().println", "print", "println", "write",
-          "sendError", "RestResponse", "ResponseEntity"
-        ]
-      }
-    ],
+ "html_output": [
+        {
+          "type": "call_with_var_arg",
+          "call": ["print", "println", "write", "sendError"],
+          "requires_text_any": ["response", "getWriter", "HttpServletResponse", "JspWriter", "out"]
+        },
+        {
+          "type": "call_with_var_arg",
+          "call": ["ok", "body"],
+          "requires_text_any": ["ResponseEntity", "RestResponse"]
+        },
+        {
+          "type": "call_with_var_arg",
+          "call": ["setViewName", "addObject"],
+          "requires_text_any": ["ModelAndView"]
+        }
+      ],
     "http_redirect": [
       {
         "type": "call_with_var_arg",
-        "call": [
-          "sendRedirect"
-        ]
+        "call": ["sendRedirect"]
       }
     ],
     "http_request": [
       {
         "type": "call_with_var_arg",
-        "call": [
-          "HttpURLConnection", "openStream", "RestTemplate.getForObject", 
-          "RestTemplate.postForObject", "WebClient.get", "HttpClient.newHttpClient"
+        "call": ["HttpURLConnection", "URL.openConnection", "openStream", "RestTemplate.getForObject", 
+                "RestTemplate.postForObject", "WebClient.get", "WebClient.post","HttpClient.newHttpClient"
         ]
       }
     ],
     "http_header_setters": [
       {
         "type": "call_with_var_arg",
-        "call":[
-        "HttpServletResponse.addHeader","HttpServletResponse.setHeader","HttpServletResponse.addCookie"]
+        "call":["HttpServletResponse.addHeader","HttpServletResponse.setHeader","HttpServletResponse.addCookie"]
       },
       {
         "type": "call_with_var_arg",
-        "call": [
-          "add",
-          "set"
-        ],
-        "requires_text_any": [
-          "ServerHttpResponse.getHeaders",
-          "getHeaders"
-        ]
+        "call": ["add","set"],
+        "requires_text_any": ["ServerHttpResponse.getHeaders","getHeaders"]
       }
 
   ],
@@ -105,8 +120,7 @@
     "logging_functions": [
       {
         "type": "call_with_var_arg",
-        "call": ["Logger.info", "Logger.error", "Logger.warn", "Logger.warning",
-                  "System.out.println", "System.err.println"]
+        "call": ["Logger.info", "Logger.error", "Logger.warn", "Logger.warning","System.out.println", "System.err.println"]
       }
     ]
   },
@@ -268,8 +282,10 @@
         {"type": "receiver_of_method", "method": "getContentType"}
       ],
       "xxe_safe_configuration": [
-        {"type": "function_has_call_matching_ast", "call": ["setFeature"], "contains_string_containing": ["disallow-doctype-decl"]}
-      ]
+        {"type": "function_has_call_matching_ast", "call": ["setFeature"], "contains_string_containing": ["disallow-doctype-decl"]},
+        {"type": "function_has_call_matching_ast","call": ["setFeature"],"contains_names": ["XMLConstants.FEATURE_SECURE_PROCESSING"]}
+      ],
+      "curl_non_url_option": []
   },
   "patterns": {
     "active_debug": {

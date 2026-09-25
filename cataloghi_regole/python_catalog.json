@@ -1,38 +1,59 @@
 {
   "sources": {
     "http_input": [
-      "request.args","request.args.get", "request.GET", "request.POST", "request.files",
-      "request.form", "request.data", "request.headers", "request.params",
-      "request.base_url", "request.authorization", "request.cookies",
-      "request.endpoint", "request.host", "request.host_url", "request.module",
-      "request.path", "request.query_strings", "request.url", "request.values",
-      "request.view_args","django.http.HttpRequest.GET", "django.http.HttpRequest.POST","input"
-    ],
+          "request.args", "request.args.get", "request.form", "request.data", 
+          "request.files", "request.headers", "request.cookies", "request.values", 
+          "request.json", "request.view_args", "request.path", "request.url", 
+          "request.base_url", "request.query_string", "request.endpoint",
+
+          "request.GET", "request.POST", "request.COOKIES", "request.META", 
+          "request.body", "request.resolver_match.kwargs", 
+          "django.http.HttpRequest.GET", "django.http.HttpRequest.POST", 
+          "django.http.HttpRequest.COOKIES", "django.http.HttpRequest.META",
+
+          "request.query_params", "request.path_params", "request.client", 
+          "request.json", "request.body", "request.form",
+          "fastapi.Request", "starlette.requests.Request"    
+        ],
+      "cli_input": [
+          "input",
+          "sys.argv",
+          "os.environ","os.environ.get","os.getenv",
+          "argparse.ArgumentParser.parse_args"
+      ],
     "nullable_returning_calls": ["re.match", "re.search", "re.fullmatch", "dict.get", "os.environ.get"]
   },
     "sinks": {
       "sql_execution": [
-          {"type": "call_with_var_arg", "call": ["execute","executemany"]}
+          {"type": "call_with_var_arg", "call": ["execute","executemany","session.execute", "engine.execute", "cursor.execute"]}
           ],
       "os_command_execution": [
-          {"type": "call_with_var_arg", "call": ["subprocess.run", "subprocess.Popen", "subprocess.call","subprocess.check_output","os.system","os.popen","os.execv", "os.execl"]}
+          {"type": "call_with_var_arg", "call": ["subprocess.run", "subprocess.Popen", "subprocess.call", "subprocess.check_output",
+                                                  "os.system", "os.popen", "os.execv", "os.execl", "os.spawnl", "os.spawnv",
+                                                  "pty.spawn", "commands.getoutput", "commands.getstatusoutput"
+                                                  ]}
           ],
       "file_system_access": [
           {
             "type": "call_with_var_arg",
-            "call": ["open", "send_file", "send_static_file", "os.remove", "os.rmdir", "shutil.rmtree"]
-          },
-          {
-            "type": "call_with_var_arg",
-            "call": ["open", "send_file"]
+            "call": ["open", "send_file", "send_static_file", "os.remove", "os.rmdir", "shutil.rmtree",
+                    "FileResponse", "flask.send_from_directory", "django.http.FileResponse"]
           }
           ],
       "path_concatenation": [
-          {"type": "concat","requires_literal_any": ["/", "\\", ".."]},
-          {"type": "fstring","requires_literal_any": ["/", "\\", ".."]},
+        {
+            "type": "concat",
+            "requires_literal_any": ["/", "\\", ".."],
+            "requires_text_any": ["open", "os.os.path", "shutil.", "Path", "send_file", "FileResponse", "read", "write"]
+          },
+          {
+            "type": "fstring",
+            "requires_literal_any": ["/", "\\", ".."],
+            "requires_text_any": ["open", "os.path", "shutil.", "Path", "send_file", "FileResponse", "read", "write"]
+          },
           {
             "type": "call_with_var_arg",
-            "call": ["os.path.join", "join"]
+            "call": ["os.path.join", "join","Path", "pathlib.Path"]
           }
         ],
       "html_output": [
@@ -62,7 +83,8 @@
         "call": [
           "requests.get", "requests.post", 
           "requests.request","requests.put","urllib.request.urlopen", "urlopen",
-          "httpx.get", "httpx.post","session.get","session.post"
+          "httpx.get", "httpx.post","session.get","session.post","urllib3.PoolManager.request",
+          "urllib3.HTTPConnectionPool.request","http.client.HTTPConnection.request","http.client.HTTPSConnection.request"
         ]
       }
     ],
@@ -84,11 +106,7 @@
       "csv_writing": [
         {
           "type": "call_with_var_arg",
-          "call": [
-            "writerow",
-            "writerows",
-            "to_csv"
-          ]
+          "call": ["writerow","writerows","to_csv"]
         }
       ],
       "exception_stringify_calls": [
@@ -128,13 +146,13 @@
         ],
         "dynamic_code_execution": ["eval", "exec","zip_importer.exec_module"],
         "unsafe_xml_parsers": [
-          "xml.sax.make_parser","xml.sax.parse","xml.sax.parseString",
-          "xml.etree.ElementTree.parse","xml.etree.ElementTree.fromstring","xml.dom.minidom.parse","xml.dom.pulldom.parse"
-        ],
+            "xml.sax.make_parser","xml.sax.parse","xml.sax.parseString",
+            "xml.etree.ElementTree.parse","xml.etree.ElementTree.fromstring","xml.dom.minidom.parse","xml.dom.pulldom.parse"
+          ],
         "unsafe_deserializers": [
           "pickle.load", "pickle.loads","_pickle.load", "_pickle.loads","cPickle.load", "cPickle.loads",
           "marshal.load", "marshal.loads","shelve.open","yaml.unsafe_load","pandas.read_pickle"
-        ],
+          ],
         "insecure_temp_functions": ["tempfile.mktemp","mktemp"],
         "insecure_cookie_configuration":["set_cookie","response.set_cookie","HttpResponse.set_cookie"],
 
@@ -145,7 +163,7 @@
             "call": ["logging.debug", "logging.info", "logging.warning", "logging.error",
                       "logger.debug", "logger.info", "logger.warning", "logger.error"],
             "contains_any_name": ["password", "Password", "pwd", "secret", "Secret",
-                                "token", "Token", "api_key", "apikey", "private_key"]
+                                  "token", "Token", "api_key", "apikey", "private_key"]
           }
         ],
         "obsolete_functions": ["os.tempnam", "os.tmpnam", "platform.linux_distribution"],
@@ -168,7 +186,7 @@
       "off_by_one_loop_condition":[".//src:while[./src:condition//src:operator[text()='<='] and ./src:condition//src:call[./src:name[text()='len']]]"]
     },
     "sanitizers": {
-        "html_escape": ["escape", "escape_filter_chars", "escape_rdn"],
+        "html_escape": ["escape", "escape_filter_chars", "escape_rdn","html.escape"],
         "path_sanitizers": ["secure_filename","os.path.basename","basename"],
         "cast_to_integer": ["int","float"],
         "shell_escape_sanitizers": ["shlex.quote","quote"],
@@ -259,7 +277,8 @@
         ],
         "xxe_safe_configuration": [
           {"type": "call_with_kwarg", "call": ["XMLParser"], "kwargs": {"resolve_entities": "False"}}
-        ]
+        ],
+        "curl_non_url_option": []
   },
   "patterns": {
     "active_debug": {

@@ -367,18 +367,43 @@ def match_sink(uso, sink_spec, fstring_nodes: list, adapter=None, imports=None) 
     if not is_match:
         return False
 
+    # if isinstance(sink_spec, dict):
+    #     # 1. FILTRO TESTUALE GLOBALE (Cerca ovunque: metodi, variabili, codice)
+    #     # Ideale per regole Java come: "requires_text_any": ["getHeaders"]
+    #     if "requires_text_any" in sink_spec:
+    #         required_keywords = sink_spec["requires_text_any"]
+    #         if required_keywords:
+    #             stmt = uso.xpath("ancestor::src:expr_stmt | ancestor::src:return | ancestor::src:if_stmt", namespaces=NS)
+    #             target_node = stmt[-1] if stmt else uso
+    #             node_text = "".join(target_node.itertext()).upper()
+
+    #             if not any(kw.upper() in node_text for kw in required_keywords):
+    #                 return False
+    
     if isinstance(sink_spec, dict):
-        # 1. FILTRO TESTUALE GLOBALE (Cerca ovunque: metodi, variabili, codice)
-        # Ideale per regole Java come: "requires_text_any": ["getHeaders"]
+        # 1. FILTRO STRUTTURALE SUGLI IDENTIFICATORI (Cerca solo nei nomi di variabili/funzioni)
         if "requires_text_any" in sink_spec:
-            required_keywords = sink_spec["requires_text_any"]
+            required_keywords = [kw.upper() for kw in sink_spec["requires_text_any"]]
             if required_keywords:
                 stmt = uso.xpath("ancestor::src:expr_stmt | ancestor::src:return | ancestor::src:if_stmt", namespaces=NS)
                 target_node = stmt[-1] if stmt else uso
-                node_text = "".join(target_node.itertext()).upper()
 
-                if not any(kw.upper() in node_text for kw in required_keywords):
+                # Estraiamo SOLO i nodi <name> (ignorando literal, comment, operatori)
+                name_nodes = target_node.xpath(".//src:name", namespaces=NS)
+                
+                keyword_found = False
+                for name_node in name_nodes:
+                    # itertext qui è sicuro perché stiamo guardando SOLO un identificatore
+                    node_text = "".join(name_node.itertext()).upper()
+                    
+                    # Controllo se l'identificatore contiene la keyword
+                    if any(kw in node_text for kw in required_keywords):
+                        keyword_found = True
+                        break
+
+                if not keyword_found:
                     return False
+                
 
         # 2. FILTRO SUI LETTERALI (Cerca SOLO nelle stringhe hardcodate)
         # Ideale per Path Traversal o SQLi: "requires_literal_any": ["/", "..", "SELECT"]
