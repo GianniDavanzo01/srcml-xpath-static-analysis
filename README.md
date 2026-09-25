@@ -1,12 +1,13 @@
 ## Struttura del Progetto
 
-Il repository è organizzato nelle seguenti directory principali:
+Il repository è organizzato nelle seguenti directory e file principali:
 
-* **`script_analysis/`**: Contiene gli script python per il funzionamento del motore di analisi statica.
-* **`Ruleset/`**: Archivia i file JSON contenenti le regole di sicurezza.
-* **`Testset/`**: Raccoglie i dataset e gli snippet di codice sorgente Python vulnerabile e sicuro, utilizzati per validare l'efficacia del motore.
-* **`xml_archivi/`**: Contiene le rappresentazioni AST (Abstract Syntax Tree) in formato XML generate da srcML a partire dal codice Python.
-* **`Result/`**: Archivia i report e i risultati finali generati dal motore al termine dell'analisi statica.
+* **`script_analysis/`**: Contiene gli script Python per il funzionamento del motore di analisi statica e l'orchestrazione (Engine, Adapter di linguaggio e Context).
+* **`cataloghi_regole/`**: Archivia i file JSON (es. `java_catalog.json`, `python_catalog.json`) che fungono da dizionari di traduzione. Mappano i concetti astratti di sicurezza sulle specifiche funzioni e librerie dei singoli linguaggi.
+* **`ruleset_abstract.json`**: Contiene il ruleset puramente semantico e astratto (CWE) indipendente dal linguaggio di programmazione.
+* **`Testset/`**: Raccoglie i dataset e gli snippet di codice sorgente utilizzati per validare l'efficacia del motore.
+* **`xml_archivi/`**: Contiene le rappresentazioni AST (Abstract Syntax Tree) in formato XML generate da srcML a partire dal codice sorgente originale.
+* **`Result/`**: Archivia i report e i risultati finali generati dal motore al termine dell'analisi statica in formato JSON strutturato.
 
 ## Come eseguire il motore di analisi
 
