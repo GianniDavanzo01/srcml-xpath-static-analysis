@@ -1,10 +1,8 @@
 {
     "sources":{
-        "http_input": [
-            "getenv","recv","recvfrom","read",
-            "fread","fgets","scanf","gets"],
-        
-        "nullable_returning_calls": ["malloc", "calloc", "realloc", "fopen", "getenv"]
+        "http_input": ["recv", "recvfrom", "recvmsg", "read", "fread", "fgets", "scanf", "gets"], 
+        "nullable_returning_calls": ["malloc", "calloc", "realloc", "fopen", "getenv"],
+        "cli_input": ["getenv","argv","optarg"]
     },
     "sinks":{
         "file_system_access": [
@@ -16,7 +14,8 @@
         "path_concatenation": [
             {
                 "type": "call_with_var_arg",
-                "call":["strcat","strncat","sprintf","snprintf"]
+                "call": ["strcat", "strncat", "sprintf", "snprintf", "asprintf"],
+                "literal_contains": ["/", "\\", ".."]
             }
         ],
         "os_command_execution": [
@@ -25,9 +24,14 @@
                 "call": ["system", "popen", "execl", "execlp", "execle", "execv", "execvp", "execvpe", "execve"]
             }
         ],
-        "html_output": [],
         "sql_execution": [
-            {"type": "call_with_var_arg", "call": ["sqlite3_exec", "sqlite3_prepare", "sqlite3_prepare_v2", "sqlite3_prepare_v3"]}
+            {
+                "type": "call_with_var_arg", 
+                "call": ["sqlite3_exec", "sqlite3_prepare", "sqlite3_prepare_v2", "sqlite3_prepare_v3",
+                        "mysql_query", "mysql_real_query",
+                        "PQexec", "PQsendQuery", "PQexecParams"    
+                        ]
+            }
         ],
         "http_request": [
             {"type": "call_with_var_arg", "call": ["curl_easy_setopt", "curl_easy_perform"]}
@@ -50,7 +54,11 @@
                 "type":"call_with_var_arg",
                 "call":["syslog", "vsyslog", "fprintf"]
             }
-        ]
+        ],
+        "html_output": [],
+        "exception_stringify_calls": [],
+        "http_redirect": [],
+        "http_header_setters": []
     },
     "forbidden_functions":{
         "weak_key_generation": [
@@ -129,10 +137,13 @@
                 "call": ["MD5", "SHA1"],
                 "contains_any_name": ["password", "passwd", "pwd"]
             }
-            ]
+        ],
+        "dynamic_code_execution": [],
+        "unsafe_deserializers": []
     },
     "excluded_functions":{
-        "safe_prng_exceptions": []
+        "safe_prng_exceptions": [],
+        "eval_false_positive_exceptions": []
     },
     "forbidden_imports": {
         "weak_crypto_modules": ["openssl/md5.h", "openssl/des.h"]
@@ -146,19 +157,19 @@
     "sanitizers":{
         "cast_to_integer":["atoi","atol","atoll","strtol","strtoll","strtoul"],
         "path_sanitizers": ["basename","realpath"],
+        "url_encode_sanitizers": ["curl_easy_escape", "curl_escape"],
+        "crlf_sanitizers": [],
         "shell_escape_sanitizers": [],
         "XSS_sanitizers": [],
         "ldap_escape_sanitizers": []
     },
     "safe_contexts":{
-        "sql_parameterization": [],
         "secure_cookie_contexts": [
                 {
                 "type": "matches_xpath",
                 "xpath": ".//src:call[.//src:name[text()='mg_printf' or text()='MHD_add_response_header' or text()='kore_http_response_header']][.//src:literal[@type='string'][contains(.,'Secure')]][.//src:literal[@type='string'][contains(.,'HttpOnly')]]"
                 }
             ],
-            "try_block": [],
             "if_block": ["if"],
             "safe_permission_defaults": [
                 {"type": "current_call_matches_ast", "call": ["chmod", "fchmod"], "contains_names": ["S_IRUSR"]},
@@ -182,8 +193,6 @@
                     "contains_names": ["CURLOPT_USE_SSL", "CURLUSESSL_TRY"]
                     }
                 ],
-            "allowlist_validation": [],
-            "file_extension_validation":[],
             "bounds_checked_array_access": [
                     {"type": "binary_comparison", "operators": ["<", "<="], "left_exact": ["$VAR"]},
                     {"type": "binary_comparison", "operators": ["<", "<="], "right_exact": ["$VAR"]}
@@ -197,7 +206,19 @@
                     {"type": "var_has_attribute", "attribute": "size"},
                     {"type": "var_has_attribute", "attribute": "length"},
                     {"type": "var_has_attribute", "attribute": "st_size"} 
-                ]
+                ],
+            "xxe_safe_configuration": [
+                    {
+                        "type": "function_has_call_matching_ast",
+                        "call": ["xmlCtxtUseOptions"],
+                        "contains_names": ["XML_PARSE_NOENT"]
+                    }
+                ],
+            "sql_parameterization": [],
+            "try_block": [],
+            "allowlist_validation": [],
+            "file_extension_validation":[],
+            "url_validation": []
     },
     "patterns":{
         "insecure_certificate_validation": {
