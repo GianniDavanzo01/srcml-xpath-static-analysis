@@ -120,7 +120,7 @@ def _run_source_operator_usage(tree, rule, findings, adapter, imports, catalog=N
             if is_in_safe_context(expr_node, safe_contexts, None, adapter, imports):
                 continue
 
-            # 3. Verifica Sanitizers applicati (Caso 3)
+            # 3. Verifica Sanitizers applicati 
             is_escaped = False
             if resolved_sanitizers:
                 for c_node in expr_node.xpath(".//src:call", namespaces=NS):
@@ -137,7 +137,7 @@ def _run_source_operator_usage(tree, rule, findings, adapter, imports, catalog=N
                 continue
 
             findings.append(build_finding(rule, expr_node))
-            # Esci dal ciclo op_node se hai già flaggato l'intera espressione
+
             break
 
 
@@ -377,7 +377,7 @@ def run_structural_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) 
             if not adapter.is_assignment(assign, NS):
                 continue
             
-            # Sfruttiamo il metodo nativo del LanguageAdapter!
+            # Sfruttiamo il metodo nativo del LanguageAdapter
             lhs_node, rhs_node = adapter.get_assignment_lhs_rhs(assign, NS)
             if lhs_node is None or rhs_node is None:
                 continue
@@ -459,18 +459,17 @@ def run_structural_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) 
         
         # 'imports' è la lista di ImportBinding già calcolata dall'adapter!
         for binding in imports:
-            # Controlla se il nome canonico importato (es. 'pickle') è tra quelli vietati
+            # Controlla se il nome canonico importato è tra quelli vietati
             is_forbidden = any(
                 binding.canonical_name == bad or binding.canonical_name.startswith(f"{bad}.")
                 for bad in forbidden_imports
             )
             
             if is_forbidden:
-                # Se c'è un'eccezione valida, perdona questo import
+                # Controllo safe_context
                 if is_in_safe_context(binding.node, safe_contexts, None, adapter, imports):
                     continue
                     
-                # Usiamo il nodo salvato per indicare la riga esatta
                 findings.append(build_finding(rule, binding.node))
 
     forbidden_returns = rule.get("forbidden_returns", [])
@@ -552,7 +551,7 @@ def run_structural_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) 
             params_nodes = func.xpath("./src:parameter_list/src:parameter", namespaces=NS)
             
             for param in params_nodes:
-                # Deleghiamo all'adapter l'estrazione strutturale!
+                # Deleghiamo all'adapter l'estrazione strutturale
                 param_name, type_text = adapter.get_parameter_name_and_type(param, NS)
                 
                 if not type_text:
@@ -620,7 +619,7 @@ def run_structural_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) 
             # Estraiamo il nome dell'oggetto a cui si sta accedendo usando l'AST puro
             parts = node.xpath("./src:name", namespaces=NS)
             if parts:
-                # NORMALIZZAZIONE AGNOSTICA: 
+                # NORMALIZZAZIONE:
                 # Ignoriamo l'operatore reale (., ->, ::) e uniamo i pezzi sempre col punto.
                 # 'request->form' (C) e 'request.form' (Python) diventano internamente 'request.form'.
                 base_name = ".".join("".join(p.itertext()).strip() for p in parts)
@@ -637,7 +636,7 @@ def run_structural_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) 
                 
             # Verifica se l'oggetto a cui si accede è nella blacklist
             for subscript in forbidden_subscripts:
-                # Ora questo controllo con il punto funzionerà perfettamente per ogni linguaggio!
+                # Ora questo controllo con il punto funzionerà perfettamente per ogni linguaggio
                 if base_name == subscript or base_name.endswith(f".{subscript}"):
                     if is_in_safe_context(node, safe_contexts, var_name=index_var, adapter=adapter, imports=imports):
                         break
@@ -737,7 +736,7 @@ def run_forbidden_functions_indexed(ctx, compiled, findings, adapter, imports):
 def run_forbidden_names_indexed(ctx, compiled, findings, adapter, imports):
 
     for name_node in ctx.names:
-        # Ottimizzazione bonus: usiamo la cache di ctx invece di join e itertext ripetuti
+        # Ottimizzazione: usiamo la cache di ctx invece di join e itertext ripetuti
         full_text = ctx.text_of(name_node).strip()
 
         for rule in compiled.forbidden_names_index.get(full_text, []):

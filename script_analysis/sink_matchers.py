@@ -16,15 +16,13 @@ def _sink_string_pattern(uso, pattern_name: str, adapter=None, imports=None, fst
     Totalmente guidati dal LanguageAdapter.
     """
     if pattern_name == "concat":
-        # Questo andava già bene, ma possiamo renderlo più sicuro
         ops = adapter.string_concat_operators() if adapter else ["+", "%"]
         op_xpath = " | ".join([f"preceding-sibling::src:operator[1][text()='{op}']" for op in ops]) + " | " + \
                    " | ".join([f"following-sibling::src:operator[1][text()='{op}']" for op in ops])
         return bool(uso.xpath(op_xpath, namespaces=NS))
 
     if pattern_name == "fstring":
-        # Sfruttiamo la lista pre-calcolata dal tuo taint_engine,
-        # che gestisce correttamente la scomposizione fatta da srcML!
+
         if fstring_nodes is not None:
             return uso in fstring_nodes
         return False
@@ -46,7 +44,7 @@ def _sink_string_pattern(uso, pattern_name: str, adapter=None, imports=None, fst
         return bool(has_member_access and is_method_call)
     
     if pattern_name == "reassign":
-        # Ok, l'operatore di assegnazione è dinamico
+        
         assign_op = adapter.assignment_operator_token() if adapter else "="
         return bool(uso.xpath(f"following-sibling::src:operator[1][text()='{assign_op}']", namespaces=NS))
 
@@ -57,16 +55,15 @@ def _sink_string_pattern(uso, pattern_name: str, adapter=None, imports=None, fst
         if uso.xpath("ancestor::src:call", namespaces=NS):
             return False
             
-        # MAGIA DELL'ADAPTER: Troviamo il blocco di codice che contiene l'assegnazione
+        # Troviamo il blocco di codice che contiene l'assegnazione
         assign_stmt = uso.xpath("ancestor::src:expr_stmt | ancestor::src:decl_stmt", namespaces=NS)
         if not assign_stmt or not adapter:
             return False
             
-        # Chiediamo all'adapter di dividere LHS e RHS per noi!
+        # l'adapter dividere LHS e RHS per noi!
         lhs, rhs = adapter.get_assignment_lhs_rhs(assign_stmt[0], NS)
         if rhs is not None:
             # Controlliamo se il nostro "uso" fa parte del sotto-albero di destra (RHS)
-            # In lxml, iter() attraversa tutti i figli di un nodo.
             return uso in rhs.iter() or uso == rhs
             
         return False
@@ -126,7 +123,7 @@ def _sink_call_with_var_arg(uso, spec, fstring_nodes, adapter=None, imports=None
     if not target_calls:
         return False
 
-    # 1. Prendiamo TUTTE le chiamate "padre", "nonno", ecc. per gestire i casi annidati
+    # 1. Prendiamo tutte per gestire i casi annidati
     call_nodes = uso.xpath("ancestor::src:call", namespaces=NS)
     if not call_nodes:
         return False
@@ -137,7 +134,7 @@ def _sink_call_with_var_arg(uso, spec, fstring_nodes, adapter=None, imports=None
         if call_name is None:
             continue
             
-        # È una delle chiamate che stiamo cercando?
+        # verifichiamo se è una delle chiamate ricercate
         if not any(call_name == c or call_name.endswith(f".{c}") for c in target_calls):
             continue
 
@@ -169,7 +166,6 @@ def _sink_call_with_var_arg(uso, spec, fstring_nodes, adapter=None, imports=None
     return False
 
 
-# def _sink_flat_call_arg(uso, spec: dict, fstring_nodes: list) -> bool:
 def _sink_flat_call_arg(uso, spec: dict, fstring_nodes: list, adapter=None, imports=None) -> bool:
     """{"type": "flat_call_arg"}
         Rileva se la variabile taintata è passata come argomento a una call, purché quella call non contenga altre call annidate 
@@ -258,9 +254,7 @@ def _sink_keyword_argument(uso, spec: dict, fstring_nodes: list, adapter=None, i
 
     return False
 
-# def _sink_subscript_key_assign_rhs(uso, spec: dict, fstring_nodes: list) -> bool:
 def _sink_subscript_key_assign_rhs(uso, spec: dict, fstring_nodes: list, adapter=None, imports=None) -> bool:
- 
     """{"type": "subscript_key_assign_rhs"}"""
     assign_op = adapter.assignment_operator_token() if adapter else "="
     rhs_holder = uso.xpath(
@@ -282,7 +276,6 @@ def _sink_subscript_key_assign_rhs(uso, spec: dict, fstring_nodes: list, adapter
     return bool(lhs.xpath("./src:index//src:literal[@type='string']", namespaces=NS))
 
 def _sink_subscript_usage(uso, spec: dict, fstring_nodes: list, adapter=None, imports=None) -> bool:
-
     """
     Motore universale per i sink basati su subscript.
     Accorpa: assign_or_concat, return, method_call.
@@ -326,7 +319,6 @@ def _sink_subscript_usage(uso, spec: dict, fstring_nodes: list, adapter=None, im
     return False
 
 
-# def _sink_matches_xpath(uso, spec: dict, fstring_nodes: list) -> bool:
 def _sink_matches_xpath(uso, spec: dict, fstring_nodes: list, adapter=None, imports=None) -> bool:
     """{"type": "matches_xpath", "xpath": "./src:index and (ancestor::src:argument or ancestor::src:index)"}"""
     xpath_query = spec.get("xpath")
@@ -413,9 +405,7 @@ def match_sink(uso, sink_spec, fstring_nodes: list, adapter=None, imports=None) 
     return True
 
 
-# def matches_any_sink(uso, sinks: list, fstring_nodes: list) -> bool:
 def matches_any_sink(uso, sinks, fstring_nodes, adapter=None, imports=None):
     if not sinks:
         return True
-    # return any(match_sink(uso, s, fstring_nodes) for s in sinks)
     return any(match_sink(uso, s, fstring_nodes, adapter, imports) for s in sinks)

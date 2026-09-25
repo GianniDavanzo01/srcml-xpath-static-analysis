@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 """
 language_adapter.py
 --------------------
@@ -42,9 +41,6 @@ class LanguageAdapter(ABC):
 
     name: str  # "python", "java", ...
 
-    # ------------------------------------------------------------------ #
-    # Riconoscimento strutturale (sostituisce i confronti testuali sparsi)
-    # ------------------------------------------------------------------ #
 
     @abstractmethod
     def is_assignment(self, node, ns) -> bool:
@@ -53,9 +49,7 @@ class LanguageAdapter(ABC):
 
     @abstractmethod
     def get_assignment_lhs_rhs(self, node, ns) -> tuple:
-        """Ritorna (lhs_node, rhs_first_node) o (None, None). Isola il fatto
-        che in Python il separatore è '=', in altri linguaggi la struttura
-        AST prodotta da srcML può differire (es. dichiarazioni tipizzate)."""
+        """Ritorna (lhs_node, rhs_first_node) o (None, None). """
 
     @abstractmethod
     def is_kwarg(self, argument_node, ns) -> bool:
@@ -65,7 +59,7 @@ class LanguageAdapter(ABC):
     @abstractmethod
     def string_concat_operators(self) -> list:
         """Operatori che contano come concatenazione/formattazione stringhe.
-        Python: ['+', '%']. Java/C#: ['+']. Da estendere per fstring-like."""
+        Python: ['+', '%']. Java/C#: ['+']."""
 
     @abstractmethod
     def is_interpolated_string(self, literal_text: str) -> bool:
@@ -73,7 +67,7 @@ class LanguageAdapter(ABC):
 
     @abstractmethod
     def is_none_literal(self, text: str) -> bool:
-        """'None' in Python, 'null' in Java/C#/JS, 'nil' in Ruby."""
+        """'None' in Python, 'null' in Java/C#/JS."""
 
     @abstractmethod
     def parse_numeric_literal(self, text: str):
@@ -85,9 +79,6 @@ class LanguageAdapter(ABC):
     def normalize_string_literal(self, text: str) -> str:
         """Normalizza apici/prefissi (f/r/b in Python) per confronti safe."""
 
-    # ------------------------------------------------------------------ #
-    # Import e risoluzione dei nomi (punto 7: 'os.system' vs 'qualsiasi.system')
-    # ------------------------------------------------------------------ #
 
     @abstractmethod
     def resolve_imports(self, unit_node, ns) -> list:
@@ -129,8 +120,7 @@ class LanguageAdapter(ABC):
     @abstractmethod
     def reference_comparison_operators(self) -> list:
         """Operatori di confronto per identità/riferimento. Python: ['is', 'is not'].
-        Java/C/C#: lista vuota (l'identità si confronta con '==', già coperto da
-        altre regole/sink, quindi questa categoria di regola resta inattiva)."""
+        Java/C/C#: l'identità si confronta con '=='."""
 
 
     @abstractmethod
@@ -206,8 +196,6 @@ class LanguageAdapter(ABC):
     trovato. Usato solo dai linguaggi con requires_pointer_type_for_reference_comparison() = True."""
 
 
-
-
     @abstractmethod
     def null_comparison_operators(self) -> dict:
         """
@@ -215,6 +203,7 @@ class LanguageAdapter(ABC):
         - 'falsy': verificano che la variabile SIA nulla (es. ==, is)
         - 'truthy': verificano che la variabile NON SIA nulla (es. !=, is not)
         """
+
 # ---------------------------------------------------------------------- #
 # Implementazione Python
 # ---------------------------------------------------------------------- #
@@ -621,7 +610,7 @@ class JavaAdapter(LanguageAdapter):
                 )
                 decls = call_node.xpath(xpath_query_param, namespaces=ns)
 
-            # 3. fallback: campi della classe che racchiude (se la call e' dentro un metodo)
+            # 3. Fallback: campi della classe che racchiude (se la call e' dentro un metodo)
             if not decls:
                 xpath_query_field = (
                     f"ancestor::src:class[1]/src:block/src:decl_stmt"

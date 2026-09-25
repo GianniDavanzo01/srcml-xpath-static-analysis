@@ -12,9 +12,6 @@ from pathlib import Path
 from lxml import etree
 from collections import Counter
 
-# from common import NS, load_rules, check_required_imports
-# from taint_engine import run_taint_rule
-# from structural_engine import run_structural_rule
 
 from common import NS, load_rules, check_required_imports, compile_rules, CompiledRuleset
 from taint_engine import run_taint_rule
@@ -162,9 +159,7 @@ def main():
     if not args.xml and not args.xml_dir:
         ap.error("Specificare almeno uno tra --xml e --xml-dir")
 
-    # rules = load_rules(Path(args.rules))
     raw_rules = load_rules(Path(args.rules))
-    # compiled = compile_rules(rules)
     xml_files = collect_xml_files(args.xml, args.xml_dir)
 
     if not xml_files:
@@ -172,7 +167,6 @@ def main():
 
     report = []
     for xml in xml_files:
-        # report.extend(analyze_file(xml, compiled))
         report.extend(analyze_file(xml, raw_rules))
 
     category_counter = Counter()

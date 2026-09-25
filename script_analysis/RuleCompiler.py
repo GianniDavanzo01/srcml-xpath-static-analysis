@@ -31,6 +31,8 @@ class RuleCompiler:
             "sinks": "sinks",
             "forbidden_functions": "forbidden_functions",
             "excluded_functions": "excluded_functions",
+            "forbidden_imports": "forbidden_imports",
+            "xpath_rules":"xpath_rules",
             "sanitizers": "sanitizers",
             "safe_contexts": "safe_contexts",
         }
@@ -50,10 +52,10 @@ class RuleCompiler:
                 for engine_key, engine_values in pattern_data.items():
                     if isinstance(engine_values, list):
                         concrete_rule.setdefault(engine_key, [])
-                        concrete_rule[engine_key] = concrete_rule[engine_key] + list(engine_values)  # nuova lista, mai extend in-place
+                        concrete_rule[engine_key] = concrete_rule[engine_key] + list(engine_values) 
                     elif isinstance(engine_values, dict):
                         concrete_rule.setdefault(engine_key, {})
-                        concrete_rule[engine_key] = {**concrete_rule[engine_key], **engine_values}   # nuovo dict
+                        concrete_rule[engine_key] = {**concrete_rule[engine_key], **engine_values}  
                     else:
                         concrete_rule[engine_key] = engine_values
 

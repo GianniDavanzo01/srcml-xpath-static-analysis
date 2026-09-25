@@ -37,7 +37,7 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
     for direct_name in rule.get("direct_taint_names", []):
         tainted_vars_with_scope.append((direct_name, tree))
 
-    # (Parametri di funzione)  ---
+    # Parametri di funzione
     if "function_parameters" in sources:
         param_nodes = tree.xpath(".//src:function//src:parameter_list//src:name", namespaces=NS)
         for p_node in param_nodes:
@@ -46,9 +46,8 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
                 parent_func = p_node.xpath("ancestor::src:function[1]", namespaces=NS)
                 scope_node = parent_func[0] if parent_func else tree
                 tainted_vars_with_scope.append((param_name, scope_node))
-    # ---------------------------------------------------------
 
-    
+    # Variabili per descrivere le eccezioni
     if "exception_variable" in sources:
         for var_name, scope_node in adapter.find_exception_bindings(tree, NS):
             tainted_vars_with_scope.append((var_name, scope_node))
@@ -79,14 +78,14 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
 
             tainted_vars_with_scope.append((var_name, scope_node))
 
-    # --- Passo 2: propagazione a catena ---
+    # Passo 2: propagazione a catena
     if rule.get("propagate_taint", True):
         block = sanitizers + adapter.taint_block_functions()
         propagating_calls = adapter.taint_propagating_calls()
 
         changed = True
         guard = 0
-        while changed and guard < 7:  # guard di sicurezza, massimo 7 iterazioni
+        while changed and guard < 5:  # guard di sicurezza, massimo 5 iterazioni (Euristica)
             changed = False
             guard += 1
 
@@ -94,9 +93,9 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
             for name, scope in tainted_vars_with_scope:
                 tainted_by_scope.setdefault(id(scope), set()).add(name)
 
-            # --- Propagazione via call che scrivono su un argomento "di
+            # Propagazione via call che scrivono su un argomento "di
             # output" invece che tramite il valore di ritorno (es. C:
-            # sprintf(buf, fmt, tainted) -> buf diventa taintato) ---
+            # sprintf(buf, fmt, tainted) -> buf diventa taintato)
             if propagating_calls:
                 scope_nodes = {id(s): s for _, s in tainted_vars_with_scope}
                 for scope_id, scope_node in scope_nodes.items():
@@ -186,40 +185,12 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
 
     # Cerca gli utilizzi SOLO all'interno dello Scope calcolato
     for var, scope_node in tainted_vars_with_scope:
-        
-        # try:
-        #     if "'" in var:
-        #         xpath_query = (
-        #             f'.//src:name[.="{var}" and not('
-        #             f'parent::src:argument'
-        #             f' and parent::src:argument/src:name[1]=self::node()'
-        #             f' and following-sibling::text()[1][contains(., "=")]'
-        #             f')]'
-        #         )
-        #     else:
-        #         xpath_query = (
-        #             f".//src:name[.='{var}' and not("
-        #             f"parent::src:argument"
-        #             f" and parent::src:argument/src:name[1]=self::node()"
-        #             f" and following-sibling::text()[1][contains(., '=')]"
-        #             f")]"
-        #         )
-            
-        #     usi_diretti = scope_node.xpath(xpath_query, namespaces=NS)
-
-        # except Exception as e:
-        #     print("\n--- [DEBUG XPATH CRASH DETECTED] ---")
-        #     print(f"Rule ID      : {rule.get('rule_id')}")
-        #     print(f"Valore di var: {repr(var)}")
-        #     print(f"XPath Fallito: .//src:name[text()='{var}' and not(...)]")
-
 
         usi_potenziali = scope_node.xpath(".//src:name[text()=$v]", namespaces=NS, v=var)
         
         usi_diretti = []
         for uso in usi_potenziali:
             
-            # 2. Riproduciamo ESATTAMENTE l'intento dell'XPath originale:
             # Scartiamo il nodo se è il nome sinistro di un keyword argument (kwarg)
             parent_arg = uso.xpath("parent::src:argument", namespaces=NS)
             if parent_arg and adapter.is_kwarg(parent_arg[0], NS):
@@ -227,7 +198,7 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
                 # Verifichiamo se 'uso' è la CHIAVE (il primo nome) o il VALORE
                 name_node = parent_arg[0].xpath("./src:name[1]", namespaces=NS)
                 if name_node and name_node[0] is uso:
-                    continue  # Corrisponde all'esclusione XPath! Lo ignoriamo.
+                    continue
                     
             usi_diretti.append(uso)
         
@@ -259,14 +230,12 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
                 continue
 
             # Verifica vulnerabilità (Sink, Mitigazioni, Sanitizzazioni)
-            # if not matches_any_sink(uso, sinks, usi_fstring):
             if not matches_any_sink(uso, sinks, usi_fstring, adapter, imports):
                 continue
 
             if is_in_safe_context(uso, safe_contexts, var, adapter, imports):
                 continue
 
-            # if is_sanitized(uso, sanitizers):
             if is_sanitized(uso, sanitizers, adapter, imports):
                 continue
 

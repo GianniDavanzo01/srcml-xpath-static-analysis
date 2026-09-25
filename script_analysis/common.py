@@ -100,8 +100,7 @@ def source_present(sources: list, rhs_node, source_form: str | None = None,
                     node=None, adapter=None, imports=None) -> bool:
     """
     Verifica se una delle source compare nel RHS (rhs_node) in forma
-    strutturale, navigando l'AST invece di fare match testuale su una
-    stringa appiattita.
+    strutturale.
     source_form (opzionale):
     - "call": la source deve essere il nome di una <src:call> dentro rhs_node.
     - "subscript": la source deve essere un <src:name> seguito da <src:index>.
@@ -137,7 +136,7 @@ def source_present(sources: list, rhs_node, source_form: str | None = None,
                     return True
             continue
 
-        # nessuna forma specificata: il nome compare ovunque, invocato o no
+        # nessuna forma specificata
         for name_node in rhs_node.xpath(".//src:name | self::src:name", namespaces=NS):
             name_text = "".join(name_node.itertext()).strip()
 
@@ -153,7 +152,6 @@ def source_present(sources: list, rhs_node, source_form: str | None = None,
 def call_arguments_match_ast(call_node, spec: dict, adapter=None, imports=None) -> bool:
     """
     Motore universale AST per validare gli argomenti di una chiamata a funzione.
-    Usata sia per cercare chiamate vietate (structural) sia per validare mitigazioni (safe context).
     """
     target_calls = spec.get("call", [])
 
@@ -161,7 +159,6 @@ def call_arguments_match_ast(call_node, spec: dict, adapter=None, imports=None) 
         target_calls = [target_calls]
 
     if target_calls:
-        # call_name = get_call_name(call_node)
         call_name = get_call_name(call_node, adapter, imports)
         if not call_name or not any(call_name == c or call_name.endswith(f".{c}") for c in target_calls):
             return False
@@ -199,8 +196,6 @@ def call_arguments_match_ast(call_node, spec: dict, adapter=None, imports=None) 
         found_names = ["".join(n.itertext()).strip() for n in names]
 
         # Estende la ricerca dentro le stringhe interpolate (es. f-string):
-        # srcML non le scompone in <src:name> figli, quindi senza questo un
-        # nome usato solo dentro un'interpolazione sarebbe invisibile qui.
         if adapter is not None:
             str_lits = call_node.xpath(".//src:argument_list//src:literal[@type='string']", namespaces=NS)
             for lit in str_lits:
@@ -260,7 +255,7 @@ def call_arguments_match_ast(call_node, spec: dict, adapter=None, imports=None) 
                 idx == target_index and v < limit for idx, v in found_pairs
             )
         else:
-            # Forma scalare originale: qualunque argomento numerico sotto soglia.
+            #qualunque argomento numerico sotto soglia.
             limit = limit_spec
             found_less_than_limit = any(v < limit for _, v in found_pairs)
 
@@ -280,19 +275,22 @@ def call_arguments_match_ast(call_node, spec: dict, adapter=None, imports=None) 
 def is_function_parameter(node) -> bool:
     """
     Verifica se il nodo corrente (es. un identificativo di variabile) 
-    corrisponde a uno dei parametri definiti nella firma della funzione circostante.
+    corrisponde a uno dei parametri definiti nella firma della funzione.
     """
     if node is None:
         return False
         
-    node_text = "".join(node.xpath(".//text()")).strip()
+    node_text = "".join(node.itertext()).strip()
     if not node_text:
         return False
 
-    param_names = node.xpath(
-        "ancestor::src:function[1]//src:parameter_list//src:name/text()", 
+    # Estrae solo il <name> figlio diretto di <decl> (ignora <type>/<name>)
+    param_name_nodes = node.xpath(
+        "ancestor::src:function[1]//src:parameter_list//src:parameter/src:decl/src:name", 
         namespaces=NS
     )
+    
+    param_names = ["".join(p.itertext()).strip() for p in param_name_nodes]
     
     return node_text in param_names
 
@@ -344,9 +342,8 @@ def _is_pure_literal_expr(node) -> bool:
 def find_assignments(scope_node, adapter, var_name: str | None = None) -> list:
     """
     Ritorna gli statement di assegnazione (expr_stmt/decl_stmt) nello scope
-    dato, tramite adapter.is_assignment/get_assignment_lhs_rhs invece di
-    XPath hardcoded su '='. Se var_name e' fornito, filtra solo le
-    assegnazioni il cui LHS e' quella variabile.
+    dato, tramite adapter.is_assignment/get_assignment_lhs_rhs.
+    Se var_name e' fornito, filtra solo le assegnazioni il cui LHS e' quella variabile.
     Ogni elemento ritornato e' una tupla (stmt, lhs_node, rhs_node).
     """
     out = []
@@ -364,14 +361,11 @@ def find_assignments(scope_node, adapter, var_name: str | None = None) -> list:
 
 def _resolve_numeric_args(call_node, adapter, ns) -> list:
     """
-    Numeri trovati negli argomenti di call_node, come coppie (indice, valore):
-    letterali diretti, oppure variabili risolte tramite l'ultima assegnazione
-    precedente nello stesso scope, solo se quell'assegnazione è un letterale
-    numerico puro (nessuna call, nessun'altra variabile in mezzo) - evita di
-    leggere un numero "a caso" dentro un'espressione composta come RHS.
-    L'indice è la posizione dell'ARGOMENTO (non del singolo letterale), utile
-    per validare puntualmente un parametro specifico di una call (es. il
-    secondo argomento di RSA_generate_key_ex, non un esponente qualsiasi).
+    Estrae gli argomenti numerici di una chiamata sotto forma di coppie `(indice, valore)`.
+    Rileva con precisione due scenari:
+    1. Letterali diretti passati alla funzione (es. `func(1024)`).
+    2. Variabili a cui è stato assegnato in precedenza un numero puro (es. `size = 1024; func(size)`).
+    L'indice corrisponde alla posizione dell'argomento, permettendo validazioni mirate su parametri specifici.
     """
     values = []
     arg_list = call_node.xpath("./src:argument_list", namespaces=ns)
@@ -379,8 +373,12 @@ def _resolve_numeric_args(call_node, adapter, ns) -> list:
         return values
 
     call_key = _pos_key(call_node)
-    scope_candidates = call_node.xpath("ancestor::src:function[1] | ancestor::src:unit[1]", namespaces=ns)
-    scope_node = scope_candidates[0] if scope_candidates else call_node
+    func_scope = call_node.xpath("ancestor::src:function[1]", namespaces=ns)
+    if func_scope:
+        scope_node = func_scope[0]
+    else:
+        unit_scope = call_node.xpath("ancestor::src:unit[1]", namespaces=ns)
+        scope_node = unit_scope[0] if unit_scope else call_node
 
     for idx, arg in enumerate(arg_list[0].xpath("./src:argument", namespaces=ns)):
         expr_nodes = arg.xpath("./src:expr", namespaces=ns)
@@ -426,9 +424,9 @@ class CompiledRuleset:
                 flattened_rules.append(r)
                 
         self.rules = flattened_rules
-        self.forbidden_functions_index = {}   # nome -> [(rule, spec), ...]
-        self.forbidden_names_index = {}       # nome -> [rule, ...]
-        self.forbidden_name_prefixes = []     # [(prefix, rule), ...]
+        self.forbidden_functions_index = {}   
+        self.forbidden_names_index = {}       
+        self.forbidden_name_prefixes = []     
         self.unindexed_forbidden_functions = [] 
 
         for rule in self.rules:
