@@ -191,7 +191,7 @@
 {
   "rule_id": "CWE-319-CLEARTEXT-TRANSMISSION",
   "type": "structural",
-  "vulnerabilities": ["CWE-319", "CRYF"],
+  "vulnerabilities": ["CWE-319"],
   "forbidden_functions": [
     {"tag": "insecure_network_protocols"}
   ],
