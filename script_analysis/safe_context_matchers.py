@@ -203,38 +203,110 @@ def _safe_context_in_function_name(node, spec: dict, var_name: str | None = None
             return True
     return False
 
-
 def _safe_context_function_has_file_size_check(node, spec: dict, var_name: str | None = None, adapter=None, imports=None) -> bool:
     """{"type": "function_has_file_size_check"}
-       Verifica se nello scope della funzione esiste un controllo sulla dimensione.
+       Sicuro solo se il sink e' effettivamente protetto da un controllo di
+       dimensione: o si trova DENTRO il blocco 'if size <= MAX:', oppure
+       si trova DOPO un guard-clause 'if size > MAX: <exit>'.
     """
-    target = _function_or_unit_scope(node)
-    
     _adapter = adapter or PythonAdapter()
-    
-    # 1. Recupera la lista degli operatori (es. ["."] o [".", "->"])
     ops = _adapter.member_access_operator()
-    
-    # 2. Costruisce la condizione OR per l'XPath
     ops_xpath = " or ".join(f"text()='{op}'" for op in ops)
-    
-    # 3. Preleva dal catalogo JSON le proprietà/metodi validi (default: ["file_size", "size"])
     size_properties = spec.get("size_properties", ["file_size", "size"])
-    
-    # 4. Ricerca generica nello scope della funzione
-    for prop in size_properties:
-        xpath_query = f".//src:operator[{ops_xpath}]/following-sibling::*[1][self::src:name[text()='{prop}']]"
-        if target.xpath(xpath_query, namespaces=NS):
-            return True
-            
-    # 5. Ricerca specifica dentro i blocchi condizionali (es. if file.size > 100)
-    conditions = target.xpath(".//src:if_stmt//src:condition", namespaces=NS)
-    for cond in conditions:
+
+    upper_bound_ops = [">", ">="]
+    lower_bound_ops = ["<", "<="]
+
+    node_key = _pos_key(node)
+
+    def _find_logical_comparisons(cond):
+        """Ritorna l'operatore LOGICO rispetto alla proprietà 'size'."""
+        matches = []
         for prop in size_properties:
-            xpath_query = f".//src:operator[{ops_xpath}]/following-sibling::*[1][self::src:name[text()='{prop}']]"
-            if cond.xpath(xpath_query, namespaces=NS):
-                return True
+            prop_nodes = cond.xpath(
+                f".//src:operator[{ops_xpath}]/following-sibling::*[1][self::src:name[text()='{prop}']]",
+                namespaces=NS
+            )
+            for pnode in prop_nodes:
+                # Se la proprietà è invocata come metodo (es. file.getSize()), l'operatore
+                # relazionale si trova allo stesso livello gerarchico del tag <call>. 
+                # Se è una variabile pura (es. file.size in Python), sarà fratello del <name>.
+                outer_call = pnode.xpath("ancestor::src:call[1]", namespaces=NS)
+                outer_name = pnode.xpath("ancestor::src:name[not(ancestor::src:name)]", namespaces=NS)
                 
+                search_node = outer_call[0] if outer_call else (outer_name[0] if outer_name else pnode)
+
+                # Proprietà a SINISTRA (es. file.getSize() > MAX)
+                following_op = search_node.xpath("following-sibling::src:operator[1]", namespaces=NS)
+                if following_op:
+                    op_text = "".join(following_op[0].itertext()).strip()
+                    if op_text in upper_bound_ops + lower_bound_ops:
+                        matches.append(op_text)
+
+                # Proprietà a DESTRA (es. MAX < file.getSize()) -> Invertiamo l'operatore
+                preceding_op = search_node.xpath("preceding-sibling::src:operator[1]", namespaces=NS)
+                if preceding_op:
+                    op_text = "".join(preceding_op[0].itertext()).strip()
+                    if op_text == "<": matches.append(">")
+                    elif op_text == "<=": matches.append(">=")
+                    elif op_text == ">": matches.append("<")
+                    elif op_text == ">=": matches.append("<=")
+                    
+        return matches
+
+    # --- Caso A: il sink è DENTRO il blocco 'if size <= MAX:' ---
+    enclosing_ifs = node.xpath("ancestor::src:if_stmt", namespaces=NS)
+    for if_stmt in enclosing_ifs:
+        cond = if_stmt.xpath("./src:if/src:condition", namespaces=NS)
+        block = if_stmt.xpath("./src:if/src:block", namespaces=NS)
+        if not cond or not block:
+            continue
+            
+        if node not in block[0].iter():
+            continue
+            
+        cmp_found = _find_logical_comparisons(cond[0])
+        if any(op in lower_bound_ops for op in cmp_found):
+            return True
+
+    # --- Caso B: guard-clause precedente 'if size > MAX: <exit>' ---
+    scope = _function_or_unit_scope(node)
+    all_if_stmts = scope.xpath(".//src:if_stmt", namespaces=NS)
+    
+    for if_stmt in all_if_stmts:
+        if _pos_key(if_stmt) >= node_key:
+            continue
+            
+        cond = if_stmt.xpath("./src:if/src:condition", namespaces=NS)
+        block = if_stmt.xpath("./src:if/src:block", namespaces=NS)
+        if not cond or not block:
+            continue
+            
+        # FIX CRITICO: Il nodo NON deve trovarsi all'interno del blocco 'if' che funge da guard clause!
+        # Se si trova lì dentro, viene eseguito proprio quando il limite è superato, quindi è vulnerabile.
+        if node in block[0].iter():
+            continue
+            
+        # Troviamo tutte le interruzioni di flusso nel blocco if
+        exits_flow = block[0].xpath(
+            ".//src:return | .//src:raise | .//src:continue | .//src:break",
+            namespaces=NS
+        )
+        
+        valid_exits = []
+        parent_func = if_stmt.xpath("ancestor::src:function[1]", namespaces=NS)
+        for exit_node in exits_flow:
+            exit_func = exit_node.xpath("ancestor::src:function[1]", namespaces=NS)
+            if parent_func == exit_func:
+                valid_exits.append(exit_node)
+
+        if not valid_exits:
+            continue
+            
+        cmp_found = _find_logical_comparisons(cond[0])
+        if any(op in upper_bound_ops for op in cmp_found):
+            return True
+
     return False
 
 

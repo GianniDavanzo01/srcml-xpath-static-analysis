@@ -13,7 +13,10 @@
         "Scanner.nextLine","Scanner.next",
         "Console.readLine","Console.readPassword"
     ],
-    "nullable_returning_calls": ["System.getenv", "Map.get", "Optional.orElse","pattern.matcher"]
+    "nullable_returning_calls": ["System.getenv", "Map.get", "Optional.orElse","pattern.matcher"],
+    "file_upload_input": ["HttpServletRequest.getPart", "HttpServletRequest.getParts","MultipartHttpServletRequest.getFile", "MultipartHttpServletRequest.getFiles",
+                          "MultipartHttpServletRequest.getFileMap","MultipartRequest.getFile","MultipartRequest.getFiles","MultipartRequest.getFileMap","ServletFileUpload.parseRequest"
+    ] 
   },
   "sinks": {
     "sql_execution": [
@@ -122,6 +125,13 @@
         "type": "call_with_var_arg",
         "call": ["Logger.info", "Logger.error", "Logger.warn", "Logger.warning","System.out.println", "System.err.println"]
       }
+    ],
+    "unbounded_resource_read": [
+      {"type": "method_call", "method": "read"},
+      {"type": "method_call", "method": "readAllBytes"},
+      {"type": "method_call", "method": "getBytes"},
+      {"type": "method_call", "method": "extractall"},
+      {"type": "method_call", "method": "transferTo"}
     ]
   },
   "forbidden_functions": {
@@ -203,17 +213,16 @@
   "sanitizers":{
     "cast_to_integer": ["Integer.parseInt", "Integer.valueOf","Long.parseLong","Long.valueOf"],
     "path_sanitizers": ["getCanonicalPath", "getCanonicalFile", "FilenameUtils.getName"],
-    "shell_escape_sanitizers":[],
     "html_escape": ["HtmlUtils.htmlEscape","StringEscapeUtils.escapeHtml4","encodeForHTML"],
     "XSS_sanitizers": ["HtmlUtils.htmlEscape","StringEscapeUtils.escapeHtml4","encodeForHTML"],
     "url_encode_sanitizers": ["URLEncoder.encode"],
     "crlf_sanitizers": ["encodeForHTTPHeader","URLEncoder.encode","StringUtils.replace","StringEscapeUtils.escapeHtml4","encodeForHTTPHeader" ],
-    "ldap_escape_sanitizers":["encodeForLDAP","encodeForDN","LdapEncoder.filterEncode","LdapEncoder.nameEncode"]
+    "ldap_escape_sanitizers":["encodeForLDAP","encodeForDN","LdapEncoder.filterEncode","LdapEncoder.nameEncode"],
+    "shell_escape_sanitizers":[]
   },
   "safe_contexts": {
     "try_block": ["try"],
     "if_block": ["if"],
-    "sql_parameterization":[],
     "safe_permission_defaults": [
         {
           "type": "matches_xpath",
@@ -228,10 +237,9 @@
           }
         ],
     "resource_safe_contexts": [
-        {
-          "type": "function_has_file_size_check",
-          "size_properties": ["length", "getSize"]
-        }
+        {"type": "function_has_file_size_check","size_properties": ["length", "getSize","size"]},
+        {"type": "binary_comparison", "operators": ["<", "<="], "left_exact": ["$VAR"]},
+        {"type": "binary_comparison", "operators": ["<", "<="], "right_exact": ["$VAR"]}
       ],
       "starttls_upgrade": [
         {
@@ -285,7 +293,8 @@
         {"type": "function_has_call_matching_ast", "call": ["setFeature"], "contains_string_containing": ["disallow-doctype-decl"]},
         {"type": "function_has_call_matching_ast","call": ["setFeature"],"contains_names": ["XMLConstants.FEATURE_SECURE_PROCESSING"]}
       ],
-      "curl_non_url_option": []
+      "curl_non_url_option": [],
+      "sql_parameterization":[]
   },
   "patterns": {
     "active_debug": {

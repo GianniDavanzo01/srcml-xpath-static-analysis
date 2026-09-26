@@ -80,7 +80,12 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
 
     # Passo 2: propagazione a catena
     if rule.get("propagate_taint", True):
-        block = sanitizers + adapter.taint_block_functions()
+
+        if rule.get("ignore_taint_block_functions", False):
+            block = sanitizers
+        else:
+            block = sanitizers + adapter.taint_block_functions()
+
         propagating_calls = adapter.taint_propagating_calls()
 
         changed = True

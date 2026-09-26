@@ -2,7 +2,8 @@
     "sources":{
         "http_input": ["recv", "recvfrom", "recvmsg", "read", "fread", "fgets", "scanf", "gets"], 
         "nullable_returning_calls": ["malloc", "calloc", "realloc", "fopen", "getenv"],
-        "cli_input": ["getenv","argv","optarg"]
+        "cli_input": ["getenv","argv","optarg"],
+        "file_upload_input":[]
     },
     "sinks":{
         "file_system_access": [
@@ -55,6 +56,7 @@
                 "call":["syslog", "vsyslog", "fprintf"]
             }
         ],
+        "unbounded_resource_read": [],
         "html_output": [],
         "exception_stringify_calls": [],
         "http_redirect": [],
@@ -213,6 +215,10 @@
                         "call": ["xmlCtxtUseOptions"],
                         "contains_names": ["XML_PARSE_NOENT"]
                     }
+                ],
+            "resource_safe_contexts": [
+                    {"type": "binary_comparison", "operators": ["<", "<="], "left_exact": ["$VAR"]},
+                    {"type": "binary_comparison", "operators": ["<", "<="], "right_exact": ["$VAR"]}
                 ],
             "sql_parameterization": [],
             "try_block": [],

@@ -21,7 +21,8 @@
           "os.environ","os.environ.get","os.getenv",
           "argparse.ArgumentParser.parse_args"
       ],
-    "nullable_returning_calls": ["re.match", "re.search", "re.fullmatch", "dict.get", "os.environ.get"]
+    "nullable_returning_calls": ["re.match", "re.search", "re.fullmatch", "dict.get", "os.environ.get"],
+    "file_upload_input": ["request.files", "request.files.get", "request.files.getlist","request.FILES", "request.FILES.get","cgi.FieldStorage"]
   },
     "sinks": {
       "sql_execution": [
@@ -69,31 +70,23 @@
       "http_redirect": [
       {
         "type": "call_with_var_arg",
-        "call": [
-          "redirect",
-          "HttpResponseRedirect",
-          "HttpResponsePermanentRedirect",
-          "RedirectResponse"
-        ]
+        "call": ["redirect","HttpResponseRedirect","HttpResponsePermanentRedirect","RedirectResponse"]
       }
     ],
     "http_request": [
       {
         "type": "call_with_var_arg",
-        "call": [
-          "requests.get", "requests.post", 
-          "requests.request","requests.put","urllib.request.urlopen", "urlopen",
-          "httpx.get", "httpx.post","session.get","session.post","urllib3.PoolManager.request",
-          "urllib3.HTTPConnectionPool.request","http.client.HTTPConnection.request","http.client.HTTPSConnection.request"
+        "call": ["requests.get", "requests.post", "requests.request","requests.put","urllib.request.urlopen", "urlopen",
+                  "httpx.get", "httpx.post","session.get","session.post","urllib3.PoolManager.request",
+                   "urllib3.HTTPConnectionPool.request","http.client.HTTPConnection.request","http.client.HTTPSConnection.request"
         ]
       }
     ],
     "http_header_setters": [
         {
         "type": "call_with_var_arg",
-        "call":[
-          "BaseHTTPRequestHandler.send_header","HttpResponse.set_cookie","Response.set_cookie",
-          "flask.Response.set_cookie","django.http.HttpResponse.set_cookie","headers.add","set_cookie"
+        "call":["BaseHTTPRequestHandler.send_header","HttpResponse.set_cookie","Response.set_cookie",
+                "django.http.HttpResponse.set_cookie","headers.add"
         ]
       }
     ],
@@ -117,6 +110,13 @@
           "type":"call_with_var_arg",
           "call":["logging.info", "logging.warning", "logging.error", "logging.debug","logger.info", "logger.error"]
         }
+      ],
+      "unbounded_resource_read": [
+        {"type": "method_call", "method": "read"},
+        {"type": "method_call", "method": "readlines"},
+        {"type": "method_call", "method": "readline"},
+        {"type": "method_call", "method": "extractall"},
+        {"type": "method_call", "method": "save"}
       ]
   },
     "forbidden_functions": {
@@ -220,10 +220,9 @@
           {"type": "call_with_kwarg", "call": ["md5", "sha1", "hashlib.new"], "kwargs": {"usedforsecurity": "False"}}
         ],
       "resource_safe_contexts": [
-          {
-            "type": "function_has_file_size_check",
-            "size_properties": ["file_size", "size"]
-          },
+          {"type": "function_has_file_size_check","size_properties": ["file_size", "size","content_length"]},
+          {"type": "binary_comparison", "operators": ["<", "<="], "left_exact": ["$VAR"]},
+          {"type": "binary_comparison", "operators": ["<", "<="], "right_exact": ["$VAR"]},    
           {
             "type": "condition_matches_xpath",
             "xpath": ".//src:call[src:name[text()='len']]"
@@ -258,7 +257,6 @@
             "arg_value": ".png" 
           }
         ],
-        "bounds_checked_array_access":[],
         "manual_string_sanitization": [
           {
             "type": "function_has_method_call",
@@ -278,7 +276,8 @@
         "xxe_safe_configuration": [
           {"type": "call_with_kwarg", "call": ["XMLParser"], "kwargs": {"resolve_entities": "False"}}
         ],
-        "curl_non_url_option": []
+        "curl_non_url_option": [],
+        "bounds_checked_array_access":[]
   },
   "patterns": {
     "active_debug": {

@@ -27,7 +27,8 @@
   "type": "taint",
   "vulnerabilities": ["CWE-22"],
   "sources": [
-    {"tag": "http_input"}
+    {"tag": "http_input"},
+    {"tag": "cli_input"}
   ],
   "sinks": [
     {"tag": "file_system_access"},
@@ -48,7 +49,8 @@
   "type": "taint",
   "vulnerabilities": ["CWE-78"],
   "sources": [
-    {"tag": "http_input"}
+    {"tag": "http_input"},
+    {"tag": "cli_input"}
   ],
   "sinks": [
     {"tag": "os_command_execution"}
@@ -174,7 +176,7 @@
   "type": "structural",
   "vulnerabilities": ["CWE-259"],
   "sensitive_var_patterns": [
-    "password", "passwd", "pwd", "pass",
+    "password", "passwd", "pwd",
     "secretkey", "secret_key",
     "credential", "credentials",
     "passphrase", "pass_phrase"
@@ -256,6 +258,15 @@
   "forbidden_functions": [
     {"tag": "insecure_temp_functions"}
   ]
+},
+{
+  "rule_id": "CWE-400-UNCONTROLLED-RESOURCE-CONSUMPTION",
+  "description":"Applicata a Java e Python",
+  "type": "taint",
+  "vulnerabilities": ["CWE-400"],
+  "sources": ["function_parameters",{"tag": "file_upload_input"}],
+  "sinks": [{"tag": "unbounded_resource_read"}],
+  "safe_contexts": [{"tag": "resource_safe_contexts"}]
 },
 {
   "rule_id": "CWE-476-NULL-POINTER-DEREFERENCE",
@@ -367,6 +378,22 @@
   ],
   "safe_contexts": [
     {"tag": "safe_permission_defaults"}
+  ]
+},
+{
+  "rule_id": "CWE-770-UNCONTROLLED-RESOURCE-ALLOCATION",
+  "type": "taint",
+  "vulnerabilities": ["CWE-770"],
+  "sources": [
+    {"tag": "http_input"},
+    {"tag":"cli_input"}
+  ],
+  "sinks": [
+    {"tag": "unbounded_resource_read"}
+  ],
+  "ignore_taint_block_functions": true,
+  "safe_contexts": [
+    {"tag": "resource_safe_contexts"}
   ]
 },
 {
