@@ -812,19 +812,22 @@ class CAdapter(LanguageAdapter):
 
     def parse_numeric_literal(self, text: str):
         t = text.strip()
+
         is_hex = t.lower().startswith("0x")
         is_bin = t.lower().startswith("0b")
 
         if is_hex or is_bin:
-            # Solo u/l sono suffissi validi qui: mai cifre esadecimali,
-            # quindi rimovibili senza ambiguita' con 'e'/'f'.
-            core = re.sub(r'[ulUL]+$', '', t)
+            # Per hex/bin, SOLO u/l sono suffissi validi: mai f/d/z, che
+            # collidono con cifre esadecimali reali (A-F).
+            core = re.sub(r'[uUlL]+$', '', t)
             try:
                 return int(core, 16 if is_hex else 2)
             except ValueError:
                 return None
 
-        core = re.sub(r'[ulfeULFE]+$', '', t)
+        # Per i letterali decimali, la classe più ampia è sicura: nessuna
+        # cifra decimale (0-9) è mai in [uUlLfFdDzZ].
+        core = re.sub(r'[uUlLfFdDzZ]+$', '', t)
         try:
             if core.startswith("0") and len(core) > 1 and core[1:].isdigit():
                 return int(core, 8)
