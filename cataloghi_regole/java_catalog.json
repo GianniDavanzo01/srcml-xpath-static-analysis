@@ -132,7 +132,13 @@
       {"type": "method_call", "method": "getBytes"},
       {"type": "method_call", "method": "extractall"},
       {"type": "method_call", "method": "transferTo"}
-    ]
+    ],
+    "format_string_functions": [
+    {
+      "type": "call_with_var_arg", 
+      "call": ["String.format", "System.out.printf", "System.err.printf","PrintStream.printf", "Formatter.format" ]
+    }
+  ]
   },
   "forbidden_functions": {
     "socket_primitives": [
@@ -194,7 +200,8 @@
           "contains_string_containing": ["MD5", "SHA-1"],
           "contains_any_name": ["password", "passwd", "pwd"]
         }
-      ]
+      ],
+      "buffer_overflow_function":[]
 
   },
   "excluded_functions": {
@@ -293,6 +300,9 @@
         {"type": "function_has_call_matching_ast", "call": ["setFeature"], "contains_string_containing": ["disallow-doctype-decl"]},
         {"type": "function_has_call_matching_ast","call": ["setFeature"],"contains_names": ["XMLConstants.FEATURE_SECURE_PROCESSING"]}
       ],
+      "format_string_not_first_arg": [
+        {"type": "node_matches_xpath", "xpath": "ancestor::src:argument[preceding-sibling::src:argument]"}
+      ],
       "curl_non_url_option": [],
       "sql_parameterization":[]
   },
@@ -337,10 +347,11 @@
             }
           ]
     },
-    "unsafe_deserialization_kwargs":{},
-    "unsafe_dict_access":{},
     "unsafe_array_access": {
       "forbidden_subscripts": ["args","array","buffer"]
-    }
+    },
+    "unsafe_deserialization_kwargs":{},
+    "unsafe_dict_access":{},
+    "use_after_free_check":{}
   }
 }

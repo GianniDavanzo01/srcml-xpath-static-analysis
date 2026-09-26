@@ -150,6 +150,15 @@
   ]
 },
 {
+  "rule_id": "CWE-120-BUFFER-OVERFLOW",
+  "type": "structural",
+  "description": "Applicata solo a C",
+  "vulnerabilities": ["CWE-120"],
+  "forbidden_functions": [
+    {"tag": "buffer_overflow_function"}
+  ] 
+},
+{
   "rule_id": "CWE-129-IMPROPER-ARRAY-INDEX-VALIDATION",
   "type": "structural",
   "description":"Applicabile solo a Java e C",
@@ -159,6 +168,20 @@
   ],
   "safe_contexts": [
     {"tag": "bounds_checked_array_access"}
+  ]
+},
+{
+  "rule_id": "CWE-134-FORMAT-STRING-INJECTION",
+  "type": "taint",
+  "vulnerabilities": ["CWE-134"],
+  "sources": [
+    {"tag": "http_input"}
+  ],
+  "sinks": [
+    {"tag": "format_string_functions"}
+  ],
+  "safe_contexts": [
+    {"tag": "format_string_not_first_arg"}
   ]
 },
 {
@@ -267,6 +290,13 @@
   "sources": ["function_parameters",{"tag": "file_upload_input"}],
   "sinks": [{"tag": "unbounded_resource_read"}],
   "safe_contexts": [{"tag": "resource_safe_contexts"}]
+},
+{
+  "rule_id": "CWE-416-USE-AFTER-FREE",
+  "type": "structural",
+  "description": "Applicabile solo a C.",
+  "vulnerabilities": ["CWE-416"],
+  "patterns": [{"tag": "use_after_free_check"}]
 },
 {
   "rule_id": "CWE-476-NULL-POINTER-DEREFERENCE",

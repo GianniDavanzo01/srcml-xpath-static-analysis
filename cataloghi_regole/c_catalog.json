@@ -56,6 +56,12 @@
                 "call":["syslog", "vsyslog", "fprintf"]
             }
         ],
+        "format_string_functions": [
+            {
+                "type": "call_with_var_arg", 
+                "call": ["printf", "fprintf", "sprintf", "snprintf", "syslog", "vsyslog"]
+            }
+        ],
         "unbounded_resource_read": [],
         "html_output": [],
         "exception_stringify_calls": [],
@@ -140,6 +146,7 @@
                 "contains_any_name": ["password", "passwd", "pwd"]
             }
         ],
+        "buffer_overflow_function":["strcpy", "strcat", "gets", "sprintf", "vsprintf", "scanf"],
         "dynamic_code_execution": [],
         "unsafe_deserializers": []
     },
@@ -220,6 +227,16 @@
                     {"type": "binary_comparison", "operators": ["<", "<="], "left_exact": ["$VAR"]},
                     {"type": "binary_comparison", "operators": ["<", "<="], "right_exact": ["$VAR"]}
                 ],
+            "format_string_not_first_arg": [
+                    {
+                        "type": "node_matches_xpath",
+                        "xpath": "ancestor::src:call[src:name[1]='printf' or src:name[1]='sprintf' or src:name[1]='snprintf'] and ancestor::src:argument[preceding-sibling::src:argument]"
+                    },
+                    {
+                        "type": "node_matches_xpath",
+                        "xpath": "ancestor::src:call[src:name[1]='fprintf' or src:name[1]='syslog' or src:name[1]='vsyslog'] and ancestor::src:argument[count(preceding-sibling::src:argument) >= 2]"
+                    }
+                ],
             "sql_parameterization": [],
             "try_block": [],
             "allowlist_validation": [],
@@ -258,7 +275,7 @@
             }
         },
           "insecure_permission_assignment": {
-                "forbidden_functions": [
+            "forbidden_functions": [
                     {
                         "type": "call_matches_ast",
                         "call": ["chmod", "fchmod"],
@@ -272,10 +289,17 @@
                     }
                 ]
             },
-            "unsafe_deserialization_kwargs":{},
-            "unsafe_dict_access":{},
+            "use_after_free_check": {
+                        "use_after_free": {
+                            "call": ["free"],
+                            "safe_allocation_calls": ["malloc", "calloc", "realloc"],
+                            "safe_reassignments": ["NULL"]
+                        }
+            },
             "unsafe_array_access": {
                 "forbidden_subscripts": ["argv","array","buffer"]
-            }
+            },
+            "unsafe_deserialization_kwargs":{},
+            "unsafe_dict_access":{}
     }
 }
