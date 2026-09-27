@@ -284,7 +284,7 @@
 },
 {
   "rule_id": "CWE-400-UNCONTROLLED-RESOURCE-CONSUMPTION",
-  "description":"Applicata a Java e Python",
+  "description":"Applicata a Java e Python (DISCOURAGED)",
   "type": "taint",
   "vulnerabilities": ["CWE-400"],
   "sources": ["function_parameters",{"tag": "file_upload_input"}],
@@ -297,6 +297,18 @@
   "description": "Applicabile solo a C.",
   "vulnerabilities": ["CWE-416"],
   "patterns": [{"tag": "use_after_free_check"}]
+},
+{
+  "rule_id": "CWE-434-UNRESTRICTED-FILE-UPLOAD",
+  "type": "taint",
+  "description": "Applicabile a Python e Java. Rileva il salvataggio di un file caricato dall'utente senza previa validazione dell'estensione/tipo.",
+  "vulnerabilities": ["CWE-434"],
+  "sources": [{"tag": "file_upload_input"}],
+  "sinks": [{"tag": "file_write"}],
+  "safe_contexts": [
+    {"tag": "file_extension_validation"},
+    {"tag": "allowlist_validation"}
+  ]
 },
 {
   "rule_id": "CWE-476-NULL-POINTER-DEREFERENCE",
@@ -395,7 +407,7 @@
 {
   "rule_id": "CWE-703-IMPROPER-EXCEPTION-HANDLING",
   "type": "structural",
-  "description": "Applicabile a Python e Java (linguaggi con gestione eccezioni strutturata)",
+  "description": "Applicabile a Python e Java (linguaggi con gestione eccezioni strutturata) (DISCOURAGED)",
   "vulnerabilities": ["CWE-703"],
   "empty_catch_blocks": true
 },

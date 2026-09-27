@@ -138,6 +138,9 @@
       "type": "call_with_var_arg", 
       "call": ["String.format", "System.out.printf", "System.err.printf","PrintStream.printf", "Formatter.format" ]
     }
+  ],
+  "file_write": [
+    {"type": "method_call", "method": "transferTo"}
   ]
   },
   "forbidden_functions": {
@@ -274,7 +277,11 @@
         {
           "type": "receiver_of_method_with_arg",
           "method": "endsWith", 
-          "arg_value": ".png"
+          "dangerous_values": [
+              ".php", ".php3", ".php4", ".php5",
+              ".exe", ".dll", ".so", ".sh", ".bat", ".cmd",
+              ".cgi", ".pl", ".py", ".jar"
+            ] 
         }
       ],
       "bounds_checked_array_access": [

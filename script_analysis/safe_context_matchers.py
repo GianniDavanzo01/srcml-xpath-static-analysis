@@ -675,49 +675,54 @@ def _safe_context_call_has_kwargs(node, spec: dict, var_name: str | None = None,
 
 
 def _safe_context_receiver_of_method_with_arg(node, spec: dict, var_name: str | None = None, adapter=None, imports=None) -> bool:
-    """{"type": "receiver_of_method_with_arg", "method": "endswith", "arg_value": ".png"}"""
     target_method = spec.get("method")
-    target_arg = spec.get("arg_value")
-    
-    if not target_method or not target_arg or not var_name:
+    dangerous_values = spec.get("dangerous_values")
+    if not target_method or not var_name or (dangerous_values is None):
         return False
 
     _adapter = adapter or PythonAdapter()
-    
-    ops = _adapter.member_access_operator()
-    ops_xpath = " or ".join(f"text()='{op}'" for op in ops)
-
+    op = _adapter.member_access_operator()
+    ops_xpath = " or ".join(f"text()='{o}'" for o in op) if isinstance(op, list) else f"text()='{op}'"
     conditions = node.xpath("ancestor::src:if_stmt//src:condition", namespaces=NS)
-    
+
     for cond in conditions:
         var_nodes = cond.xpath(f".//src:name[text()='{var_name}']", namespaces=NS)
-        
         for v_node in var_nodes:
-            method_nodes = v_node.xpath(
-                f"following-sibling::src:operator[1][{ops_xpath}]/following-sibling::src:name[1]",
-                namespaces=NS,
-            )
-            
-            if method_nodes and "".join(method_nodes[0].itertext()).strip() == target_method:
-                
-                call_node = v_node.xpath("ancestor::src:call[1]", namespaces=NS)
-                if not call_node:
-                    continue
-                    
-                arg_list = call_node[0].xpath("./src:argument_list", namespaces=NS)
-                if not arg_list:
-                    continue
-                    
-                arguments = arg_list[0].xpath("./src:argument", namespaces=NS)
-                for arg in arguments:
-                    literals = arg.xpath(".//src:literal[@type='string']", namespaces=NS)
-                    for lit in literals:
-                        lit_text = "".join(lit.itertext()).strip()
-                        normalized_lit = _adapter.normalize_string_literal(lit_text)
-                        
-                        if normalized_lit == target_arg:
-                            return True
-                            
+            current = v_node
+            method_nodes = []
+            while True:
+                next_hop = current.xpath(
+                    f"following-sibling::src:operator[1][{ops_xpath}]/following-sibling::src:name[1]",
+                    namespaces=NS
+                )
+                if not next_hop:
+                    break
+                method_nodes = next_hop
+                if "".join(next_hop[0].itertext()).strip() == target_method:
+                    break
+                current = next_hop[0]
+
+            if not method_nodes or "".join(method_nodes[0].itertext()).strip() != target_method:
+                continue
+
+            call_node = method_nodes[0].xpath("ancestor::src:call[1]", namespaces=NS)
+            if not call_node:
+                continue
+            arg_list = call_node[0].xpath("./src:argument_list", namespaces=NS)
+            if not arg_list:
+                continue
+
+            found_values = [
+                _adapter.normalize_string_literal("".join(lit.itertext()).strip())
+                for lit in arg_list[0].xpath(".//src:literal[@type='string']", namespaces=NS)
+            ]
+            if not found_values:
+                continue
+
+            if dangerous_values is not None:
+                # SICURO se NESSUNO dei valori ammessi dal check è nella blacklist pericolosa
+                if not any(v in dangerous_values for v in found_values):
+                    return True
     return False
 
 

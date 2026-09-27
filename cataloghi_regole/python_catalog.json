@@ -123,6 +123,9 @@
           "type": "call_with_var_arg", 
           "call": ["logging.info", "logging.warning", "logging.error", "logging.debug","logger.info", "logger.warning", "logger.error", "print"]
         }
+      ],
+      "file_write": [
+        {"type": "method_call", "method": "save"}
       ]
   },
     "forbidden_functions": {
@@ -261,7 +264,11 @@
           {
             "type": "receiver_of_method_with_arg",
             "method": "endswith",
-            "arg_value": ".png" 
+            "dangerous_values": [
+              ".php", ".php3", ".php4", ".php5",
+              ".exe", ".dll", ".so", ".sh", ".bat", ".cmd",
+              ".cgi", ".pl", ".py", ".jar"
+            ] 
           }
         ],
         "manual_string_sanitization": [

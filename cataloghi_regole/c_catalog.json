@@ -66,7 +66,8 @@
         "html_output": [],
         "exception_stringify_calls": [],
         "http_redirect": [],
-        "http_header_setters": []
+        "http_header_setters": [],
+        "file_write":[]
     },
     "forbidden_functions":{
         "weak_key_generation": [
