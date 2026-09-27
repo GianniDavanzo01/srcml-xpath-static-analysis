@@ -344,31 +344,23 @@ class PythonAdapter(LanguageAdapter):
 
         # 3. INSTANCE TRACKING (Risolto il bug di XPath)
         if rest:
-            from common import _pos_key
-            
-            # Cerca TUTTE le assegnazioni in modo generico
-            xpath_assign = (
-                f"ancestor::*[self::src:function or self::src:unit][1]"
-                f"//src:expr_stmt[.//src:operator[text()='=']]"
-            )
-            all_assignments = call_node.xpath(xpath_assign, namespaces=ns)
+            from common import _pos_key, find_assignments
 
-            valid_assignments = []
-            for a in all_assignments:
-                lhs, _ = self.get_assignment_lhs_rhs(a, ns)
-                if lhs is not None:
-                    # Verifica in modo sicuro che il nome a sinistra sia esattamente la variabile che cerchiamo (es. 'key')
-                    lhs_text = "".join(lhs.itertext()).strip()
-                    if lhs_text == head:
-                        valid_assignments.append(a)
+            scope_candidates = call_node.xpath(
+                "ancestor::*[self::src:function or self::src:unit][1]", namespaces=ns
+            )
+            scope_node = scope_candidates[0] if scope_candidates else call_node
+
+            valid_assignments = [
+                (stmt, rhs) for stmt, lhs, rhs in find_assignments(scope_node, self, head)
+            ]
 
             if valid_assignments:
                 call_key = _pos_key(call_node)
-                prior = [a for a in valid_assignments if _pos_key(a) < call_key]
+                prior = [(stmt, rhs) for stmt, rhs in valid_assignments if _pos_key(stmt) < call_key]
 
                 if prior:
-                    assign_node = max(prior, key=_pos_key)
-                    _, rhs = self.get_assignment_lhs_rhs(assign_node, ns)
+                    assign_node, rhs = max(prior, key=lambda t: _pos_key(t[0]))
 
                     if rhs is not None:
                         rhs_call_names = rhs.xpath("descendant-or-self::src:call[1]/src:name", namespaces=ns)
@@ -377,16 +369,15 @@ class PythonAdapter(LanguageAdapter):
                             constructor_name = "".join(rhs_call_names[0].itertext()).strip()
                             resolved_constructor = constructor_name
                             c_head, _, c_rest = constructor_name.partition(".")
-                            
+
                             for binding in imports:
                                 if binding.local_name == c_head:
-                                    # Usa la logica flessibile anche qui
                                     if c_rest:
                                         resolved_constructor = f"{binding.canonical_name}.{c_rest}"
                                     else:
                                         resolved_constructor = binding.canonical_name
                                     break
-                            
+
                             return f"{resolved_constructor}.{rest}"
 
         return raw

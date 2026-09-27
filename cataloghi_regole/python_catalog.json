@@ -85,7 +85,7 @@
       {
         "type": "call_with_var_arg",
         "call": ["requests.get", "requests.post", "requests.request","requests.put","urllib.request.urlopen", "urlopen",
-                  "httpx.get", "httpx.post","session.get","session.post","urllib3.PoolManager.request","ldap.initialize",
+                  "httpx.get", "httpx.post","Session.get","Session.post","urllib3.PoolManager.request","ldap.initialize",
                   "urllib3.HTTPConnectionPool.request","http.client.HTTPConnection.request","http.client.HTTPSConnection.request"
         ]
       }
@@ -134,6 +134,12 @@
       ],
       "file_write": [
         {"type": "method_call", "method": "save"}
+      ],
+      "resource_injection_sinks": [
+        {
+          "type": "call_with_var_arg",
+          "call": ["__import__","importlib.import_module","flask.send_file","flask.send_static_file","django.utils.module_loading.import_string","urllib.request.urlopen"]
+        }
       ]
   },
     "forbidden_functions": {
@@ -168,7 +174,7 @@
           ],
         "unsafe_deserializers": [
           "pickle.load", "pickle.loads","_pickle.load", "_pickle.loads","cPickle.load", "cPickle.loads",
-          "marshal.load", "marshal.loads","shelve.open","yaml.unsafe_load","pandas.read_pickle"
+          "marshal.load", "marshal.loads","shelve.open","yaml.unsafe_load","pandas.read_pickle","pickle.Unpickler.load"
           ],
         "insecure_temp_functions": ["tempfile.mktemp","mktemp"],
         "insecure_cookie_configuration":["set_cookie","response.set_cookie","HttpResponse.set_cookie"],

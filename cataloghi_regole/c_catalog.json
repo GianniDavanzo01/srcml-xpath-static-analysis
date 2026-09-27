@@ -62,6 +62,12 @@
                 "call": ["printf", "fprintf", "sprintf", "snprintf", "syslog", "vsyslog"]
             }
         ],
+        "resource_injection_sinks": [
+            {
+            "type": "call_with_var_arg",
+            "call": ["dlopen","LoadLibrary","LoadLibraryEx","LoadLibraryA","LoadLibraryW","LoadLibraryExA","LoadLibraryExW"]
+            }
+        ],
         "unbounded_resource_read": [],
         "html_output": [],
         "exception_stringify_calls": [],

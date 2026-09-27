@@ -120,6 +120,24 @@
   "safe_contexts": [{"type": "all_args_are_literals"}]
 },
 {
+  "rule_id": "CWE-99-RESOURCE-INJECTION",
+  "type": "taint",
+  "vulnerabilities": ["CWE-99"],
+  "sources": [
+    {"tag": "http_input"},
+    {"tag": "cli_input"}
+  ],
+  "sinks": [
+    {"tag": "resource_injection_sinks"}
+  ],
+  "sanitizers": [
+    {"tag": "cast_to_integer"}
+  ],
+  "safe_contexts": [
+    {"tag": "allowlist_validation"}
+  ]
+},
+{
   "rule_id": "CWE-113-HTTP-RESPONSE-SPLITTING",
   "type": "taint",
   "vulnerabilities": ["CWE-113"],

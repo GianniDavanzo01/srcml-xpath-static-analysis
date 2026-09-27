@@ -134,14 +134,22 @@
       {"type": "method_call", "method": "transferTo"}
     ],
     "format_string_functions": [
-    {
-      "type": "call_with_var_arg", 
-      "call": ["String.format", "System.out.printf", "System.err.printf","PrintStream.printf", "Formatter.format" ]
-    }
-  ],
-  "file_write": [
-    {"type": "method_call", "method": "transferTo"}
-  ]
+      {
+        "type": "call_with_var_arg", 
+        "call": ["String.format", "System.out.printf", "System.err.printf","PrintStream.printf", "Formatter.format" ]
+      }
+    ],
+    "file_write": [
+      {"type": "method_call", "method": "transferTo"}
+    ],
+    "resource_injection_sinks": [
+      {
+        "type": "call_with_var_arg",
+        "call": ["Class.forName","ClassLoader.loadClass","ClassLoader.getResource","ClassLoader.getResourceAsStream",
+                  "ResourceBundle.getBundle","ServletContext.getResource","ServletContext.getResourceAsStream"
+                ]
+      }
+    ]
   },
   "forbidden_functions": {
     "socket_primitives": [
