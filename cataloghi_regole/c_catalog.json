@@ -148,6 +148,14 @@
             }
         ],
         "buffer_overflow_function":["strcpy", "strcat", "gets", "sprintf", "vsprintf", "scanf"],
+        "insecure_default_permissions": [
+            {
+                "type": "call_matches_ast",
+                "call": ["umask"],
+                "exact_args_count": 1,
+                "contains_numbers": [0]
+            }
+        ],
         "dynamic_code_execution": [],
         "unsafe_deserializers": []
     },

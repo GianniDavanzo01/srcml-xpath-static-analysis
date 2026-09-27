@@ -677,12 +677,14 @@ def _safe_context_call_has_kwargs(node, spec: dict, var_name: str | None = None,
 def _safe_context_receiver_of_method_with_arg(node, spec: dict, var_name: str | None = None, adapter=None, imports=None) -> bool:
     target_method = spec.get("method")
     dangerous_values = spec.get("dangerous_values")
-    if not target_method or not var_name or (dangerous_values is None):
+    target_arg = spec.get("arg_value")  # retrocompatibilità
+    if not target_method or not var_name or (dangerous_values is None and not target_arg):
         return False
 
     _adapter = adapter or PythonAdapter()
     op = _adapter.member_access_operator()
     ops_xpath = " or ".join(f"text()='{o}'" for o in op) if isinstance(op, list) else f"text()='{op}'"
+    neg_op = _adapter.negation_operator()
     conditions = node.xpath("ancestor::src:if_stmt//src:condition", namespaces=NS)
 
     for cond in conditions:
@@ -719,9 +721,21 @@ def _safe_context_receiver_of_method_with_arg(node, spec: dict, var_name: str | 
             if not found_values:
                 continue
 
+            # La call e' preceduta da un operatore di negazione (es. !filename.endsWith(".exe"))?
+            is_negated = bool(
+                call_node[0].xpath(f"preceding-sibling::src:operator[1][text()='{neg_op}']", namespaces=NS)
+            )
+
             if dangerous_values is not None:
-                # SICURO se NESSUNO dei valori ammessi dal check è nella blacklist pericolosa
-                if not any(v in dangerous_values for v in found_values):
+                any_dangerous = any(v in dangerous_values for v in found_values)
+                # Sicuro se: nessun valore pericoloso presente, OPPURE
+                # il valore pericoloso e' presente ma la call e' negata (rifiuto esplicito)
+                if not any_dangerous:
+                    return True
+                if any_dangerous and is_negated:
+                    return True
+            else:
+                if target_arg in found_values:
                     return True
     return False
 

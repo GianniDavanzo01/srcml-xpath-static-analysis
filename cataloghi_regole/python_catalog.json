@@ -26,7 +26,15 @@
   },
     "sinks": {
       "sql_execution": [
-          {"type": "call_with_var_arg", "call": ["execute","executemany","session.execute", "engine.execute", "cursor.execute"]}
+          {"type": "call_with_var_arg", "call": [
+            "cursor.execute", 
+            "cursor.executemany",
+            "connection.execute",
+            "conn.execute",
+            "sqlalchemy.orm.Session.execute",
+            "sqlalchemy.engine.Engine.execute",
+            "sqlalchemy.engine.Connection.execute"
+          ]}
           ],
       "os_command_execution": [
           {"type": "call_with_var_arg", "call": ["subprocess.run", "subprocess.Popen", "subprocess.call", "subprocess.check_output",
@@ -77,8 +85,8 @@
       {
         "type": "call_with_var_arg",
         "call": ["requests.get", "requests.post", "requests.request","requests.put","urllib.request.urlopen", "urlopen",
-                  "httpx.get", "httpx.post","session.get","session.post","urllib3.PoolManager.request",
-                   "urllib3.HTTPConnectionPool.request","http.client.HTTPConnection.request","http.client.HTTPSConnection.request"
+                  "httpx.get", "httpx.post","session.get","session.post","urllib3.PoolManager.request","ldap.initialize",
+                  "urllib3.HTTPConnectionPool.request","http.client.HTTPConnection.request","http.client.HTTPSConnection.request"
         ]
       }
     ],
@@ -93,7 +101,7 @@
       "ldap_execution": [
         {
           "type": "call_with_var_arg",
-          "call": ["ldap3.Connection.search","ldap_connection.search_s","ldap.search_s","ldap.initialize"]
+          "call": ["search_s","search_st","search_ext", "search_ext_s","ldap3.Connection.search"]
         }
       ],
       "csv_writing": [
@@ -182,6 +190,14 @@
             "call": ["hashlib.md5", "hashlib.sha1", "md5", "sha1"],
             "contains_any_name": ["password", "passwd", "pwd", "passphrase"]
           }
+        ],
+        "insecure_default_permissions": [
+            {
+                "type": "call_matches_ast",
+                "call": ["umask", "os.umask"],
+                "exact_args_count": 1,
+                "contains_numbers": [0]
+            }
         ],
         "buffer_overflow_function":[]
       },

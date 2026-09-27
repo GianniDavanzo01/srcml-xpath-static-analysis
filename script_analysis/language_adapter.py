@@ -327,21 +327,70 @@ class PythonAdapter(LanguageAdapter):
         if not raw:
             return None
 
-        # PREVENZIONE DOPPIO PREFISSO: se è già qualificato con un modulo noto, ritornalo così com'è
+        # 1. PREVENZIONE DOPPIO PREFISSO
         for binding in imports:
             if raw == binding.canonical_name or raw.startswith(f"{binding.canonical_name}."):
                 return raw
 
         head, _, rest = raw.partition(".")
+        
+        # 2. MATCH SUI MODULI IMPORTATI (Rimosso il check restrittivo su is_module)
         for binding in imports:
             if binding.local_name == head:
-                if binding.is_module:
-                    return f"{binding.canonical_name}.{rest}" if rest else binding.canonical_name
-                if not rest:
-                    return binding.canonical_name
-                    
-        return raw 
+                # Se c'è un resto (es. modes.CBC), comportati come se "modes" fosse un modulo
+                if rest:
+                    return f"{binding.canonical_name}.{rest}"
+                return binding.canonical_name
 
+        # 3. INSTANCE TRACKING (Risolto il bug di XPath)
+        if rest:
+            from common import _pos_key
+            
+            # Cerca TUTTE le assegnazioni in modo generico
+            xpath_assign = (
+                f"ancestor::*[self::src:function or self::src:unit][1]"
+                f"//src:expr_stmt[.//src:operator[text()='=']]"
+            )
+            all_assignments = call_node.xpath(xpath_assign, namespaces=ns)
+
+            valid_assignments = []
+            for a in all_assignments:
+                lhs, _ = self.get_assignment_lhs_rhs(a, ns)
+                if lhs is not None:
+                    # Verifica in modo sicuro che il nome a sinistra sia esattamente la variabile che cerchiamo (es. 'key')
+                    lhs_text = "".join(lhs.itertext()).strip()
+                    if lhs_text == head:
+                        valid_assignments.append(a)
+
+            if valid_assignments:
+                call_key = _pos_key(call_node)
+                prior = [a for a in valid_assignments if _pos_key(a) < call_key]
+
+                if prior:
+                    assign_node = max(prior, key=_pos_key)
+                    _, rhs = self.get_assignment_lhs_rhs(assign_node, ns)
+
+                    if rhs is not None:
+                        rhs_call_names = rhs.xpath("descendant-or-self::src:call[1]/src:name", namespaces=ns)
+
+                        if rhs_call_names:
+                            constructor_name = "".join(rhs_call_names[0].itertext()).strip()
+                            resolved_constructor = constructor_name
+                            c_head, _, c_rest = constructor_name.partition(".")
+                            
+                            for binding in imports:
+                                if binding.local_name == c_head:
+                                    # Usa la logica flessibile anche qui
+                                    if c_rest:
+                                        resolved_constructor = f"{binding.canonical_name}.{c_rest}"
+                                    else:
+                                        resolved_constructor = binding.canonical_name
+                                    break
+                            
+                            return f"{resolved_constructor}.{rest}"
+
+        return raw
+                
 
     def get_interpolated_variables(self, literal_text: str) -> list[str]:
         # Cerca tutto quello che c'è tra { e } ignorando eventuali specificatori di formato

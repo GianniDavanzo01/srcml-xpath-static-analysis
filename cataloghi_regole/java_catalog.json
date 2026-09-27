@@ -204,7 +204,8 @@
           "contains_any_name": ["password", "passwd", "pwd"]
         }
       ],
-      "buffer_overflow_function":[]
+      "buffer_overflow_function":[],
+      "insecure_default_permissions":[]
 
   },
   "excluded_functions": {
