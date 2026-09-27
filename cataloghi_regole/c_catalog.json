@@ -227,14 +227,16 @@
                     {"type": "binary_comparison", "operators": ["<", "<="], "left_exact": ["$VAR"]},
                     {"type": "binary_comparison", "operators": ["<", "<="], "right_exact": ["$VAR"]}
                 ],
-            "format_string_not_first_arg": [
+            "format_string_position": [
                     {
-                        "type": "node_matches_xpath",
-                        "xpath": "ancestor::src:call[src:name[1]='printf' or src:name[1]='sprintf' or src:name[1]='snprintf'] and ancestor::src:argument[preceding-sibling::src:argument]"
-                    },
-                    {
-                        "type": "node_matches_xpath",
-                        "xpath": "ancestor::src:call[src:name[1]='fprintf' or src:name[1]='syslog' or src:name[1]='vsyslog'] and ancestor::src:argument[count(preceding-sibling::src:argument) >= 2]"
+                        "type": "check_format_arg_position",
+                        "vulnerable_indices": {
+                            "printf": 0,
+                            "sprintf": 1,
+                            "snprintf": 2,
+                            "fprintf": 1,
+                            "syslog": 1
+                        }
                     }
                 ],
             "sql_parameterization": [],

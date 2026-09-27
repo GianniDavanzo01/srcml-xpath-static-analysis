@@ -399,7 +399,7 @@ def _check_use_after_free(tree, rule, findings, adapter, imports):
             if lhs is None or rhs is None:
                 continue
                 
-            # FIX 2: descendant-or-self garantisce di catturare il name anche se coincide col nodo stesso
+            # descendant-or-self garantisce di catturare il name anche se coincide col nodo stesso
             lhs_names = set(n.text for n in lhs.xpath("descendant-or-self::src:name", namespaces=NS) if n.text)
             rhs_names = set(n.text for n in rhs.xpath("descendant-or-self::src:name[not(following-sibling::src:argument_list)]", namespaces=NS) if n.text)
             

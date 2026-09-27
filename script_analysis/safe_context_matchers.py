@@ -917,6 +917,46 @@ def _safe_context_member_access_name(node, spec: dict, var_name: str | None = No
 
     return bool(name_nodes) and "".join(name_nodes[0].itertext()).strip() == target
 
+
+def _safe_context_check_format_arg_position(node, spec, var_name, adapter, imports=None):
+    if imports is None:
+        imports = []
+        
+    vulnerable_indices = spec.get("vulnerable_indices", {})
+    if not vulnerable_indices:
+        return False
+        
+    # 1. Trova l'argomento (src:argument) in cui si trova il nodo infetto
+    arg_node = node.xpath("ancestor-or-self::src:argument[1]", namespaces=NS)
+    if not arg_node:
+        return False
+        
+    # 2. Risale alla chiamata (src:call) genitrice
+    call_node = arg_node[0].xpath("ancestor::src:call[1]", namespaces=NS)
+    if not call_node:
+        return False
+        
+    # 3. Ottiene il nome reale della funzione
+    call_name = adapter.resolve_call_name(call_node[0], NS, imports)
+    if not call_name:
+        return False
+        
+    target_index = None
+    for target_name, idx in vulnerable_indices.items():
+        if call_name == target_name or call_name.endswith(f".{target_name}") or call_name.endswith(f"::{target_name}"):
+            target_index = idx
+            break
+            
+    # Se la funzione non è nel catalogo, non disinnescare
+    if target_index is None:
+        return False
+        
+    # 4. Conta matematicamente quanti argomenti precedono questo nodo
+    preceding_args = int(arg_node[0].xpath("count(preceding-sibling::src:argument)", namespaces=NS))
+    
+    # 5. È sicuro se la sua posizione NON coincide con l'indice vulnerabile.
+    return preceding_args != target_index
+
 SAFE_CONTEXT_MATCHERS = {
     "parametrized_query": _safe_context_parametrized_query,
     "receiver_of_method": _safe_context_member_access_name,
@@ -943,6 +983,7 @@ SAFE_CONTEXT_MATCHERS = {
     "try_after_source": _safe_context_try_after_source,
     "var_falsy_guard_clause":_safe_context_var_falsy_guard_clause,
     "all_args_are_literals": _safe_context_all_args_are_literals,
+    "check_format_arg_position":_safe_context_check_format_arg_position
 }
 
 

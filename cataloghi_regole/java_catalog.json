@@ -300,9 +300,16 @@
         {"type": "function_has_call_matching_ast", "call": ["setFeature"], "contains_string_containing": ["disallow-doctype-decl"]},
         {"type": "function_has_call_matching_ast","call": ["setFeature"],"contains_names": ["XMLConstants.FEATURE_SECURE_PROCESSING"]}
       ],
-      "format_string_not_first_arg": [
-        {"type": "node_matches_xpath", "xpath": "ancestor::src:argument[preceding-sibling::src:argument]"}
-      ],
+      "format_string_position": [
+                    {
+                        "type": "check_format_arg_position",
+                        "vulnerable_indices": {
+                            "String.format": 0,
+                            "printf": 0,
+                            "Formatter.format": 0
+                        }
+                    }
+                ],
       "curl_non_url_option": [],
       "sql_parameterization":[]
   },

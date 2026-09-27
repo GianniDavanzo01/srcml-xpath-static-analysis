@@ -181,7 +181,7 @@
     {"tag": "format_string_functions"}
   ],
   "safe_contexts": [
-    {"tag": "format_string_not_first_arg"}
+    {"tag": "format_string_position"}
   ]
 },
 {

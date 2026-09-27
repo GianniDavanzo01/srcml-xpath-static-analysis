@@ -283,9 +283,21 @@
         "xxe_safe_configuration": [
           {"type": "call_with_kwarg", "call": ["XMLParser"], "kwargs": {"resolve_entities": "False"}}
         ],
-        "format_string_not_first_arg": [
-          {"type": "node_matches_xpath", "xpath": "ancestor::src:argument[preceding-sibling::src:argument]"}
-        ],
+        "format_string_position": [
+              {
+                  "type": "check_format_arg_position",
+                  "vulnerable_indices": {
+                      "logging.info": 0,
+                      "logging.warning": 0,
+                      "logging.error": 0,
+                      "logging.debug":0,
+                      "logger.info":0,
+                      "logger.warning":0,
+                      "logger.error":0,
+                      "printf":0
+                  }
+              }
+          ],
         "curl_non_url_option": [],
         "bounds_checked_array_access":[]
   },
