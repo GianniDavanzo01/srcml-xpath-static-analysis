@@ -308,7 +308,7 @@
             },
             "use_after_free_check": {
                         "use_after_free": {
-                            "call": ["free"],
+                            "deallocation_calls": ["free"],
                             "safe_allocation_calls": ["malloc", "calloc", "realloc"],
                             "safe_reassignments": ["NULL"]
                         }

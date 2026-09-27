@@ -317,10 +317,10 @@
   "safe_contexts": [{"tag": "resource_safe_contexts"}]
 },
 {
-  "rule_id": "CWE-416-USE-AFTER-FREE",
+  "rule_id": "CWE-415-416-MEMORY-MISUSE-AFTER-FREE",
   "type": "structural",
+  "vulnerabilities": ["CWE-415", "CWE-416"],
   "description": "Applicabile solo a C.",
-  "vulnerabilities": ["CWE-416"],
   "patterns": [{"tag": "use_after_free_check"}]
 },
 {

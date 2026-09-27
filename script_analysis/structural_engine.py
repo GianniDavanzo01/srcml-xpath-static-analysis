@@ -354,14 +354,16 @@ def _run_empty_catch_blocks(tree, rule, findings, adapter, imports):
 
 def _check_use_after_free(tree, rule, findings, adapter, imports):
     """
-    {"use_after_free": {"call": ["free"], "safe_allocation_calls": [...], "safe_reassignments": [...]}}
+    {"use_after_free": {"deallocation_calls": ["free"], "safe_allocation_calls": [...], "safe_reassignments": [...]}}
+    Classifica ogni finding come CWE-415 (double-free) o CWE-416 (use-after-free generico)
+    in base alla natura dell'uso non sanificato trovato.
     """
     spec = rule.get("use_after_free")
     if not spec:
         return
 
     _adapter = adapter or PythonAdapter()
-    target_calls = spec.get("call", ["free"])
+    target_calls = spec.get("deallocation_calls", ["free"])
     safe_allocations = spec.get("safe_allocation_calls", [])
     safe_reassignments = spec.get("safe_reassignments", [])
 
@@ -378,93 +380,85 @@ def _check_use_after_free(tree, rule, findings, adapter, imports):
         target_nodes = node.xpath(".//src:argument//src:name", namespaces=NS)
         if not target_nodes:
             continue
-            
-        original_target = target_nodes[0].text
+        original_target = "".join(target_nodes[0].itertext()).strip()
         if not original_target:
             continue
-            
+
         aliased_pointers = {original_target}
         node_key = _pos_key(node)
 
         # --- BACKWARD SCAN ---
         all_assignments = find_assignments(scope, _adapter)
-        
         prior_assignments = sorted(
             [(s, l, r) for s, l, r in all_assignments if _pos_key(s) < node_key],
             key=lambda t: _pos_key(t[0]),
-            reverse=True 
+            reverse=True
         )
-        
         for stmt, lhs, rhs in prior_assignments:
             if lhs is None or rhs is None:
                 continue
-                
-            # descendant-or-self garantisce di catturare il name anche se coincide col nodo stesso
             lhs_names = set(n.text for n in lhs.xpath("descendant-or-self::src:name", namespaces=NS) if n.text)
-            rhs_names = set(n.text for n in rhs.xpath("descendant-or-self::src:name[not(following-sibling::src:argument_list)]", namespaces=NS) if n.text)
-            
-            # Se LHS è un alias e RHS non è una chiamata a funzione (es. per evitare di tracciare 'malloc')
+            rhs_names = set(
+                n.text for n in rhs.xpath(
+                    "descendant-or-self::src:name[not(following-sibling::src:argument_list)]", namespaces=NS
+                ) if n.text
+            )
             if aliased_pointers.intersection(lhs_names):
                 if not rhs.xpath(".//src:call", namespaces=NS):
                     aliased_pointers.update(rhs_names)
-            # Se RHS è un alias
             elif aliased_pointers.intersection(rhs_names):
                 aliased_pointers.update(lhs_names)
 
         # --- FORWARD SCAN ---
         usages = []
-        
         for p in aliased_pointers:
             for u in scope.xpath(f".//src:name[text()='{p}']", namespaces=NS):
                 if u in node.iter():
                     continue
-                    
                 if _pos_key(u) > node_key:
                     usages.append((p, u))
-                    
         usages.sort(key=lambda item: _pos_key(item[1]))
 
         for p, uso in usages:
             if p not in aliased_pointers:
-                continue 
-                
-            enclosing_stmt = uso.xpath("ancestor::src:expr_stmt[1] | ancestor::src:decl_stmt[1] | ancestor::src:return_stmt[1]", namespaces=NS)
-            if not enclosing_stmt:
-                findings.append(build_finding(rule, uso))
-                aliased_pointers.discard(p) # Segnala e smette di tracciare questo specifico alias
                 continue
-                
-            stmt_node = enclosing_stmt[0]
+
+            enclosing_stmt = uso.xpath(
+                "ancestor::*[self::src:expr_stmt or self::src:decl_stmt][1]", namespaces=NS
+            )
             is_sanitized = False
 
-            if _adapter.is_assignment(stmt_node, NS):
-                lhs, rhs = _adapter.get_assignment_lhs_rhs(stmt_node, NS)
-                if lhs is not None and rhs is not None:
-                    
-                    if (uso in lhs.iter() or uso is lhs):
-                        rhs_names = [n.text for n in rhs.xpath("descendant-or-self::src:name", namespaces=NS) if n.text]
-                        
-                        if p not in rhs_names:
-                            rhs_text = "".join(rhs.itertext()).strip()
-                            is_safe_val = _adapter.is_none_literal(rhs_text) or rhs_text in safe_reassignments
-                            
-                            is_safe_alloc = False
-                            if safe_allocations:
-                                xp = " or ".join(f"text()='{a}'" for a in safe_allocations)
-                                query = (
-                                    f"descendant-or-self::src:call[.//src:name[{xp}]] | "
-                                    f"following-sibling::src:call[.//src:name[{xp}]] | "
-                                    f"following-sibling::*//src:call[.//src:name[{xp}]]"
-                                )
-                                is_safe_alloc = bool(rhs.xpath(query, namespaces=NS))
-                                
-                            if is_safe_val or is_safe_alloc:
-                                is_sanitized = True
-                                aliased_pointers.discard(p)
-                                
+            if enclosing_stmt and _adapter.is_assignment(enclosing_stmt[0], NS):
+                lhs, rhs = _adapter.get_assignment_lhs_rhs(enclosing_stmt[0], NS)
+                if lhs is not None and rhs is not None and (uso in lhs.iter() or uso is lhs):
+                    rhs_names = [n.text for n in rhs.xpath("descendant-or-self::src:name", namespaces=NS) if n.text]
+                    if p not in rhs_names:
+                        rhs_text = "".join(rhs.itertext()).strip()
+                        is_safe_val = _adapter.is_none_literal(rhs_text) or rhs_text in safe_reassignments
+                        is_safe_alloc = False
+                        if safe_allocations:
+                            xp = " or ".join(f"text()='{a}'" for a in safe_allocations)
+                            query = (
+                                f"descendant-or-self::src:call[.//src:name[{xp}]] | "
+                                f"following-sibling::src:call[.//src:name[{xp}]] | "
+                                f"following-sibling::*//src:call[.//src:name[{xp}]]"
+                            )
+                            is_safe_alloc = bool(rhs.xpath(query, namespaces=NS))
+                        if is_safe_val or is_safe_alloc:
+                            is_sanitized = True
+                            aliased_pointers.discard(p)
+
             if not is_sanitized:
-                findings.append(build_finding(rule, uso))
-                aliased_pointers.discard(p) # Segnala e smette di tracciare questo specifico alias
+                call_ancestor = uso.xpath("ancestor::src:call[1]", namespaces=NS)
+                is_double_free = False
+                if call_ancestor:
+                    ancestor_call_name = get_call_name(call_ancestor[0], _adapter, imports)
+                    if ancestor_call_name in target_calls:
+                        is_double_free = True
+
+                extra = {"vulnerabilities": ["CWE-415"]} if is_double_free else {"vulnerabilities": ["CWE-416"]}
+                findings.append(build_finding(rule, uso, extra=extra))
+                aliased_pointers.discard(p)
 
 
 def run_structural_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> list:
