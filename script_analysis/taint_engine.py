@@ -10,13 +10,14 @@ safe-context o un sanitizer.
 
 import re
 
-# from common import NS, build_finding, is_sanitized, source_present, get_call_name 
-from common import NS, build_finding, is_sanitized, source_present, get_call_name, _pos_key
+from common import NS, build_finding, is_sanitized, source_present, get_call_name, _pos_key, name_text
 from sink_matchers import matches_any_sink
 from safe_context_matchers import is_in_safe_context
 
 from language_adapter import PythonAdapter
 
+# [MODIFICA 1] helper che pre-calcola lhs/rhs/scope di ogni assegnazione
+from unit_context import build_assign_infos
 
 
 def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> list:
@@ -42,7 +43,8 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
     if "function_parameters" in sources:
         param_nodes = tree.xpath(".//src:function//src:parameter_list//src:name", namespaces=NS)
         for p_node in param_nodes:
-            param_name = "".join(p_node.itertext()).strip()
+            # param_name = "".join(p_node.itertext()).strip()
+            param_name = name_text(p_node)
             if param_name:
                 parent_func = p_node.xpath("ancestor::src:function[1]", namespaces=NS)
                 scope_node = parent_func[0] if parent_func else tree
@@ -53,17 +55,21 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
         for var_name, scope_node in adapter.find_exception_bindings(tree, NS):
             tainted_vars_with_scope.append((var_name, scope_node))
 
+    # [MODIFICA 2] Assegnazioni: se c'e' il ctx si riusano quelle GIA' calcolate
+    # per l'unit (una volta sola, condivise da tutte le regole). Altrimenti si
+    # calcolano qui con lo stesso helper.
     if ctx is not None:
-        assignments = ctx.assignments
+        assign_infos = ctx.assign_infos
+        assign_by_stmt = ctx.assign_by_stmt
     else:
         assignments = [
             stmt for stmt in tree.xpath(".//src:expr_stmt | .//src:decl_stmt", namespaces=NS)
             if adapter.is_assignment(stmt, NS)
         ]
+        assign_infos = build_assign_infos(assignments, adapter, tree)
+        assign_by_stmt = {i.stmt: i for i in assign_infos}
 
-    def _scope_of(stmt):
-        parent_func = stmt.xpath("ancestor::src:function[1]", namespaces=NS)
-        return parent_func[0] if parent_func else tree
+    # (la vecchia funzione _scope_of e' stata eliminata: lo scope e' in info.scope)
 
     # ------------------------------------------------------------------ #
     # Source "per side-effect": funzioni che RIEMPIONO un argomento
@@ -78,7 +84,7 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
         if s not in output_arg_table or output_arg_table[s].get("return_tainted", False)
     ]
 
-    source_origin_pos = {}   # (var, id(scope)) -> posizione della prima call che riempie var
+    source_origin_pos = {}     # (var, id(scope)) -> posizione della prima call che riempie var
     source_call_nodes = set()  # call-sorgente: gli usi al loro interno non sono usi reali
 
     active_output_sources = {s for s in sources if s in output_arg_table}
@@ -113,7 +119,8 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
                 leaf_names = args[i].xpath(".//src:name[not(src:name)]", namespaces=NS)
                 if not leaf_names:
                     continue
-                out_var = "".join(leaf_names[0].itertext()).strip()
+                # out_var = "".join(leaf_names[0].itertext()).strip()
+                out_var = name_text(leaf_names[0])
                 if not out_var:
                     continue
 
@@ -126,18 +133,12 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
                 elif pos < source_origin_pos[key]:
                     source_origin_pos[key] = pos
 
-    for assign in assignments:
-        lhs, rhs = adapter.get_assignment_lhs_rhs(assign, NS)
-        if lhs is None or not lhs.tag.endswith("name"):
-            continue
-        var_name = "".join(lhs.itertext()).strip()
-
-        if rhs is not None and source_present(return_sources, rhs, source_form, adapter=adapter, imports=imports):
-
-            parent_func = assign.xpath("ancestor::src:function[1]", namespaces=NS)
-            scope_node = parent_func[0] if parent_func else tree
-
-            tainted_vars_with_scope.append((var_name, scope_node))
+    # [MODIFICA 3] Seed: assegnazioni da source. lhs/scope sono gia' pronti.
+    for info in assign_infos:
+        if info.rhs is not None and source_present(
+            return_sources, info.rhs, source_form, adapter=adapter, imports=imports
+        ):
+            tainted_vars_with_scope.append((info.var, info.scope))
 
     # Passo 2: propagazione a catena
     if rule.get("propagate_taint", True):
@@ -180,7 +181,8 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
                         out_names = args[out_idx].xpath(".//src:name", namespaces=NS)
                         if not out_names:
                             continue
-                        out_var = "".join(out_names[0].itertext()).strip()
+                        # out_var = "".join(out_names[0].itertext()).strip()
+                        out_var = name_text(out_names[0])
                         if not out_var or out_var in already_tainted:
                             continue
 
@@ -201,23 +203,21 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
                             already_tainted.add(out_var)
                             changed = True
 
-            for assign in assignments:
-                lhs, rhs = adapter.get_assignment_lhs_rhs(assign, NS)
-                if lhs is None or rhs is None or not lhs.tag.endswith("name"):
+            # [MODIFICA 4] Propagazione via assegnazione: nessuna query XPath
+            # per ricavare lhs/rhs/scope/rhs_all, sono gia' in `info`.
+            for info in assign_infos:
+                if info.rhs is None:
                     continue
-                var_name = "".join(lhs.itertext()).strip()
-                scope_node = _scope_of(assign)
+                var_name = info.var
+                scope_node = info.scope
                 already_tainted = tainted_by_scope.get(id(scope_node), set())
                 if var_name in already_tainted:
                     continue
 
-                # rhs ottenuto tramite l'adapter è solo il PRIMO fratello dopo l'operatore
-                # di assegnazione, dobbiamo coprire tutta l'espressione
-                # ES: "SELECT..." + user_id
-                rhs_all_nodes = rhs.xpath("self::* | following-sibling::*", namespaces=NS)
-
+                # info.rhs_all = primo fratello dopo l'operatore + tutti i successivi,
+                # per coprire l'intera espressione (es: "SELECT..." + user_id)
                 propagates = False
-                for rn in rhs_all_nodes:
+                for rn in info.rhs_all:
 
                     for n in rn.xpath("self::src:name | .//src:name", namespaces=NS):
                         n_text = "".join(n.itertext()).strip()
@@ -246,6 +246,7 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
                     tainted_vars_with_scope.append((var_name, scope_node))
                     tainted_by_scope.setdefault(id(scope_node), set()).add(var_name)
                     changed = True
+
 
     if not tainted_vars_with_scope:
         return findings
@@ -294,10 +295,12 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
             if origin is not None and _pos_key(uso) < origin:
                 continue
 
+            # [MODIFICA 5] Scarta l'uso se e' proprio il nome a sinistra di
+            # un'assegnazione: lookup nel dizionario invece di get_assignment_lhs_rhs.
             enclosing_stmt = uso.xpath("ancestor::src:expr_stmt[1] | ancestor::src:decl_stmt[1]", namespaces=NS)
-            if enclosing_stmt and adapter.is_assignment(enclosing_stmt[0], NS):
-                lhs, _ = adapter.get_assignment_lhs_rhs(enclosing_stmt[0], NS)
-                if lhs is not None and lhs is uso:
+            if enclosing_stmt:
+                info = assign_by_stmt.get(enclosing_stmt[0])
+                if info is not None and info.lhs is uso:
                     continue
 
             # Filtri per ignorare dichiarazioni e definizioni (Evita FP sulle firme delle funzioni)

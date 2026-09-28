@@ -5,6 +5,7 @@ Motore di analisi statica per srcML.
 Architettura "Source-Sink-Sanitizer" con predicati tipizzati e componibili
 per sink e safe-context.
 """
+import time, sys
 
 import argparse
 import json
@@ -13,7 +14,7 @@ from lxml import etree
 from collections import Counter
 
 
-from common import NS, load_rules, check_required_imports, compile_rules, CompiledRuleset
+from common import NS, load_rules, check_required_imports, compile_rules, CompiledRuleset, reset_caches
 from taint_engine import run_taint_rule
 from structural_engine import run_structural_rule, run_forbidden_functions_indexed, run_forbidden_names_indexed
 from unit_context import UnitContext
@@ -76,6 +77,7 @@ def _get_compiled_ruleset(language_name: str, raw_rules: list) -> "CompiledRules
 
 
 def analyze_unit(unit_node, raw_rules: list, xml_source: str) -> dict:
+    reset_caches()
     adapter = get_adapter(unit_node)
     imports = adapter.resolve_imports(unit_node, NS)
     language_name = getattr(adapter, 'name', 'python').lower()
@@ -115,6 +117,7 @@ def analyze_unit(unit_node, raw_rules: list, xml_source: str) -> dict:
 
 
 def analyze_file(xml_file: Path, raw_rules: list) -> list:
+    reset_caches()
     tree = etree.parse(str(xml_file))
     units = get_units(tree)
 
@@ -124,17 +127,36 @@ def analyze_file(xml_file: Path, raw_rules: list) -> list:
         imports = adapter.resolve_imports(root, NS)
         language_name = getattr(adapter, 'name', 'python').lower()
 
-        compiled = _get_compiled_ruleset(language_name, raw_rules)   # <-- ora compila anche qui
+        compiled = _get_compiled_ruleset(language_name, raw_rules)
+
+        # 1. Caricamento del catalogo (come in analyze_unit)
+        catalog_obj = {}
+        catalog_path = Path(f"{language_name}_catalog.json")
+        if catalog_path.exists():
+            with open(catalog_path, 'r', encoding='utf-8') as f:
+                catalog_obj = json.load(f)
+
+        # 2. Creazione dello UnitContext sul nodo root
+        ctx = UnitContext(root, adapter, catalog=catalog_obj)
 
         findings = []
+        
+        # 3. Esecuzione delle regole indicizzate (mancavano nel fallback!)
+        run_forbidden_functions_indexed(ctx, compiled, findings, adapter, imports)
+        run_forbidden_names_indexed(ctx, compiled, findings, adapter, imports)
+
         for rule in compiled.rules:
-            if not check_required_imports(tree, rule, NS, imports):
+            # Passiamo 'root' anziché 'tree' per coerenza con il context
+            if not check_required_imports(root, rule, NS, imports):
                 continue
+                
             rule_type = rule.get("type")
+            # 4. Passaggio esplicito del ctx per sfruttare la cache
             if rule_type == "taint":
-                findings.extend(run_taint_rule(tree, rule, adapter, imports))
+                findings.extend(run_taint_rule(root, rule, adapter, imports, ctx=ctx))
             elif rule_type == "structural":
-                findings.extend(run_structural_rule(tree, rule, adapter, imports))
+                findings.extend(run_structural_rule(root, rule, adapter, imports, ctx=ctx))
+                
         return [{
             "source_file": xml_file.name,
             "xml_source": xml_file.name,
@@ -145,6 +167,7 @@ def analyze_file(xml_file: Path, raw_rules: list) -> list:
             "findings": findings,
         }]
 
+    # Se ci sono 'units' normali, deleghiamo alla funzione apposita (che gestiva già bene il ctx)
     return [analyze_unit(u, raw_rules, xml_source=xml_file.name) for u in units]
 
 
@@ -165,9 +188,17 @@ def main():
     if not xml_files:
         ap.error("Nessun file .xml trovato da analizzare")
 
+
+
+    t0 = time.perf_counter() #TEMPO PER VERIFICARE PERFORMANCE
+
+
     report = []
     for xml in xml_files:
         report.extend(analyze_file(xml, raw_rules))
+    
+    
+    elapsed = time.perf_counter() - t0               #TEMPO PER VERIFICARE PERFORMANCE
 
     category_counter = Counter()
     total_findings = 0
@@ -201,7 +232,7 @@ def main():
     else:
         print(output_text)
 
-
+    print(f"[TIMING] Analisi di {len(xml_files)} file in {elapsed:.2f} s", file=sys.stderr) #TEMPO PER VERIFICARE PERFORMANCE
 
 if __name__ == "__main__":
     main()

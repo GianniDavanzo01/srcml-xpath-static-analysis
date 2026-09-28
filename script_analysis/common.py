@@ -19,6 +19,17 @@ NS = {"src": "http://www.srcML.org/srcML/src", "pos": "http://www.srcML.org/srcM
 # Utility di base
 # --------------------------------------------------------------------------- #
 
+def name_text(name_node) -> str:
+    """Testo di un <name> senza i suffissi [..] della propria dichiarazione/accesso
+    ('names[]' -> 'names', 'a[i].b[0]' -> 'a.b'). Per un nome semplice è identico a prima."""
+    parts = name_node.xpath(
+        ".//text()[count(ancestor::src:index) = count($n/ancestor::src:index)]",
+        namespaces=NS, n=name_node,
+    )
+    return "".join(parts).strip()
+
+
+
 def load_rules(rules_path: Path) -> list:
     """
     Carica le regole da:
@@ -61,15 +72,59 @@ def node_snippet(node, max_len: int = 140) -> str:
     text = re.sub(r"\s+", " ", text).strip()
     return text[:max_len] + ("…" if len(text) > max_len else "")
 
-def get_call_name(call, adapter=None, imports=None) -> str | None:
+
+_member_rx_cache = {}
+
+
+def _member_access_regex(adapter):
+    """Regex che riconosce gli operatori di accesso a membro del linguaggio."""
+    ops = tuple(adapter.member_access_operator()) if adapter else (".",)
+    rx = _member_rx_cache.get(ops)
+    if rx is None:
+        # operatori più lunghi per primi, così '->' non viene spezzato
+        rx = re.compile("|".join(re.escape(o) for o in sorted(ops, key=len, reverse=True)))
+        _member_rx_cache[ops] = rx
+    return rx
+
+
+def _access_suffixes(text: str, rx) -> set:
+    """'a.b.c' -> {'a.b.c', 'b.c', 'c'}; in C 'a->b.c' -> {'a->b.c', 'b.c', 'c'}."""
+    out = {text}
+    for m in rx.finditer(text):
+        tail = text[m.end():]
+        if tail:
+            out.add(tail)
+    return out
+
+
+def _access_prefixes(text: str, rx) -> set:
+    """'a.b.c' -> {'a.b.c', 'a.b', 'a'}."""
+    out = {text}
+    for m in rx.finditer(text):
+        head = text[:m.start()]
+        if head:
+            out.add(head)
+    return out
+
+_call_name_cache = {}
+_rhs_keys_cache = {}
+
+def reset_caches():
+    _call_name_cache.clear()
+    _rhs_keys_cache.clear()
+
+def get_call_name(call, adapter=None, imports=None):
+    if call in _call_name_cache:
+        return _call_name_cache[call]
     name_nodes = call.xpath("./src:name", namespaces=NS)
     if not name_nodes:
-        return None
-    raw = "".join(name_nodes[0].itertext()).strip()
-    if adapter is not None and imports is not None:
-        return adapter.resolve_call_name(call, NS, imports)
-    return raw
-
+        result = None
+    elif adapter is not None and imports is not None:
+        result = adapter.resolve_call_name(call, NS, imports)
+    else:
+        result = "".join(name_nodes[0].itertext()).strip()
+    _call_name_cache[call] = result
+    return result
 
 def build_finding(rule: dict, node, extra: dict | None = None) -> dict:
     """Costruisce il dizionario di finding"""
@@ -96,31 +151,28 @@ def is_sanitized(node, sanitizers: list, adapter=None, imports=None) -> bool:
             return True
     return False
 
+
 def source_present(sources: list, rhs_node, source_form: str | None = None,
                    node=None, adapter=None, imports=None) -> bool:
-    """
-    Verifica se una delle source compare nel RHS (rhs_node) in forma strutturale.
-    Versione OTTIMIZZATA: pre-calcola i tipi per evitare di lanciare XPath pesanti 
-    n volte per ogni singola assegnazione.
-    """
     op = adapter.member_access_operator()[0] if adapter and adapter.member_access_operator() else "."
+    rx = _member_access_regex(adapter)
 
-    # --- OTTIMIZZAZIONE: Caching pre-ciclo---
-    resolved_calls = []
-    clean_names = []
-    
+    call_keys, name_keys = (), ()
     if source_form is None:
-        # 1. Risolve le chiamate una sola volta per tutto il rhs_node!
-        for call in rhs_node.xpath(".//src:call | self::src:call", namespaces=NS):
-            cname = get_call_name(call, adapter, imports)
-            if cname:
-                resolved_calls.append(cname)
-                
-        # 2. Estrae il testo grezzo una sola volta
-        for name_node in rhs_node.xpath(".//src:name | self::src:name", namespaces=NS):
-            name_text = "".join(name_node.itertext()).strip()
-            clean_names.append(name_text.split('[')[0].split('(')[0].strip())
-
+        keys = _rhs_keys_cache.get(rhs_node)
+        if keys is None:
+            call_keys, name_keys = set(), set()
+            for call in rhs_node.xpath(".//src:call | self::src:call", namespaces=NS):
+                cname = get_call_name(call, adapter, imports)
+                if cname:
+                    call_keys |= _access_suffixes(cname, rx)
+            for name_node in rhs_node.xpath(".//src:name | self::src:name", namespaces=NS):
+                text = "".join(name_node.itertext()).strip()
+                text = text.split('[')[0].split('(')[0].strip()
+                name_keys |= _access_suffixes(text, rx) | _access_prefixes(text, rx)
+            _rhs_keys_cache[rhs_node] = (call_keys, name_keys)
+        else:
+            call_keys, name_keys = keys
 
     for source in sources:
         if source == "function_parameters":
@@ -135,10 +187,9 @@ def source_present(sources: list, rhs_node, source_form: str | None = None,
             continue
 
         if source_form == "call":
-            
             for call in rhs_node.xpath(".//src:call | self::src:call", namespaces=NS):
                 cname = get_call_name(call, adapter, imports)
-                if cname and (cname == source or cname.endswith(f".{source}")):
+                if cname and source in _access_suffixes(cname, rx):
                     return True
             continue
 
@@ -146,20 +197,13 @@ def source_present(sources: list, rhs_node, source_form: str | None = None,
             for outer_name in rhs_node.xpath(".//src:name[src:index] | self::src:name[src:index]", namespaces=NS):
                 parts = outer_name.xpath("./src:name", namespaces=NS)
                 dotted = op.join("".join(p.itertext()).strip() for p in parts) if parts else (outer_name.text or "").strip()
-                if dotted == source or dotted.endswith(f".{source}"):
+                if source in _access_suffixes(dotted, rx):
                     return True
             continue
 
-        # --- NESSUNA FORMA SPECIFICATA  ---
-        
-        # Invece di interrogare l'AST, controlliamo le liste calcolate prima
-        for cname in resolved_calls:
-            if cname == source or cname.endswith(f".{source}"):
-                return True
-
-        for clean_name in clean_names:
-            if clean_name == source or clean_name.endswith(f".{source}") or clean_name.startswith(f"{source}."):
-                return True
+        # Nessuna forma specificata: lookup negli insiemi
+        if source in call_keys or source in name_keys:
+            return True
 
     return False
 
@@ -368,7 +412,8 @@ def find_assignments(scope_node, adapter, var_name: str | None = None) -> list:
         lhs, rhs = adapter.get_assignment_lhs_rhs(stmt, NS)
         if lhs is None or not lhs.tag.endswith("name"):
             continue
-        if var_name is not None and "".join(lhs.itertext()).strip() != var_name:
+        # if var_name is not None and "".join(lhs.itertext()).strip() != var_name:
+        if var_name is not None and name_text(lhs) != var_name:
             continue
         out.append((stmt, lhs, rhs))
     return out
