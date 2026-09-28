@@ -346,6 +346,7 @@
   "rule_id": "CWE-476-NULL-POINTER-DEREFERENCE",
   "type": "taint",
   "vulnerabilities": ["CWE-476"],
+  "propagate_taint": false,
   "sources": [
     {"tag": "nullable_returning_calls"}
   ],
@@ -398,7 +399,6 @@
   "type": "taint",
   "vulnerabilities": ["CWE-601"],
   "sources": [
-    "function_parameters",
     {"tag": "http_input"}
   ],
   "sinks": [

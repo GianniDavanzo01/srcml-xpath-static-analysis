@@ -10,7 +10,8 @@ safe-context o un sanitizer.
 
 import re
 
-from common import NS, build_finding, is_sanitized, source_present, get_call_name 
+# from common import NS, build_finding, is_sanitized, source_present, get_call_name 
+from common import NS, build_finding, is_sanitized, source_present, get_call_name, _pos_key
 from sink_matchers import matches_any_sink
 from safe_context_matchers import is_in_safe_context
 
@@ -33,7 +34,7 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
         return []
 
     tainted_vars_with_scope = []
-    
+
     for direct_name in rule.get("direct_taint_names", []):
         tainted_vars_with_scope.append((direct_name, tree))
 
@@ -52,7 +53,6 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
         for var_name, scope_node in adapter.find_exception_bindings(tree, NS):
             tainted_vars_with_scope.append((var_name, scope_node))
 
-
     if ctx is not None:
         assignments = ctx.assignments
     else:
@@ -65,13 +65,74 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
         parent_func = stmt.xpath("ancestor::src:function[1]", namespaces=NS)
         return parent_func[0] if parent_func else tree
 
+    # ------------------------------------------------------------------ #
+    # Source "per side-effect": funzioni che RIEMPIONO un argomento
+    # (C: recv, read, fread, scanf, ...) invece di restituire il dato.
+    # ------------------------------------------------------------------ #
+    output_arg_table = adapter.taint_source_output_args()
+
+    # Source valide per il pattern "var = func()": escludiamo quelle che
+    # restituiscono solo un contatore (recv, read, scanf, ...)
+    return_sources = [
+        s for s in sources
+        if s not in output_arg_table or output_arg_table[s].get("return_tainted", False)
+    ]
+
+    source_origin_pos = {}   # (var, id(scope)) -> posizione della prima call che riempie var
+    source_call_nodes = set()  # call-sorgente: gli usi al loro interno non sono usi reali
+
+    active_output_sources = {s for s in sources if s in output_arg_table}
+    if active_output_sources:
+        all_calls = ctx.calls if ctx is not None else tree.xpath(".//src:call", namespaces=NS)
+        for call in all_calls:
+            cname = get_call_name(call, adapter, imports)
+            if not cname:
+                continue
+            matched = next(
+                (s for s in active_output_sources if cname == s or cname.endswith(f".{s}")),
+                None,
+            )
+            if matched is None:
+                continue
+
+            source_call_nodes.add(call)
+
+            spec = output_arg_table[matched]
+            args = call.xpath("./src:argument_list/src:argument", namespaces=NS)
+            idxs = set(spec.get("indices", []))
+            if "variadic_from" in spec:
+                idxs.update(range(spec["variadic_from"], len(args)))
+
+            parent_func = call.xpath("ancestor::src:function[1]", namespaces=NS)
+            call_scope = parent_func[0] if parent_func else tree
+
+            for i in sorted(idxs):
+                if i >= len(args):
+                    continue
+                # nome "foglia": per 's->buf' prende 's', per '&x' prende 'x'
+                leaf_names = args[i].xpath(".//src:name[not(src:name)]", namespaces=NS)
+                if not leaf_names:
+                    continue
+                out_var = "".join(leaf_names[0].itertext()).strip()
+                if not out_var:
+                    continue
+
+                key = (out_var, id(call_scope))
+                pos = _pos_key(call)
+                if key not in source_origin_pos:
+                    # prima volta che vediamo questa variabile: la registriamo una sola volta
+                    tainted_vars_with_scope.append((out_var, call_scope))
+                    source_origin_pos[key] = pos
+                elif pos < source_origin_pos[key]:
+                    source_origin_pos[key] = pos
+
     for assign in assignments:
         lhs, rhs = adapter.get_assignment_lhs_rhs(assign, NS)
         if lhs is None or not lhs.tag.endswith("name"):
             continue
         var_name = "".join(lhs.itertext()).strip()
 
-        if rhs is not None and source_present(sources, rhs, source_form, adapter=adapter, imports=imports):
+        if rhs is not None and source_present(return_sources, rhs, source_form, adapter=adapter, imports=imports):
 
             parent_func = assign.xpath("ancestor::src:function[1]", namespaces=NS)
             scope_node = parent_func[0] if parent_func else tree
@@ -150,13 +211,14 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
                 if var_name in already_tainted:
                     continue
 
-                # rhs ottenuto tramite l'adapter  è solo il PRIMO fratello dopo l'operatore di assegnazione, dobbiamo coprire tutta l'espressione
-                #ES: "SELECT..." + user_id
+                # rhs ottenuto tramite l'adapter è solo il PRIMO fratello dopo l'operatore
+                # di assegnazione, dobbiamo coprire tutta l'espressione
+                # ES: "SELECT..." + user_id
                 rhs_all_nodes = rhs.xpath("self::* | following-sibling::*", namespaces=NS)
 
                 propagates = False
                 for rn in rhs_all_nodes:
-                    
+
                     for n in rn.xpath("self::src:name | .//src:name", namespaces=NS):
                         n_text = "".join(n.itertext()).strip()
                         if n_text in already_tainted and not is_sanitized(n, block, adapter, imports):
@@ -192,21 +254,21 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
     for var, scope_node in tainted_vars_with_scope:
 
         usi_potenziali = scope_node.xpath(".//src:name[text()=$v]", namespaces=NS, v=var)
-        
+
         usi_diretti = []
         for uso in usi_potenziali:
-            
+
             # Scartiamo il nodo se è il nome sinistro di un keyword argument (kwarg)
             parent_arg = uso.xpath("parent::src:argument", namespaces=NS)
             if parent_arg and adapter.is_kwarg(parent_arg[0], NS):
-                
+
                 # Verifichiamo se 'uso' è la CHIAVE (il primo nome) o il VALORE
                 name_node = parent_arg[0].xpath("./src:name[1]", namespaces=NS)
                 if name_node and name_node[0] is uso:
                     continue
-                    
+
             usi_diretti.append(uso)
-        
+
         fstrings_in_scope = scope_node.xpath(".//src:literal[@type='string']", namespaces=NS)
 
         usi_fstring = []
@@ -219,7 +281,19 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
         tutti_gli_usi = usi_diretti + usi_fstring
 
         for uso in tutti_gli_usi:
-        
+
+            # uso interno a una call-sorgente (buf, sizeof(buf), ...) -> non è un uso reale
+            if source_call_nodes and any(
+                c in source_call_nodes
+                for c in uso.xpath("ancestor::src:call", namespaces=NS)
+            ):
+                continue
+
+            # uso testualmente PRIMA della call che riempie la variabile
+            origin = source_origin_pos.get((var, id(scope_node)))
+            if origin is not None and _pos_key(uso) < origin:
+                continue
+
             enclosing_stmt = uso.xpath("ancestor::src:expr_stmt[1] | ancestor::src:decl_stmt[1]", namespaces=NS)
             if enclosing_stmt and adapter.is_assignment(enclosing_stmt[0], NS):
                 lhs, _ = adapter.get_assignment_lhs_rhs(enclosing_stmt[0], NS)
@@ -248,6 +322,5 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
             nodo_snippet = stmt[0] if stmt else uso
 
             findings.append(build_finding(rule, nodo_snippet, extra={"tainted_variable": var}))
-
 
     return findings

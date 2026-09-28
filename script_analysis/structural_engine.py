@@ -6,7 +6,7 @@ Motore Strutturale
 
 import re
 
-from common import NS, get_call_name, build_finding, call_arguments_match_ast, check_required_imports,_pos_key, find_assignments
+from common import NS, get_call_name, build_finding, call_arguments_match_ast, check_required_imports,_pos_key, find_assignments,_is_pure_literal_expr
 from safe_context_matchers import is_in_safe_context
 
 
@@ -724,7 +724,10 @@ def run_structural_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) 
         for node in tree.xpath(".//src:name[src:index]", namespaces=NS):
             if node.xpath("ancestor::src:parameter", namespaces=NS):
                 continue
-            
+
+            # dichiarazione di array (char buf[1024]; struct { int a[4]; }): non è un accesso
+            if node.xpath("parent::src:decl", namespaces=NS):
+                continue
             # Estraiamo il nome dell'oggetto a cui si sta accedendo usando l'AST puro
             parts = node.xpath("./src:name", namespaces=NS)
             if parts:
@@ -738,6 +741,10 @@ def run_structural_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) 
 
             index_var = None
             index_expr = node.xpath("./src:index/src:expr", namespaces=NS)
+            if rule.get("skip_literal_subscript_index") and index_expr \
+               and _is_pure_literal_expr(index_expr[0]):
+                continue
+            
             if index_expr:
                 idx_names = index_expr[0].xpath("./src:name", namespaces=NS)
                 if len(idx_names) == 1 and len(list(index_expr[0])) == 1:

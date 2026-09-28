@@ -13,7 +13,7 @@
         "Scanner.nextLine","Scanner.next",
         "Console.readLine","Console.readPassword"
     ],
-    "nullable_returning_calls":["System.getenv", "System.getProperty","Map.get", "HashMap.get","HttpServletRequest.getParameter",
+    "nullable_returning_calls":["System.getenv", "System.getProperty","Map.get", "HashMap.get",
                                 "HttpServletRequest.getHeader", "HttpServletRequest.getAttribute","ResultSet.getString","File.listFiles"
     ],
     "file_upload_input": ["HttpServletRequest.getPart", "HttpServletRequest.getParts","MultipartHttpServletRequest.getFile", "MultipartHttpServletRequest.getFiles",
@@ -306,9 +306,9 @@
         }
       ],
       "bounds_checked_array_access": [
-        {"type": "binary_comparison", "operators": ["<", "<="], "left_exact": ["$VAR"]},
-        {"type": "binary_comparison", "operators": ["<", "<="], "right_exact": ["$VAR"]}
-      ],
+          {"type": "binary_comparison", "operators": ["<", "<=", ">", ">="], "left_exact": ["$VAR"]},
+          {"type": "binary_comparison", "operators": ["<", "<=", ">", ">="], "right_exact": ["$VAR"]}
+        ],
       "manual_string_sanitization":[
         {
           "type": "function_has_method_call",
@@ -389,7 +389,8 @@
           ]
     },
     "unsafe_array_access": {
-      "forbidden_subscripts": ["args","array","buffer"]
+      "forbidden_subscripts": ["args","array","buffer"],
+      "skip_literal_subscript_index": true
     },
     "unsafe_deserialization_kwargs":{},
     "unsafe_dict_access":{},

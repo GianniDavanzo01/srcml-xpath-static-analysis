@@ -1,6 +1,6 @@
 {
     "sources":{
-        "http_input": ["recv", "recvfrom", "recvmsg", "read", "fread", "fgets", "scanf", "gets"], 
+        "http_input": ["recv", "recvfrom", "recvmsg", "read", "fread", "fgets", "scanf","fscanf"], 
         "nullable_returning_calls": ["malloc", "calloc", "realloc", "fopen", "getenv","tmpfile", "opendir","getcwd"],
         "cli_input": ["getenv","argv","optarg"],
         "file_upload_input":[]
@@ -236,8 +236,8 @@
                     }
                 ],
             "bounds_checked_array_access": [
-                    {"type": "binary_comparison", "operators": ["<", "<="], "left_exact": ["$VAR"]},
-                    {"type": "binary_comparison", "operators": ["<", "<="], "right_exact": ["$VAR"]}
+                {"type": "binary_comparison", "operators": ["<", "<=", ">", ">="], "left_exact": ["$VAR"]},
+                {"type": "binary_comparison", "operators": ["<", "<=", ">", ">="], "right_exact": ["$VAR"]}
                 ],
             "manual_string_sanitization":[],
             "null_checked": [
@@ -338,7 +338,8 @@
                         }
             },
             "unsafe_array_access": {
-                "forbidden_subscripts": ["argv","array","buffer"]
+                "forbidden_subscripts": ["argv","array","buffer"],
+                "skip_literal_subscript_index": true
             },
             "unsafe_deserialization_kwargs":{},
             "unsafe_dict_access":{}

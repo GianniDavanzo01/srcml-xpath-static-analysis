@@ -204,6 +204,18 @@ class LanguageAdapter(ABC):
         - 'truthy': verificano che la variabile NON SIA nulla (es. !=, is not)
         """
 
+
+    @abstractmethod
+    def taint_source_output_args(self) -> dict:
+        """Mappa nome_funzione -> spec degli argomenti che la funzione RIEMPIE con
+        dati esterni (source per side-effect, non per valore di ritorno).
+        spec = {
+            "indices": [int, ...],       # argomenti di output fissi
+            "variadic_from": int,        # (opz.) tutti gli argomenti da questo indice in poi
+            "return_tainted": bool,      # (opz., default False) il valore di ritorno e' anch'esso source
+        }
+        Linguaggi senza questo pattern ritornano {}."""
+
 # ---------------------------------------------------------------------- #
 # Implementazione Python
 # ---------------------------------------------------------------------- #
@@ -501,6 +513,9 @@ class PythonAdapter(LanguageAdapter):
             "truthy": ["!=", "is not"]
         }
 
+    def taint_source_output_args(self) -> dict:
+        return {}
+
 # ---------------------------------------------------------------------- #
 # Implementazione Java
 # ---------------------------------------------------------------------- #
@@ -676,6 +691,8 @@ class JavaAdapter(LanguageAdapter):
                     type_nodes = decl_node.xpath("./src:type//src:name", namespaces=ns)
                     if type_nodes:
                         var_type = "".join(type_nodes[0].itertext()).strip()
+                        # Tronca la stringa alla prima parentesi angolare evita di considerare: Map<String<String>
+                        var_type = var_type.split('<')[0].strip()
                         break
 
                     type_node = decl_node.xpath("./src:type", namespaces=ns)
@@ -802,6 +819,8 @@ class JavaAdapter(LanguageAdapter):
             "truthy": ["!="]
         }
 
+    def taint_source_output_args(self) -> dict:
+        return {}
 # ---------------------------------------------------------------------- #
 # Implementazione C
 # ---------------------------------------------------------------------- #
@@ -1076,6 +1095,22 @@ class CAdapter(LanguageAdapter):
             "truthy": ["!="]
         }
 
+
+    def taint_source_output_args(self) -> dict:
+        return {
+            "recv":     {"indices": [1]},
+            "recvfrom": {"indices": [1]},
+            "recvmsg":  {"indices": [1]},
+            "read":     {"indices": [1]},
+            "pread":    {"indices": [1]},
+            "fread":    {"indices": [0]},
+            "fgets":    {"indices": [0], "return_tainted": True},
+            "gets":     {"indices": [0], "return_tainted": True},
+            "getline":  {"indices": [0]},
+            "scanf":    {"variadic_from": 1},
+            "fscanf":   {"variadic_from": 2},
+            "sscanf":   {"variadic_from": 2},
+        }
 
 # ---------------------------------------------------------------------- #
 # Registro / dispatch
