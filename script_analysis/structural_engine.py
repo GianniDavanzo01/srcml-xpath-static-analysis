@@ -706,14 +706,44 @@ def run_structural_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) 
 
             index_var = None
             index_expr = node.xpath("./src:index/src:expr", namespaces=NS)
-            if rule.get("skip_literal_subscript_index") and index_expr \
-               and _is_pure_literal_expr(index_expr[0]):
-                continue
+            
+            # if rule.get("skip_literal_subscript_index") and index_expr \
+            #    and _is_pure_literal_expr(index_expr[0]):
+            #     continue
+            
+            # if index_expr:
+            #     idx_names = index_expr[0].xpath("./src:name", namespaces=NS)
+            #     if len(idx_names) == 1 and len(list(index_expr[0])) == 1:
+            #         index_var = "".join(idx_names[0].itertext()).strip()
             
             if index_expr:
+                # 1. Controllo diretto: è un letterale puro? (es. array[2])
+                is_literal_index = _is_pure_literal_expr(index_expr[0])
+                
                 idx_names = index_expr[0].xpath("./src:name", namespaces=NS)
                 if len(idx_names) == 1 and len(list(index_expr[0])) == 1:
                     index_var = "".join(idx_names[0].itertext()).strip()
+                    
+                    # 2. Risoluzione basata su resolve_numeric_args
+                    # Se non è un letterale diretto, facciamo un backward scan
+                    # per vedere se l'ultima assegnazione era un letterale sicuro.
+                    if not is_literal_index and rule.get("skip_literal_subscript_index"):
+                        node_key = _pos_key(node)
+                        func_scope = node.xpath("ancestor::src:function[1]", namespaces=NS)
+                        scope_node = func_scope[0] if func_scope else tree
+                        
+                        prior_assigns = [
+                            (stmt, rhs) for stmt, _, rhs in find_assignments(scope_node, adapter, index_var)
+                            if _pos_key(stmt) < node_key and rhs is not None and _is_pure_literal_expr(rhs)
+                        ]
+                        
+                        if prior_assigns:
+                            # Trovata un'assegnazione hardcodata precedente! Scartiamo il finding.
+                            is_literal_index = True
+                
+                # Se la regola lo consente e abbiamo appurato che è un letterale (diretto o assegnato), saltiamo.
+                if rule.get("skip_literal_subscript_index") and is_literal_index:
+                    continue
                 
             # Verifica se l'oggetto a cui si accede è nella blacklist
             for subscript in forbidden_subscripts:
