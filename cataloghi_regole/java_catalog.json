@@ -13,7 +13,9 @@
         "Scanner.nextLine","Scanner.next",
         "Console.readLine","Console.readPassword"
     ],
-    "nullable_returning_calls": ["System.getenv", "Map.get", "Optional.orElse","pattern.matcher"],
+    "nullable_returning_calls":["System.getenv", "System.getProperty","Map.get", "HashMap.get","HttpServletRequest.getParameter",
+                                "HttpServletRequest.getHeader", "HttpServletRequest.getAttribute","ResultSet.getString","File.listFiles"
+    ],
     "file_upload_input": ["HttpServletRequest.getPart", "HttpServletRequest.getParts","MultipartHttpServletRequest.getFile", "MultipartHttpServletRequest.getFiles",
                           "MultipartHttpServletRequest.getFileMap","MultipartRequest.getFile","MultipartRequest.getFiles","MultipartRequest.getFileMap","ServletFileUpload.parseRequest"
     ] 
@@ -148,6 +150,12 @@
         "call": ["Class.forName","ClassLoader.loadClass","ClassLoader.getResource","ClassLoader.getResourceAsStream",
                   "ResourceBundle.getBundle","ServletContext.getResource","ServletContext.getResourceAsStream"
                 ]
+      }
+    ],
+    "null_dereference": [
+      {
+        "type": "matches_xpath",
+        "xpath": "following-sibling::src:operator[1][text()='.'] | following-sibling::src:index[1]"
       }
     ]
   },

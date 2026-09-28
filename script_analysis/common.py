@@ -97,17 +97,30 @@ def is_sanitized(node, sanitizers: list, adapter=None, imports=None) -> bool:
     return False
 
 def source_present(sources: list, rhs_node, source_form: str | None = None,
-                    node=None, adapter=None, imports=None) -> bool:
+                   node=None, adapter=None, imports=None) -> bool:
     """
-    Verifica se una delle source compare nel RHS (rhs_node) in forma
-    strutturale.
-    source_form (opzionale):
-    - "call": la source deve essere il nome di una <src:call> dentro rhs_node.
-    - "subscript": la source deve essere un <src:name> seguito da <src:index>.
-    - "regex": la source è una regex cruda, valutata sul testo di rhs_node.
-    - assente: basta che la source compaia come <src:name>, in qualunque forma.
+    Verifica se una delle source compare nel RHS (rhs_node) in forma strutturale.
+    Versione OTTIMIZZATA: pre-calcola i tipi per evitare di lanciare XPath pesanti 
+    n volte per ogni singola assegnazione.
     """
     op = adapter.member_access_operator()[0] if adapter and adapter.member_access_operator() else "."
+
+    # --- OTTIMIZZAZIONE: Caching pre-ciclo---
+    resolved_calls = []
+    clean_names = []
+    
+    if source_form is None:
+        # 1. Risolve le chiamate una sola volta per tutto il rhs_node!
+        for call in rhs_node.xpath(".//src:call | self::src:call", namespaces=NS):
+            cname = get_call_name(call, adapter, imports)
+            if cname:
+                resolved_calls.append(cname)
+                
+        # 2. Estrae il testo grezzo una sola volta
+        for name_node in rhs_node.xpath(".//src:name | self::src:name", namespaces=NS):
+            name_text = "".join(name_node.itertext()).strip()
+            clean_names.append(name_text.split('[')[0].split('(')[0].strip())
+
 
     for source in sources:
         if source == "function_parameters":
@@ -122,6 +135,7 @@ def source_present(sources: list, rhs_node, source_form: str | None = None,
             continue
 
         if source_form == "call":
+            
             for call in rhs_node.xpath(".//src:call | self::src:call", namespaces=NS):
                 cname = get_call_name(call, adapter, imports)
                 if cname and (cname == source or cname.endswith(f".{source}")):
@@ -136,13 +150,14 @@ def source_present(sources: list, rhs_node, source_form: str | None = None,
                     return True
             continue
 
-        # nessuna forma specificata
-        for name_node in rhs_node.xpath(".//src:name | self::src:name", namespaces=NS):
-            name_text = "".join(name_node.itertext()).strip()
+        # --- NESSUNA FORMA SPECIFICATA  ---
+        
+        # Invece di interrogare l'AST, controlliamo le liste calcolate prima
+        for cname in resolved_calls:
+            if cname == source or cname.endswith(f".{source}"):
+                return True
 
-            #Bisogna eliminare le parentesi per fare match sul nome della funzione
-            clean_name = name_text.split('[')[0].split('(')[0].strip()
-
+        for clean_name in clean_names:
             if clean_name == source or clean_name.endswith(f".{source}") or clean_name.startswith(f"{source}."):
                 return True
 

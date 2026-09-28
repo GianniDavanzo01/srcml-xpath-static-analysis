@@ -350,7 +350,7 @@
     {"tag": "nullable_returning_calls"}
   ],
   "sinks": [
-    {"type": "any_use"}
+    {"tag": "null_dereference"}
   ],
   "safe_contexts": [
     {"tag": "null_checked"}

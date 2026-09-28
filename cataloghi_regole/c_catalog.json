@@ -1,7 +1,7 @@
 {
     "sources":{
         "http_input": ["recv", "recvfrom", "recvmsg", "read", "fread", "fgets", "scanf", "gets"], 
-        "nullable_returning_calls": ["malloc", "calloc", "realloc", "fopen", "getenv"],
+        "nullable_returning_calls": ["malloc", "calloc", "realloc", "fopen", "getenv","tmpfile", "opendir","getcwd"],
         "cli_input": ["getenv","argv","optarg"],
         "file_upload_input":[]
     },
@@ -66,6 +66,18 @@
             {
             "type": "call_with_var_arg",
             "call": ["dlopen","LoadLibrary","LoadLibraryEx","LoadLibraryA","LoadLibraryW","LoadLibraryExA","LoadLibraryExW"]
+            }
+        ],
+        "null_dereference": [
+            {
+            "type": "matches_xpath",
+            "xpath": "following-sibling::src:operator[1][text()='->' or text()='.'] | following-sibling::src:index[1] | parent::src:call | preceding-sibling::src:operator[1][text()='*']"
+            },
+            {
+                "type": "call_with_var_arg",
+                "call":["strcpy", "strncpy", "strcat", "strncat", "strlen", "strcmp", "strncmp",
+                        "memcpy", "memmove", "memset", "sscanf",
+                        "fread", "fwrite", "fgets", "fputs", "fclose", "fseek", "ftell", "fflush"]
             }
         ],
         "unbounded_resource_read": [],

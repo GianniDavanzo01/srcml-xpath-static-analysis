@@ -21,7 +21,9 @@
           "os.environ","os.environ.get","os.getenv",
           "argparse.ArgumentParser.parse_args"
       ],
-    "nullable_returning_calls": ["re.match", "re.search", "re.fullmatch", "dict.get", "os.environ.get"],
+    "nullable_returning_calls":["re.match", "re.search", "re.fullmatch","os.environ.get", "os.getenv",
+                                "request.args.get", "request.form.get", "request.headers.get", "request.cookies.get","fetchone"
+                              ],
     "file_upload_input": ["request.files", "request.files.get", "request.files.getlist","request.FILES", "request.FILES.get","cgi.FieldStorage"]
   },
     "sinks": {
@@ -139,6 +141,12 @@
         {
           "type": "call_with_var_arg",
           "call": ["__import__","importlib.import_module","flask.send_file","flask.send_static_file","django.utils.module_loading.import_string","urllib.request.urlopen"]
+        }
+      ],
+      "null_dereference": [
+        {
+          "type": "matches_xpath",
+          "xpath": "following-sibling::src:operator[1][text()='.'] | following-sibling::src:index[1]"
         }
       ]
   },
