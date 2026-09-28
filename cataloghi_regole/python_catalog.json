@@ -205,6 +205,11 @@
                 "contains_numbers": [0]
             }
         ],
+        "return_value_must_be_checked": ["subprocess.call","os.system","os.fork","subprocess.Popen",
+                                         "urllib.parse.quote","urllib.parse.quote_plus","shlex.quote",
+                                         "re.sub","re.match","re.search","re.fullmatch",
+                                         "hmac.compare_digest","secrets.compare_digest"
+        ],
         "buffer_overflow_function":[]
       },
     "excluded_functions": {
@@ -327,6 +332,17 @@
                   }
               }
           ],
+        "return_value_used": [
+              {
+                "type": "node_matches_xpath",
+                "xpath": "ancestor::src:condition or ancestor::src:return or ancestor::src:argument or ancestor::src:with or ancestor-or-self::*[preceding-sibling::src:operator[1][text()='=' or text()='+=' or text()='-=']]"
+              },
+              {
+                "type": "call_with_kwarg",
+                "call": ["subprocess.call", "subprocess.Popen"],
+                "kwargs": {"check": "True"}
+              }
+            ],
         "curl_non_url_option": [],
         "bounds_checked_array_access":[]
   },

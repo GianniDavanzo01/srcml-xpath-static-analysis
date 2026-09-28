@@ -162,6 +162,12 @@
                 "contains_numbers": [0]
             }
         ],
+        "return_value_must_be_checked": ["fopen", "fread", "fwrite", "fgets", "scanf", "snprintf", "setuid", "chroot", "pthread_mutex_lock",
+                                        "malloc", "calloc", "realloc","setgid", "seteuid", "setegid", "setresuid", "setresgid",
+                                        "chown", "fchown", "lchown", "chmod", "fchmod","socket", "bind", "listen", "accept", "connect",
+                                        "recv", "send", "recvfrom", "sendto","fork", "execve", "execl", "execvp", "wait", "waitpid",
+                                        "getenv", "pthread_mutex_trylock"
+        ],
         "dynamic_code_execution": [],
         "unsafe_deserializers": []
     },
@@ -253,6 +259,12 @@
                             "syslog": 1
                         }
                     }
+                ],
+            "return_value_used": [
+                {
+                    "type": "node_matches_xpath",
+                    "xpath": "ancestor::src:condition or ancestor::src:return or ancestor::src:argument or ancestor::src:init or ancestor-or-self::*[preceding-sibling::src:operator[1][text()='=' or text()='+=' or text()='-=']] or preceding-sibling::*[1][self::src:operator[text()=')']]/preceding-sibling::*[1][self::src:name[text()='void']]"
+                }
                 ],
             "sql_parameterization": [],
             "try_block": [],

@@ -213,6 +213,13 @@
   ]
 },
 {
+  "rule_id": "CWE-252-UNCHECKED-RETURN-VALUE",
+  "type": "structural",
+  "vulnerabilities": ["CWE-252"],
+  "forbidden_functions": [{"tag": "return_value_must_be_checked"}],
+  "safe_contexts": [{"tag": "return_value_used"}]
+},
+{
   "rule_id": "CWE-259-HARDCODED-PASSWORD",
   "type": "structural",
   "vulnerabilities": ["CWE-259"],

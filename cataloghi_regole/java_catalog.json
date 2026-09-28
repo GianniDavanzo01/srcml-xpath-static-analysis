@@ -212,6 +212,10 @@
           "contains_any_name": ["password", "passwd", "pwd"]
         }
       ],
+      "return_value_must_be_checked": ["File.delete","File.mkdir","File.mkdirs","File.createNewFile","File.renameTo","File.setExecutable","File.setReadable",
+                                      "File.setWritable","File.setReadOnly","String.replace","String.replaceAll","String.replaceFirst","String.trim",
+                                      "URLEncoder.encode","Signature.verify","MessageDigest.isEqual","Lock.tryLock","Semaphore.tryAcquire","Matcher.matches","Matcher.find"
+      ],
       "buffer_overflow_function":[],
       "insecure_default_permissions":[]
 
@@ -317,15 +321,21 @@
         {"type": "function_has_call_matching_ast","call": ["setFeature"],"contains_names": ["XMLConstants.FEATURE_SECURE_PROCESSING"]}
       ],
       "format_string_position": [
-                    {
-                        "type": "check_format_arg_position",
-                        "vulnerable_indices": {
-                            "String.format": 0,
-                            "printf": 0,
-                            "Formatter.format": 0
-                        }
-                    }
-                ],
+        {
+            "type": "check_format_arg_position",
+            "vulnerable_indices": {
+                "String.format": 0,
+                "printf": 0,
+                "Formatter.format": 0
+            }
+        }
+      ],
+      "return_value_used": [
+        {
+          "type": "node_matches_xpath",
+          "xpath": "ancestor::src:condition or ancestor::src:return or ancestor::src:argument or ancestor::src:init or ancestor-or-self::*[preceding-sibling::src:operator[1][text()='=' or text()='+=' or text()='-=']]"
+        }
+      ],
       "curl_non_url_option": [],
       "sql_parameterization":[]
   },
