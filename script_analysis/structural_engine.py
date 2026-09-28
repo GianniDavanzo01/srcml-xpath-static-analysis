@@ -240,53 +240,6 @@ def _run_missing_while_increments(tree, rule, findings, adapter, imports):
                 continue
             findings.append(build_finding(rule, w_node))
 
-
-# def _run_unsafe_file_reads(tree, rule, findings, adapter, imports):
-#     specs = rule.get("unsafe_file_reads", [])
-#     if not specs:
-#         return
-
-#     safe_contexts = rule.get("safe_contexts", [])
-#     with_nodes = tree.xpath(".//src:with", namespaces=NS)
-
-#     for w_node in with_nodes:
-#         with_text = "".join(w_node.itertext())
-
-#         if not re.search(r"\bopen\s*\(", with_text) or not re.search(r"\bas\b", with_text):
-#             continue
-
-#         if not re.search(r"\.read\s*\(", with_text):
-#             continue
-
-#         open_calls = w_node.xpath(".//src:call[.//src:name[text()='open']]", namespaces=NS)
-#         if not open_calls:
-#             continue
-
-#         arg_list = open_calls[0].xpath("./src:argument_list", namespaces=NS)
-#         if not arg_list:
-#             continue
-
-#         first_arg = arg_list[0].xpath("./src:argument[1]", namespaces=NS)
-#         if not first_arg:
-#             continue
-
-#         arg_text_clean = "".join(first_arg[0].itertext()).strip()
-        
-#         literal_nodes = first_arg[0].xpath("./src:literal[@type='string']", namespaces=NS)
-#         is_pure_literal = bool(literal_nodes) and len(first_arg[0]) == 1 and \
-#             "".join(literal_nodes[0].itertext()).strip() == arg_text_clean
-#         if is_pure_literal:
-#             continue
-
-#         var_name = arg_text_clean
-#         if not var_name:
-#             continue
-
-#         if is_in_safe_context(w_node, safe_contexts, var_name=var_name, adapter=adapter, imports=imports):
-#             continue
-
-#         findings.append(build_finding(rule, w_node))
-
  
 
 def _run_reference_comparisons(tree, rule, findings, adapter, imports):
@@ -308,6 +261,18 @@ def _run_reference_comparisons(tree, rule, findings, adapter, imports):
         rhs_text = "".join(rhs_nodes[0].itertext()).strip()
 
         if adapter.is_none_literal(rhs_text) or adapter.is_boolean_literal(rhs_text):
+            continue
+
+        lhs_node = lhs_nodes[-1] if lhs_nodes else None
+        rhs_node = rhs_nodes[0]
+
+        def is_primitive_literal(node):
+            if node is None:
+                return False
+            # Verifica se il nodo è esattamente un letterale numerico o di carattere
+            return node.tag.endswith("literal") and node.get("type") in ["number", "char"]
+
+        if is_primitive_literal(lhs_node) or is_primitive_literal(rhs_node):
             continue
 
         if needs_pointer_check:
