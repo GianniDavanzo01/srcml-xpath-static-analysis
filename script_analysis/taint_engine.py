@@ -10,7 +10,7 @@ safe-context o un sanitizer.
 
 import re
 
-from common import NS, build_finding, is_sanitized, source_present, get_call_name, _pos_key, name_text
+from common import NS, build_finding, is_sanitized, source_present, get_call_name, _pos_key, name_text, get_scope_index
 from sink_matchers import matches_any_sink
 from safe_context_matchers import is_in_safe_context
 
@@ -216,31 +216,22 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
 
                 # info.rhs_all = primo fratello dopo l'operatore + tutti i successivi,
                 # per coprire l'intera espressione (es: "SELECT..." + user_id)
+                # [MODIFICA 7] nomi e stringhe interpolate dell'RHS sono pre-calcolati in
+                # AssignInfo (indipendenti dalla regola): qui nessuna query XPath, solo
+                # confronti con l'insieme delle variabili gia' taintate.
                 propagates = False
-                for rn in info.rhs_all:
+                for n_text, n in info.rhs_names:
+                    if n_text in already_tainted and not is_sanitized(n, block, adapter, imports):
+                        propagates = True
+                        break
 
-                    for n in rn.xpath("self::src:name | .//src:name", namespaces=NS):
-                        n_text = "".join(n.itertext()).strip()
-                        if n_text in already_tainted and not is_sanitized(n, block, adapter, imports):
+                if not propagates:
+                    # stringhe interpolate nel RHS (query = f"...{user_id}")
+                    for lit, interpolated_vars in info.rhs_interp:
+                        if any(v in already_tainted for v in interpolated_vars) \
+                           and not is_sanitized(lit, block, adapter, imports):
                             propagates = True
                             break
-                    if propagates:
-                        break
-
-                    # stringhe interpolate nel RHS (query = f"...{user_id}")
-                    for lit in rn.xpath(
-                        "self::src:literal[@type='string'] | .//src:literal[@type='string']",
-                        namespaces=NS,
-                    ):
-                        testo = "".join(lit.itertext())
-                        if adapter.is_interpolated_string(testo):
-                            interpolated_vars = adapter.get_interpolated_variables(testo)
-                            if any(v in already_tainted for v in interpolated_vars) \
-                               and not is_sanitized(lit, block, adapter, imports):
-                                propagates = True
-                                break
-                    if propagates:
-                        break
 
                 if propagates:
                     tainted_vars_with_scope.append((var_name, scope_node))
@@ -254,7 +245,9 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
     # Cerca gli utilizzi SOLO all'interno dello Scope calcolato
     for var, scope_node in tainted_vars_with_scope:
 
-        usi_potenziali = scope_node.xpath(".//src:name[text()=$v]", namespaces=NS, v=var)
+        # [MODIFICA 6] indice per scope: calcolato una volta e condiviso da tutte le regole
+        names_idx, interp_idx = get_scope_index(scope_node, adapter)
+        usi_potenziali = names_idx.get(var, [])
 
         usi_diretti = []
         for uso in usi_potenziali:
@@ -270,14 +263,7 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
 
             usi_diretti.append(uso)
 
-        fstrings_in_scope = scope_node.xpath(".//src:literal[@type='string']", namespaces=NS)
-
-        usi_fstring = []
-        for fs in fstrings_in_scope:
-            testo = "".join(fs.itertext())
-            if adapter and adapter.is_interpolated_string(testo):
-                if var in adapter.get_interpolated_variables(testo):
-                    usi_fstring.append(fs)
+        usi_fstring = interp_idx.get(var, [])
 
         tutti_gli_usi = usi_diretti + usi_fstring
 

@@ -12,6 +12,8 @@ from pathlib import Path
 
 from language_adapter import PythonAdapter
 
+from collections import defaultdict
+
 NS = {"src": "http://www.srcML.org/srcML/src", "pos": "http://www.srcML.org/srcML/position"}
 
 
@@ -108,22 +110,68 @@ def _access_prefixes(text: str, rx) -> set:
 
 _call_name_cache = {}
 _rhs_keys_cache = {}
+_assign_pairs_cache = {}
+_scope_index_cache = {}
 
 def reset_caches():
     _call_name_cache.clear()
     _rhs_keys_cache.clear()
+    _assign_pairs_cache.clear()
+    _scope_index_cache.clear()
+
+
+def get_scope_index(scope_node, adapter):
+    """
+    Indice per scope, calcolato una volta e condiviso da tutte le regole:
+      names:  testo del nodo <name> -> [nodi]
+      interp: nome variabile interpolata -> [letterali stringa che la usano]
+    """
+    idx = _scope_index_cache.get(scope_node)
+    if idx is None:
+        names = defaultdict(list)
+        for n in scope_node.xpath(".//src:name", namespaces=NS):
+            if n.text:                      # stessa semantica di text()=$v
+                names[n.text].append(n)
+
+        interp = defaultdict(list)
+        for lit in scope_node.xpath(".//src:literal[@type='string']", namespaces=NS):
+            testo = "".join(lit.itertext())
+            if adapter.is_interpolated_string(testo):
+                for v in set(adapter.get_interpolated_variables(testo)):
+                    interp[v].append(lit)
+
+        idx = (names, interp)
+        _scope_index_cache[scope_node] = idx
+    return idx
+
+def assignment_pairs(scope_node, adapter) -> list:
+    """(stmt, lhs, rhs) di ogni assegnazione nello scope, calcolate una volta sola."""
+    pairs = _assign_pairs_cache.get(scope_node)
+    if pairs is None:
+        pairs = []
+        for stmt in scope_node.xpath(".//src:expr_stmt | .//src:decl_stmt", namespaces=NS):
+            if not adapter.is_assignment(stmt, NS):
+                continue
+            lhs, rhs = adapter.get_assignment_lhs_rhs(stmt, NS)
+            pairs.append((stmt, lhs, rhs))
+        _assign_pairs_cache[scope_node] = pairs
+    return pairs
 
 def get_call_name(call, adapter=None, imports=None):
-    if call in _call_name_cache:
-        return _call_name_cache[call]
+    resolved = adapter is not None and imports is not None
+    key = (call, resolved)
+    if key in _call_name_cache:
+        return _call_name_cache[key]
+
     name_nodes = call.xpath("./src:name", namespaces=NS)
     if not name_nodes:
         result = None
-    elif adapter is not None and imports is not None:
+    elif resolved:
         result = adapter.resolve_call_name(call, NS, imports)
     else:
         result = "".join(name_nodes[0].itertext()).strip()
-    _call_name_cache[call] = result
+
+    _call_name_cache[key] = result
     return result
 
 def build_finding(rule: dict, node, extra: dict | None = None) -> dict:
@@ -399,20 +447,10 @@ def _is_pure_literal_expr(node) -> bool:
 
 
 def find_assignments(scope_node, adapter, var_name: str | None = None) -> list:
-    """
-    Ritorna gli statement di assegnazione (expr_stmt/decl_stmt) nello scope
-    dato, tramite adapter.is_assignment/get_assignment_lhs_rhs.
-    Se var_name e' fornito, filtra solo le assegnazioni il cui LHS e' quella variabile.
-    Ogni elemento ritornato e' una tupla (stmt, lhs_node, rhs_node).
-    """
     out = []
-    for stmt in scope_node.xpath(".//src:expr_stmt | .//src:decl_stmt", namespaces=NS):
-        if not adapter.is_assignment(stmt, NS):
-            continue
-        lhs, rhs = adapter.get_assignment_lhs_rhs(stmt, NS)
+    for stmt, lhs, rhs in assignment_pairs(scope_node, adapter):
         if lhs is None or not lhs.tag.endswith("name"):
             continue
-        # if var_name is not None and "".join(lhs.itertext()).strip() != var_name:
         if var_name is not None and name_text(lhs) != var_name:
             continue
         out.append((stmt, lhs, rhs))

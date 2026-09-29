@@ -6,7 +6,7 @@ Motore Strutturale
 
 import re
 
-from common import NS, get_call_name, build_finding, call_arguments_match_ast, check_required_imports,_pos_key, find_assignments,_is_pure_literal_expr
+from common import NS, get_call_name, build_finding, call_arguments_match_ast, check_required_imports,_pos_key, find_assignments,_is_pure_literal_expr, assignment_pairs
 from safe_context_matchers import is_in_safe_context
 
 
@@ -444,15 +444,7 @@ def run_structural_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) 
     if bad_assignments:
         safe_contexts = rule.get("safe_contexts", []) 
         
-        # Troviamo tutti gli statement di assegnazione usando l'adapter
-        expr_stmts = tree.xpath(".//src:expr_stmt | .//src:decl_stmt", namespaces=NS)
-        
-        for assign in expr_stmts:
-            if not adapter.is_assignment(assign, NS):
-                continue
-            
-            # Sfruttiamo il metodo nativo del LanguageAdapter
-            lhs_node, rhs_node = adapter.get_assignment_lhs_rhs(assign, NS)
+        for assign, lhs_node, rhs_node in assignment_pairs(tree, adapter):
             if lhs_node is None or rhs_node is None:
                 continue
             
