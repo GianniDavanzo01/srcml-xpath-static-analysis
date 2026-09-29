@@ -1076,7 +1076,7 @@ class CAdapter(LanguageAdapter):
             "sprintf": 0, "snprintf": 0,
             "strcpy": 0, "strncpy": 0,
             "strcat": 0, "strncat": 0,
-            "memcpy": 0,
+            "memcpy": 0,  "_snprintf": 0
         }
 
     def extract_membership_relations(self, condition_node, ns) -> list[dict]:
@@ -1171,7 +1171,7 @@ ADAPTERS = {
 
 def get_adapter(unit_node) -> LanguageAdapter:
     """Sceglie l'adapter leggendo l'attributo language="..." che srcML scrive
-    su ogni <unit> (es. language="Python", language="Java", language="C++").
+    su ogni <unit> (es. language="Python", language="Java", language="C").
     """
     lang = (unit_node.get("language") or "python").lower()
     adapter = ADAPTERS.get(lang)

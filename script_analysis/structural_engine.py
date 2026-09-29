@@ -200,14 +200,43 @@ def _run_missing_while_increments(tree, rule, findings, adapter, imports):
         return
 
     safe_contexts = rule.get("safe_contexts", [])
-    while_nodes = tree.xpath(".//src:while", namespaces=NS)
+    
+    # Intercetta sia while che do-while
+    loop_nodes = tree.xpath(".//src:while | .//src:do", namespaces=NS)
 
-    for w_node in while_nodes:
-        cond = w_node.xpath("./src:condition//src:operator[text()='<']", namespaces=NS)
-        if not cond:
+    for loop_node in loop_nodes:
+        # Cerca qualsiasi operatore di confronto, non solo '<'
+        cond_ops = loop_node.xpath(
+            "./src:condition//src:operator[text()='<' or text()='<=' or text()='>' or text()='>=' or text()='!=' or text()='==']", 
+            namespaces=NS
+        )
+        
+        # Gestione speciale per cicli palesemente infiniti: while(1), while(true)
+        is_literal_true = False
+        literals = loop_node.xpath("./src:condition//src:literal", namespaces=NS)
+        if literals:
+            lit_text = "".join(literals[0].itertext()).strip()
+            if lit_text == "1" or adapter.is_boolean_literal(lit_text):
+                if lit_text not in ("0", "false", "False"): # Assicurati che non sia while(0)
+                    is_literal_true = True
+
+        block = loop_node.xpath("./src:block", namespaces=NS)
+        if not block:
+            continue
+            
+        # Se il ciclo è infinito (while(true) o while(1)), DEVE esserci un break/return
+        if is_literal_true:
+            has_break_or_return = bool(block[0].xpath(".//src:break | .//src:return", namespaces=NS))
+            if not has_break_or_return:
+                if not is_in_safe_context(loop_node, safe_contexts, None, adapter, imports):
+                    findings.append(build_finding(rule, loop_node))
             continue
 
-        op_node = cond[0]
+        # Se non ci sono operatori e non è while(1), passiamo oltre
+        if not cond_ops:
+            continue
+
+        op_node = cond_ops[0]
         lhs_nodes = op_node.xpath("./preceding-sibling::*[not(self::src:comment)]", namespaces=NS)
         if not lhs_nodes:
             continue
@@ -216,28 +245,33 @@ def _run_missing_while_increments(tree, rule, findings, adapter, imports):
         if not var_name.isidentifier():
             continue
 
-        block = w_node.xpath("./src:block", namespaces=NS)
-        if not block:
-            continue
-
+        # Cerca l'incremento: +=, -=, ++, --, oppure var = var + X
         aug_assign = block[0].xpath(
-            f".//src:expr[src:name[1][text()='{var_name}'] and src:operator[1][text()='+=']]",
+            f".//src:expr[src:name[1][text()='{var_name}'] and src:operator[1][text()='+=' or text()='-=']]",
+            namespaces=NS
+        )
+        
+        inc_dec = block[0].xpath(
+            f".//src:expr[.//src:name[text()='{var_name}'] and .//src:operator[text()='++' or text()='--']]",
             namespaces=NS
         )
 
         assign_op = adapter.assignment_operator_token()
         exp_assign = block[0].xpath(
             f".//src:expr[src:name[1][text()='{var_name}'] and src:operator[1][text()='{assign_op}']"
-            f" and .//src:name[text()='{var_name}'] and .//src:operator[text()='+']]",   # '+' hardcoded, universale
+            f" and .//src:name[text()='{var_name}']]", 
             namespaces=NS
         )
 
-        has_increment = bool(aug_assign or exp_assign)
+        has_increment = bool(aug_assign or exp_assign or inc_dec)
+        
+        # Controlla anche se c'è un break (che rende sicuro il ciclo anche se manca l'incremento palese)
+        has_break = bool(block[0].xpath(".//src:break | .//src:return", namespaces=NS))
 
-        if not has_increment:
-            if is_in_safe_context(w_node, safe_contexts, None, adapter, imports):
+        if not has_increment and not has_break:
+            if is_in_safe_context(loop_node, safe_contexts, None, adapter, imports):
                 continue
-            findings.append(build_finding(rule, w_node))
+            findings.append(build_finding(rule, loop_node))
 
  
 
