@@ -83,7 +83,7 @@
 {
   "rule_id": "CWE-89-SQLI",
   "type": "taint",
-  "vulnerabilities": ["Injection"],
+  "vulnerabilities": ["CWE-89"],
   "sources": [
     {"tag": "http_input"}
   ],
@@ -193,7 +193,8 @@
   "type": "taint",
   "vulnerabilities": ["CWE-134"],
   "sources": [
-    {"tag": "http_input"}
+    {"tag": "http_input"},
+    {"tag": "cli_input"}
   ],
   "sinks": [
     {"tag": "format_string_functions"}
@@ -254,6 +255,20 @@
   ],
   "safe_contexts": [
     {"tag": "starttls_upgrade"}
+  ]
+},
+{
+  "rule_id": "CWE-319-CLEARTEXT-SOCKET-TRANSMISSION",
+  "type": "taint",
+  "vulnerabilities": ["CWE-319"],
+  "sources": [
+    {"tag": "socket_input"}
+  ],
+  "sinks": [
+    {"tag": "authentication_sinks"}
+  ],
+  "sanitizers": [
+    {"tag": "crypto_decryption_functions"}
   ]
 },
 {

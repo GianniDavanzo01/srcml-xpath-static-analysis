@@ -1,8 +1,9 @@
 {
     "sources":{
-        "http_input": ["recv", "recvfrom", "recvmsg", "read", "fread", "fgets", "scanf","fscanf"], 
+        "http_input": ["recv", "recvfrom", "recvmsg", "read", "fread"], 
         "nullable_returning_calls": ["malloc", "calloc", "realloc", "fopen", "getenv","tmpfile", "opendir","getcwd"],
-        "cli_input": ["getenv","argv","optarg"],
+        "cli_input": ["getenv","argv","optarg","fgets", "scanf","fscanf"],
+        "socket_input": ["recv", "recvfrom", "recvmsg", "read", "WSARecv", "WSARecvFrom"],
         "file_upload_input":[]
     },
     "sinks":{
@@ -78,6 +79,12 @@
                 "call":["strcpy", "strncpy", "strcat", "strncat", "strlen", "strcmp", "strncmp",
                         "memcpy", "memmove", "memset", "sscanf",
                         "fread", "fwrite", "fgets", "fputs", "fclose", "fseek", "ftell", "fflush"]
+            }
+        ],
+        "authentication_sinks": [
+            {
+                "type": "call_with_var_arg",
+                "call": ["LogonUserA", "LogonUserW", "pam_authenticate", "crypt"]
             }
         ],
         "unbounded_resource_read": [],
@@ -200,6 +207,7 @@
         "cast_to_integer":["atoi","atol","atoll","strtol","strtoll","strtoul"],
         "path_sanitizers": ["basename","realpath"],
         "url_encode_sanitizers": ["curl_easy_escape", "curl_escape"],
+        "crypto_decryption_functions": ["CryptDecrypt", "EVP_DecryptUpdate", "EVP_DecryptFinal_ex"],
         "crlf_sanitizers": [],
         "shell_escape_sanitizers": [],
         "XSS_sanitizers": [],

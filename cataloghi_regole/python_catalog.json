@@ -24,7 +24,8 @@
     "nullable_returning_calls":["re.match", "re.search", "re.fullmatch","os.environ.get", "os.getenv",
                                 "request.args.get", "request.form.get", "request.headers.get", "request.cookies.get","fetchone"
                               ],
-    "file_upload_input": ["request.files", "request.files.get", "request.files.getlist","request.FILES", "request.FILES.get","cgi.FieldStorage"]
+    "file_upload_input": ["request.files", "request.files.get", "request.files.getlist","request.FILES", "request.FILES.get","cgi.FieldStorage"],
+    "socket_input": ["socket.recv", "socket.recvfrom", "socket.recvmsg", "socket.recv_into","StreamReader.read","StreamReader.readline"]
   },
     "sinks": {
       "sql_execution": [
@@ -148,7 +149,13 @@
           "type": "matches_xpath",
           "xpath": "following-sibling::src:operator[1][text()='.'] | following-sibling::src:index[1]"
         }
-      ]
+      ],
+      "authentication_sinks": [
+      {
+        "type": "call_with_var_arg",
+        "call": ["authenticate", "check_password_hash", "checkpw", "pam.authenticate","ldap.bind_s","ldap.simple_bind_s"]
+      }
+    ]
   },
     "forbidden_functions": {
         "socket_primitives": [
@@ -238,7 +245,8 @@
         "XSS_sanitizers": ["markupsafe.escape", "flask.escape", "escape", "html.escape", "bleach.clean"],
         "url_encode_sanitizers": ["urllib.parse.quote", "urllib.parse.quote_plus"],
         "crlf_sanitizers": ["urllib.parse.quote","urllib.parse.quote_plus","werkzeug.urls.url_quote"],
-        "ldap_escape_sanitizers":["ldap3.utils.conv.escape_filter_chars","ldap.filter.escape_filter_chars"]
+        "ldap_escape_sanitizers":["ldap3.utils.conv.escape_filter_chars","ldap.filter.escape_filter_chars"],
+        "crypto_decryption_functions": ["decrypt", "Fernet.decrypt", "AES.decrypt","Cipher.decrypt"]
     },
   "safe_contexts": {
     "sql_parameterization": [{"type": "parametrized_query"}],
@@ -336,7 +344,8 @@
                       "logger.info":0,
                       "logger.warning":0,
                       "logger.error":0,
-                      "printf":0
+                      "printf":0,
+                      "format": 0
                   }
               }
           ],

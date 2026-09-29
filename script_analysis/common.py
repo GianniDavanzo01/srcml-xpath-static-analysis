@@ -30,6 +30,71 @@ def name_text(name_node) -> str:
     )
     return "".join(parts).strip()
 
+#Fondamentale per le sorgenti la cui variabile taint è argomento della funzione (elimina i cast)-------------------------
+_C_TYPE_WORDS = {
+    "char", "int", "long", "short", "unsigned", "signed", "void",
+    "float", "double", "struct", "union", "enum", "const", "volatile",
+    "size_t", "ssize_t", "wchar_t",
+    "uint8_t", "uint16_t", "uint32_t", "uint64_t",
+    "int8_t", "int16_t", "int32_t", "int64_t",
+}
+
+def _local(n) -> str:
+    return n.tag.split('}')[-1]
+
+def _txt(n) -> str:
+    return "".join(n.itertext()).strip()
+
+
+def _is_cast_type_name(name_node) -> bool:
+    """
+    True se <name> fa parte del tipo di un cast C: '(char*)x', '(struct foo *)x',
+    '(unsigned char *)x'. Il cast e' una sequenza piatta di <operator>/<name>:
+        '('  name+  '*'*  ')'
+    """
+    if _txt(name_node) in _C_TYPE_WORDS:
+        return True
+
+    # risale dai fratelli precedenti saltando altri <name> del tipo (struct foo, unsigned char)
+    prev = name_node.getprevious()
+    while prev is not None and _local(prev) == "name":
+        prev = prev.getprevious()
+    if prev is None or _local(prev) != "operator" or _txt(prev) != "(":
+        return False
+
+    # avanti: uno o piu' '*' e poi ')'
+    nxt = name_node.getnext()
+    while nxt is not None and _local(nxt) == "name":
+        nxt = nxt.getnext()
+    stars = 0
+    while nxt is not None and _local(nxt) == "operator" and _txt(nxt) == "*":
+        stars += 1
+        nxt = nxt.getnext()
+
+    # servono almeno un '*' (altrimenti '(buf)' sembrerebbe un cast) e la ')' finale
+    return stars > 0 and nxt is not None and _local(nxt) == "operator" and _txt(nxt) == ")"
+
+
+def extract_output_buffer_name(arg_node) -> str | None:
+    """
+    Nome della variabile-buffer in un <src:argument>, ignorando cast, sizeof,
+    tipi e nomi dentro un indice.
+      (char*)(password + n) -> password
+      &x                    -> x
+      s->buf                -> s
+    """
+    for n in arg_node.xpath(".//src:name[not(src:name)]", namespaces=NS):
+        if n.xpath("ancestor::src:sizeof | ancestor::src:index | ancestor::src:type",
+                   namespaces=NS):
+            continue
+        if _is_cast_type_name(n):
+            continue
+        txt = name_text(n)
+        if txt:
+            return txt
+    return None
+
+#----------------------------------------------------------------------------------------------------
 
 
 def load_rules(rules_path: Path) -> list:

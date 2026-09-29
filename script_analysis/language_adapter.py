@@ -1110,6 +1110,8 @@ class CAdapter(LanguageAdapter):
             "scanf":    {"variadic_from": 1},
             "fscanf":   {"variadic_from": 2},
             "sscanf":   {"variadic_from": 2},
+            "WSARecv":     {"indices": [1], "return_tainted": False},
+            "WSARecvFrom": {"indices": [1], "return_tainted": False},
         }
 
 # ---------------------------------------------------------------------- #

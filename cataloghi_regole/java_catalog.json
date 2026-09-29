@@ -6,7 +6,9 @@
       "HttpServletRequest.getHeader",
       "HttpServletRequest.getCookies",
       "request.getParameter",
-      "request.getHeader"
+      "request.getHeader",
+      "Properties.getProperty",
+      "System.getenv"
     ],
     "cli_input": [
         "System.getenv","System.getProperty",
@@ -18,7 +20,8 @@
     ],
     "file_upload_input": ["HttpServletRequest.getPart", "HttpServletRequest.getParts","MultipartHttpServletRequest.getFile", "MultipartHttpServletRequest.getFiles",
                           "MultipartHttpServletRequest.getFileMap","MultipartRequest.getFile","MultipartRequest.getFiles","MultipartRequest.getFileMap","ServletFileUpload.parseRequest"
-    ] 
+    ],
+    "socket_input": ["Socket.getInputStream", "DatagramSocket.receive", "SocketChannel.read", "AsynchronousSocketChannel.read","SSLServerSocket.accept"]
   },
   "sinks": {
     "sql_execution": [
@@ -28,11 +31,12 @@
           "Statement.executeQuery", "PreparedStatement.executeQuery", "CallableStatement.executeQuery",
           "Statement.executeUpdate", "PreparedStatement.executeUpdate", "CallableStatement.executeUpdate",
           "Statement.execute", "PreparedStatement.execute", "CallableStatement.execute",
+          "Statement.addBatch", "PreparedStatement.addBatch", "CallableStatement.addBatch",
           "Connection.prepareStatement",
           "EntityManager.createQuery", "Session.createQuery",
           "EntityManager.createNativeQuery",
           "JdbcTemplate.query",
-          "executeQuery", "executeUpdate", "execute",
+          "executeQuery", "executeUpdate", "execute", "addBatch",
           "prepareStatement", "createQuery", "createNativeQuery", "jdbcTemplate.query"
         ]
       } 
@@ -62,7 +66,7 @@
               "newInputStream", "readAllBytes", "write", "delete", "copy", "move",
               "createNewFile", "File"
       ]}],
- "html_output": [
+  "html_output": [
         {
           "type": "call_with_var_arg",
           "call": ["print", "println", "write", "sendError"],
@@ -120,7 +124,8 @@
     "exception_stringify_calls": [
       {"type": "method_call", "method": "getMessage"},
       {"type": "method_call", "method": "toString"},
-      {"type": "method_call", "method": "getLocalizedMessage"}
+      {"type": "method_call", "method": "getLocalizedMessage"},
+      {"type": "method_call", "method": "printStackTrace"}
     ],
     "logging_functions": [
       {
@@ -138,7 +143,7 @@
     "format_string_functions": [
       {
         "type": "call_with_var_arg", 
-        "call": ["String.format", "System.out.printf", "System.err.printf","PrintStream.printf", "Formatter.format" ]
+        "call": ["String.format", "System.out.printf", "System.err.printf", "PrintStream.printf", "Formatter.format", "System.out.format", "PrintStream.format"]
       }
     ],
     "file_write": [
@@ -156,6 +161,12 @@
       {
         "type": "matches_xpath",
         "xpath": "following-sibling::src:operator[1][text()='.'] | following-sibling::src:index[1]"
+      }
+    ],
+    "authentication_sinks": [
+      {
+        "type": "call_with_var_arg",
+        "call": ["LoginContext.login", "AuthenticationManager.authenticate", "HttpServletRequest.login","Subject.doAs"]
       }
     ]
   },
@@ -200,7 +211,7 @@
         "contains_names": ["java.io.tmpdir"]
       }
     ],
-    "insecure_cookie_configuration":["HttpServletResponse.addCookie","Cookie"],
+    "insecure_cookie_configuration":["HttpServletResponse.addCookie"],
     "insecure_network_protocols": ["FTPClient","TelnetClient","POP3Client"],
     "logging_calls_with_sensitive_content": [
       {
@@ -211,7 +222,7 @@
                             "token", "Token", "api_key", "apikey", "private_key"]
       }
     ],
-    "obsolete_functions": ["Thread.stop", "Thread.suspend", "Thread.resume", "Runtime.exec"],
+    "obsolete_functions": ["Thread.stop", "Thread.suspend", "Thread.resume", "Runtime.exec","DataInputStream.readLine"],
     "weak_password_hashing": [
         {
           "type": "call_matches_ast",
@@ -249,6 +260,7 @@
     "url_encode_sanitizers": ["URLEncoder.encode"],
     "crlf_sanitizers": ["encodeForHTTPHeader","URLEncoder.encode","StringUtils.replace","StringEscapeUtils.escapeHtml4","encodeForHTTPHeader" ],
     "ldap_escape_sanitizers":["encodeForLDAP","encodeForDN","LdapEncoder.filterEncode","LdapEncoder.nameEncode"],
+    "crypto_decryption_functions": ["Cipher.doFinal", "Cipher.update"],
     "shell_escape_sanitizers":[]
   },
   "safe_contexts": {
@@ -332,9 +344,12 @@
         {
             "type": "check_format_arg_position",
             "vulnerable_indices": {
-                "String.format": 0,
-                "printf": 0,
-                "Formatter.format": 0
+              "String.format": 0,
+              "printf": 0,
+              "Formatter.format": 0,
+              "System.out.format": 0,
+              "PrintStream.format": 0,
+              "format": 0
             }
         }
       ],

@@ -10,7 +10,7 @@ safe-context o un sanitizer.
 
 import re
 
-from common import NS, build_finding, is_sanitized, source_present, get_call_name, _pos_key, name_text, get_scope_index
+from common import NS, build_finding, is_sanitized, source_present, get_call_name, _pos_key, name_text, get_scope_index,  extract_output_buffer_name
 from sink_matchers import matches_any_sink
 from safe_context_matchers import is_in_safe_context
 
@@ -116,11 +116,14 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
                 if i >= len(args):
                     continue
                 # nome "foglia": per 's->buf' prende 's', per '&x' prende 'x'
-                leaf_names = args[i].xpath(".//src:name[not(src:name)]", namespaces=NS)
-                if not leaf_names:
-                    continue
-                # out_var = "".join(leaf_names[0].itertext()).strip()
-                out_var = name_text(leaf_names[0])
+                # leaf_names = args[i].xpath(".//src:name[not(src:name)]", namespaces=NS)
+                # if not leaf_names:
+                #     continue
+                # out_var = name_text(leaf_names[0])
+                # if not out_var:
+                #     continue
+
+                out_var = extract_output_buffer_name(args[i])
                 if not out_var:
                     continue
 
@@ -178,11 +181,13 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
                         if out_idx >= len(args):
                             continue
 
-                        out_names = args[out_idx].xpath(".//src:name", namespaces=NS)
-                        if not out_names:
-                            continue
-                        # out_var = "".join(out_names[0].itertext()).strip()
-                        out_var = name_text(out_names[0])
+                        # out_names = args[out_idx].xpath(".//src:name", namespaces=NS)
+                        # if not out_names:
+                        #     continue
+                        # out_var = name_text(out_names[0])
+                        # if not out_var or out_var in already_tainted:
+                        #     continue
+                        out_var = extract_output_buffer_name(args[out_idx])
                         if not out_var or out_var in already_tainted:
                             continue
 
