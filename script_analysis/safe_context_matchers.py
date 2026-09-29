@@ -802,11 +802,16 @@ def _safe_context_var_falsy_guard_clause(node, spec: dict, var_name=None, adapte
     all_if_stmts = scope.xpath(".//src:if_stmt", namespaces=NS)
     node_key = _pos_key(node)
 
-    def _adjacent_is_and(boundary_node, direction: str) -> bool:
-        """Vero se il fratello immediatamente prima/dopo boundary_node e' l'operatore 'and'."""
+    def _adjacent_is_and(boundary_node, direction: str, adapter) -> bool:
+        """Vero se il fratello immediatamente prima/dopo boundary_node e' un operatore logico AND."""
         axis = "preceding-sibling" if direction == "prev" else "following-sibling"
         adj = boundary_node.xpath(f"./{axis}::*[not(self::src:comment)][1]", namespaces=NS)
-        return bool(adj) and "".join(adj[0].itertext()).strip() == "and"
+        
+        if not adj:
+            return False
+            
+        op_text = "".join(adj[0].itertext()).strip()
+        return op_text in adapter.logical_and_operator()
 
     for if_stmt in all_if_stmts:
         if _pos_key(if_stmt) >= node_key:

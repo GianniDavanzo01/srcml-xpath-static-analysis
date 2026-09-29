@@ -136,6 +136,14 @@ class LanguageAdapter(ABC):
         """Operatore testuale usato per il confronto di uguaglianza (es. '==')."""
 
     @abstractmethod
+    def logical_and_operator(self) -> list:
+        """Operatori logici AND. Python: ['and']. C/Java: ['&&']."""
+
+    @abstractmethod
+    def logical_or_operator(self) -> list:
+        """Operatori logici OR. Python: ['or']. C/Java: ['||']."""
+
+    @abstractmethod
     def get_parameter_name_and_type(self, param_node, namespaces):
             """Estrae nome e tipo da un parametro (<src:parameter>)."""
 
@@ -215,6 +223,11 @@ class LanguageAdapter(ABC):
             "return_tainted": bool,      # (opz., default False) il valore di ritorno e' anch'esso source
         }
         Linguaggi senza questo pattern ritornano {}."""
+
+
+    @abstractmethod
+    def get_parameter_name_node(self, param_node, ns):
+        """Nodo <name> dell'identificatore del parametro, o None."""
 
 # ---------------------------------------------------------------------- #
 # Implementazione Python
@@ -419,6 +432,12 @@ class PythonAdapter(LanguageAdapter):
     def equality_operator(self) -> str:
         return "=="
 
+    def logical_and_operator(self) -> list:
+        return ["and"]
+
+    def logical_or_operator(self) -> list:
+        return ["or"]
+
     def get_parameter_name_and_type(self, param_node, namespaces):
         """Estrae nome e tipo da un parametro (<src:parameter>) in Python."""
         # In Python il tipo è dentro l'annotazione
@@ -515,6 +534,10 @@ class PythonAdapter(LanguageAdapter):
 
     def taint_source_output_args(self) -> dict:
         return {}
+
+    def get_parameter_name_node(self, param_node, ns):
+        n = param_node.xpath("./src:name[1]", namespaces=ns)
+        return n[0] if n else None
 
 # ---------------------------------------------------------------------- #
 # Implementazione Java
@@ -726,6 +749,12 @@ class JavaAdapter(LanguageAdapter):
     def equality_operator(self) -> str:
         return "=="
 
+    def logical_and_operator(self) -> list:
+        return ["&&"]
+
+    def logical_or_operator(self) -> list:
+        return ["||"]
+
     def get_parameter_name_and_type(self, param_node, namespaces):
         decl = param_node.xpath("./src:decl[1]", namespaces=namespaces)
         if not decl:
@@ -821,6 +850,10 @@ class JavaAdapter(LanguageAdapter):
 
     def taint_source_output_args(self) -> dict:
         return {}
+
+    def get_parameter_name_node(self, param_node, ns):
+        n = param_node.xpath("./src:decl/src:name[1]", namespaces=ns)
+        return n[0] if n else None
 # ---------------------------------------------------------------------- #
 # Implementazione C
 # ---------------------------------------------------------------------- #
@@ -1003,6 +1036,12 @@ class CAdapter(LanguageAdapter):
     def equality_operator(self) -> str:
         return "=="
 
+    def logical_and_operator(self) -> list:
+        return ["&&", "and"]
+
+    def logical_or_operator(self) -> list:
+        return ["||", "or"]
+
     def get_parameter_name_and_type(self, param_node, namespaces):
         decl = param_node.xpath("./src:decl[1]", namespaces=namespaces)
         if not decl:
@@ -1113,6 +1152,11 @@ class CAdapter(LanguageAdapter):
             "WSARecv":     {"indices": [1], "return_tainted": False},
             "WSARecvFrom": {"indices": [1], "return_tainted": False},
         }
+
+    def get_parameter_name_node(self, param_node, ns):
+        n = param_node.xpath(
+            "./src:decl/src:name[1] | ./src:function_decl/src:name[1]", namespaces=ns)
+        return n[0] if n else None
 
 # ---------------------------------------------------------------------- #
 # Registro / dispatch

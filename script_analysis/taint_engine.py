@@ -41,14 +41,14 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
 
     # Parametri di funzione
     if "function_parameters" in sources:
-        param_nodes = tree.xpath(".//src:function//src:parameter_list//src:name", namespaces=NS)
-        for p_node in param_nodes:
-            # param_name = "".join(p_node.itertext()).strip()
-            param_name = name_text(p_node)
+        for param in tree.xpath(".//src:function/src:parameter_list/src:parameter", namespaces=NS):
+            name_node = adapter.get_parameter_name_node(param, NS)
+            if name_node is None:
+                continue
+            param_name = name_text(name_node)
             if param_name:
-                parent_func = p_node.xpath("ancestor::src:function[1]", namespaces=NS)
-                scope_node = parent_func[0] if parent_func else tree
-                tainted_vars_with_scope.append((param_name, scope_node))
+                scope = param.xpath("ancestor::src:function[1]", namespaces=NS)
+                tainted_vars_with_scope.append((param_name, scope[0] if scope else tree))
 
     # Variabili per descrivere le eccezioni
     if "exception_variable" in sources:

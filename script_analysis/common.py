@@ -289,7 +289,7 @@ def source_present(sources: list, rhs_node, source_form: str | None = None,
 
     for source in sources:
         if source == "function_parameters":
-            if node is not None and is_function_parameter(node):
+            if node is not None and is_function_parameter(node, adapter):
                 return True
             continue
 
@@ -444,27 +444,42 @@ def call_arguments_match_ast(call_node, spec: dict, adapter=None, imports=None) 
     return True
 
 
-def is_function_parameter(node) -> bool:
-    """
-    Verifica se il nodo corrente (es. un identificativo di variabile) 
-    corrisponde a uno dei parametri definiti nella firma della funzione.
-    """
-    if node is None:
-        return False
+# def is_function_parameter(node) -> bool:
+#     """
+#     Verifica se il nodo corrente (es. un identificativo di variabile) 
+#     corrisponde a uno dei parametri definiti nella firma della funzione.
+#     """
+#     if node is None:
+#         return False
         
+#     node_text = "".join(node.itertext()).strip()
+#     if not node_text:
+#         return False
+
+#     # Estrae solo il <name> figlio diretto di <decl> (ignora <type>/<name>)
+#     param_name_nodes = node.xpath(
+#         "ancestor::src:function[1]//src:parameter_list//src:parameter/src:decl/src:name", 
+#         namespaces=NS
+#     )
+    
+#     param_names = ["".join(p.itertext()).strip() for p in param_name_nodes]
+    
+#     return node_text in param_names
+
+def is_function_parameter(node, adapter) -> bool:
+    if node is None or adapter is None:
+        return False
     node_text = "".join(node.itertext()).strip()
     if not node_text:
         return False
-
-    # Estrae solo il <name> figlio diretto di <decl> (ignora <type>/<name>)
-    param_name_nodes = node.xpath(
-        "ancestor::src:function[1]//src:parameter_list//src:parameter/src:decl/src:name", 
-        namespaces=NS
-    )
-    
-    param_names = ["".join(p.itertext()).strip() for p in param_name_nodes]
-    
-    return node_text in param_names
+    func = node.xpath("ancestor::src:function[1]", namespaces=NS)
+    if not func:
+        return False
+    for p in func[0].xpath("./src:parameter_list/src:parameter", namespaces=NS):
+        n = adapter.get_parameter_name_node(p, NS)
+        if n is not None and name_text(n) == node_text:
+            return True
+    return False
 
 
 def check_required_imports(unit_node, rule_spec: dict, namespaces: dict, imports=None) -> bool:

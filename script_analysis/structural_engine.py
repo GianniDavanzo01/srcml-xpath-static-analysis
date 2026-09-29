@@ -80,7 +80,7 @@ def _run_source_operator_usage(tree, rule, findings, adapter, imports, catalog=N
                 if sibling is None:
                     continue
                     
-                # CASO 1: La sorgente è una funzione (es. input())
+                # CASO 1: La sorgente è una funzione 
                 if sibling.tag.endswith("call"):
                     c_name = get_call_name(sibling, adapter, imports)
                     if c_name in source_names:
@@ -138,7 +138,6 @@ def _run_source_operator_usage(tree, rule, findings, adapter, imports, catalog=N
 
             findings.append(build_finding(rule, expr_node))
 
-            break
 
 
 def _run_forbidden_function_defs(tree, rule, findings, adapter, imports):
@@ -796,31 +795,34 @@ def run_forbidden_functions_indexed(ctx, compiled, findings, adapter, imports):
         if not call_name:
             continue
 
-        seen = set()
-        candidates = []
-        
         parts = call_name.split('.')
         suffixes = [".".join(parts[i:]) for i in range(len(parts))]
-        
-        # 1. Ricerca tramite indice (suffissi)
-        for suff in suffixes:
-            for item in compiled.forbidden_functions_index.get(suff, []):
-                rule_obj = item[0]  # item[0] contiene la reference al dizionario della regola
-                
-                # Il filtro agisce sull'ID della regola, evitando duplicati per spec ridondanti
-                if id(rule_obj) not in seen:
-                    seen.add(id(rule_obj))
-                    candidates.append(item)
-                    
-        # 2. Ricerca tra le funzioni non indicizzate (es. pattern AST complessi)
-        for item in compiled.unindexed_forbidden_functions:
-            rule_obj = item[0]
-            if id(rule_obj) not in seen:
-                seen.add(id(rule_obj))
-                candidates.append(item)
 
-        # 3. Validazione finale ed emissione del finding
+        # 1. Candidati: dedup per (regola, spec), non per sola regola.
+        #    Serve solo a non contare due volte la stessa spec trovata
+        #    tramite suffissi diversi ('os.system' e 'system').
+        seen = set()
+        candidates = []
+
+        for suff in suffixes:
+            for rule_obj, spec in compiled.forbidden_functions_index.get(suff, []):
+                key = (id(rule_obj), id(spec))
+                if key not in seen:
+                    seen.add(key)
+                    candidates.append((rule_obj, spec))
+
+        for rule_obj, spec in compiled.unindexed_forbidden_functions:
+            key = (id(rule_obj), id(spec))
+            if key not in seen:
+                seen.add(key)
+                candidates.append((rule_obj, spec))
+
+        # 2. Validazione: al massimo un finding per regola per call,
+        #    ma DOPO aver verificato che la spec abbia davvero matchato.
+        reported_rules = set()
         for rule, spec in candidates:
+            if id(rule) in reported_rules:
+                continue
             if not check_required_imports(ctx.unit, rule, NS, imports=imports):
                 continue
             if call_name in rule.get("excluded_functions", []):
@@ -828,16 +830,18 @@ def run_forbidden_functions_indexed(ctx, compiled, findings, adapter, imports):
             if is_in_safe_context(call, rule.get("safe_contexts", []), None, adapter, imports):
                 continue
 
-            # Verifica rigorosa del match effettivo
             if isinstance(spec, str):
-                if call_name == spec or call_name.endswith(f".{spec}"):
-                    findings.append(build_finding(rule, call))
+                matched = call_name == spec or call_name.endswith(f".{spec}")
             elif spec.get("type") == "exact_name":
-                if call_name == spec.get("name"):
-                    findings.append(build_finding(rule, call))
+                matched = call_name == spec.get("name")
             elif spec.get("type") == "call_matches_ast":
-                if call_arguments_match_ast(call, spec, adapter, imports):
-                    findings.append(build_finding(rule, call))
+                matched = call_arguments_match_ast(call, spec, adapter, imports)
+            else:
+                matched = False
+
+            if matched:
+                findings.append(build_finding(rule, call))
+                reported_rules.add(id(rule))
 
 def run_forbidden_names_indexed(ctx, compiled, findings, adapter, imports):
 
