@@ -536,10 +536,8 @@ def _resolve_numeric_args(call_node, adapter, ns) -> list:
         return values
 
     call_key = _pos_key(call_node)
-    func_scope = call_node.xpath("ancestor::src:function[1]", namespaces=ns)
-    if func_scope:
-        scope_node = func_scope[0]
-    else:
+    scope_node = enclosing_scope(call_node, adapter)
+    if scope_node is None:
         unit_scope = call_node.xpath("ancestor::src:unit[1]", namespaces=ns)
         scope_node = unit_scope[0] if unit_scope else call_node
 

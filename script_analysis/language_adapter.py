@@ -245,6 +245,13 @@ class LanguageAdapter(ABC):
     def flow_exit_calls(self) -> list:
         """Nomi di chiamate che terminano il flusso (exit, abort, ...)."""
 
+
+    def scope_axis(self, extra=()) -> str:
+        """Asse XPath verso la funzione/costruttore che racchiude il nodo,
+        con eventuali tag di ripiego (es. 'class', 'unit')."""
+        tags = list(self.function_tags()) + list(extra)
+        return "ancestor::*[" + " or ".join(f"self::src:{t}" for t in tags) + "][1]"
+
 # ---------------------------------------------------------------------- #
 # Implementazione Python
 # ---------------------------------------------------------------------- #
@@ -387,8 +394,11 @@ class PythonAdapter(LanguageAdapter):
         if rest:
             from common import _pos_key, find_assignments
 
+            # scope_candidates = call_node.xpath(
+            #     "ancestor::*[self::src:function or self::src:unit][1]", namespaces=ns
+            # )
             scope_candidates = call_node.xpath(
-                "ancestor::*[self::src:function or self::src:unit][1]", namespaces=ns
+                self.scope_axis(("unit",)), namespaces=ns
             )
             scope_node = scope_candidates[0] if scope_candidates else call_node
 
@@ -695,9 +705,13 @@ class JavaAdapter(LanguageAdapter):
             var_name = "".join(parts[0].itertext()).strip()
             method_name = "".join(parts[-1].itertext()).strip()
             
+            # xpath_query_local = (
+            #     f"ancestor::*[self::src:function or self::src:class or self::src:unit][1]"   
+            #     f"//src:decl[src:name[text()='{var_name}']]"
+            # )
             xpath_query_local = (
-                f"ancestor::*[self::src:function or self::src:class or self::src:unit][1]"   
-                f"//src:decl[src:name[text()='{var_name}']]"
+                    f"{self.scope_axis(('class', 'unit'))}"
+                    f"//src:decl[src:name[text()='{var_name}']]"
             )
             
             decls = call_node.xpath(xpath_query_local, namespaces=ns)
@@ -707,7 +721,7 @@ class JavaAdapter(LanguageAdapter):
             if not decls:
 
                 xpath_query_param = (
-                    f"ancestor::src:function[1]//src:parameter_list"
+                    f"{self.scope_axis()}//src:parameter_list"
                     f"//src:decl[src:name[text()='{var_name}']]"
                 )
                 decls = call_node.xpath(xpath_query_param, namespaces=ns)
@@ -1007,15 +1021,20 @@ class CAdapter(LanguageAdapter):
             var_name = "".join(parts[0].itertext()).strip()
             method_name = "".join(parts[-1].itertext()).strip()
 
+            # xpath_query_local = (
+            #     f"ancestor::*[self::src:function or self::src:unit][1]"
+            #     f"//src:decl[src:name[text()='{var_name}']]"
+            # )
             xpath_query_local = (
-                f"ancestor::*[self::src:function or self::src:unit][1]"
+                f"{self.scope_axis(('unit',))}"
                 f"//src:decl[src:name[text()='{var_name}']]"
             )
+
             decls = call_node.xpath(xpath_query_local, namespaces=ns)
 
             if not decls:
                 xpath_query_param = (
-                    f"ancestor::src:function[1]//src:parameter_list"
+                    f"{self.scope_axis()}//src:parameter_list"
                     f"//src:decl[src:name[text()='{var_name}']]"
                 )
                 decls = call_node.xpath(xpath_query_param, namespaces=ns)
@@ -1132,14 +1151,20 @@ class CAdapter(LanguageAdapter):
     def resolve_variable_type(self, name_node, var_name, ns) -> str | None:
         """Cerca la dichiarazione (locale o parametro) di var_name e ritorna
         il suo tipo dichiarato, es. 'char *'."""
+        # xpath_query_local = (
+        #     f"ancestor::*[self::src:function or self::src:unit][1]"
+        #     f"//src:decl[src:name[text()='{var_name}']]"
+        # )
         xpath_query_local = (
-            f"ancestor::*[self::src:function or self::src:unit][1]"
-            f"//src:decl[src:name[text()='{var_name}']]"
-        )
+                f"{self.scope_axis(('unit',))}"
+                f"//src:decl[src:name[text()='{var_name}']]"
+            )
+
         decls = name_node.xpath(xpath_query_local, namespaces=ns)
         if not decls:
             xpath_query_param = (
-                f"ancestor::src:function[1]//src:parameter_list//src:decl[src:name[text()='{var_name}']]"
+                f"{self.scope_axis()}//src:parameter_list"
+                f"//src:decl[src:name[text()='{var_name}']]"
             )
             decls = name_node.xpath(xpath_query_param, namespaces=ns)
         if not decls:
