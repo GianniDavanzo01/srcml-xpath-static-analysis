@@ -21,6 +21,33 @@ NS = {"src": "http://www.srcML.org/srcML/src", "pos": "http://www.srcML.org/srcM
 # Utility di base
 # --------------------------------------------------------------------------- #
 
+def scope_xpath(adapter, with_lambda=False):
+    tags = adapter.function_tags() + (adapter.lambda_tags() if with_lambda else [])
+    return "ancestor::*[" + " or ".join(f"self::src:{t}" for t in tags) + "][1]"
+
+def enclosing_scope(node, adapter):
+    """Nodo funzione/costruttore che racchiude `node`, o None."""
+    r = node.xpath(scope_xpath(adapter), namespaces=NS)
+    return r[0] if r else None
+
+def block_exits_flow(block, adapter, imports=None) -> bool:
+    fn = scope_xpath(adapter, with_lambda=True)
+    my_scope = block.xpath(fn, namespaces=NS)
+    same = lambda n: n.xpath(fn, namespaces=NS) == my_scope
+
+    tags = " | ".join(f".//src:{t}" for t in adapter.flow_exit_tags())
+    if any(same(n) for n in block.xpath(tags, namespaces=NS)):
+        return True
+
+    exits = adapter.flow_exit_calls()
+    for c in block.xpath(".//src:call", namespaces=NS):
+        cn = get_call_name(c, adapter, imports)
+        if cn and any(cn == e or cn.endswith(f".{e}") for e in exits) and same(c):
+            return True
+    return False
+
+
+
 def name_text(name_node) -> str:
     """Testo di un <name> senza i suffissi [..] della propria dichiarazione/accesso
     ('names[]' -> 'names', 'a[i].b[0]' -> 'a.b'). Per un nome semplice è identico a prima."""

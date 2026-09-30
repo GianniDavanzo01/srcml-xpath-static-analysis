@@ -8,9 +8,10 @@ con il relativo registro e dispatcher.
 
 import re
 
-from common import NS, get_call_name, call_arguments_match_ast, find_assignments,_pos_key
+from common import NS, get_call_name, call_arguments_match_ast, find_assignments,_pos_key, block_exits_flow, enclosing_scope
 
 from language_adapter import PythonAdapter
+
 
 
 def _safe_context_current_call_matches(node, spec: dict, var_name: str | None = None, adapter=None, imports=None) -> bool:
@@ -28,14 +29,18 @@ def _safe_context_current_call_matches(node, spec: dict, var_name: str | None = 
 
 def _safe_context_function_has_call_matching(node, spec: dict, var_name: str | None = None, adapter=None, imports=None) -> bool:
     """Cerca in tutta la funzione una chiamata che rispetti i requisiti degli argomenti."""
-    target = _function_or_unit_scope(node)
+    target = _function_or_unit_scope(node, adapter)
     return any(call_arguments_match_ast(c, spec, adapter, imports) for c in target.xpath(".//src:call", namespaces=NS))
 
 
-def _function_or_unit_scope(node):
-    """Ritorna la <src:function> più vicina che racchiude `node`, o l'intero <src:unit>."""
-    parent_func = node.xpath("ancestor::src:function[1]", namespaces=NS)
-    return parent_func[0] if parent_func else node.xpath("ancestor::src:unit[1]", namespaces=NS)[0]
+# def _function_or_unit_scope(node):
+#     """Ritorna la <src:function> più vicina che racchiude `node`, o l'intero <src:unit>."""
+#     parent_func = node.xpath("ancestor::src:function[1]", namespaces=NS)
+#     return parent_func[0] if parent_func else node.xpath("ancestor::src:unit[1]", namespaces=NS)[0]
+
+def _function_or_unit_scope(node, adapter=None):
+    scope = enclosing_scope(node, adapter or PythonAdapter())
+    return scope if scope is not None else node.xpath("ancestor::src:unit[1]", namespaces=NS)[0]
 
 
 def _safe_context_parametrized_query(node, spec: dict, var_name: str | None = None, adapter=None, imports=None) -> bool:
@@ -99,7 +104,7 @@ def _safe_context_function_has_method_call(node, spec: dict, var_name: str | Non
         
     _adapter = adapter or PythonAdapter()
         
-    target_node = _function_or_unit_scope(node)
+    target_node = _function_or_unit_scope(node, adapter)
     
     # 1. Trova tutte le chiamate che riguardano il metodo specificato (es. replace) nello scope
     calls = target_node.xpath(
@@ -196,9 +201,9 @@ def _safe_context_in_function_name(node, spec: dict, var_name: str | None = None
         Rileva se il nodo si trova all'interno di una funzione con il nome specificato.
     """
     target = spec.get("name")
-    func = node.xpath("ancestor::src:function[1]", namespaces=NS)
-    if func:
-        name_nodes = func[0].xpath("./src:name", namespaces=NS)
+    func = enclosing_scope(node, adapter or PythonAdapter())
+    if func is not None:
+        name_nodes = func.xpath("./src:name", namespaces=NS)
         if name_nodes and "".join(name_nodes[0].itertext()).strip() == target:
             return True
     return False
@@ -270,7 +275,7 @@ def _safe_context_function_has_file_size_check(node, spec: dict, var_name: str |
             return True
 
     # --- Caso B: guard-clause precedente 'if size > MAX: <exit>' ---
-    scope = _function_or_unit_scope(node)
+    scope = _function_or_unit_scope(node, adapter)
     all_if_stmts = scope.xpath(".//src:if_stmt", namespaces=NS)
     
     for if_stmt in all_if_stmts:
@@ -288,19 +293,21 @@ def _safe_context_function_has_file_size_check(node, spec: dict, var_name: str |
             continue
             
         # Troviamo tutte le interruzioni di flusso nel blocco if
-        exits_flow = block[0].xpath(
-            ".//src:return | .//src:raise | .//src:continue | .//src:break",
-            namespaces=NS
-        )
+        # exits_flow = block[0].xpath(
+        #     ".//src:return | .//src:raise | .//src:continue | .//src:break",
+        #     namespaces=NS
+        # )
         
-        valid_exits = []
-        parent_func = if_stmt.xpath("ancestor::src:function[1]", namespaces=NS)
-        for exit_node in exits_flow:
-            exit_func = exit_node.xpath("ancestor::src:function[1]", namespaces=NS)
-            if parent_func == exit_func:
-                valid_exits.append(exit_node)
+        # valid_exits = []
+        # parent_func = if_stmt.xpath("ancestor::src:function[1]", namespaces=NS)
+        # for exit_node in exits_flow:
+        #     exit_func = exit_node.xpath("ancestor::src:function[1]", namespaces=NS)
+        #     if parent_func == exit_func:
+        #         valid_exits.append(exit_node)
 
-        if not valid_exits:
+        # if not valid_exits:
+        #     continue
+        if not block_exits_flow(block[0], _adapter, imports):
             continue
             
         cmp_found = _find_logical_comparisons(cond[0])
@@ -326,10 +333,10 @@ def _safe_context_var_truthiness_check(node, spec: dict, var_name=None, adapter=
         conditions = node.xpath("ancestor::src:if_stmt//src:condition", namespaces=NS)
     elif search_scope in ("file", "unit"):
         unit_node = node.xpath("ancestor::src:unit[1]", namespaces=NS)
-        target = unit_node[0] if unit_node else _function_or_unit_scope(node)
+        target = unit_node[0] if unit_node else _function_or_unit_scope(node, adapter)
         conditions = target.xpath(".//src:if_stmt//src:condition", namespaces=NS)
     else:
-        target = _function_or_unit_scope(node)
+        target = _function_or_unit_scope(node, adapter)
         conditions = target.xpath(".//src:if_stmt//src:condition", namespaces=NS)
 
     _adapter = adapter or PythonAdapter()
@@ -398,7 +405,7 @@ def _safe_context_condition_matches_xpath(node, spec: dict, var_name: str | None
         return False
         
     search_scope = spec.get("scope", "function")
-    target = _function_or_unit_scope(node)
+    target = _function_or_unit_scope(node, adapter)
     
     if search_scope == "enclosing":
         conditions = node.xpath("ancestor::src:if_stmt//src:condition", namespaces=NS)
@@ -422,7 +429,7 @@ def _safe_context_matches_xpath(node, spec: dict, var_name: str | None = None, a
     if not xpath_template:
         return False
         
-    target = _function_or_unit_scope(node)
+    target = _function_or_unit_scope(node, adapter)
     xpath_query = xpath_template.replace("$VAR", var_name) if var_name else xpath_template
     return bool(target.xpath(xpath_query, namespaces=NS))
 
@@ -446,7 +453,7 @@ def _safe_context_binary_comparison(node, spec: dict, var_name: str | None = Non
         sostituito dinamicamente con var_name (es. la variabile usata come
         indice in un accesso subscript), per confronti legati al contesto.
     """
-    target = _function_or_unit_scope(node)
+    target = _function_or_unit_scope(node, adapter)
     operators = spec.get("operators", [])
 
     def _resolve(values):
@@ -506,7 +513,7 @@ def _safe_context_membership_check(node, spec: dict, var_name: str | None = None
         return False
 
     search_scope = spec.get("scope", "function")
-    target_for_assignments = _function_or_unit_scope(node)
+    target_for_assignments = _function_or_unit_scope(node, adapter)
     
     if search_scope == "enclosing":
         conditions = node.xpath("ancestor::src:if_stmt[1]//src:condition", namespaces=NS)
@@ -748,7 +755,7 @@ def _safe_context_function_has_call_with_var_arg(node, spec: dict, var_name: str
     if not target_calls:
         return False
 
-    target = _function_or_unit_scope(node)
+    target = _function_or_unit_scope(node, adapter)
     for call_node in target.xpath(".//src:call", namespaces=NS):
         call_name = get_call_name(call_node, adapter, imports)
         if not call_name or not any(call_name == c or call_name.endswith(f".{c}") for c in target_calls):
@@ -780,7 +787,7 @@ def _safe_context_try_after_source(node, spec: dict, var_name: str | None = None
         return False
     try_node = try_ancestors[0]
 
-    scope = _function_or_unit_scope(node)
+    scope = _function_or_unit_scope(node, adapter)
     _adapter = adapter or PythonAdapter()
     for assign, _, _ in find_assignments(scope, _adapter, var_name):
         assign_try = assign.xpath("ancestor::src:try[1]", namespaces=NS)
@@ -798,20 +805,17 @@ def _safe_context_var_falsy_guard_clause(node, spec: dict, var_name=None, adapte
     null_ops = _adapter.null_comparison_operators()
     falsy_ops = null_ops["falsy"]
 
-    scope = _function_or_unit_scope(node)
+    scope = _function_or_unit_scope(node, adapter)
     all_if_stmts = scope.xpath(".//src:if_stmt", namespaces=NS)
     node_key = _pos_key(node)
 
     def _adjacent_is_and(boundary_node, direction: str, adapter) -> bool:
-        """Vero se il fratello immediatamente prima/dopo boundary_node e' un operatore logico AND."""
         axis = "preceding-sibling" if direction == "prev" else "following-sibling"
         adj = boundary_node.xpath(f"./{axis}::*[not(self::src:comment)][1]", namespaces=NS)
-        
-        if not adj:
+        if not adj or not adj[0].tag.endswith("}operator"):
             return False
+        return "".join(adj[0].itertext()).strip() in adapter.logical_and_operator()
             
-        op_text = "".join(adj[0].itertext()).strip()
-        return op_text in adapter.logical_and_operator()
 
     for if_stmt in all_if_stmts:
         if _pos_key(if_stmt) >= node_key:
@@ -823,12 +827,14 @@ def _safe_context_var_falsy_guard_clause(node, spec: dict, var_name=None, adapte
         cond = cond[0]
 
         block = if_stmt.xpath("./src:if/src:block[1]", namespaces=NS)
-        exits_flow = block and block[0].xpath(
-            ".//src:return[not(ancestor::src:function)] | .//src:raise[not(ancestor::src:function)] | "
-            ".//src:continue[not(ancestor::src:function)] | .//src:break[not(ancestor::src:function)]",
-            namespaces=NS
-        )
-        if not exits_flow:
+        # exits_flow = block and block[0].xpath(
+        #     ".//src:return[not(ancestor::src:function)] | .//src:raise[not(ancestor::src:function)] | "
+        #     ".//src:continue[not(ancestor::src:function)] | .//src:break[not(ancestor::src:function)]",
+        #     namespaces=NS
+        # )
+        # if not exits_flow:
+        #     continue
+        if not block or not block_exits_flow(block[0], _adapter, imports):
             continue
 
         # --- Condizione falsy: negazione (not var) ---
@@ -838,7 +844,7 @@ def _safe_context_var_falsy_guard_clause(node, spec: dict, var_name=None, adapte
                 if "".join(next_node[0].itertext()).strip() == var_name:
                     #scarta se "not var" e' congiunto in AND con altro -->anche se fosse True che la variabile è nulla 
                     #se l'altra condizione è False non si entra nell'if e si rischia di eseguire un operazione con la variabile nulla.
-                    if _adjacent_is_and(nop, "prev") or _adjacent_is_and(next_node[0], "next"):
+                    if _adjacent_is_and(nop, "prev",_adapter) or _adjacent_is_and(next_node[0], "next",_adapter):
                         continue
                     return True
 
@@ -856,7 +862,7 @@ def _safe_context_var_falsy_guard_clause(node, spec: dict, var_name=None, adapte
             if (lhs_text == var_name and _adapter.is_none_literal(rhs_text)) or \
                (_adapter.is_none_literal(lhs_text) and rhs_text == var_name):
                 # NUOVO: scarta se "var is None" e' congiunto in AND con altro
-                if _adjacent_is_and(lhs[0], "prev") or _adjacent_is_and(rhs[0], "next"):
+                if _adjacent_is_and(lhs[0], "prev",_adapter) or _adjacent_is_and(rhs[0], "next",_adapter):
                     continue
                 return True
 

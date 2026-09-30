@@ -229,6 +229,22 @@ class LanguageAdapter(ABC):
     def get_parameter_name_node(self, param_node, ns):
         """Nodo <name> dell'identificatore del parametro, o None."""
 
+    @abstractmethod
+    def function_tags(self) -> list:
+        """Tag srcML che definiscono uno scope di funzione (es. ['function'])."""
+
+    @abstractmethod
+    def lambda_tags(self) -> list:
+        """Tag srcML delle funzioni anonime: confine di flusso, non scope di taint."""
+
+    @abstractmethod
+    def flow_exit_tags(self) -> list:
+        """Tag srcML che interrompono il flusso (return, throw, ...)."""
+
+    @abstractmethod
+    def flow_exit_calls(self) -> list:
+        """Nomi di chiamate che terminano il flusso (exit, abort, ...)."""
+
 # ---------------------------------------------------------------------- #
 # Implementazione Python
 # ---------------------------------------------------------------------- #
@@ -538,6 +554,11 @@ class PythonAdapter(LanguageAdapter):
     def get_parameter_name_node(self, param_node, ns):
         n = param_node.xpath("./src:name[1]", namespaces=ns)
         return n[0] if n else None
+
+    def function_tags(self):   return ["function"]
+    def lambda_tags(self):     return ["lambda"]
+    def flow_exit_tags(self):  return ["return", "throw", "continue", "break"]
+    def flow_exit_calls(self): return ["sys.exit", "exit", "quit", "os._exit"]
 
 # ---------------------------------------------------------------------- #
 # Implementazione Java
@@ -854,6 +875,14 @@ class JavaAdapter(LanguageAdapter):
     def get_parameter_name_node(self, param_node, ns):
         n = param_node.xpath("./src:decl/src:name[1]", namespaces=ns)
         return n[0] if n else None
+
+
+    def function_tags(self):   return ["function", "constructor"]
+    def lambda_tags(self):     return ["lambda"]
+    def flow_exit_tags(self):  return ["return", "throw", "continue", "break"]
+    def flow_exit_calls(self): return ["System.exit"]
+
+    
 # ---------------------------------------------------------------------- #
 # Implementazione C
 # ---------------------------------------------------------------------- #
@@ -1037,7 +1066,7 @@ class CAdapter(LanguageAdapter):
         return "=="
 
     def logical_and_operator(self) -> list:
-        return ["&&", "and"]
+        return ["&&"]
 
     def logical_or_operator(self) -> list:
         return ["||", "or"]
@@ -1157,6 +1186,12 @@ class CAdapter(LanguageAdapter):
         n = param_node.xpath(
             "./src:decl/src:name[1] | ./src:function_decl/src:name[1]", namespaces=ns)
         return n[0] if n else None
+
+
+    def function_tags(self):   return ["function"]
+    def lambda_tags(self):     return []
+    def flow_exit_tags(self):  return ["return", "goto", "continue", "break"]
+    def flow_exit_calls(self): return ["exit", "abort", "_exit", "_Exit"]
 
 # ---------------------------------------------------------------------- #
 # Registro / dispatch

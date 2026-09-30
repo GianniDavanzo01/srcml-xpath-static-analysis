@@ -10,7 +10,7 @@ safe-context o un sanitizer.
 
 import re
 
-from common import NS, build_finding, is_sanitized, source_present, get_call_name, _pos_key, name_text, get_scope_index,  extract_output_buffer_name
+from common import NS, build_finding, is_sanitized, source_present, get_call_name, _pos_key, name_text, get_scope_index,  extract_output_buffer_name, enclosing_scope
 from sink_matchers import matches_any_sink
 from safe_context_matchers import is_in_safe_context
 
@@ -18,6 +18,10 @@ from language_adapter import PythonAdapter
 
 # [MODIFICA 1] helper che pre-calcola lhs/rhs/scope di ogni assegnazione
 from unit_context import build_assign_infos
+
+
+
+PSEUDO_SOURCES = {"function_parameters", "exception_variable"}
 
 
 def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> list:
@@ -41,15 +45,18 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
 
     # Parametri di funzione
     if "function_parameters" in sources:
-        for param in tree.xpath(".//src:function/src:parameter_list/src:parameter", namespaces=NS):
+        fn = " or ".join(f"self::src:{t}" for t in adapter.function_tags())
+        xp = f".//*[{fn}]/src:parameter_list/src:parameter"
+        for param in tree.xpath(xp, namespaces=NS):
             name_node = adapter.get_parameter_name_node(param, NS)
             if name_node is None:
                 continue
             param_name = name_text(name_node)
             if param_name:
-                scope = param.xpath("ancestor::src:function[1]", namespaces=NS)
-                tainted_vars_with_scope.append((param_name, scope[0] if scope else tree))
-
+                scope = enclosing_scope(param, adapter)
+                tainted_vars_with_scope.append(
+                    (param_name, scope if scope is not None else tree)
+                )
     # Variabili per descrivere le eccezioni
     if "exception_variable" in sources:
         for var_name, scope_node in adapter.find_exception_bindings(tree, NS):
@@ -80,8 +87,9 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
     # Source valide per il pattern "var = func()": escludiamo quelle che
     # restituiscono solo un contatore (recv, read, scanf, ...)
     return_sources = [
-        s for s in sources
-        if s not in output_arg_table or output_arg_table[s].get("return_tainted", False)
+    s for s in sources
+    if s not in PSEUDO_SOURCES
+    and (s not in output_arg_table or output_arg_table[s].get("return_tainted", False))
     ]
 
     source_origin_pos = {}     # (var, id(scope)) -> posizione della prima call che riempie var
@@ -109,8 +117,11 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
             if "variadic_from" in spec:
                 idxs.update(range(spec["variadic_from"], len(args)))
 
-            parent_func = call.xpath("ancestor::src:function[1]", namespaces=NS)
-            call_scope = parent_func[0] if parent_func else tree
+            # parent_func = call.xpath("ancestor::src:function[1]", namespaces=NS)
+            # call_scope = parent_func[0] if parent_func else tree
+            call_scope = enclosing_scope(call, adapter)
+            if call_scope is None:
+                call_scope = tree
 
             for i in sorted(idxs):
                 if i >= len(args):

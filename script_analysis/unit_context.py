@@ -1,6 +1,6 @@
 from collections import namedtuple
 
-from common import NS, name_text, assignment_pairs
+from common import NS, name_text, assignment_pairs, enclosing_scope
 
 # [MODIFICA] due campi nuovi: rhs_names e rhs_interp (vedi build_assign_infos)
 AssignInfo = namedtuple("AssignInfo", "stmt lhs rhs var scope rhs_all rhs_names rhs_interp")
@@ -18,8 +18,12 @@ def build_assign_infos(assignments, adapter, unit):
             lhs, rhs = adapter.get_assignment_lhs_rhs(stmt, NS)
         if lhs is None or not lhs.tag.endswith("name"):
             continue
-        parent_func = stmt.xpath("ancestor::src:function[1]", namespaces=NS)
-        scope = parent_func[0] if parent_func else unit
+        # parent_func = stmt.xpath("ancestor::src:function[1]", namespaces=NS)
+        # scope = parent_func[0] if parent_func else unit
+        scope = enclosing_scope(stmt, adapter)
+        if scope is None:
+            scope = unit
+
         rhs_all = rhs.xpath("self::* | following-sibling::*", namespaces=NS) if rhs is not None else []
 
         # [MODIFICA] Contenuti dell'RHS, indipendenti dalla regola: calcolati una volta
