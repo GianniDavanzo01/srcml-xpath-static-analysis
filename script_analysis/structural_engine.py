@@ -563,6 +563,10 @@ def run_structural_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) 
         
         # 'imports' è la lista di ImportBinding già calcolata dall'adapter!
         for binding in imports:
+            
+            if binding.is_macro:      
+                continue
+
             # Controlla se il nome canonico importato è tra quelli vietati
             is_forbidden = any(
                 binding.canonical_name == bad or binding.canonical_name.startswith(f"{bad}.")

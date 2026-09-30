@@ -24,6 +24,10 @@ from dataclasses import dataclass, field
 from lxml import etree
 
 
+_MACRO_ALIAS_RE = re.compile(r"^\s*\(?\s*([A-Za-z_]\w*)\s*\)?\s*$")  # #define FOPEN fopen
+_MACRO_FWD_RE   = re.compile(r"^\s*([A-Za-z_]\w*)\s*\(")             # #define F(p) fopen(p,"r")
+
+
 @dataclass
 class ImportBinding:
     """Rappresenta un binding di import risolto a un nome canonico.
@@ -35,7 +39,7 @@ class ImportBinding:
     canonical_name: str
     is_module: bool = True  # False se il binding punta a una funzione/simbolo, non a un modulo intero
     node: etree._Element = None
-
+    is_macro: bool = False 
 
 class LanguageAdapter(ABC):
 
@@ -1005,7 +1009,35 @@ class CAdapter(LanguageAdapter):
                     is_module=True,
                     node=inc
                 ))
+
+        full_ns = {**ns, **cpp_ns}
+        for d in unit_node.xpath(".//cpp:define", namespaces=full_ns):
+            name_n = d.xpath("./cpp:macro/src:name[1]", namespaces=full_ns)
+            val_n = d.xpath("./cpp:value[1]", namespaces=full_ns)
+            if not name_n or not val_n:
+                continue   # es. include guard: #define FOO_H
+
+            local = "".join(name_n[0].itertext()).strip()
+            value = "".join(val_n[0].itertext()).strip()
+            is_fn_like = bool(d.xpath("./cpp:macro/src:parameter_list", namespaces=full_ns))
+
+            m = (_MACRO_FWD_RE if is_fn_like else _MACRO_ALIAS_RE).match(value)
+            if not m or m.group(1) == local:
+                continue
+
+            bindings.append(ImportBinding(
+                local_name=local, canonical_name=m.group(1),
+                is_module=False, node=d, is_macro=True))
+            
         return bindings
+
+    def _expand_macro(self, name, imports):
+        macros = {b.local_name: b.canonical_name for b in imports if b.is_macro}
+        seen = set()
+        while name in macros and name not in seen:   # A -> B -> fopen
+            seen.add(name)
+            name = macros[name]
+        return name
 
     def resolve_call_name(self, call_node, ns, imports) -> str:
         name_nodes = call_node.xpath("./src:name", namespaces=ns)
@@ -1013,6 +1045,8 @@ class CAdapter(LanguageAdapter):
             return None
 
         raw_name = "".join(name_nodes[0].itertext()).strip()
+
+        raw_name = self._expand_macro(raw_name, imports)
 
         parts = name_nodes[0].xpath("./src:name", namespaces=ns)
         ops = name_nodes[0].xpath("./src:operator[text()='.' or text()='->']", namespaces=ns)

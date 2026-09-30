@@ -475,6 +475,7 @@ def check_required_imports(unit_node, rule_spec: dict, namespaces: dict, imports
         return True
 
     if imports is not None:
+        imports = [b for b in imports if not b.is_macro]
         imported_modules = {b.canonical_name for b in imports} | {b.canonical_name.split(".")[0] for b in imports}
     else:
         xpath_query = ".//src:import//src:name"
