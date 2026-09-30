@@ -413,8 +413,10 @@ def call_arguments_match_ast(call_node, spec: dict, adapter=None, imports=None) 
                 testo = "".join(lit.itertext())
                 if adapter.is_interpolated_string(testo):
                     found_names.extend(adapter.get_interpolated_variables(testo))
-
-        if not any(req in found_names for req in required_names_any):
+        
+        #case-insensitive e matcha sottostringhe
+        lowered = [f.lower() for f in found_names]
+        if not any(req.lower() in f for req in required_names_any for f in lowered):
             return False
 
     substr_targets = spec.get("contains_string_containing", [])

@@ -41,7 +41,7 @@
         "ldap_execution": [
             {
             "type": "call_with_var_arg",
-            "call": ["ldap_search","ldap_search_s","ldap_search_st","ldap_search_ext","ldap_search_ext_s"]
+            "call": ["ldap_search", "ldap_search_s", "ldap_search_st", "ldap_search_ext", "ldap_search_ext_s", "ldap_search_ext_sA", "ldap_search_ext_sW"]
             }
         ],
         "csv_writing": [
@@ -60,7 +60,8 @@
         "format_string_functions": [
             {
                 "type": "call_with_var_arg", 
-                "call": ["printf", "fprintf", "sprintf", "snprintf", "syslog", "vsyslog"]
+                "call": ["printf","fprintf","sprintf","snprintf","syslog","vsyslog",
+                        "vprintf","vfprintf","vsprintf","vsnprintf","dprintf","vdprintf"]
             }
         ],
         "resource_injection_sinks": [
@@ -159,8 +160,8 @@
             {
                 "type": "call_matches_ast",
                 "call": ["printf", "fprintf", "syslog"],
-                "contains_any_name": ["password", "Password", "pwd", "secret", "Secret",
-                            "token", "Token", "api_key", "apikey", "private_key"]
+                "contains_any_name": ["password", "Secret",
+                            "auth_token", "access_token", "api_key", "apikey", "private_key"]
             }
         ],
         "obsolete_functions": ["gets", "strtok", "scanf", "sprintf", "strcpy", "strcat"],
@@ -181,7 +182,7 @@
                 "contains_numbers": [0]
             }
         ],
-        "return_value_must_be_checked": ["fopen", "fread", "fwrite", "fgets", "scanf", "snprintf", "setuid", "chroot", "pthread_mutex_lock",
+        "return_value_must_be_checked": ["fopen", "fread", "fwrite", "fgets", "scanf", "snprintf", "fprintf","setuid", "chroot", "pthread_mutex_lock",
                                         "malloc", "calloc", "realloc","setgid", "seteuid", "setegid", "setresuid", "setresgid",
                                         "chown", "fchown", "lchown", "chmod", "fchmod","socket", "bind", "listen", "accept", "connect",
                                         "recv", "send", "recvfrom", "sendto","fork", "execve", "execl", "execvp", "wait", "waitpid",
@@ -272,19 +273,18 @@
                     {
                         "type": "check_format_arg_position",
                         "vulnerable_indices": {
-                            "printf": 0,
-                            "sprintf": 1,
-                            "snprintf": 2,
-                            "fprintf": 1,
-                            "syslog": 1
-                        }
+                            "printf":0, "vprintf":0,
+                            "fprintf":1, "vfprintf":1, "dprintf":1, "vdprintf":1,
+                            "sprintf":1, "vsprintf":1,
+                            "snprintf":2, "vsnprintf":2,
+                            "syslog":1, "vsyslog":1
+                            }
                     }
                 ],
             "return_value_used": [
                 {
                     "type": "node_matches_xpath",
-                    "xpath": "ancestor::src:condition or ancestor::src:return or ancestor::src:argument or ancestor::src:init or ancestor-or-self::*[preceding-sibling::src:operator[1][text()='=' or text()='+=' or text()='-=']] or preceding-sibling::*[1][self::src:operator[text()=')']]/preceding-sibling::*[1][self::src:name[text()='void']]"
-                }
+                    "xpath": "ancestor::src:condition or ancestor::src:return or ancestor::src:argument or ancestor::src:init or ancestor::src:expr[src:operator[text()='=' or text()='+=' or text()='-=']] or preceding-sibling::*[1][self::src:operator[text()=')']]/preceding-sibling::*[1][self::src:name[text()='void']]"                }
                 ],
             "sql_parameterization": [],
             "try_block": [],
@@ -328,7 +328,12 @@
                     {
                         "type": "call_matches_ast",
                         "call": ["chmod", "fchmod"],
-                        "contains_numbers": ["0", "0000", "0755", "0777", "0400", "0644"]
+                        "contains_numbers": ["0", "0000", "0755", "0777"]
+                    },
+                    {
+                        "type": "call_matches_ast",
+                        "call": ["chmod", "fchmod"],
+                        "contains_any_name": ["S_IWOTH", "S_IRWXO"]
                     },
                     {
                         "type": "call_matches_ast",

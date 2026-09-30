@@ -208,7 +208,7 @@
       {
         "type": "call_matches_ast",
         "call": ["File"],
-        "contains_names": ["java.io.tmpdir"]
+        "contains_string_containing": ["java.io.tmpdir"]
       }
     ],
     "insecure_cookie_configuration":["HttpServletResponse.addCookie"],
@@ -218,8 +218,8 @@
         "type": "call_matches_ast",
         "call": ["logging.debug", "logging.info", "logging.warning", "logging.error",
                   "logger.debug", "logger.info", "logger.warning", "logger.error"],
-        "contains_any_name": ["password", "Password", "pwd", "secret", "Secret",
-                            "token", "Token", "api_key", "apikey", "private_key"]
+        "contains_any_name": ["password", "Secret",
+                            "auth_token", "access_token", "api_key", "apikey", "private_key"]
       }
     ],
     "obsolete_functions": ["Thread.stop", "Thread.suspend", "Thread.resume", "Runtime.exec","DataInputStream.readLine"],
