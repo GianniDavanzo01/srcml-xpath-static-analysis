@@ -126,13 +126,6 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
             for i in sorted(idxs):
                 if i >= len(args):
                     continue
-                # nome "foglia": per 's->buf' prende 's', per '&x' prende 'x'
-                # leaf_names = args[i].xpath(".//src:name[not(src:name)]", namespaces=NS)
-                # if not leaf_names:
-                #     continue
-                # out_var = name_text(leaf_names[0])
-                # if not out_var:
-                #     continue
 
                 out_var = extract_output_buffer_name(args[i])
                 if not out_var:
@@ -148,9 +141,17 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
                     source_origin_pos[key] = pos
 
     # [MODIFICA 3] Seed: assegnazioni da source. lhs/scope sono gia' pronti.
+    # for info in assign_infos:
+    #     if info.rhs is not None and source_present(
+    #         return_sources, info.rhs, source_form, adapter=adapter, imports=imports
+    #     ):
+    #         tainted_vars_with_scope.append((info.var, info.scope))
     for info in assign_infos:
-        if info.rhs is not None and source_present(
-            return_sources, info.rhs, source_form, adapter=adapter, imports=imports
+        if info.rhs is None:
+            continue
+        if any(
+            source_present(return_sources, n, source_form, adapter=adapter, imports=imports)
+            for n in info.rhs_all
         ):
             tainted_vars_with_scope.append((info.var, info.scope))
 

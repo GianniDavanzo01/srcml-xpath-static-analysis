@@ -10,11 +10,13 @@ import json
 import re
 from pathlib import Path
 
-from language_adapter import PythonAdapter
+from language_adapter import PythonAdapter, C_TYPE_WORDS as _C_TYPE_WORDS
 
 from collections import defaultdict
 
 NS = {"src": "http://www.srcML.org/srcML/src", "pos": "http://www.srcML.org/srcML/position"}
+
+
 
 
 # --------------------------------------------------------------------------- #
@@ -58,13 +60,13 @@ def name_text(name_node) -> str:
     return "".join(parts).strip()
 
 #Fondamentale per le sorgenti la cui variabile taint è argomento della funzione (elimina i cast)-------------------------
-_C_TYPE_WORDS = {
-    "char", "int", "long", "short", "unsigned", "signed", "void",
-    "float", "double", "struct", "union", "enum", "const", "volatile",
-    "size_t", "ssize_t", "wchar_t",
-    "uint8_t", "uint16_t", "uint32_t", "uint64_t",
-    "int8_t", "int16_t", "int32_t", "int64_t",
-}
+# _C_TYPE_WORDS = {
+#     "char", "int", "long", "short", "unsigned", "signed", "void",
+#     "float", "double", "struct", "union", "enum", "const", "volatile",
+#     "size_t", "ssize_t", "wchar_t",
+#     "uint8_t", "uint16_t", "uint32_t", "uint64_t",
+#     "int8_t", "int16_t", "int32_t", "int64_t",
+# }
 
 def _local(n) -> str:
     return n.tag.split('}')[-1]

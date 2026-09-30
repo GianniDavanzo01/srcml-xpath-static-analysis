@@ -256,6 +256,8 @@ class LanguageAdapter(ABC):
         tags = list(self.function_tags()) + list(extra)
         return "ancestor::*[" + " or ".join(f"self::src:{t}" for t in tags) + "][1]"
 
+    
+
 # ---------------------------------------------------------------------- #
 # Implementazione Python
 # ---------------------------------------------------------------------- #
@@ -900,6 +902,40 @@ class JavaAdapter(LanguageAdapter):
     def flow_exit_tags(self):  return ["return", "throw", "continue", "break"]
     def flow_exit_calls(self): return ["System.exit"]
 
+
+
+# ---------------------------------------------------------------------- #
+# Helper per l'adapter C (cast)
+# ---------------------------------------------------------------------- #
+
+C_TYPE_WORDS = {
+    "char", "int", "long", "short", "unsigned", "signed", "void",
+    "float", "double", "struct", "union", "enum", "const", "volatile",
+    "size_t", "ssize_t", "wchar_t",
+    "uint8_t", "uint16_t", "uint32_t", "uint64_t",
+    "int8_t", "int16_t", "int32_t", "int64_t",
+}
+
+def _lname(n): return n.tag.split('}')[-1]
+def _ntxt(n):  return "".join(n.itertext()).strip()
+
+def _skip_leading_casts(nodes):
+    """Scarta i cast C iniziali '(' name+ '*'* ')' dalla lista di fratelli."""
+    i = 0
+    while i < len(nodes):
+        if not (_lname(nodes[i]) == "operator" and _ntxt(nodes[i]) == "("):
+            break
+        j, names, stars = i + 1, [], 0
+        while j < len(nodes) and _lname(nodes[j]) == "name":
+            names.append(_ntxt(nodes[j])); j += 1
+        while j < len(nodes) and _lname(nodes[j]) == "operator" and _ntxt(nodes[j]) and set(_ntxt(nodes[j])) == {"*"}:
+            stars += 1; j += 1
+        closed = j < len(nodes) and _lname(nodes[j]) == "operator" and _ntxt(nodes[j]) == ")"
+        is_type = bool(names) and (stars > 0 or any(n in C_TYPE_WORDS for n in names))
+        if not (closed and is_type):
+            break
+        i = j + 1
+    return nodes[i:]
     
 # ---------------------------------------------------------------------- #
 # Implementazione C
@@ -922,7 +958,7 @@ class CAdapter(LanguageAdapter):
             if not op:
                 return None, None
             lhs_nodes = op[0].xpath("./preceding-sibling::*", namespaces=ns)
-            rhs_nodes = op[0].xpath("./following-sibling::*", namespaces=ns)
+            rhs_nodes = _skip_leading_casts(op[0].xpath("./following-sibling::*", namespaces=ns))
             return (lhs_nodes[-1] if lhs_nodes else None, rhs_nodes[0] if rhs_nodes else None)
             
         if node.tag.endswith("decl_stmt"):
