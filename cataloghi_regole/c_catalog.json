@@ -67,7 +67,15 @@
         "resource_injection_sinks": [
             {
             "type": "call_with_var_arg",
-            "call": ["dlopen","LoadLibrary","LoadLibraryEx","LoadLibraryA","LoadLibraryW","LoadLibraryExA","LoadLibraryExW"]
+            "call": ["dlopen","LoadLibrary","LoadLibraryEx","LoadLibraryA","LoadLibraryW","LoadLibraryExA","LoadLibraryExW",
+                        "RegOpenKey", "RegOpenKeyA", "RegOpenKeyW", 
+                        "RegOpenKeyEx", "RegOpenKeyExA", "RegOpenKeyExW",
+                        "RegCreateKey", "RegCreateKeyA", "RegCreateKeyW",
+                        "RegCreateKeyEx", "RegCreateKeyExA", "RegCreateKeyExW",
+                        "RegDeleteKey", "RegDeleteKeyA", "RegDeleteKeyW",
+                        "RegSetValue", "RegSetValueA", "RegSetValueW",
+                        "RegSetValueEx", "RegSetValueExA", "RegSetValueExW"
+                    ]
             }
         ],
         "null_dereference": [
@@ -88,12 +96,19 @@
                 "call": ["LogonUserA", "LogonUserW", "pam_authenticate", "crypt"]
             }
         ],
+        "array_index_use": [
+            {
+                "type": "matches_xpath",
+                "xpath": "ancestor::src:index[not(parent::src:name/parent::src:decl)][not(parent::src:name/preceding-sibling::*[1][self::src:operator and text()='new'])]"
+            }
+        ],
         "unbounded_resource_read": [],
         "html_output": [],
         "exception_stringify_calls": [],
         "http_redirect": [],
         "http_header_setters": [],
-        "file_write":[]
+        "file_write":[],
+        "array_alloc_size": []
     },
     "forbidden_functions":{
         "weak_key_generation": [
@@ -111,7 +126,17 @@
         "weak_ciphers_and_modes": [
             "DES_encrypt1", "DES_encrypt2", "DES_encrypt3", "DES_ecb_encrypt",
             "EVP_des_ecb", "EVP_des_cbc","EVP_rc4", "EVP_rc2_ecb",
-            "RC4","EVP_bf_ecb"
+            "RC4","EVP_bf_ecb",
+            {
+                "type": "call_matches_ast",
+                "call": "CryptDeriveKey",
+                "contains_any_name": ["CALG_3DES", "CALG_RC5", "CALG_RC2", "CALG_DES", "CALG_RC4"]
+            },
+            {
+                "type": "call_matches_ast",
+                "call": "CryptCreateHash",
+                "contains_any_name": ["CALG_MD5", "CALG_MD2", "CALG_SHA1"]
+            }
         ],
         "weak_hash_functions": [
             "MD5", "MD5_Init", "MD5_Update", "MD5_Final",
@@ -245,8 +270,8 @@
                     }
                 ],
             "bounds_checked_array_access": [
-                {"type": "binary_comparison", "operators": ["<", "<=", ">", ">="], "left_exact": ["$VAR"]},
-                {"type": "binary_comparison", "operators": ["<", "<=", ">", ">="], "right_exact": ["$VAR"]}
+                {"type": "binary_comparison", "operators": ["<", "<="], "left_exact": ["$VAR"], "right_not_exact": ["0"]},
+                {"type": "binary_comparison", "operators": [">", ">="], "right_exact": ["$VAR"], "left_not_exact": ["0"]}
                 ],
             "manual_string_sanitization":[],
             "null_checked": [
@@ -290,7 +315,8 @@
             "try_block": [],
             "allowlist_validation": [],
             "file_extension_validation":[],
-            "url_validation": []
+            "url_validation": [],
+            "alloc_size_positive_checked":[]
     },
     "patterns":{
         "insecure_certificate_validation": {
@@ -350,9 +376,8 @@
                             "safe_reassignments": ["NULL"]
                         }
             },
-            "unsafe_array_access": {
-                "forbidden_subscripts": ["argv","array","buffer"],
-                "skip_literal_subscript_index": true
+            "string_to_int_propagation": {
+                "propagate_only_through_calls": ["atoi", "atol", "atoll", "strtol", "strtoul", "strtoll"]
             },
             "unsafe_deserialization_kwargs":{},
             "unsafe_dict_access":{}

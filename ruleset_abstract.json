@@ -189,6 +189,16 @@
   "patterns": [{"tag": "string_to_int_propagation"}]
 },
 {
+  "rule_id": "CWE-129-ARRAY-SIZE-VALIDATION",
+  "type": "taint",
+  "description": "Applicabile a Java",
+  "vulnerabilities": ["CWE-129"],
+  "sources": [{"tag": "http_input"}],
+  "sinks": [{"tag": "array_alloc_size"}],
+  "patterns": [{"tag": "string_to_int_propagation"}],
+  "safe_contexts": [{"tag": "alloc_size_positive_checked"}]
+},
+{
   "rule_id": "CWE-134-FORMAT-STRING-INJECTION",
   "type": "taint",
   "vulnerabilities": ["CWE-134"],

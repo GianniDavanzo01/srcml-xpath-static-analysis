@@ -168,7 +168,17 @@
         "type": "call_with_var_arg",
         "call": ["LoginContext.login", "AuthenticationManager.authenticate", "HttpServletRequest.login","Subject.doAs"]
       }
-    ]
+    ],
+    "array_index_use": [
+    {
+      "type": "matches_xpath",
+      "xpath": "ancestor::src:index[not(parent::src:name/parent::src:decl)][not(parent::src:name/preceding-sibling::*[1][self::src:operator and text()='new'])]"
+    }
+  ],
+  "array_alloc_size": [
+    {"type": "matches_xpath",
+     "xpath": "ancestor::src:index[parent::src:name/preceding-sibling::*[1][self::src:operator and text()='new']]"}
+  ]
   },
   "forbidden_functions": {
     "socket_primitives": [
@@ -318,8 +328,8 @@
         }
       ],
       "bounds_checked_array_access": [
-          {"type": "binary_comparison", "operators": ["<", "<=", ">", ">="], "left_exact": ["$VAR"]},
-          {"type": "binary_comparison", "operators": ["<", "<=", ">", ">="], "right_exact": ["$VAR"]}
+                {"type": "binary_comparison", "operators": ["<", "<="], "left_exact": ["$VAR"], "right_not_exact": ["0"]},
+                {"type": "binary_comparison", "operators": [">", ">="], "right_exact": ["$VAR"], "left_not_exact": ["0"]}
         ],
       "manual_string_sanitization":[
         {
@@ -358,6 +368,12 @@
           "type": "node_matches_xpath",
           "xpath": "ancestor::src:condition or ancestor::src:return or ancestor::src:argument or ancestor::src:init or ancestor-or-self::*[preceding-sibling::src:operator[1][text()='=' or text()='+=' or text()='-=']]"
         }
+      ],
+      "alloc_size_positive_checked": [
+        {"type": "binary_comparison", "operators": [">"],  "left_exact": ["$VAR"], "right_exact": ["0"]},
+        {"type": "binary_comparison", "operators": [">="], "left_exact": ["$VAR"], "right_exact": ["1"]},
+        {"type": "binary_comparison", "operators": ["<"],  "left_exact": ["0"], "right_exact": ["$VAR"]},
+        {"type": "binary_comparison", "operators": ["<="], "left_exact": ["1"], "right_exact": ["$VAR"]}
       ],
       "curl_non_url_option": [],
       "sql_parameterization":[]
@@ -403,9 +419,8 @@
             }
           ]
     },
-    "unsafe_array_access": {
-      "forbidden_subscripts": ["args","array","buffer"],
-      "skip_literal_subscript_index": true
+    "string_to_int_propagation": {
+      "propagate_only_through_calls": ["parseInt", "parseLong", "valueOf", "trim", "strip"]
     },
     "unsafe_deserialization_kwargs":{},
     "unsafe_dict_access":{},

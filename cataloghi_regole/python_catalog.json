@@ -155,7 +155,9 @@
         "type": "call_with_var_arg",
         "call": ["authenticate", "check_password_hash", "checkpw", "pam.authenticate","ldap.bind_s","ldap.simple_bind_s"]
       }
-    ]
+    ],
+      "array_index_use": [],
+      "array_alloc_size": []
   },
     "forbidden_functions": {
         "socket_primitives": [
@@ -361,7 +363,8 @@
               }
             ],
         "curl_non_url_option": [],
-        "bounds_checked_array_access":[]
+        "bounds_checked_array_access":[],
+        "alloc_size_positive_checked":[]
   },
   "patterns": {
     "active_debug": {
@@ -417,7 +420,7 @@
     "unsafe_dict_access": {
       "forbidden_subscripts": ["request.form", "request.args", "os.environ"]
     },
-    "unsafe_array_access":{},
+    "string_to_int_propagation": {},
     "use_after_free_check":{}
   }
 }
