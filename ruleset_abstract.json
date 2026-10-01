@@ -349,6 +349,34 @@
   "safe_contexts": [{"tag": "resource_safe_contexts"}]
 },
 {
+  "rule_id": "CWE-400-UNCONTROLLED-LOOP-BOUND",
+  "description": "Rileva l'uso di input non fidati (es. variabili d'ambiente o parametri HTTP) come limite di un ciclo senza validazione dei confini.",
+  "type": "taint",
+  "vulnerabilities": ["CWE-400"],
+  "sources": [
+    {"tag": "http_input"},
+    {"tag": "cli_input"}
+  ],
+  "patterns": [
+    {"tag": "string_to_int_propagation"}
+  ],
+  "sinks": [
+    {"tag": "loop_condition"}
+  ],
+  "safe_contexts": [
+    {
+      "type": "binary_comparison",
+      "operators": ["<", "<="],
+      "left_exact": ["$VAR"]
+    },
+    {
+      "type": "binary_comparison",
+      "operators": [">", ">="],
+      "right_exact": ["$VAR"]
+    }
+  ]
+},
+{
   "rule_id": "CWE-415-416-MEMORY-MISUSE-AFTER-FREE",
   "type": "structural",
   "vulnerabilities": ["CWE-415", "CWE-416"],
@@ -387,6 +415,14 @@
   "type": "structural",
   "vulnerabilities": ["CWE-477"],
   "forbidden_functions": [{"tag": "obsolete_functions"}]
+},
+{
+  "rule_id": "CWE-481-ASSIGNMENT-INSTEAD-OF-COMPARISON",
+  "type": "structural",
+  "vulnerabilities": ["CWE-481"],
+  "patterns": [
+    {"tag": "assignment_in_condition"}
+  ]
 },
 {
   "rule_id": "CWE-489-ACTIVE-DEBUG",

@@ -23,7 +23,7 @@
         "os_command_execution": [
             {
                 "type": "call_with_var_arg",
-                "call": ["system", "popen", "execl", "execlp", "execle", "execv", "execvp", "execvpe", "execve"]
+                "call": ["system", "popen", "execl", "execlp", "execle", "execv", "execvp", "execvpe", "execve","_wsystem", "_wpopen", "_execl", "_wexecl"]
             }
         ],
         "sql_execution": [
@@ -102,6 +102,7 @@
                 "xpath": "ancestor::src:index[not(parent::src:name/parent::src:decl)][not(parent::src:name/preceding-sibling::*[1][self::src:operator and text()='new'])]"
             }
         ],
+        "loop_condition": [{"type": "loop_condition"}],
         "unbounded_resource_read": [],
         "html_output": [],
         "exception_stringify_calls": [],
@@ -379,6 +380,11 @@
             "string_to_int_propagation": {
                 "propagate_only_through_calls": ["atoi", "atol", "atoll", "strtol", "strtoul", "strtoll"]
             },
+            "assignment_in_condition": {
+                "xpath_rules": [
+                    ".//src:condition/src:expr[src:operator[text()='='] and not(src:operator[text()='==' or text()='!=' or text()='<' or text()='>' or text()='<=' or text()='>=' or text()='&&' or text()='||'])]"
+                    ]
+                },
             "unsafe_deserialization_kwargs":{},
             "unsafe_dict_access":{}
     }

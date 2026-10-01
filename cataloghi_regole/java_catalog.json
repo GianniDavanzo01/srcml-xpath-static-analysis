@@ -178,7 +178,8 @@
   "array_alloc_size": [
     {"type": "matches_xpath",
      "xpath": "ancestor::src:index[parent::src:name/preceding-sibling::*[1][self::src:operator and text()='new']]"}
-  ]
+  ],
+  "loop_condition": [{"type": "loop_condition"}]
   },
   "forbidden_functions": {
     "socket_primitives": [
@@ -186,8 +187,18 @@
       "ServerSocketChannel","Socket.connect","ServerSocket.bind","ServerSocket.accept",
       "Socket.getInputStream","Socket.getOutputStream","DatagramSocket.send","DatagramSocket.receive"
     ],
-    "weak_hash_functions": ["MD5", "SHA-1", "MessageDigest.getInstance"],
-    "weak_ciphers_and_modes": ["DES", "DESede", "RC2", "RC4", "Blowfish", "ECB", "Cipher.getInstance"],
+    "weak_hash_functions": [
+          {
+            "type": "call_matches_ast",
+            "call": "MessageDigest.getInstance",
+            "contains_string_containing": ["MD5","MD4","MD2","SHA-1","SHA1"]
+          }
+        ],
+    "weak_ciphers_and_modes": [{
+          "type": "call_matches_ast",
+          "call": "Cipher.getInstance",
+          "contains_string_containing": ["DES", "DESede", "RC2", "RC4", "Blowfish", "ECB"]
+        }],
     "weak_prngs": ["java.util.Random","Math.random","Random"],
     "weak_key_generation": [
       {
@@ -422,6 +433,11 @@
     "string_to_int_propagation": {
       "propagate_only_through_calls": ["parseInt", "parseLong", "valueOf", "trim", "strip"]
     },
+    "assignment_in_condition": {
+        "xpath_rules": [
+          ".//src:condition/src:expr[src:operator[text()='='] and not(src:operator[text()='==' or text()='!=' or text()='<' or text()='>' or text()='<=' or text()='>=' or text()='&&' or text()='||'])]"
+        ]
+      },
     "unsafe_deserialization_kwargs":{},
     "unsafe_dict_access":{},
     "use_after_free_check":{}
