@@ -14,9 +14,19 @@ from language_adapter import PythonAdapter, C_TYPE_WORDS as _C_TYPE_WORDS
 
 from collections import defaultdict
 
-NS = {"src": "http://www.srcML.org/srcML/src", "pos": "http://www.srcML.org/srcML/position"}
+NS = {"src": "http://www.srcML.org/srcML/src", "pos": "http://www.srcML.org/srcML/position", "cpp": "http://www.srcML.org/srcML/cpp",}
 
 
+
+def macro_map(imports) -> dict:
+    return {b.local_name: b.canonical_name for b in (imports or []) if getattr(b, "is_macro", False)}
+
+def expand_macro_name(name, macros):
+    seen = set()
+    while macros and name in macros and name not in seen:
+        seen.add(name)
+        name = macros[name]
+    return name
 
 
 # --------------------------------------------------------------------------- #
@@ -215,7 +225,7 @@ def reset_caches():
     _scope_index_cache.clear()
 
 
-def get_scope_index(scope_node, adapter):
+def get_scope_index(scope_node, adapter, macros=None):
     """
     Indice per scope, calcolato una volta e condiviso da tutte le regole:
       names:  testo del nodo <name> -> [nodi]
@@ -225,8 +235,11 @@ def get_scope_index(scope_node, adapter):
     if idx is None:
         names = defaultdict(list)
         for n in scope_node.xpath(".//src:name", namespaces=NS):
-            if n.text:                      # stessa semantica di text()=$v
+            if n.text:
                 names[n.text].append(n)
+                if macros and n.text in macros \
+                   and not n.xpath("ancestor::cpp:define", namespaces=NS):
+                    names[expand_macro_name(n.text, macros)].append(n)
 
         interp = defaultdict(list)
         for lit in scope_node.xpath(".//src:literal[@type='string']", namespaces=NS):

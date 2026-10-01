@@ -11,7 +11,7 @@ safe-context o un sanitizer.
 import re
 
 from common import NS, build_finding, is_sanitized, source_present, get_call_name, _pos_key, name_text, get_scope_index,  \
-    extract_output_buffer_name, enclosing_scope, in_opaque_tag
+    extract_output_buffer_name, enclosing_scope, in_opaque_tag, macro_map, expand_macro_name
 from sink_matchers import matches_any_sink
 from safe_context_matchers import is_in_safe_context
 
@@ -28,6 +28,7 @@ PSEUDO_SOURCES = {"function_parameters", "exception_variable"}
 def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> list:
     adapter = adapter or PythonAdapter()
     imports = imports if imports is not None else []
+    macros = macro_map(imports)
 
     findings = []
     sources = rule.get("sources", [])
@@ -128,7 +129,7 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
                 if i >= len(args):
                     continue
 
-                out_var = extract_output_buffer_name(args[i])
+                out_var = expand_macro_name(extract_output_buffer_name(args[i]) or "", macros) or None
                 if not out_var:
                     continue
 
@@ -209,7 +210,7 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
                         if out_idx >= len(args):
                             continue
 
-                        out_var = extract_output_buffer_name(args[out_idx])
+                        out_var = expand_macro_name(extract_output_buffer_name(args[out_idx]) or "", macros) or None
                         if not out_var or out_var in already_tainted:
                             continue
 
@@ -220,7 +221,7 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
                             for n in arg.xpath(".//src:name", namespaces=NS):
                                 if in_opaque_tag(n, adapter):
                                     continue
-                                n_text = "".join(n.itertext()).strip()
+                                n_text = expand_macro_name("".join(n.itertext()).strip(), macros)
                                 if n_text in already_tainted and not is_sanitized(n, block, adapter, imports):
                                     source_found = True
                                     break
@@ -250,24 +251,22 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
                 # confronti con l'insieme delle variabili gia' taintate.
                 propagates = False
                 for n_text, n in info.rhs_names:
-                    if n_text in already_tainted:
-                        origin = source_origin_pos.get((n_text, id(scope_node)))
+                    eff = expand_macro_name(n_text, macros)
+                    if eff in already_tainted and not is_sanitized(n, block, adapter, imports):
+                        origin = source_origin_pos.get((eff, id(scope_node)))
                         if origin is not None and _pos_key(info.stmt) < origin:
                             continue
-                        if in_opaque_tag(n, adapter):        
+                        if in_opaque_tag(n, adapter):
                             continue
-
                         if skip_source_args and source_call_nodes and any(
                             c in source_call_nodes
                             for c in n.xpath("ancestor::src:call", namespaces=NS)
                         ):
                             continue
-                        # con allowlist attiva, propaga solo attraverso le call elencate
                         if _blocked_by_call_allowlist(n):
                             continue
-                        if not is_sanitized(n, block, adapter, imports):
-                            propagates = True
-                            break
+                        propagates = True
+                        break
 
                 if not propagates:
                     # stringhe interpolate nel RHS (query = f"...{user_id}")
@@ -289,7 +288,7 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
     for var, scope_node in tainted_vars_with_scope:
 
         # [MODIFICA 6] indice per scope: calcolato una volta e condiviso da tutte le regole
-        names_idx, interp_idx = get_scope_index(scope_node, adapter)
+        names_idx, interp_idx = get_scope_index(scope_node, adapter, macros)
         usi_potenziali = names_idx.get(var, [])
 
         usi_diretti = []
