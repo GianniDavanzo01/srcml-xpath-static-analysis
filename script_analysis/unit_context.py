@@ -1,6 +1,6 @@
 from collections import namedtuple
 
-from common import NS, name_text, assignment_pairs, enclosing_scope
+from common import NS, name_text, assignment_pairs, enclosing_scope, in_opaque_tag
 
 # [MODIFICA] due campi nuovi: rhs_names e rhs_interp (vedi build_assign_infos)
 AssignInfo = namedtuple("AssignInfo", "stmt lhs rhs var scope rhs_all rhs_names rhs_interp")
@@ -34,6 +34,8 @@ def build_assign_infos(assignments, adapter, unit):
         rhs_interp = []
         for rn in rhs_all:
             for n in rn.xpath("self::src:name | .//src:name", namespaces=NS):
+                if in_opaque_tag(n, adapter):
+                    continue
                 rhs_names.append(("".join(n.itertext()).strip(), n))
             for lit in rn.xpath(
                 "self::src:literal[@type='string'] | .//src:literal[@type='string']",

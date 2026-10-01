@@ -463,6 +463,8 @@ def _safe_context_binary_comparison(node, spec: dict, var_name: str | None = Non
     left_contains = _resolve(spec.get("left_contains", []))
     right_exact = _resolve(spec.get("right_exact", []))
     right_contains = _resolve(spec.get("right_contains", []))
+    left_not = _resolve(spec.get("left_not_exact", []))
+    right_not = _resolve(spec.get("right_not_exact", []))
     
     _adapter = adapter or PythonAdapter()
 
@@ -498,6 +500,11 @@ def _safe_context_binary_comparison(node, spec: dict, var_name: str | None = Non
                 right_ok = True
                 if right_exact or right_contains:
                     right_ok = (rhs_text in right_exact) or any(c in rhs_text for c in right_contains)
+
+                if left_not and lhs_text in left_not:
+                    left_ok = False
+                if right_not and rhs_text in right_not:
+                    right_ok = False
 
                 if left_ok and right_ok:
                     return True

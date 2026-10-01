@@ -178,15 +178,15 @@
 },
 {
   "rule_id": "CWE-129-IMPROPER-ARRAY-INDEX-VALIDATION",
-  "type": "structural",
-  "description":"Applicabile solo a Java e C",
+  "type": "taint",
+  "description": "Applicabile a Java e C",
   "vulnerabilities": ["CWE-129"],
-  "patterns": [
-    {"tag": "unsafe_array_access"}
+  "sources": [
+    {"tag": "http_input"}
   ],
-  "safe_contexts": [
-    {"tag": "bounds_checked_array_access"}
-  ]
+  "sinks": [{"tag": "array_index_use"}],
+  "safe_contexts": [{"tag": "bounds_checked_array_access"}],
+  "patterns": [{"tag": "string_to_int_propagation"}]
 },
 {
   "rule_id": "CWE-134-FORMAT-STRING-INJECTION",

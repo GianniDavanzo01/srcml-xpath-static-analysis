@@ -10,7 +10,8 @@ safe-context o un sanitizer.
 
 import re
 
-from common import NS, build_finding, is_sanitized, source_present, get_call_name, _pos_key, name_text, get_scope_index,  extract_output_buffer_name, enclosing_scope
+from common import NS, build_finding, is_sanitized, source_present, get_call_name, _pos_key, name_text, get_scope_index,  \
+    extract_output_buffer_name, enclosing_scope, in_opaque_tag
 from sink_matchers import matches_any_sink
 from safe_context_matchers import is_in_safe_context
 
@@ -141,11 +142,7 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
                     source_origin_pos[key] = pos
 
     # [MODIFICA 3] Seed: assegnazioni da source. lhs/scope sono gia' pronti.
-    # for info in assign_infos:
-    #     if info.rhs is not None and source_present(
-    #         return_sources, info.rhs, source_form, adapter=adapter, imports=imports
-    #     ):
-    #         tainted_vars_with_scope.append((info.var, info.scope))
+
     for info in assign_infos:
         if info.rhs is None:
             continue
@@ -158,15 +155,34 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
     # Passo 2: propagazione a catena
     if rule.get("propagate_taint", True):
 
+        only_through = rule.get("propagate_only_through_calls") or []
         if rule.get("ignore_taint_block_functions", False):
             block = sanitizers
         else:
-            block = sanitizers + adapter.taint_block_functions()
+             block = sanitizers + [
+        f for f in adapter.taint_block_functions() if f not in only_through]
 
         propagating_calls = adapter.taint_propagating_calls()
 
+        def _blocked_by_call_allowlist(n):
+            """Con allowlist attiva, un nome dentro una call propaga solo se
+            tutte le call che lo racchiudono sono nell'allowlist."""
+            if not only_through:
+                return False
+            for c in n.xpath("ancestor::src:call", namespaces=NS):
+                cname = get_call_name(c, adapter, imports)
+                if not cname or not any(
+                    cname == a or cname.endswith(f".{a}") for a in only_through
+                ):
+                    return True
+            return False
+
+
         changed = True
         guard = 0
+
+        skip_source_args = not rule.get("source_call_args_propagate",adapter.source_call_args_propagate_to_return())
+
         while changed and guard < 5:  # guard di sicurezza, massimo 5 iterazioni (Euristica)
             changed = False
             guard += 1
@@ -193,12 +209,6 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
                         if out_idx >= len(args):
                             continue
 
-                        # out_names = args[out_idx].xpath(".//src:name", namespaces=NS)
-                        # if not out_names:
-                        #     continue
-                        # out_var = name_text(out_names[0])
-                        # if not out_var or out_var in already_tainted:
-                        #     continue
                         out_var = extract_output_buffer_name(args[out_idx])
                         if not out_var or out_var in already_tainted:
                             continue
@@ -208,6 +218,8 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
                             if i == out_idx:
                                 continue
                             for n in arg.xpath(".//src:name", namespaces=NS):
+                                if in_opaque_tag(n, adapter):
+                                    continue
                                 n_text = "".join(n.itertext()).strip()
                                 if n_text in already_tainted and not is_sanitized(n, block, adapter, imports):
                                     source_found = True
@@ -238,9 +250,24 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
                 # confronti con l'insieme delle variabili gia' taintate.
                 propagates = False
                 for n_text, n in info.rhs_names:
-                    if n_text in already_tainted and not is_sanitized(n, block, adapter, imports):
-                        propagates = True
-                        break
+                    if n_text in already_tainted:
+                        origin = source_origin_pos.get((n_text, id(scope_node)))
+                        if origin is not None and _pos_key(info.stmt) < origin:
+                            continue
+                        if in_opaque_tag(n, adapter):        
+                            continue
+
+                        if skip_source_args and source_call_nodes and any(
+                            c in source_call_nodes
+                            for c in n.xpath("ancestor::src:call", namespaces=NS)
+                        ):
+                            continue
+                        # con allowlist attiva, propaga solo attraverso le call elencate
+                        if _blocked_by_call_allowlist(n):
+                            continue
+                        if not is_sanitized(n, block, adapter, imports):
+                            propagates = True
+                            break
 
                 if not propagates:
                     # stringhe interpolate nel RHS (query = f"...{user_id}")
@@ -254,7 +281,6 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
                     tainted_vars_with_scope.append((var_name, scope_node))
                     tainted_by_scope.setdefault(id(scope_node), set()).add(var_name)
                     changed = True
-
 
     if not tainted_vars_with_scope:
         return findings
@@ -285,7 +311,8 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
         tutti_gli_usi = usi_diretti + usi_fstring
 
         for uso in tutti_gli_usi:
-
+            if in_opaque_tag(uso, adapter):
+                continue
             # uso interno a una call-sorgente (buf, sizeof(buf), ...) -> non è un uso reale
             if source_call_nodes and any(
                 c in source_call_nodes

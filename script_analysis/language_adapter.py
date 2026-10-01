@@ -256,6 +256,17 @@ class LanguageAdapter(ABC):
         tags = list(self.function_tags()) + list(extra)
         return "ancestor::*[" + " or ".join(f"self::src:{t}" for t in tags) + "][1]"
 
+    def source_call_args_propagate_to_return(self) -> bool:
+        """True se 'x = source(args...)' propaga il taint degli argomenti al
+        valore di ritorno. False per linguaggi con source per side-effect (C)."""
+        return True
+
+    def taint_opaque_tags(self) -> list:
+        """Tag srcML il cui contenuto non trasporta taint verso l'espressione
+        che li racchiude (es. sizeof in C: il risultato dipende dal tipo, non
+        dal contenuto). Default: nessuno."""
+        return []
+
     
 
 # ---------------------------------------------------------------------- #
@@ -1183,7 +1194,7 @@ class CAdapter(LanguageAdapter):
     def taint_block_functions(self) -> list:
         # Funzioni C che restituiscono numeri o bool analizzando buffer/stringhe,
         # interrompendo la propagazione del taint come stringa.
-        return ["strlen", "sizeof", "atoi", "atol", "atof", "strcmp", "strncmp"]
+        return ["strlen", "atoi", "atol", "atof", "strcmp", "strncmp"]
 
     def taint_propagating_calls(self) -> dict:
         # Funzioni libc che scrivono il risultato in un buffer passato come
@@ -1288,6 +1299,13 @@ class CAdapter(LanguageAdapter):
     def flow_exit_tags(self):  return ["return", "goto", "continue", "break"]
     def flow_exit_calls(self): return ["exit", "abort", "_exit", "_Exit"]
 
+
+    def source_call_args_propagate_to_return(self) -> bool:
+        return False
+
+
+    def taint_opaque_tags(self) -> list:
+        return ["sizeof"]
 # ---------------------------------------------------------------------- #
 # Registro / dispatch
 # ---------------------------------------------------------------------- #

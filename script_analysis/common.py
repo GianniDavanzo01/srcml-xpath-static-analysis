@@ -23,6 +23,15 @@ NS = {"src": "http://www.srcML.org/srcML/src", "pos": "http://www.srcML.org/srcM
 # Utility di base
 # --------------------------------------------------------------------------- #
 
+def in_opaque_tag(node, adapter) -> bool:
+    """True se `node` sta dentro un costrutto che non propaga taint (es. sizeof)."""
+    tags = adapter.taint_opaque_tags() if adapter else []
+    if not tags:
+        return False
+    cond = " or ".join(f"self::src:{t}" for t in tags)
+    return bool(node.xpath(f"ancestor::*[{cond}]", namespaces=NS))
+
+
 def scope_xpath(adapter, with_lambda=False):
     tags = adapter.function_tags() + (adapter.lambda_tags() if with_lambda else [])
     return "ancestor::*[" + " or ".join(f"self::src:{t}" for t in tags) + "][1]"
@@ -59,14 +68,6 @@ def name_text(name_node) -> str:
     )
     return "".join(parts).strip()
 
-#Fondamentale per le sorgenti la cui variabile taint è argomento della funzione (elimina i cast)-------------------------
-# _C_TYPE_WORDS = {
-#     "char", "int", "long", "short", "unsigned", "signed", "void",
-#     "float", "double", "struct", "union", "enum", "const", "volatile",
-#     "size_t", "ssize_t", "wchar_t",
-#     "uint8_t", "uint16_t", "uint32_t", "uint64_t",
-#     "int8_t", "int16_t", "int32_t", "int64_t",
-# }
 
 def _local(n) -> str:
     return n.tag.split('}')[-1]
