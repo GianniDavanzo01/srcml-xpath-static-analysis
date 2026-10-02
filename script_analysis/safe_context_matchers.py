@@ -10,7 +10,7 @@ import re
 
 from common import NS, get_call_name, call_arguments_match_ast, find_assignments,_pos_key, block_exits_flow, enclosing_scope
 
-from language_adapter import PythonAdapter
+# from language_adapter import PythonAdapter
 
 
 
@@ -33,21 +33,17 @@ def _safe_context_function_has_call_matching(node, spec: dict, var_name: str | N
     return any(call_arguments_match_ast(c, spec, adapter, imports) for c in target.xpath(".//src:call", namespaces=NS))
 
 
-# def _function_or_unit_scope(node):
-#     """Ritorna la <src:function> più vicina che racchiude `node`, o l'intero <src:unit>."""
-#     parent_func = node.xpath("ancestor::src:function[1]", namespaces=NS)
-#     return parent_func[0] if parent_func else node.xpath("ancestor::src:unit[1]", namespaces=NS)[0]
 
 def _function_or_unit_scope(node, adapter=None):
-    scope = enclosing_scope(node, adapter or PythonAdapter())
+    scope = enclosing_scope(node, adapter)
     return scope if scope is not None else node.xpath("ancestor::src:unit[1]", namespaces=NS)[0]
 
 
 def _safe_context_parametrized_query(node, spec: dict, var_name: str | None = None, adapter=None, imports=None) -> bool:
     """{"type": "parametrized_query", "method": "execute", "placeholders": ["%s", "?"]}"""
-    # Configurabilità tramite JSON (default per compatibilità col codice Python legacy)
-    target_method = spec.get("method", "execute")
-    placeholders = spec.get("placeholders", ["%s", "?"])
+
+    target_method = spec.get("method")
+    placeholders = spec.get("placeholders")
     
     # 1. Trova la chiamata al metodo di esecuzione
     call_node = node.xpath(f"ancestor::src:call[.//src:name[last()][text()='{target_method}']][1]", namespaces=NS)
@@ -63,7 +59,7 @@ def _safe_context_parametrized_query(node, spec: dict, var_name: str | None = No
     if len(arguments) < 2:
         return False
 
-    _adapter = adapter or PythonAdapter()
+    _adapter = adapter 
     
     # 3. Cerca i placeholder ESCLUSIVAMENTE all'interno dei letterali stringa reali
     for lit in arg_list[0].xpath(".//src:literal[@type='string']", namespaces=NS):
@@ -102,7 +98,7 @@ def _safe_context_function_has_method_call(node, spec: dict, var_name: str | Non
     if not method or not args_contain:
         return False
         
-    _adapter = adapter or PythonAdapter()
+    _adapter = adapter
         
     target_node = _function_or_unit_scope(node, adapter)
     
@@ -201,7 +197,7 @@ def _safe_context_in_function_name(node, spec: dict, var_name: str | None = None
         Rileva se il nodo si trova all'interno di una funzione con il nome specificato.
     """
     target = spec.get("name")
-    func = enclosing_scope(node, adapter or PythonAdapter())
+    func = enclosing_scope(node, adapter)
     if func is not None:
         name_nodes = func.xpath("./src:name", namespaces=NS)
         if name_nodes and "".join(name_nodes[0].itertext()).strip() == target:
@@ -214,7 +210,7 @@ def _safe_context_function_has_file_size_check(node, spec: dict, var_name: str |
        dimensione: o si trova DENTRO il blocco 'if size <= MAX:', oppure
        si trova DOPO un guard-clause 'if size > MAX: <exit>'.
     """
-    _adapter = adapter or PythonAdapter()
+    _adapter = adapter 
     ops = _adapter.member_access_operator()
     ops_xpath = " or ".join(f"text()='{op}'" for op in ops)
     size_properties = spec.get("size_properties", ["file_size", "size"])
@@ -339,7 +335,7 @@ def _safe_context_var_truthiness_check(node, spec: dict, var_name=None, adapter=
         target = _function_or_unit_scope(node, adapter)
         conditions = target.xpath(".//src:if_stmt//src:condition", namespaces=NS)
 
-    _adapter = adapter or PythonAdapter()
+    _adapter = adapter 
     neg_op = _adapter.negation_operator()
 
     null_ops = _adapter.null_comparison_operators()
@@ -466,7 +462,7 @@ def _safe_context_binary_comparison(node, spec: dict, var_name: str | None = Non
     left_not = _resolve(spec.get("left_not_exact", []))
     right_not = _resolve(spec.get("right_not_exact", []))
     
-    _adapter = adapter or PythonAdapter()
+    _adapter = adapter
 
     conditions = target.xpath(".//src:if_stmt//src:condition", namespaces=NS)
     for cond in conditions:
@@ -610,7 +606,7 @@ def _safe_context_call_has_kwargs(node, spec: dict, var_name: str | None = None,
     altrimenti vulnerabile (es. `yaml.load(..., Loader=SafeLoader)` o cookie con `secure=True`).
     """
     calls = spec.get("call", [])
-    _adapter = adapter or PythonAdapter()
+    _adapter = adapter
     
     call_node = node.xpath("ancestor-or-self::src:call[1]", namespaces=NS)
     if not call_node:
@@ -695,7 +691,7 @@ def _safe_context_receiver_of_method_with_arg(node, spec: dict, var_name: str | 
     if not target_method or not var_name or (dangerous_values is None and not target_arg):
         return False
 
-    _adapter = adapter or PythonAdapter()
+    _adapter = adapter
     op = _adapter.member_access_operator()
     ops_xpath = " or ".join(f"text()='{o}'" for o in op) if isinstance(op, list) else f"text()='{op}'"
     neg_op = _adapter.negation_operator()
@@ -795,7 +791,7 @@ def _safe_context_try_after_source(node, spec: dict, var_name: str | None = None
     try_node = try_ancestors[0]
 
     scope = _function_or_unit_scope(node, adapter)
-    _adapter = adapter or PythonAdapter()
+    _adapter = adapter
     for assign, _, _ in find_assignments(scope, _adapter, var_name):
         assign_try = assign.xpath("ancestor::src:try[1]", namespaces=NS)
         if assign_try and assign_try[0] == try_node:
@@ -807,7 +803,7 @@ def _safe_context_var_falsy_guard_clause(node, spec: dict, var_name=None, adapte
     if not var_name:
         return False
 
-    _adapter = adapter or PythonAdapter()
+    _adapter = adapter
     neg_op = _adapter.negation_operator()
     null_ops = _adapter.null_comparison_operators()
     falsy_ops = null_ops["falsy"]
@@ -943,7 +939,7 @@ def _safe_context_member_access_name(node, spec: dict, var_name: str | None = No
     if not target:
         return False
 
-    _adapter = adapter or PythonAdapter()
+    _adapter = adapter
     ops = _adapter.member_access_operator()
     ops_xpath = " or ".join(f"text()='{op}'" for op in ops)
 

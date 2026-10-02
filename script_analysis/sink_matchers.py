@@ -16,7 +16,7 @@ def _sink_string_pattern(uso, pattern_name: str, adapter=None, imports=None, fst
     Totalmente guidati dal LanguageAdapter.
     """
     if pattern_name == "concat":
-        ops = adapter.string_concat_operators() if adapter else ["+", "%"]
+        ops = adapter.string_concat_operators()
         op_xpath = " | ".join([f"preceding-sibling::src:operator[1][text()='{op}']" for op in ops]) + " | " + \
                    " | ".join([f"following-sibling::src:operator[1][text()='{op}']" for op in ops])
         return bool(uso.xpath(op_xpath, namespaces=NS))
@@ -297,8 +297,8 @@ def _sink_subscript_usage(uso, spec: dict, fstring_nodes: list, adapter=None, im
         op_text = "".join(op[0].itertext()).strip()
         
         # Chiediamo i token corretti all'adattatore
-        assign_op = adapter.assignment_operator_token() if adapter else "="
-        concat_ops = adapter.string_concat_operators() if adapter else ["+"]
+        assign_op = adapter.assignment_operator_token() 
+        concat_ops = adapter.string_concat_operators()
         
         # Verifichiamo se l'operatore finisce con il token di assegnazione (es: "=" o "+=")
         is_assign = op_text.endswith(assign_op)

@@ -80,7 +80,7 @@ def analyze_unit(unit_node, raw_rules: list, xml_source: str) -> dict:
     reset_caches()
     adapter = get_adapter(unit_node)
     imports = adapter.resolve_imports(unit_node, NS)
-    language_name = getattr(adapter, 'name', 'python').lower()
+    language_name = getattr(adapter, 'name').lower()
 
     compiled = _get_compiled_ruleset(language_name, raw_rules)
 
@@ -125,7 +125,7 @@ def analyze_file(xml_file: Path, raw_rules: list) -> list:
         root = tree.getroot() if hasattr(tree, "getroot") else tree
         adapter = get_adapter(root)
         imports = adapter.resolve_imports(root, NS)
-        language_name = getattr(adapter, 'name', 'python').lower()
+        language_name = getattr(adapter, 'name').lower()
 
         compiled = _get_compiled_ruleset(language_name, raw_rules)
 

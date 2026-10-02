@@ -11,7 +11,6 @@ assignment_pairs, enclosing_scope, extract_output_buffer_name, node_snippet
 from safe_context_matchers import is_in_safe_context
 
 
-from language_adapter import PythonAdapter
 
 
 def _run_source_operator_usage(tree, rule, findings, adapter, imports, catalog=None):
@@ -363,7 +362,7 @@ def _check_use_after_free(tree, rule, findings, adapter, imports):
     if not spec:
         return
 
-    _adapter = adapter or PythonAdapter()
+    _adapter = adapter 
     target_calls = spec.get("deallocation_calls", ["free"])
     safe_allocations = spec.get("safe_allocation_calls", [])
     safe_reassignments = spec.get("safe_reassignments", [])
@@ -468,7 +467,7 @@ def _check_use_after_free(tree, rule, findings, adapter, imports):
 
 
 def run_structural_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> list:
-    adapter = adapter or PythonAdapter()
+    adapter = adapter
     imports = imports if imports is not None else []
 
     findings = []

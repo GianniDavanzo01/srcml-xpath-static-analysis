@@ -15,7 +15,6 @@ from common import NS, build_finding, is_sanitized, source_present, get_call_nam
 from sink_matchers import matches_any_sink
 from safe_context_matchers import is_in_safe_context
 
-from language_adapter import PythonAdapter
 
 # [MODIFICA 1] helper che pre-calcola lhs/rhs/scope di ogni assegnazione
 from unit_context import build_assign_infos
@@ -57,7 +56,7 @@ def _sanitized_reassign_reaches(uso, var, scope_node, assign_infos, tainted_name
 
 
 def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> list:
-    adapter = adapter or PythonAdapter()
+    adapter = adapter 
     imports = imports if imports is not None else []
     macros = macro_map(imports)
 

@@ -10,7 +10,7 @@ import json
 import re
 from pathlib import Path
 
-from language_adapter import PythonAdapter, C_TYPE_WORDS as _C_TYPE_WORDS
+from language_adapter import  C_TYPE_WORDS as _C_TYPE_WORDS
 
 from collections import defaultdict
 
@@ -464,7 +464,7 @@ def call_arguments_match_ast(call_node, spec: dict, adapter=None, imports=None) 
 
     banned_numbers = spec.get("contains_numbers", [])
     if banned_numbers:
-        _adapter = adapter or PythonAdapter()
+        _adapter = adapter
         found_values = {v for _, v in _resolve_numeric_args(call_node, _adapter, NS)}
         found_texts = [str(v) for v in found_values]
 
@@ -476,7 +476,7 @@ def call_arguments_match_ast(call_node, spec: dict, adapter=None, imports=None) 
 
     if "arg_less_than" in spec:
         limit_spec = spec["arg_less_than"]
-        _adapter = adapter or PythonAdapter()
+        _adapter = adapter
         found_pairs = _resolve_numeric_args(call_node, _adapter, NS)
 
         if isinstance(limit_spec, dict):
