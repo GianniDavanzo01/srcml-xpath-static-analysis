@@ -360,6 +360,19 @@ def source_present(sources: list, rhs_node, source_form: str | None = None,
     return False
 
 
+def own_literals(call_node, lit_type: str) -> list:
+    """
+    Letterali di tipo `lit_type` che appartengono direttamente a `call_node`:
+    stanno nella sua argument_list e la call più vicina che li racchiude è
+    proprio `call_node`, non una call annidata.
+    """
+    return call_node.xpath(
+        "./src:argument_list//src:literal[@type=$t]"
+        "[count(ancestor::src:call[1] | $c) = 1]",
+        namespaces=NS, t=lit_type, c=call_node,
+    )
+
+
 def call_arguments_match_ast(call_node, spec: dict, adapter=None, imports=None) -> bool:
     """
     Motore universale AST per validare gli argomenti di una chiamata a funzione.
@@ -437,9 +450,16 @@ def call_arguments_match_ast(call_node, spec: dict, adapter=None, imports=None) 
 
     substr_targets = spec.get("contains_string_containing", [])
     if substr_targets:
-        str_lits = call_node.xpath(".//src:argument_list//src:literal[@type='string']", namespaces=NS)
-        found_texts = ["".join(l.itertext()).strip() for l in str_lits]
-        if not any(any(t in txt for txt in found_texts) for t in substr_targets):
+        found_texts = [
+            adapter.normalize_string_literal("".join(l.itertext())) if adapter
+            else "".join(l.itertext()).strip()
+            for l in own_literals(call_node, "string")
+        ]
+        if spec.get("case_insensitive", False):
+            found_texts = [t.lower() for t in found_texts]
+            substr_targets = [t.lower() for t in substr_targets]
+
+        if not any(t in txt for t in substr_targets for txt in found_texts):
             return False
 
     banned_numbers = spec.get("contains_numbers", [])
@@ -477,8 +497,8 @@ def call_arguments_match_ast(call_node, spec: dict, adapter=None, imports=None) 
 
     banned_booleans = spec.get("contains_booleans", [])
     if banned_booleans:
-        bools = call_node.xpath(".//src:argument_list//src:literal[@type='boolean']", namespaces=NS)
-        found_bools = ["".join(b.itertext()).strip().lower() for b in bools]
+        found_bools = ["".join(b.itertext()).strip().lower()
+                    for b in own_literals(call_node, "boolean")]
         if not any(str(req).lower() in found_bools for req in banned_booleans):
             return False
 
