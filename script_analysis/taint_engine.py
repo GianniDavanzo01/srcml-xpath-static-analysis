@@ -250,7 +250,6 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
                             continue
 
                         
-                        out_idx = propagating_calls[cname]
                         args = call.xpath("./src:argument_list/src:argument", namespaces=NS)
                         if out_idx >= len(args):
                             continue
