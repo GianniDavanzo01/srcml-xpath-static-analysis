@@ -6,7 +6,8 @@ Motore Strutturale
 
 import re
 
-from common import NS, get_call_name, build_finding, call_arguments_match_ast, check_required_imports,_pos_key, find_assignments,_is_pure_literal_expr, assignment_pairs, enclosing_scope, extract_output_buffer_name
+from common import NS, get_call_name, build_finding, call_arguments_match_ast, check_required_imports,_pos_key, find_assignments,_is_pure_literal_expr,  \
+assignment_pairs, enclosing_scope, extract_output_buffer_name, node_snippet
 from safe_context_matchers import is_in_safe_context
 
 
@@ -282,45 +283,47 @@ def _run_reference_comparisons(tree, rule, findings, adapter, imports):
 
     safe_contexts = rule.get("safe_contexts", [])
     op_xpath = " or ".join(f"text()='{op}'" for op in ref_ops)
-    operators = tree.xpath(f".//src:operator[{op_xpath}]", namespaces=NS)
-    needs_pointer_check = adapter.requires_pointer_type_for_reference_comparison()
 
-    for op in operators:
+    def is_primitive_literal(node):
+        return (node is not None and node.tag.endswith("literal")
+                and node.get("type") in ("number", "char"))
+
+    def is_signed_number(nodes):          # -1 / +1: operatore + letterale
+        return (len(nodes) >= 2 and nodes[0].tag.endswith("operator")
+                and "".join(nodes[0].itertext()).strip() in ("-", "+")
+                and nodes[1].tag.endswith("literal") and nodes[1].get("type") == "number")
+
+    for op in tree.xpath(f".//src:operator[{op_xpath}]", namespaces=NS):
         lhs_nodes = op.xpath("./preceding-sibling::*[not(self::src:comment)]", namespaces=NS)
         rhs_nodes = op.xpath("./following-sibling::*[not(self::src:comment)]", namespaces=NS)
         if not rhs_nodes:
             continue
 
         rhs_text = "".join(rhs_nodes[0].itertext()).strip()
-
         if adapter.is_none_literal(rhs_text) or adapter.is_boolean_literal(rhs_text):
             continue
 
         lhs_node = lhs_nodes[-1] if lhs_nodes else None
         rhs_node = rhs_nodes[0]
-
-        def is_primitive_literal(node):
-            if node is None:
-                return False
-            # Verifica se il nodo è esattamente un letterale numerico o di carattere
-            return node.tag.endswith("literal") and node.get("type") in ["number", "char"]
-
-        if is_primitive_literal(lhs_node) or is_primitive_literal(rhs_node):
+        if is_primitive_literal(lhs_node) or is_primitive_literal(rhs_node) or is_signed_number(rhs_nodes):
             continue
 
-        if needs_pointer_check:
-            if not lhs_nodes:
-                continue
-            lhs_text = "".join(lhs_nodes[-1].itertext()).strip()
-            lhs_type = adapter.resolve_variable_type(op, lhs_text, NS)
-            rhs_type = adapter.resolve_variable_type(op, rhs_text, NS)
-            if not (lhs_type and "*" in lhs_type and rhs_type and "*" in rhs_type):
-                continue   # non entrambi puntatori -> confronto numerico legittimo, non segnalare
+        lhs_type = adapter.resolve_operand_type(lhs_node, NS)
+        rhs_type = adapter.resolve_operand_type(rhs_node, NS)
+        if not adapter.is_reference_comparison(lhs_type, rhs_type):
+            continue
 
         if is_in_safe_context(op, safe_contexts, None, adapter, imports):
             continue
 
-        findings.append(build_finding(rule, op))
+        lhs_txt = node_snippet(lhs_node, 60) if lhs_node is not None else "?"
+        rhs_txt = node_snippet(rhs_node, 60)
+        op_txt = "".join(op.itertext()).strip()
+        findings.append(build_finding(
+            rule, op,
+            extra={"snippet": f"{lhs_txt} {op_txt} {rhs_txt}",
+                   "operand_types": [lhs_type, rhs_type]},
+        ))
 
 
 

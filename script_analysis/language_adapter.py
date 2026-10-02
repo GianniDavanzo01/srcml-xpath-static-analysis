@@ -267,6 +267,19 @@ class LanguageAdapter(ABC):
         dal contenuto). Default: nessuno."""
         return []
 
+    def resolve_operand_type(self, node, ns):
+        """Tipo dichiarato di un operando che sia un semplice identificatore, altrimenti None."""
+        if node is None or not node.tag.endswith("}name"):
+            return None
+        text = "".join(node.itertext()).strip()
+        if not text.isidentifier():
+            return None
+        return self.resolve_variable_type(node, text, ns)
+
+    def is_reference_comparison(self, lhs_type, rhs_type) -> bool:
+        """True se il confronto va segnalato. Default: nel dubbio segnala."""
+        return True
+
     
 
 # ---------------------------------------------------------------------- #
@@ -890,8 +903,6 @@ class JavaAdapter(LanguageAdapter):
     def requires_pointer_type_for_reference_comparison(self) -> bool:
         return False
 
-    def resolve_variable_type(self, name_node, var_name, ns) -> str | None:
-        return None
 
 
     def null_comparison_operators(self) -> dict:
@@ -912,6 +923,62 @@ class JavaAdapter(LanguageAdapter):
     def lambda_tags(self):     return ["lambda"]
     def flow_exit_tags(self):  return ["return", "throw", "continue", "break"]
     def flow_exit_calls(self): return ["System.exit"]
+
+
+    # CWE-595: distinguere confronto di riferimenti da confronto di valori
+    # ------------------------------------------------------------------ #
+    # In Java '==' ha due significati: tra primitivi confronta i valori
+    # (int == int), tra oggetti confronta gli indirizzi (String == String).
+    # Dall'AST la forma è identica ('a == b'), quindi serve il TIPO DICHIARATO
+    # degli operandi. Questa sezione fornisce al motore generico tre cose,
+    # senza che structural_engine.py conosca nulla di Java:
+    #   - resolve_operand_type():     tipo di un operando (identificatore o letterale stringa)
+    #   - resolve_variable_type():    ricerca della dichiarazione locale/parametro/campo
+    #   - is_reference_comparison():  decisione finale "segnalare o no"
+
+    # Limiti noti: enum ('st == State.READY' è corretto ma resta segnalato),
+    # operandi che sono call ('a.size() == b.size()'), tipi definiti in altri file.
+
+
+    _PRIMS = {"byte", "short", "int", "long", "float", "double", "char", "boolean"}
+
+    def _is_primitive(self, t: str) -> bool:
+        t = re.sub(r"\b(final|static)\b", "", t).split("<")[0].strip()
+        return t in self._PRIMS          # "int[]" non è primitivo: confronto di riferimenti
+
+    def resolve_operand_type(self, node, ns):
+        if node is not None and node.tag.endswith("}literal") and node.get("type") == "string":
+            return "String"
+        return super().resolve_operand_type(node, ns)
+
+    def resolve_variable_type(self, name_node, var_name, ns):
+        from common import _pos_key
+        decls = name_node.xpath(
+            f"{self.scope_axis(('class', 'unit'))}//src:decl[src:name[text()=$v]]",
+            namespaces=ns, v=var_name,
+        )
+        if not decls:
+            return None
+        key = _pos_key(name_node)
+        before = [d for d in decls if _pos_key(d) <= key]
+        decl = (before or decls)[-1]          # dichiarazione più vicina che precede l'uso
+
+        seen = set()
+        while decl is not None and id(decl) not in seen:
+            seen.add(id(decl))
+            t = decl.xpath("./src:type", namespaces=ns)
+            if t and t[0].get("ref") != "prev":
+                return "".join(t[0].itertext()).strip()
+            prev = decl.xpath("preceding-sibling::src:decl[1]", namespaces=ns)
+            decl = prev[0] if prev else None
+        return None
+
+    def is_reference_comparison(self, lhs_type, rhs_type) -> bool:
+        # segnala, a meno che almeno un operando sia provabilmente primitivo
+        return not any(t and self._is_primitive(t) for t in (lhs_type, rhs_type))
+
+
+    #FINE SEZIONE CWE 595-----------------------------------------------------------------------------
 
 
 
@@ -947,6 +1014,8 @@ def _skip_leading_casts(nodes):
             break
         i = j + 1
     return nodes[i:]
+
+
     
 # ---------------------------------------------------------------------- #
 # Implementazione C
@@ -1303,9 +1372,15 @@ class CAdapter(LanguageAdapter):
     def source_call_args_propagate_to_return(self) -> bool:
         return False
 
-
     def taint_opaque_tags(self) -> list:
         return ["sizeof"]
+
+
+    def is_reference_comparison(self, lhs_type, rhs_type) -> bool:
+        return bool(lhs_type and rhs_type and "*" in lhs_type and "*" in rhs_type)
+
+
+    
 # ---------------------------------------------------------------------- #
 # Registro / dispatch
 # ---------------------------------------------------------------------- #
