@@ -6,7 +6,7 @@ Predicati SINK per il motore: sia i pattern semplici basati su stringa
 (oggetto {"type": "..."}), con il relativo registro e dispatcher.
 """
 
-from common import NS, get_call_name
+from common import NS, get_call_name, call_matches
 
 
 
@@ -135,7 +135,8 @@ def _sink_call_with_var_arg(uso, spec, fstring_nodes, adapter=None, imports=None
             continue
             
         # verifichiamo se è una delle chiamate ricercate
-        if not any(call_name == c or call_name.endswith(f".{c}") for c in target_calls):
+        # if not any(call_name == c or call_name.endswith(f".{c}") for c in target_calls):
+        if not any(call_matches(call_name,c) for c in target_calls):
             continue
 
         # 3. Definiamo arg_list all'interno del ciclo per questa specifica chiamata
@@ -301,9 +302,9 @@ def _sink_subscript_usage(uso, spec: dict, fstring_nodes: list, adapter=None, im
         concat_ops = adapter.string_concat_operators()
         
         # Verifichiamo se l'operatore finisce con il token di assegnazione (es: "=" o "+=")
-        is_assign = op_text.endswith(assign_op)
+        is_assign = op_text == assign_op
         # Verifichiamo se l'operatore finisce con un token di concatenazione
-        is_concat = any(op_text.endswith(c) for c in concat_ops)
+        is_concat = op_text in concat_ops or op_text in {c + assign_op for c in concat_ops}
         
         return is_assign or is_concat
 

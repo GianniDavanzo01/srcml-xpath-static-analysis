@@ -18,6 +18,9 @@ NS = {"src": "http://www.srcML.org/srcML/src", "pos": "http://www.srcML.org/srcM
 
 
 
+#VERIFICA DELLE MACRO
+
+
 def macro_map(imports) -> dict:
     return {b.local_name: b.canonical_name for b in (imports or []) if getattr(b, "is_macro", False)}
 
@@ -32,6 +35,31 @@ def expand_macro_name(name, macros):
 # --------------------------------------------------------------------------- #
 # Utility di base
 # --------------------------------------------------------------------------- #
+
+
+
+#RISOLVONO IL MATCH ESATTO E NON PIù PER SUFFISSO---------------------
+def _norm(name: str) -> str:
+    return name.replace("->", ".")          # C: s->fn == s.fn
+
+def call_matches(call_name: str | None, pattern: str) -> bool:
+    """Esatto sul nome canonico risolto.
+    '*.x[.y]' = 'x[.y]' oppure '<qualsiasi>.x[.y]' (ricevente non risolto, dichiarato)."""
+    if not call_name or not pattern:
+        return False
+    cn, pat = _norm(call_name), _norm(pattern)
+    if pat.startswith("*."):
+        pat = pat[2:]
+        return cn == pat or cn.endswith("." + pat)
+    return cn == pat
+
+def call_lookup_keys(call_name: str) -> list:
+    """Chiavi da cercare nell'indice: nome esatto + tutte le forme '*.<coda>'."""
+    cn = _norm(call_name)
+    parts = cn.split(".")
+    return [cn] + ["*." + ".".join(parts[i:]) for i in range(len(parts))]
+
+# ---------------------------------------------------------------
 
 def in_opaque_tag(node, adapter) -> bool:
     """True se `node` sta dentro un costrutto che non propaga taint (es. sizeof)."""
@@ -63,7 +91,8 @@ def block_exits_flow(block, adapter, imports=None) -> bool:
     exits = adapter.flow_exit_calls()
     for c in block.xpath(".//src:call", namespaces=NS):
         cn = get_call_name(c, adapter, imports)
-        if cn and any(cn == e or cn.endswith(f".{e}") for e in exits) and same(c):
+        # if cn and any(cn == e or cn.endswith(f".{e}") for e in exits) and same(c):
+        if cn and any(call_matches(cn, e) for e in exits) and same(c):
             return True
     return False
 
@@ -179,40 +208,6 @@ def node_snippet(node, max_len: int = 140) -> str:
     text = re.sub(r"\s+", " ", text).strip()
     return text[:max_len] + ("…" if len(text) > max_len else "")
 
-
-_member_rx_cache = {}
-
-
-def _member_access_regex(adapter):
-    """Regex che riconosce gli operatori di accesso a membro del linguaggio."""
-    ops = tuple(adapter.member_access_operator()) if adapter else (".",)
-    rx = _member_rx_cache.get(ops)
-    if rx is None:
-        # operatori più lunghi per primi, così '->' non viene spezzato
-        rx = re.compile("|".join(re.escape(o) for o in sorted(ops, key=len, reverse=True)))
-        _member_rx_cache[ops] = rx
-    return rx
-
-
-def _access_suffixes(text: str, rx) -> set:
-    """'a.b.c' -> {'a.b.c', 'b.c', 'c'}; in C 'a->b.c' -> {'a->b.c', 'b.c', 'c'}."""
-    out = {text}
-    for m in rx.finditer(text):
-        tail = text[m.end():]
-        if tail:
-            out.add(tail)
-    return out
-
-
-def _access_prefixes(text: str, rx) -> set:
-    """'a.b.c' -> {'a.b.c', 'a.b', 'a'}."""
-    out = {text}
-    for m in rx.finditer(text):
-        head = text[:m.start()]
-        if head:
-            out.add(head)
-    return out
-
 _call_name_cache = {}
 _rhs_keys_cache = {}
 _assign_pairs_cache = {}
@@ -303,7 +298,8 @@ def is_sanitized(node, sanitizers: list, adapter=None, imports=None) -> bool:
     call_ancestors = node.xpath("ancestor::src:call", namespaces=NS)
     for call in call_ancestors:
         cname = get_call_name(call, adapter, imports)
-        if cname and any(cname == san or cname.endswith(f".{san}") for san in sanitizers):
+        # if cname and any(cname == san or cname.endswith(f".{san}") for san in sanitizers):
+        if cname and any(call_matches(cname, san) for san in sanitizers):
             return True
     return False
 
@@ -311,27 +307,26 @@ def is_sanitized(node, sanitizers: list, adapter=None, imports=None) -> bool:
 def source_present(sources: list, rhs_node, source_form: str | None = None,
                    node=None, adapter=None, imports=None) -> bool:
     op = adapter.member_access_operator()[0] if adapter and adapter.member_access_operator() else "."
-    rx = _member_access_regex(adapter)
 
-    call_keys, name_keys = (), ()
-    if source_form is None:
-        keys = _rhs_keys_cache.get(rhs_node)
-        if keys is None:
-            call_keys, name_keys = set(), set()
-            for call in rhs_node.xpath(".//src:call | self::src:call", namespaces=NS):
-                cname = get_call_name(call, adapter, imports)
-                if cname:
-                    call_keys |= _access_suffixes(cname, rx)
-            for name_node in rhs_node.xpath(".//src:name | self::src:name", namespaces=NS):
-                text = "".join(name_node.itertext()).strip()
-                text = text.split('[')[0].split('(')[0].strip()
-                name_keys |= _access_suffixes(text, rx) | _access_prefixes(text, rx)
-            _rhs_keys_cache[rhs_node] = (call_keys, name_keys)
-        else:
-            call_keys, name_keys = keys
+    # 1. Estraiamo solo i nomi completi reali
+    keys = _rhs_keys_cache.get(rhs_node)
+    if keys is None:
+        call_names, var_names = set(), set()
+        for call in rhs_node.xpath(".//src:call | self::src:call", namespaces=NS):
+            cname = get_call_name(call, adapter, imports)
+            if cname:
+                call_names.add(cname)
+        for name_node in rhs_node.xpath(".//src:name | self::src:name", namespaces=NS):
+            text = "".join(name_node.itertext()).strip()
+            text = text.split('[')[0].split('(')[0].strip()
+            var_names.add(text)
+        _rhs_keys_cache[rhs_node] = (call_names, var_names)
+        call_keys, name_keys = call_names, var_names
+    else:
+        call_keys, name_keys = keys
 
+    # 2. Match rigoroso tramite la tua funzione call_matches
     for source in sources:
-
         if source_form == "regex":
             text = "".join(rhs_node.itertext())
             if re.search(source, text):
@@ -339,26 +334,23 @@ def source_present(sources: list, rhs_node, source_form: str | None = None,
             continue
 
         if source_form == "call":
-            for call in rhs_node.xpath(".//src:call | self::src:call", namespaces=NS):
-                cname = get_call_name(call, adapter, imports)
-                if cname and source in _access_suffixes(cname, rx):
-                    return True
+            if any(call_matches(ck, source) for ck in call_keys):
+                return True
             continue
 
         if source_form == "subscript":
             for outer_name in rhs_node.xpath(".//src:name[src:index] | self::src:name[src:index]", namespaces=NS):
                 parts = outer_name.xpath("./src:name", namespaces=NS)
                 dotted = op.join("".join(p.itertext()).strip() for p in parts) if parts else (outer_name.text or "").strip()
-                if source in _access_suffixes(dotted, rx):
+                if call_matches(dotted, source):
                     return True
             continue
 
-        # Nessuna forma specificata: lookup negli insiemi
-        if source in call_keys or source in name_keys:
+        # Nessuna forma: controlla se una qualsiasi chiamata o variabile matcha il pattern della sorgente
+        if any(call_matches(k, source) for k in call_keys | name_keys):
             return True
 
     return False
-
 
 def own_literals(call_node, lit_type: str) -> list:
     """
@@ -384,7 +376,8 @@ def call_arguments_match_ast(call_node, spec: dict, adapter=None, imports=None) 
 
     if target_calls:
         call_name = get_call_name(call_node, adapter, imports)
-        if not call_name or not any(call_name == c or call_name.endswith(f".{c}") for c in target_calls):
+        # if not call_name or not any(call_name == c or call_name.endswith(f".{c}") for c in target_calls):
+        if not call_name or not any(call_matches(call_name, c) for c in target_calls):
             return False
 
     arg_list_nodes = call_node.xpath("./src:argument_list", namespaces=NS)
@@ -632,17 +625,17 @@ class CompiledRuleset:
         for rule in self.rules:
             for spec in rule.get("forbidden_functions", []):
                 if isinstance(spec, str):
-                    self.forbidden_functions_index.setdefault(spec, []).append((rule, spec))
+                    self.forbidden_functions_index.setdefault(_norm(spec), []).append((rule, spec))
                 elif isinstance(spec, dict):
                     stype = spec.get("type")
                     if stype == "exact_name" and spec.get("name"):
-                        self.forbidden_functions_index.setdefault(spec["name"], []).append((rule, spec))
+                        self.forbidden_functions_index.setdefault(_norm(spec["name"]), []).append((rule, spec))
                     elif stype == "call_matches_ast" and spec.get("call"):
                         calls = spec.get("call")
                         if isinstance(calls, str):
                             calls = [calls]
                         for c in calls:
-                            self.forbidden_functions_index.setdefault(c, []).append((rule, spec))
+                            self.forbidden_functions_index.setdefault(_norm(c), []).append((rule, spec))
                     else:
                         self.unindexed_forbidden_functions.append((rule, spec))
 

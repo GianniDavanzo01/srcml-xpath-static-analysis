@@ -11,7 +11,7 @@ safe-context o un sanitizer.
 import re
 
 from common import NS, build_finding, is_sanitized, source_present, get_call_name, _pos_key, name_text, get_scope_index,  \
-    extract_output_buffer_name, enclosing_scope, in_opaque_tag, macro_map, expand_macro_name
+    extract_output_buffer_name, enclosing_scope, in_opaque_tag, macro_map, expand_macro_name, call_matches
 from sink_matchers import matches_any_sink
 from safe_context_matchers import is_in_safe_context
 
@@ -134,8 +134,12 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
             cname = get_call_name(call, adapter, imports)
             if not cname:
                 continue
+            # matched = next(
+            #     (s for s in active_output_sources if cname == s or cname.endswith(f".{s}")),
+            #     None,
+            # )
             matched = next(
-                (s for s in active_output_sources if cname == s or cname.endswith(f".{s}")),
+                (s for s in active_output_sources if call_matches(cname, s)),
                 None,
             )
             if matched is None:
@@ -202,8 +206,11 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
                 return False
             for c in n.xpath("ancestor::src:call", namespaces=NS):
                 cname = get_call_name(c, adapter, imports)
+                # if not cname or not any(
+                #     cname == a or cname.endswith(f".{a}") for a in only_through
+                # ):
                 if not cname or not any(
-                    cname == a or cname.endswith(f".{a}") for a in only_through
+                    call_matches(cname, a) for a in only_through
                 ):
                     return True
             return False
@@ -233,8 +240,16 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
                         continue
                     for call in scope_node.xpath(".//src:call", namespaces=NS):
                         cname = get_call_name(call, adapter, imports)
-                        if cname not in propagating_calls:
+                        # if cname not in propagating_calls:
+                        #     continue
+
+                        if not cname:
                             continue
+                        out_idx = next((i for k, i in propagating_calls.items() if call_matches(cname, k)), None)
+                        if out_idx is None:
+                            continue
+
+                        
                         out_idx = propagating_calls[cname]
                         args = call.xpath("./src:argument_list/src:argument", namespaces=NS)
                         if out_idx >= len(args):

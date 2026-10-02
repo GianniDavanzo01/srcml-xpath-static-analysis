@@ -385,15 +385,31 @@ class PythonAdapter(LanguageAdapter):
                     bindings.append(ImportBinding(local_name=local, canonical_name=canonical, is_module=False, node=imp))
  
             else:
-                # import MODULO [as alias] [, MODULO2 [as alias2]]
+                # # import MODULO [as alias] [, MODULO2 [as alias2]]
+                # names = imp.xpath("./src:name[not(ancestor::src:alias)]", namespaces=ns)
+                # for n in names:
+                #     canonical = "".join(n.itertext()).strip()
+                #     if not canonical:
+                #         continue
+                #     alias_nodes = n.xpath("following-sibling::src:alias[1]//src:name", namespaces=ns)
+                #     local = "".join(alias_nodes[0].itertext()).strip() if alias_nodes else canonical.split(".")[0]
+                #     bindings.append(ImportBinding(local_name=local, canonical_name=canonical,node=imp))
                 names = imp.xpath("./src:name[not(ancestor::src:alias)]", namespaces=ns)
                 for n in names:
                     canonical = "".join(n.itertext()).strip()
                     if not canonical:
                         continue
                     alias_nodes = n.xpath("following-sibling::src:alias[1]//src:name", namespaces=ns)
-                    local = "".join(alias_nodes[0].itertext()).strip() if alias_nodes else canonical.split(".")[0]
-                    bindings.append(ImportBinding(local_name=local, canonical_name=canonical,node=imp))
+                    head = canonical.split(".")[0]
+
+                    if alias_nodes:
+                        local = "".join(alias_nodes[0].itertext()).strip()
+                        bindings.append(ImportBinding(local_name=local, canonical_name=canonical, node=imp))
+                    else:
+                        # 'import os.path' rende disponibile 'os', non 'os.path'
+                        bindings.append(ImportBinding(local_name=head, canonical_name=head, node=imp))
+                        if canonical != head:   # serve a required_imports
+                            bindings.append(ImportBinding(local_name=canonical, canonical_name=canonical, node=imp))
  
         return bindings
 
@@ -604,8 +620,18 @@ class PythonAdapter(LanguageAdapter):
 # Implementazione Java
 # ---------------------------------------------------------------------- #
 
+
 class JavaAdapter(LanguageAdapter):
     name = "java"
+
+
+    def _canonicalize(self, name, imports):
+        head, _, rest = name.partition(".")
+        for b in imports or []:
+            if b.is_macro or b.local_name != head:
+                continue
+            return f"{b.canonical_name}.{rest}" if rest else b.canonical_name
+        return name
 
     def is_assignment(self, node, ns) -> bool:
         # Java usa expr_stmt per riassegnazioni (x = 10;) e decl_stmt per dichiarazioni (int x = 5;)
@@ -735,10 +761,6 @@ class JavaAdapter(LanguageAdapter):
             var_name = "".join(parts[0].itertext()).strip()
             method_name = "".join(parts[-1].itertext()).strip()
             
-            # xpath_query_local = (
-            #     f"ancestor::*[self::src:function or self::src:class or self::src:unit][1]"   
-            #     f"//src:decl[src:name[text()='{var_name}']]"
-            # )
             xpath_query_local = (
                     f"{self.scope_axis(('class', 'unit'))}"
                     f"//src:decl[src:name[text()='{var_name}']]"
@@ -791,9 +813,11 @@ class JavaAdapter(LanguageAdapter):
                         decl_node = None
 
                 if var_type:
-
-                    return f"{var_type}.{method_name}"
-        return raw_name
+                    # return f"{var_type}.{method_name}"
+                    return self._canonicalize(f"{var_type}.{method_name}", imports)
+                
+        # return raw_name
+        return self._canonicalize(raw_name, imports)
 
     def string_formatting_operator_roles(self) -> dict:
         return {"concat": "+"}
@@ -836,7 +860,7 @@ class JavaAdapter(LanguageAdapter):
 
 
     def taint_block_functions(self) -> list:
-        return ["length", "hashCode", "isEmpty", "equals", "compareTo"]
+        return ["*.length", "*.hashCode", "*.isEmpty", "*.equals", "*.compareTo"]
 
     def taint_propagating_calls(self) -> dict:
         # Le String Java sono immutabili; StringBuilder/StringBuffer si

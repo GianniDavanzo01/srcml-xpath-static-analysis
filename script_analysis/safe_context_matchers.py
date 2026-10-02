@@ -8,7 +8,7 @@ con il relativo registro e dispatcher.
 
 import re
 
-from common import NS, get_call_name, call_arguments_match_ast, find_assignments,_pos_key, block_exits_flow, enclosing_scope
+from common import NS, get_call_name, call_arguments_match_ast, find_assignments,_pos_key, block_exits_flow, enclosing_scope, call_matches
 
 # from language_adapter import PythonAdapter
 
@@ -83,7 +83,8 @@ def _safe_context_rhs_call(node, spec: dict, var_name: str | None = None, adapte
     expr = node.xpath("ancestor::src:expr_stmt[1]//src:call | ancestor::src:condition[1]//src:call", namespaces=NS)
     for c in expr:
         cn = get_call_name(c, adapter, imports)
-        if cn and any(cn == t or cn.endswith(f".{t}") for t in calls):
+        # if cn and any(cn == t or cn.endswith(f".{t}") for t in calls):
+        if cn and any(call_matches(cn, t) for t in calls):
             return True
     return False
 
@@ -613,7 +614,8 @@ def _safe_context_call_has_kwargs(node, spec: dict, var_name: str | None = None,
         return False
         
     call_name = get_call_name(call_node[0], _adapter, imports)
-    if call_name is None or not any(call_name == c or call_name.endswith(f".{c}") for c in calls):
+    # if call_name is None or not any(call_name == c or call_name.endswith(f".{c}") for c in calls):
+    if call_name is None or not any(call_matches(call_name, c) for c in calls):
         return False
 
     arg_list_nodes = call_node[0].xpath("./src:argument_list", namespaces=NS)
@@ -761,7 +763,8 @@ def _safe_context_function_has_call_with_var_arg(node, spec: dict, var_name: str
     target = _function_or_unit_scope(node, adapter)
     for call_node in target.xpath(".//src:call", namespaces=NS):
         call_name = get_call_name(call_node, adapter, imports)
-        if not call_name or not any(call_name == c or call_name.endswith(f".{c}") for c in target_calls):
+        # if not call_name or not any(call_name == c or call_name.endswith(f".{c}") for c in target_calls):
+        if not call_name or not any(call_matches(call_name,c) for c in target_calls):
             continue
 
         arg_list = call_node.xpath("./src:argument_list", namespaces=NS)
@@ -976,7 +979,8 @@ def _safe_context_check_format_arg_position(node, spec, var_name, adapter, impor
         
     target_index = None
     for target_name, idx in vulnerable_indices.items():
-        if call_name == target_name or call_name.endswith(f".{target_name}") or call_name.endswith(f"::{target_name}"):
+        # if call_name == target_name or call_name.endswith(f".{target_name}") or call_name.endswith(f"::{target_name}"):
+        if call_matches(call_name, target_name):
             target_index = idx
             break
             

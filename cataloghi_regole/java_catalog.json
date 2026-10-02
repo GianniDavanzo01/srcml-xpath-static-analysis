@@ -1,160 +1,331 @@
 {
   "sources": {
     "http_input": [
-      "HttpServletRequest.getParameter",
-      "HttpServletRequest.getParameterValues",
-      "HttpServletRequest.getHeader",
-      "HttpServletRequest.getCookies",
-      "request.getParameter",
-      "request.getHeader",
-      "Properties.getProperty",
+      "*.HttpServletRequest.getParameter",
+      "*.HttpServletRequest.getParameterValues",
+      "*.HttpServletRequest.getHeader",
+      "*.HttpServletRequest.getCookies",
+      "*.Properties.getProperty",
       "System.getenv"
     ],
     "cli_input": [
-        "System.getenv","System.getProperty",
-        "Scanner.nextLine","Scanner.next",
-        "Console.readLine","Console.readPassword"
+      "System.getenv",
+      "System.getProperty",
+      "*.Scanner.nextLine",
+      "*.Scanner.next",
+      "*.Console.readLine",
+      "*.Console.readPassword"
     ],
-    "nullable_returning_calls":["System.getenv", "System.getProperty","Map.get", "HashMap.get",
-                                "HttpServletRequest.getHeader", "HttpServletRequest.getAttribute","ResultSet.getString","File.listFiles"
+    "nullable_returning_calls": [
+      "System.getenv",
+      "System.getProperty",
+      "*.Map.get",
+      "*.HashMap.get",
+      "*.HttpServletRequest.getHeader",
+      "*.HttpServletRequest.getAttribute",
+      "*.ResultSet.getString",
+      "*.File.listFiles"
     ],
-    "file_upload_input": ["HttpServletRequest.getPart", "HttpServletRequest.getParts","MultipartHttpServletRequest.getFile", "MultipartHttpServletRequest.getFiles",
-                          "MultipartHttpServletRequest.getFileMap","MultipartRequest.getFile","MultipartRequest.getFiles","MultipartRequest.getFileMap","ServletFileUpload.parseRequest"
+    "file_upload_input": [
+      "*.HttpServletRequest.getPart",
+      "*.HttpServletRequest.getParts",
+      "*.MultipartHttpServletRequest.getFile",
+      "*.MultipartHttpServletRequest.getFiles",
+      "*.MultipartHttpServletRequest.getFileMap",
+      "*.MultipartRequest.getFile",
+      "*.MultipartRequest.getFiles",
+      "*.MultipartRequest.getFileMap",
+      "*.ServletFileUpload.parseRequest"
     ],
-    "socket_input": ["Socket.getInputStream", "DatagramSocket.receive", "SocketChannel.read", "AsynchronousSocketChannel.read","SSLServerSocket.accept"]
+    "socket_input": [
+      "*.Socket.getInputStream",
+      "*.DatagramSocket.receive",
+      "*.SocketChannel.read",
+      "*.AsynchronousSocketChannel.read",
+      "*.SSLServerSocket.accept",
+      "*.URLConnection.getInputStream",
+      "*.HttpURLConnection.getInputStream",
+      "*.URL.openStream"
+    ],
+    "file_input": [
+      "*.BufferedReader.readLine",
+      "*.FileInputStream.read",
+      "*.Files.readAllLines",
+      "*.Files.readString"
+    ]
   },
   "sinks": {
     "sql_execution": [
       {
         "type": "call_with_var_arg",
         "call": [
-          "Statement.executeQuery", "PreparedStatement.executeQuery", "CallableStatement.executeQuery",
-          "Statement.executeUpdate", "PreparedStatement.executeUpdate", "CallableStatement.executeUpdate",
-          "Statement.execute", "PreparedStatement.execute", "CallableStatement.execute",
-          "Statement.addBatch", "PreparedStatement.addBatch", "CallableStatement.addBatch",
-          "Connection.prepareStatement",
-          "EntityManager.createQuery", "Session.createQuery",
-          "EntityManager.createNativeQuery",
-          "JdbcTemplate.query",
-          "executeQuery", "executeUpdate", "execute", "addBatch",
-          "prepareStatement", "createQuery", "createNativeQuery", "jdbcTemplate.query"
+          "*.executeQuery",
+          "*.executeUpdate",
+          "*.execute",
+          "*.addBatch",
+          "*.prepareStatement",
+          "*.createQuery",
+          "*.createNativeQuery",
+          "*.JdbcTemplate.query"
         ]
-      } 
-      ],
+      }
+    ],
     "path_concatenation": [
-        {
-          "type": "concat",
-          "requires_literal_any": ["/", "\\", ".."],
-          "requires_text_any": ["File", "Path", "Paths", "FileInputStream", "FileOutputStream", "Reader", "Writer"]
-        },
-        {
-          "type": "call_with_var_arg",
-          "call": ["Paths.get", "Path.of"]
-        },
-        {
-          "type": "call_with_var_arg",
-          "call": ["resolve", "resolveSibling"],
-          "requires_text_any": ["Path", "FileSystem"]
-        }
+      {
+        "type": "concat",
+        "requires_literal_any": [
+          "/",
+          "\\",
+          ".."
+        ],
+        "requires_text_any": [
+          "File",
+          "Path",
+          "Paths",
+          "FileInputStream",
+          "FileOutputStream",
+          "Reader",
+          "Writer"
+        ]
+      },
+      {
+        "type": "call_with_var_arg",
+        "call": [
+          "*.Paths.get",
+          "*.Path.of"
+        ]
+      },
+      {
+        "type": "call_with_var_arg",
+        "call": [
+          "*.resolve",
+          "*.resolveSibling"
+        ],
+        "requires_text_any": [
+          "Path",
+          "FileSystem"
+        ]
+      }
     ],
     "os_command_execution": [
-      {"type": "call_with_var_arg", "call": ["exec", "ProcessBuilder","command"]}
+      {
+        "type": "call_with_var_arg",
+        "call": [
+          "*.exec",
+          "*.ProcessBuilder",
+          "*.command"
+        ]
+      }
     ],
     "file_system_access": [
-      {"type": "call_with_var_arg", 
-      "call": ["FileInputStream", "FileOutputStream", "FileReader", "FileWriter", "RandomAccessFile",
-              "newInputStream", "readAllBytes", "write", "delete", "copy", "move",
-              "createNewFile", "File"
-      ]}],
-  "html_output": [
-        {
-          "type": "call_with_var_arg",
-          "call": ["print", "println", "write", "sendError"],
-          "requires_text_any": ["response", "getWriter", "HttpServletResponse", "JspWriter", "out"]
-        },
-        {
-          "type": "call_with_var_arg",
-          "call": ["ok", "body"],
-          "requires_text_any": ["ResponseEntity", "RestResponse"]
-        },
-        {
-          "type": "call_with_var_arg",
-          "call": ["setViewName", "addObject"],
-          "requires_text_any": ["ModelAndView"]
-        }
-      ],
+      {
+        "type": "call_with_var_arg",
+        "call": [
+          "*.FileInputStream",
+          "*.FileOutputStream",
+          "*.FileReader",
+          "*.FileWriter",
+          "*.RandomAccessFile",
+          "*.File",
+          "*.Files.newInputStream",
+          "*.Files.readAllBytes",
+          "*.Files.write",
+          "*.Files.delete",
+          "*.Files.copy",
+          "*.Files.move",
+          "*.File.delete",
+          "*.File.createNewFile"
+        ]
+      }
+    ],
+    "html_output": [
+      {
+        "type": "call_with_var_arg",
+        "call": [
+          "*.print",
+          "*.println",
+          "*.write",
+          "*.HttpServletResponse.sendError"
+        ],
+        "requires_text_any": [
+          "response",
+          "getWriter",
+          "HttpServletResponse",
+          "JspWriter",
+          "out"
+        ]
+      },
+      {
+        "type": "call_with_var_arg",
+        "call": [
+          "*.ok",
+          "*.body"
+        ],
+        "requires_text_any": [
+          "ResponseEntity",
+          "RestResponse"
+        ]
+      },
+      {
+        "type": "call_with_var_arg",
+        "call": [
+          "*.setViewName",
+          "*.addObject"
+        ],
+        "requires_text_any": [
+          "ModelAndView"
+        ]
+      }
+    ],
     "http_redirect": [
       {
         "type": "call_with_var_arg",
-        "call": ["sendRedirect"]
+        "call": [
+          "*.HttpServletResponse.sendRedirect"
+        ]
       }
     ],
     "http_request": [
       {
         "type": "call_with_var_arg",
-        "call": ["HttpURLConnection", "URL.openConnection", "openStream", "RestTemplate.getForObject", 
-                "RestTemplate.postForObject", "WebClient.get", "WebClient.post","HttpClient.newHttpClient"
+        "call": [
+          "*.URL",
+          "*.URI.create",
+          "*.URL.openConnection",
+          "*.openStream",
+          "*.RestTemplate.getForObject",
+          "*.RestTemplate.postForObject",
+          "*.WebClient.get",
+          "*.WebClient.post"
         ]
       }
     ],
     "http_header_setters": [
       {
         "type": "call_with_var_arg",
-        "call":["HttpServletResponse.addHeader","HttpServletResponse.setHeader","HttpServletResponse.addCookie"]
+        "call": [
+          "*.HttpServletResponse.addHeader",
+          "*.HttpServletResponse.setHeader",
+          "*.HttpServletResponse.addCookie"
+        ]
       },
       {
         "type": "call_with_var_arg",
-        "call": ["add","set"],
-        "requires_text_any": ["ServerHttpResponse.getHeaders","getHeaders"]
+        "call": [
+          "*.add",
+          "*.set"
+        ],
+        "requires_text_any": [
+          "ServerHttpResponse.getHeaders",
+          "getHeaders"
+        ]
       }
-
-  ],
-  "ldap_execution": [
+    ],
+    "ldap_execution": [
       {
         "type": "call_with_var_arg",
-        "call": ["DirContext.search","InitialDirContext.search","LdapContext.search","InitialLdapContext.search"]
+        "call": [
+          "*.DirContext.search",
+          "*.InitialDirContext.search",
+          "*.LdapContext.search",
+          "*.InitialLdapContext.search"
+        ]
       }
     ],
     "csv_writing": [
       {
         "type": "call_with_var_arg",
-        "call": ["printRecord","writeNext","writeAll"]
+        "call": [
+          "*.printRecord",
+          "*.writeNext",
+          "*.writeAll"
+        ]
       }
     ],
     "exception_stringify_calls": [
-      {"type": "method_call", "method": "getMessage"},
-      {"type": "method_call", "method": "toString"},
-      {"type": "method_call", "method": "getLocalizedMessage"},
-      {"type": "method_call", "method": "printStackTrace"}
+      {
+        "type": "method_call",
+        "method": "getMessage"
+      },
+      {
+        "type": "method_call",
+        "method": "toString"
+      },
+      {
+        "type": "method_call",
+        "method": "getLocalizedMessage"
+      },
+      {
+        "type": "method_call",
+        "method": "printStackTrace"
+      }
     ],
     "logging_functions": [
       {
         "type": "call_with_var_arg",
-        "call": ["Logger.info", "Logger.error", "Logger.warn", "Logger.warning","System.out.println", "System.err.println"]
+        "call": [
+          "*.Logger.info",
+          "*.Logger.error",
+          "*.Logger.warn",
+          "*.Logger.warning",
+          "*.Logger.severe",
+          "*.Logger.debug",
+          "*.Logger.trace",
+          "System.out.println",
+          "System.err.println"
+        ]
       }
     ],
     "unbounded_resource_read": [
-      {"type": "method_call", "method": "read"},
-      {"type": "method_call", "method": "readAllBytes"},
-      {"type": "method_call", "method": "getBytes"},
-      {"type": "method_call", "method": "extractall"},
-      {"type": "method_call", "method": "transferTo"}
+      {
+        "type": "method_call",
+        "method": "read"
+      },
+      {
+        "type": "method_call",
+        "method": "readAllBytes"
+      },
+      {
+        "type": "method_call",
+        "method": "getBytes"
+      },
+      {
+        "type": "method_call",
+        "method": "transferTo"
+      }
     ],
     "format_string_functions": [
       {
-        "type": "call_with_var_arg", 
-        "call": ["String.format", "System.out.printf", "System.err.printf", "PrintStream.printf", "Formatter.format", "System.out.format", "PrintStream.format"]
+        "type": "call_with_var_arg",
+        "call": [
+          "String.format",
+          "System.out.printf",
+          "System.err.printf",
+          "System.out.format",
+          "*.PrintStream.printf",
+          "*.PrintStream.format",
+          "*.Formatter.format"
+        ]
       }
     ],
     "file_write": [
-      {"type": "method_call", "method": "transferTo"}
+      {
+        "type": "method_call",
+        "method": "transferTo"
+      }
     ],
     "resource_injection_sinks": [
       {
         "type": "call_with_var_arg",
-        "call": ["Class.forName","ClassLoader.loadClass","ClassLoader.getResource","ClassLoader.getResourceAsStream",
-                  "ResourceBundle.getBundle","ServletContext.getResource","ServletContext.getResourceAsStream"
-                ]
+        "call": [
+          "Class.forName",
+          "ClassLoader.loadClass",
+          "ClassLoader.getResource",
+          "ClassLoader.getResourceAsStream",
+          "*.ResourceBundle.getBundle",
+          "*.ServletContext.getResource",
+          "*.ServletContext.getResourceAsStream"
+        ]
       }
     ],
     "null_dereference": [
@@ -166,280 +337,584 @@
     "authentication_sinks": [
       {
         "type": "call_with_var_arg",
-        "call": ["LoginContext.login", "AuthenticationManager.authenticate", "HttpServletRequest.login","Subject.doAs"]
+        "call": [
+          "*.LoginContext.login",
+          "*.AuthenticationManager.authenticate",
+          "*.HttpServletRequest.login",
+          "*.Subject.doAs",
+          "*.DriverManager.getConnection"
+        ]
       }
     ],
     "array_index_use": [
-    {
-      "type": "matches_xpath",
-      "xpath": "ancestor::src:index[not(parent::src:name/parent::src:decl)][not(parent::src:name/preceding-sibling::*[1][self::src:operator and text()='new'])]"
-    }
-  ],
-  "array_alloc_size": [
-    {"type": "matches_xpath",
-     "xpath": "ancestor::src:index[parent::src:name/preceding-sibling::*[1][self::src:operator and text()='new']]"}
-  ],
-  "loop_condition": [{"type": "loop_condition"}]
+      {
+        "type": "matches_xpath",
+        "xpath": "ancestor::src:index[not(parent::src:name/parent::src:decl)][not(parent::src:name/preceding-sibling::*[1][self::src:operator and text()='new'])]"
+      }
+    ],
+    "array_alloc_size": [
+      {
+        "type": "matches_xpath",
+        "xpath": "ancestor::src:index[parent::src:name/preceding-sibling::*[1][self::src:operator and text()='new']]"
+      }
+    ],
+    "loop_condition": [
+      {
+        "type": "loop_condition"
+      }
+    ]
   },
   "forbidden_functions": {
     "socket_primitives": [
-      "Socket","ServerSocket","DatagramSocket","SocketChannel",
-      "ServerSocketChannel","Socket.connect","ServerSocket.bind","ServerSocket.accept",
-      "Socket.getInputStream","Socket.getOutputStream","DatagramSocket.send","DatagramSocket.receive"
+      "*.Socket",
+      "*.ServerSocket",
+      "*.DatagramSocket",
+      "*.SocketChannel",
+      "*.ServerSocketChannel",
+      "*.Socket.connect",
+      "*.ServerSocket.bind",
+      "*.ServerSocket.accept",
+      "*.Socket.getInputStream",
+      "*.Socket.getOutputStream",
+      "*.DatagramSocket.send",
+      "*.DatagramSocket.receive"
     ],
     "weak_hash_functions": [
-          {
-            "type": "call_matches_ast",
-            "call": "MessageDigest.getInstance",
-            "contains_string_containing": ["MD5","MD4","MD2","SHA-1","SHA1"]
-          }
-        ],
-    "weak_ciphers_and_modes": [{
-          "type": "call_matches_ast",
-          "call": "Cipher.getInstance",
-          "contains_string_containing": ["DES", "DESede", "RC2", "RC4", "Blowfish", "ECB"]
-        }],
-    "weak_prngs": ["java.util.Random","Math.random","Random"],
+      {
+        "type": "call_matches_ast",
+        "call": "*.MessageDigest.getInstance",
+        "case_insensitive": true,
+        "contains_string_containing": [
+          "MD5",
+          "MD4",
+          "MD2",
+          "SHA-1",
+          "SHA1"
+        ]
+      }
+    ],
+    "weak_ciphers_and_modes": [
+      {
+        "type": "call_matches_ast",
+        "call": "*.Cipher.getInstance",
+        "case_insensitive": true,
+        "contains_string_containing": [
+          "DES",
+          "DESede",
+          "RC2",
+          "RC4",
+          "Blowfish",
+          "ECB"
+        ]
+      }
+    ],
+    "weak_prngs": [
+      "Math.random",
+      "*.Random"
+    ],
     "weak_key_generation": [
       {
         "type": "call_matches_ast",
-        "call": ["KeyPairGenerator.initialize", "KeyGenerator.init"],
+        "call": [
+          "*.KeyPairGenerator.initialize",
+          "*.KeyGenerator.init"
+        ],
         "arg_less_than": 2048
       }
     ],
     "dynamic_code_execution": [
-      "ScriptEngine.eval",
-      "GroovyShell.evaluate",
-      "ExpressionParser.parseExpression",
-      "Ognl.getValue",
-      "MVEL.eval"
+      "*.ScriptEngine.eval",
+      "*.GroovyShell.evaluate",
+      "*.ExpressionParser.parseExpression",
+      "*.Ognl.getValue",
+      "*.MVEL.eval"
     ],
     "unsafe_xml_parsers": [
-      "DocumentBuilderFactory.newDocumentBuilder",
-      "SAXParserFactory.newSAXParser",
-      "XMLInputFactory.createXMLStreamReader",
-      "SchemaFactory.newSchema"
+      "*.DocumentBuilderFactory.newDocumentBuilder",
+      "*.SAXParserFactory.newSAXParser",
+      "*.XMLInputFactory.createXMLStreamReader",
+      "*.SchemaFactory.newSchema"
     ],
     "unsafe_deserializers": [
-      "ObjectInputStream.readObject","ObjectInputStream.readUnshared",
-      "XMLDecoder.readObject","XStream.fromXML","Yaml.load",
-      "Kryo.readObject","Kryo.readClassAndObject"
+      "*.ObjectInputStream.readObject",
+      "*.ObjectInputStream.readUnshared",
+      "*.XMLDecoder.readObject",
+      "*.XStream.fromXML",
+      "*.Yaml.load",
+      "*.Kryo.readObject",
+      "*.Kryo.readClassAndObject"
     ],
     "insecure_temp_functions": [
       {
         "type": "call_matches_ast",
-        "call": ["File"],
-        "contains_string_containing": ["java.io.tmpdir"]
+        "call": [
+          "*.File"
+        ],
+        "contains_string_containing": [
+          "java.io.tmpdir"
+        ]
       }
     ],
-    "insecure_cookie_configuration":["HttpServletResponse.addCookie"],
-    "insecure_network_protocols": ["FTPClient","TelnetClient","POP3Client"],
+    "insecure_cookie_configuration": [
+      "*.HttpServletResponse.addCookie"
+    ],
+    "insecure_network_protocols": [
+      "*.FTPClient",
+      "*.TelnetClient",
+      "*.POP3Client"
+    ],
     "logging_calls_with_sensitive_content": [
       {
         "type": "call_matches_ast",
-        "call": ["logging.debug", "logging.info", "logging.warning", "logging.error",
-                  "logger.debug", "logger.info", "logger.warning", "logger.error"],
-        "contains_any_name": ["password", "Secret",
-                            "auth_token", "access_token", "api_key", "apikey", "private_key"]
+        "call": [
+          "*.Logger.debug",
+          "*.Logger.info",
+          "*.Logger.warn",
+          "*.Logger.warning",
+          "*.Logger.error",
+          "*.Logger.severe",
+          "*.Logger.trace"
+        ],
+        "contains_any_name": [
+          "password",
+          "Secret",
+          "auth_token",
+          "authtoken",
+          "access_token",
+          "accesstoken",
+          "api_key",
+          "apikey",
+          "private_key",
+          "privatekey"
+        ]
       }
     ],
-    "obsolete_functions": ["Thread.stop", "Thread.suspend", "Thread.resume", "Runtime.exec","DataInputStream.readLine"],
+    "obsolete_functions": [
+      "Thread.stop",
+      "Thread.suspend",
+      "Thread.resume",
+      "*.DataInputStream.readLine"
+    ],
     "weak_password_hashing": [
-        {
-          "type": "call_matches_ast",
-          "call": ["MessageDigest.getInstance"],
-          "contains_string_containing": ["MD5", "SHA-1"],
-          "contains_any_name": ["password", "passwd", "pwd"]
-        }
-      ],
-      "return_value_must_be_checked": ["File.delete","File.mkdir","File.mkdirs","File.createNewFile","File.renameTo","File.setExecutable","File.setReadable",
-                                      "File.setWritable","File.setReadOnly","String.replace","String.replaceAll","String.replaceFirst","String.trim",
-                                      "URLEncoder.encode","Signature.verify","MessageDigest.isEqual","Lock.tryLock","Semaphore.tryAcquire","Matcher.matches","Matcher.find"
-      ],
-      "buffer_overflow_function":[],
-      "insecure_default_permissions":[]
-
+      {
+        "type": "call_matches_ast",
+        "call": [
+          "*.MessageDigest.getInstance"
+        ],
+        "case_insensitive": true,
+        "contains_string_containing": [
+          "MD5",
+          "SHA-1"
+        ],
+        "contains_any_name": [
+          "password",
+          "passwd",
+          "pwd"
+        ]
+      }
+    ],
+    "return_value_must_be_checked": [
+      "*.File.delete",
+      "*.File.mkdir",
+      "*.File.mkdirs",
+      "*.File.createNewFile",
+      "*.File.renameTo",
+      "*.File.setExecutable",
+      "*.File.setReadable",
+      "*.File.setWritable",
+      "*.File.setReadOnly",
+      "String.replace",
+      "String.replaceAll",
+      "String.replaceFirst",
+      "String.trim",
+      "*.URLEncoder.encode",
+      "*.Signature.verify",
+      "*.MessageDigest.isEqual",
+      "*.Lock.tryLock",
+      "*.Semaphore.tryAcquire",
+      "*.Matcher.matches",
+      "*.Matcher.find"
+    ],
+    "buffer_overflow_function": [],
+    "insecure_default_permissions": []
   },
   "excluded_functions": {
-      "safe_prng_exceptions": ["SecureRandom"],
-      "eval_false_positive_exceptions": []
+    "safe_prng_exceptions": [
+      "*.SecureRandom"
+    ],
+    "eval_false_positive_exceptions": []
   },
   "forbidden_imports": {
-    "weak_crypto_modules": ["org.apache.commons.codec.digest.DigestUtils"]
-  },
-  "xpath_rules":{
-      "off_by_one_loop_condition": [
-        ".//src:while[./src:condition//src:operator[text()='<='] and ./src:condition//src:name[text()='length']]",
-        ".//src:while[.//src:condition//src:operator[text()='<='] and .//src:condition//src:call[.//src:name[text()='size']]]"
+    "weak_crypto_modules": [
+      "org.apache.commons.codec.digest.DigestUtils"
     ]
   },
-  "sanitizers":{
-    "cast_to_integer": ["Integer.parseInt", "Integer.valueOf","Long.parseLong","Long.valueOf"],
-    "path_sanitizers": ["getCanonicalPath", "getCanonicalFile", "FilenameUtils.getName"],
-    "html_escape": ["HtmlUtils.htmlEscape","StringEscapeUtils.escapeHtml4","encodeForHTML"],
-    "XSS_sanitizers": ["HtmlUtils.htmlEscape","StringEscapeUtils.escapeHtml4","encodeForHTML"],
-    "url_encode_sanitizers": ["URLEncoder.encode"],
-    "crlf_sanitizers": ["encodeForHTTPHeader","URLEncoder.encode","StringUtils.replace","StringEscapeUtils.escapeHtml4","encodeForHTTPHeader" ],
-    "ldap_escape_sanitizers":["encodeForLDAP","encodeForDN","LdapEncoder.filterEncode","LdapEncoder.nameEncode"],
-    "crypto_decryption_functions": ["Cipher.doFinal", "Cipher.update"],
-    "shell_escape_sanitizers":[]
+  "xpath_rules": {
+    "off_by_one_loop_condition": [
+      ".//src:while[./src:condition//src:operator[text()='<='] and ./src:condition//src:name[text()='length']]",
+      ".//src:while[.//src:condition//src:operator[text()='<='] and .//src:condition//src:call[.//src:name[text()='size']]]"
+    ]
+  },
+  "sanitizers": {
+    "cast_to_integer": [
+      "Integer.parseInt",
+      "Integer.valueOf",
+      "Long.parseLong",
+      "Long.valueOf"
+    ],
+    "path_sanitizers": [
+      "*.getCanonicalPath",
+      "*.getCanonicalFile",
+      "*.FilenameUtils.getName"
+    ],
+    "html_escape": [
+      "*.HtmlUtils.htmlEscape",
+      "*.StringEscapeUtils.escapeHtml4",
+      "*.encodeForHTML"
+    ],
+    "XSS_sanitizers": [
+      "*.HtmlUtils.htmlEscape",
+      "*.StringEscapeUtils.escapeHtml4",
+      "*.encodeForHTML"
+    ],
+    "url_encode_sanitizers": [
+      "*.URLEncoder.encode"
+    ],
+    "crlf_sanitizers": [
+      "*.encodeForHTTPHeader",
+      "*.URLEncoder.encode",
+      "*.StringUtils.replace",
+      "*.StringEscapeUtils.escapeHtml4"
+    ],
+    "ldap_escape_sanitizers": [
+      "*.encodeForLDAP",
+      "*.encodeForDN",
+      "*.LdapEncoder.filterEncode",
+      "*.LdapEncoder.nameEncode"
+    ],
+    "crypto_decryption_functions": [
+      "*.Cipher.doFinal",
+      "*.Cipher.update"
+    ],
+    "shell_escape_sanitizers": []
   },
   "safe_contexts": {
-    "try_block": ["try"],
-    "if_block": ["if"],
+    "try_block": [
+      "try"
+    ],
+    "if_block": [
+      "if"
+    ],
     "safe_permission_defaults": [
-        {
-          "type": "matches_xpath",
-          "xpath": ".//src:call[.//src:name[text()='PosixFilePermissions']]"
-        }
-      ],
+      {
+        "type": "matches_xpath",
+        "xpath": ".//src:call[.//src:name[text()='PosixFilePermissions']]"
+      }
+    ],
     "secure_cookie_contexts": [
-          {
-            "type": "function_has_call_matching_ast",
-            "call": ["setSecure"],
-            "contains_booleans": ["true"]
-          }
+      {
+        "type": "function_has_call_matching_ast",
+        "call": [
+          "*.setSecure"
         ],
+        "contains_booleans": [
+          "true"
+        ]
+      }
+    ],
     "resource_safe_contexts": [
-        {"type": "function_has_file_size_check","size_properties": ["length", "getSize","size"]},
-        {"type": "binary_comparison", "operators": ["<", "<="], "left_exact": ["$VAR"]},
-        {"type": "binary_comparison", "operators": ["<", "<="], "right_exact": ["$VAR"]}
-      ],
-      "starttls_upgrade": [
-        {
-          "type": "function_has_call_matching_ast",
-          "call": ["execTLS"]
-        }
-      ],
-      "url_validation": [
-        {
-          "type": "condition_matches_xpath",
-          "scope": "enclosing",
-          "xpath": ".//src:call[.//src:name[last()][text()='isValid']][.//src:argument_list//src:name[text()='$VAR']]"
-        }
-      ],
-      "allowlist_validation": [
-        {
-          "type": "membership_check",
-          "scope": "enclosing",
-          "require_var_left": true,
-          "right_is_bare_identifier": true,
-          "allowed_negation": [false]
-        }
-      ],
-      "file_extension_validation": [
-        {
-          "type": "receiver_of_method_with_arg",
-          "method": "endsWith", 
-          "dangerous_values": [
-              ".php", ".php3", ".php4", ".php5",
-              ".exe", ".dll", ".so", ".sh", ".bat", ".cmd",
-              ".cgi", ".pl", ".py", ".jar"
-            ] 
-        }
-      ],
-      "bounds_checked_array_access": [
-                {"type": "binary_comparison", "operators": ["<", "<="], "left_exact": ["$VAR"], "right_not_exact": ["0"]},
-                {"type": "binary_comparison", "operators": [">", ">="], "right_exact": ["$VAR"], "left_not_exact": ["0"]}
+      {
+        "type": "function_has_file_size_check",
+        "size_properties": [
+          "length",
+          "getSize",
+          "size"
+        ]
+      },
+      {
+        "type": "binary_comparison",
+        "operators": [
+          "<",
+          "<="
         ],
-      "manual_string_sanitization":[
-        {
-          "type": "function_has_method_call",
-          "method": "replace",
-          "args_contain": [";", "&"]
+        "left_exact": [
+          "$VAR"
+        ]
+      },
+      {
+        "type": "binary_comparison",
+        "operators": [
+          "<",
+          "<="
+        ],
+        "right_exact": [
+          "$VAR"
+        ]
+      }
+    ],
+    "starttls_upgrade": [
+      {
+        "type": "function_has_call_matching_ast",
+        "call": [
+          "*.execTLS"
+        ]
+      }
+    ],
+    "url_validation": [
+      {
+        "type": "condition_matches_xpath",
+        "scope": "enclosing",
+        "xpath": ".//src:call[.//src:name[last()][text()='isValid']][.//src:argument_list//src:name[text()='$VAR']]"
+      }
+    ],
+    "allowlist_validation": [
+      {
+        "type": "membership_check",
+        "scope": "enclosing",
+        "require_var_left": true,
+        "right_is_bare_identifier": true,
+        "allowed_negation": [
+          false
+        ]
+      }
+    ],
+    "file_extension_validation": [
+      {
+        "type": "receiver_of_method_with_arg",
+        "method": "endsWith",
+        "dangerous_values": [
+          ".php",
+          ".php3",
+          ".php4",
+          ".php5",
+          ".exe",
+          ".dll",
+          ".so",
+          ".sh",
+          ".bat",
+          ".cmd",
+          ".cgi",
+          ".pl",
+          ".py",
+          ".jar"
+        ]
+      }
+    ],
+    "bounds_checked_array_access": [
+      {
+        "type": "binary_comparison",
+        "operators": [
+          "<",
+          "<="
+        ],
+        "left_exact": [
+          "$VAR"
+        ],
+        "right_not_exact": [
+          "0"
+        ]
+      },
+      {
+        "type": "binary_comparison",
+        "operators": [
+          ">",
+          ">="
+        ],
+        "right_exact": [
+          "$VAR"
+        ],
+        "left_not_exact": [
+          "0"
+        ]
+      }
+    ],
+    "manual_string_sanitization": [
+      {
+        "type": "function_has_method_call",
+        "method": "replace",
+        "args_contain": [
+          ";",
+          "&"
+        ]
+      }
+    ],
+    "null_checked": [
+      {
+        "type": "var_truthiness_check",
+        "scope": "enclosing",
+        "require_state": "truthy"
+      },
+      {
+        "type": "var_falsy_guard_clause"
+      }
+    ],
+    "safe_metadata_extraction": [
+      {
+        "type": "receiver_of_method",
+        "method": "getSize"
+      },
+      {
+        "type": "receiver_of_method",
+        "method": "getContentType"
+      }
+    ],
+    "xxe_safe_configuration": [
+      {
+        "type": "function_has_call_matching_ast",
+        "call": [
+          "*.setFeature"
+        ],
+        "contains_string_containing": [
+          "disallow-doctype-decl"
+        ]
+      },
+      {
+        "type": "function_has_call_matching_ast",
+        "call": [
+          "*.setFeature"
+        ],
+        "contains_names": [
+          "XMLConstants.FEATURE_SECURE_PROCESSING"
+        ]
+      }
+    ],
+    "format_string_position": [
+      {
+        "type": "check_format_arg_position",
+        "vulnerable_indices": {
+          "*.format": 0,
+          "*.printf": 0
         }
-      ],
-      "null_checked": [
-        {"type": "var_truthiness_check", "scope": "enclosing", "require_state": "truthy"},
-        {"type": "var_falsy_guard_clause"}
-      ],
-      "safe_metadata_extraction": [
-        {"type": "receiver_of_method", "method": "getSize"},
-        {"type": "receiver_of_method", "method": "getContentType"}
-      ],
-      "xxe_safe_configuration": [
-        {"type": "function_has_call_matching_ast", "call": ["setFeature"], "contains_string_containing": ["disallow-doctype-decl"]},
-        {"type": "function_has_call_matching_ast","call": ["setFeature"],"contains_names": ["XMLConstants.FEATURE_SECURE_PROCESSING"]}
-      ],
-      "format_string_position": [
-        {
-            "type": "check_format_arg_position",
-            "vulnerable_indices": {
-              "String.format": 0,
-              "printf": 0,
-              "Formatter.format": 0,
-              "System.out.format": 0,
-              "PrintStream.format": 0,
-              "format": 0
-            }
-        }
-      ],
-      "return_value_used": [
-        {
-          "type": "node_matches_xpath",
-          "xpath": "ancestor::src:condition or ancestor::src:return or ancestor::src:argument or ancestor::src:init or ancestor-or-self::*[preceding-sibling::src:operator[1][text()='=' or text()='+=' or text()='-=']]"
-        }
-      ],
-      "alloc_size_positive_checked": [
-        {"type": "binary_comparison", "operators": [">"],  "left_exact": ["$VAR"], "right_exact": ["0"]},
-        {"type": "binary_comparison", "operators": [">="], "left_exact": ["$VAR"], "right_exact": ["1"]},
-        {"type": "binary_comparison", "operators": ["<"],  "left_exact": ["0"], "right_exact": ["$VAR"]},
-        {"type": "binary_comparison", "operators": ["<="], "left_exact": ["1"], "right_exact": ["$VAR"]}
-      ],
-      "curl_non_url_option": [],
-      "sql_parameterization":[]
+      }
+    ],
+    "return_value_used": [
+      {
+        "type": "node_matches_xpath",
+        "xpath": "ancestor::src:condition or ancestor::src:return or ancestor::src:argument or ancestor::src:init or ancestor-or-self::*[preceding-sibling::src:operator[1][text()='=' or text()='+=' or text()='-=']]"
+      }
+    ],
+    "alloc_size_positive_checked": [
+      {
+        "type": "binary_comparison",
+        "operators": [
+          ">"
+        ],
+        "left_exact": [
+          "$VAR"
+        ],
+        "right_exact": [
+          "0"
+        ]
+      },
+      {
+        "type": "binary_comparison",
+        "operators": [
+          ">="
+        ],
+        "left_exact": [
+          "$VAR"
+        ],
+        "right_exact": [
+          "1"
+        ]
+      },
+      {
+        "type": "binary_comparison",
+        "operators": [
+          "<"
+        ],
+        "left_exact": [
+          "0"
+        ],
+        "right_exact": [
+          "$VAR"
+        ]
+      },
+      {
+        "type": "binary_comparison",
+        "operators": [
+          "<="
+        ],
+        "left_exact": [
+          "1"
+        ],
+        "right_exact": [
+          "$VAR"
+        ]
+      }
+    ],
+    "curl_non_url_option": [],
+    "sql_parameterization": []
   },
   "patterns": {
     "active_debug": {
       "forbidden_functions": [
         {
           "type": "call_matches_ast",
-          "call": ["setDebug", "enableDebug"],
+          "call": [
+            "*.setDebug",
+            "*.enableDebug"
+          ],
           "exact_args_count": 1,
-          "contains_booleans": ["true"]
+          "contains_booleans": [
+            "true"
+          ]
         }
       ]
     },
     "insecure_permission_assignment": {
       "forbidden_functions": [
-          "Files.createTempDirectory",
-          {
-            "type": "call_matches_ast",
-            "call": ["setWritable", "setExecutable", "setReadable"],
-            "exact_args_count": 2,
-            "args_boolean_sequence": ["true", "false"]
-          }
-        ]
-      },
-      "insecure_certificate_validation": {
-        "bad_function_defs": [
-          {
-            "name": "verify",
-            "param": "hostname",
-            "return_expr": "true"
-          }
-        ],
-        "forbidden_function_defs": [
-            {
-              "name": "checkClientTrusted",
-              "exact_body": "{}"
-            },
-            {
-              "name": "checkServerTrusted",
-              "exact_body": "{}"
-            }
+        "*.Files.createTempDirectory",
+        {
+          "type": "call_matches_ast",
+          "call": [
+            "*.setWritable",
+            "*.setExecutable",
+            "*.setReadable"
+          ],
+          "exact_args_count": 2,
+          "args_boolean_sequence": [
+            "true",
+            "false"
           ]
+        }
+      ]
+    },
+    "insecure_certificate_validation": {
+      "bad_function_defs": [
+        {
+          "name": "verify",
+          "param": "hostname",
+          "return_expr": "true"
+        }
+      ],
+      "forbidden_function_defs": [
+        {
+          "name": "checkClientTrusted",
+          "exact_body": "{}"
+        },
+        {
+          "name": "checkServerTrusted",
+          "exact_body": "{}"
+        }
+      ]
     },
     "string_to_int_propagation": {
-      "propagate_only_through_calls": ["parseInt", "parseLong", "valueOf", "trim", "strip"]
+      "propagate_only_through_calls": [
+        "*.parseInt",
+        "*.parseLong",
+        "*.valueOf",
+        "*.trim",
+        "*.strip"
+      ]
     },
     "assignment_in_condition": {
-        "xpath_rules": [
-          ".//src:condition/src:expr[src:operator[text()='='] and not(src:operator[text()='==' or text()='!=' or text()='<' or text()='>' or text()='<=' or text()='>=' or text()='&&' or text()='||'])]"
-        ]
-      },
-    "unsafe_deserialization_kwargs":{},
-    "unsafe_dict_access":{},
-    "use_after_free_check":{}
+      "xpath_rules": [
+        ".//src:condition/src:expr[src:operator[text()='='] and not(src:operator[text()='==' or text()='!=' or text()='<' or text()='>' or text()='<=' or text()='>=' or text()='&&' or text()='||'])]"
+      ]
+    },
+    "unsafe_deserialization_kwargs": {},
+    "unsafe_dict_access": {},
+    "use_after_free_check": {}
   }
 }
