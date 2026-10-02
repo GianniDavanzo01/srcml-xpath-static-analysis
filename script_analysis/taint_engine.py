@@ -24,6 +24,37 @@ from unit_context import build_assign_infos
 
 PSEUDO_SOURCES = {"function_parameters", "exception_variable"}
 
+_COND_ANCESTORS = (
+    "ancestor::*[self::src:if or self::src:else or self::src:while or "
+    "self::src:for or self::src:do or self::src:switch or "
+    "self::src:try or self::src:catch or self::src:finally]"
+)
+
+def _sanitized_reassign_reaches(uso, var, scope_node, assign_infos, tainted_names,
+                                sanitizers, adapter, imports) -> bool:
+    """True se l'ultima assegnazione a `var` prima di `uso`:
+       - non propaga taint (ogni nome taintato nell'RHS e' sanificato),
+       - contiene almeno un nome passato da un sanitizer,
+       - domina l'uso (nessun if/else/ciclo/catch che racchiuda lei ma non l'uso)."""
+    key = _pos_key(uso)
+    prior = [i for i in assign_infos
+             if i.var == var and i.scope is scope_node and _pos_key(i.stmt) < key]
+    if not prior:
+        return False
+    last = max(prior, key=lambda i: _pos_key(i.stmt))
+
+    saw_sanitized = False
+    for text, n in last.rhs_names:
+        if is_sanitized(n, sanitizers, adapter, imports):
+            saw_sanitized = True
+        elif text in tainted_names:
+            return False          # un valore taintato arriva ancora non sanificato
+    if not saw_sanitized:
+        return False
+
+    anc = set(uso.iterancestors())
+    return all(c in anc for c in last.stmt.xpath(_COND_ANCESTORS, namespaces=NS))
+
 
 def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> list:
     adapter = adapter or PythonAdapter()
@@ -346,6 +377,12 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
 
             if is_in_safe_context(uso, safe_contexts, var, adapter, imports):
                 continue
+
+            if rule.get("sanitizer_kills_taint",True):
+                tainted_names = {v for v, s in tainted_vars_with_scope if s is scope_node}
+                if _sanitized_reassign_reaches(uso, var, scope_node, assign_infos,
+                                               tainted_names, sanitizers, adapter, imports):
+                    continue
 
             if is_sanitized(uso, sanitizers, adapter, imports):
                 continue
