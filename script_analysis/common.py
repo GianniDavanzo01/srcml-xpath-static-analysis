@@ -61,6 +61,14 @@ def call_lookup_keys(call_name: str) -> list:
 
 # ---------------------------------------------------------------
 
+def function_nodes(tree, adapter, name=None):
+    """Nodi funzione/costruttore dello scope, secondo i tag dell'adapter.
+    Se `name` è dato, filtra per nome dichiarato."""
+    cond = " or ".join(f"self::src:{t}" for t in adapter.function_tags())
+    if name is None:
+        return tree.xpath(f".//*[{cond}]", namespaces=NS)
+    return tree.xpath(f".//*[({cond}) and src:name[text()=$n]]", namespaces=NS, n=name)
+
 def in_opaque_tag(node, adapter) -> bool:
     """True se `node` sta dentro un costrutto che non propaga taint (es. sizeof)."""
     tags = adapter.taint_opaque_tags()

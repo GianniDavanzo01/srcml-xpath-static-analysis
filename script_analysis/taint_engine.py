@@ -53,6 +53,9 @@ def _sanitized_reassign_reaches(uso, var, scope_node, assign_infos, tainted_name
 def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
     macros = macro_map(imports)
 
+    decl_tags = adapter.function_tags() + adapter.class_tags()
+    decl_name_xpath = "parent::*[" + " or ".join(f"self::src:{t}" for t in decl_tags) + "]"
+
     findings = []
     sources = rule.get("sources", [])
     source_form = rule.get("source_form")
@@ -363,9 +366,7 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
             # Filtri per ignorare dichiarazioni e definizioni (Evita FP sulle firme delle funzioni)
             if uso.xpath("ancestor::src:parameter", namespaces=NS):
                 continue
-            if uso.xpath("parent::src:function", namespaces=NS):
-                continue
-            if uso.xpath("parent::src:class", namespaces=NS):
+            if uso.xpath(decl_name_xpath, namespaces=NS):
                 continue
 
             # Verifica vulnerabilità (Sink, Mitigazioni, Sanitizzazioni)

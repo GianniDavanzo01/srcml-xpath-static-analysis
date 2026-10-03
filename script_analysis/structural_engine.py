@@ -7,7 +7,7 @@ Motore Strutturale
 import re
 
 from common import NS, get_call_name, build_finding, call_arguments_match_ast, check_required_imports,_pos_key, find_assignments,_is_pure_literal_expr,  \
-assignment_pairs, enclosing_scope, extract_output_buffer_name, node_snippet, call_matches, call_lookup_keys, _norm
+assignment_pairs, enclosing_scope, extract_output_buffer_name, node_snippet, call_matches, call_lookup_keys, function_nodes
 from safe_context_matchers import is_in_safe_context
 
 
@@ -167,7 +167,9 @@ def _run_forbidden_function_defs(tree, rule, findings, adapter, imports):
         if not target_name:
             continue
 
-        for func_node in tree.xpath(f".//src:function[src:name[text()='{target_name}']]", namespaces=NS):
+        fn = " or ".join(f"self::src:{t}" for t in adapter.function_tags())
+        noop = " or ".join(f"self::src:{t}" for t in ["comment"] + adapter.noop_statement_tags())
+        for func_node in function_nodes(tree, adapter, name=target_name):
             if is_async:
                 modifiers = func_node.xpath("./src:type/src:modifier[text()='async']", namespaces=NS)
                 if not modifiers:
@@ -182,11 +184,7 @@ def _run_forbidden_function_defs(tree, rule, findings, adapter, imports):
                 block_content = func_node.xpath("./src:block/src:block_content", namespaces=NS)
                 if not block_content:
                     continue
-
-                valid_stmts = block_content[0].xpath(
-                    "./*[not(self::src:comment or self::src:pass or self::src:return[not(src:expr)])]",
-                    namespaces=NS
-                )
+                valid_stmts = block_content[0].xpath(f"./*[not({noop})]", namespaces=NS)
                 if len(valid_stmts) > 0:
                     continue
 
@@ -336,6 +334,7 @@ def _run_empty_catch_blocks(tree, rule, findings, adapter, imports):
     safe_contexts = rule.get("safe_contexts", [])
     catches = tree.xpath(".//src:catch", namespaces=NS)
 
+    noop = " or ".join(f"self::src:{t}" for t in ["comment"] + adapter.noop_statement_tags())
     for catch in catches:
         block_content = catch.xpath("./src:block/src:block_content", namespaces=NS)
         if not block_content:
@@ -343,9 +342,7 @@ def _run_empty_catch_blocks(tree, rule, findings, adapter, imports):
 
         # Stesso criterio già usato per i corpi funzione vuoti:
         # nessun figlio reale a parte commenti (e 'pass' per Python)
-        valid_stmts = block_content[0].xpath(
-            "./*[not(self::src:comment or self::src:pass)]", namespaces=NS
-        )
+        valid_stmts = block_content[0].xpath(f"./*[not({noop})]", namespaces=NS)
         if len(valid_stmts) > 0:
             continue  # il blocco fa QUALCOSA: logging, re-raise, cleanup, ecc.
 
@@ -616,7 +613,7 @@ def run_structural_rule(tree, rule: dict, adapter, imports, ctx) -> list:
     if bad_function_defs:
         safe_contexts = rule.get("safe_contexts", [])
         
-        functions = tree.xpath(".//src:function", namespaces=NS)
+        functions = function_nodes(tree, adapter)
         for func in functions:
             name_nodes = func.xpath("./src:name", namespaces=NS)
             if not name_nodes:
@@ -663,7 +660,7 @@ def run_structural_rule(tree, rule: dict, adapter, imports, ctx) -> list:
     if bad_param_types:
         safe_contexts = rule.get("safe_contexts", [])
         
-        functions = tree.xpath(".//src:function", namespaces=NS)
+        functions = function_nodes(tree, adapter)
         for func in functions:
             params_nodes = func.xpath("./src:parameter_list/src:parameter", namespaces=NS)
             

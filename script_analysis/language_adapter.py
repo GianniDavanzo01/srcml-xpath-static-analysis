@@ -249,6 +249,15 @@ class LanguageAdapter(ABC):
     def flow_exit_calls(self) -> list:
         """Nomi di chiamate che terminano il flusso (exit, abort, ...)."""
 
+    @abstractmethod
+    def noop_statement_tags(self) -> list:
+        """Tag srcML di statement che non hanno effetto (es. 'pass' in Python)."""
+
+    @abstractmethod
+    def class_tags(self) -> list:
+        """Tag srcML che definiscono un tipo/classe (es. ['class']). Lista vuota se il
+        linguaggio non ha classi (C)."""
+
 
     def scope_axis(self, extra=()) -> str:
         """Asse XPath verso la funzione/costruttore che racchiude il nodo,
@@ -287,9 +296,9 @@ class LanguageAdapter(ABC):
 
     
     def _chain_receiver(self, call_node, ns):
-        """Call che precede call_node in una catena 'a().b()', altrimenti None."""
+        ops = " or ".join(f"text()='{o}'" for o in self.member_access_operator())
         op = call_node.xpath(
-            "preceding-sibling::*[1][self::src:operator and text()='.']", namespaces=ns)
+            f"preceding-sibling::*[1][self::src:operator and ({ops})]", namespaces=ns)
         if not op:
             return None
         prev = op[0].xpath("preceding-sibling::*[1][self::src:call]", namespaces=ns)
@@ -335,8 +344,10 @@ class PythonAdapter(LanguageAdapter):
             
         # Caso 2: srcML lo lascia come testo "libero" subito dopo il tag <name>
         tail_text = name_nodes[0].tail
-        if tail_text and "=" in tail_text:
-            return True
+        if tail_text:
+            t = tail_text.strip()
+            if t.startswith("=") and not t.startswith("=="):
+                return True
             
         return False
 
@@ -603,6 +614,8 @@ class PythonAdapter(LanguageAdapter):
     def lambda_tags(self):     return ["lambda"]
     def flow_exit_tags(self):  return ["return", "throw", "continue", "break"]
     def flow_exit_calls(self): return ["sys.exit", "exit", "quit", "os._exit"]
+    def noop_statement_tags(self): return ["pass"]
+    def class_tags(self): return ["class"]
 
 
     def resolve_name_text(self, text, imports):
@@ -980,9 +993,10 @@ class JavaAdapter(LanguageAdapter):
             return True
             
         # Inizializzazioni tramite 'new' (es. new ArrayList<>(Arrays.asList(...)))
-        new_obj = assignment_node.xpath(".//src:init/src:expr/src:call[.//src:name[text()='new']]", namespaces=ns)
-        if new_obj:
-            text = "".join(new_obj[0].itertext()).strip()
+        new_call = assignment_node.xpath(
+            ".//src:init/src:expr[src:operator[text()='new']]/src:call/src:name", namespaces=ns)
+        if new_call:
+            text = "".join(new_call[0].itertext()).strip()
             if "List" in text or "Set" in text or "Collection" in text or "Array" in text:
                 return True
                 
@@ -1024,6 +1038,8 @@ class JavaAdapter(LanguageAdapter):
     def lambda_tags(self):     return ["lambda"]
     def flow_exit_tags(self):  return ["return", "throw", "continue", "break"]
     def flow_exit_calls(self): return ["System.exit"]
+    def noop_statement_tags(self): return ["empty_stmt"]
+    def class_tags(self): return ["class"]
 
 
     def resolve_name_text(self, text, imports):
@@ -1471,6 +1487,8 @@ class CAdapter(LanguageAdapter):
     def lambda_tags(self):     return []
     def flow_exit_tags(self):  return ["return", "goto", "continue", "break"]
     def flow_exit_calls(self): return ["exit", "abort", "_exit", "_Exit"]
+    def noop_statement_tags(self): return ["empty_stmt"]
+    def class_tags(self): return []
 
 
     def source_call_args_propagate_to_return(self) -> bool:

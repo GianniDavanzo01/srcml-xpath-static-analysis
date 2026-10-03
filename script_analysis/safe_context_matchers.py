@@ -6,7 +6,8 @@ Predicati SAFE-CONTEXT per il motore. Include contesti semplici basati su string
 con il relativo registro e dispatcher.
 """
 
-from common import NS, get_call_name, call_arguments_match_ast, find_assignments,_pos_key, block_exits_flow, enclosing_scope, call_matches, own_literals
+from common import NS, get_call_name, call_arguments_match_ast, find_assignments,_pos_key, block_exits_flow, enclosing_scope, \
+    call_matches, own_literals, assignment_pairs
 
 
 #HELPER PER _safe_context_parametrized_query e _safe_context_function_has_method_call
@@ -480,8 +481,6 @@ def _safe_context_membership_check(node, spec: dict, var_name, adapter, imports)
     """{"type": "membership_check", "scope": "enclosing"}
         Verifica controllo di appartenenza (Allowlist).
     """
-    if not adapter:
-        return False
 
     search_scope = spec.get("scope", "function")
     target_for_assignments = _function_or_unit_scope(node, adapter)
@@ -503,16 +502,8 @@ def _safe_context_membership_check(node, spec: dict, var_name, adapter, imports)
 
     # 1. Analisi delle assegnazioni di collezioni (Totalmente guidata dai tag AST)
     if require_collection_assignment:
-        assign_op = adapter.assignment_operator_token()
-        assignments = target_for_assignments.xpath(f".//src:expr_stmt[.//src:operator[text()='{assign_op}']]", namespaces=NS)
-        
-        has_coll_assign = False
-        for assign in assignments:
-            # L'adapter analizza i tag specifici del linguaggio (es. <src:list> in Python, <src:array> in Java)
-            if adapter.is_collection_assignment(assign, NS):
-                has_coll_assign = True
-                break
-        if not has_coll_assign:
+        if not any(adapter.is_collection_assignment(stmt, NS)
+                for stmt, _, _ in assignment_pairs(target_for_assignments, adapter)):
             return False
 
     # 2. Analisi Strutturale delle Condizioni
