@@ -10,7 +10,7 @@ from common import NS, get_call_name, call_matches
 
 
 
-def _sink_string_pattern(uso, pattern_name: str, adapter=None, imports=None, fstring_nodes=None) -> bool:
+def _sink_string_pattern(uso, pattern_name: str, adapter, imports, fstring_nodes) -> bool:
     """
     Pattern strutturali basati sul TIPO di utilizzo della variabile.
     Totalmente guidati dal LanguageAdapter.
@@ -76,7 +76,7 @@ def _sink_string_pattern(uso, pattern_name: str, adapter=None, imports=None, fst
     return False
 
 
-def _sink_method_call(uso, spec: dict, fstring_nodes: list, adapter=None, imports=None) -> bool:
+def _sink_method_call(uso, spec: dict, fstring_nodes: list, adapter, imports) -> bool:
 
     """{"type": "method_call", "method": "endswith", "arg_contains": [".com/"]}
         Cerca l'uso della variabile taintata uso come receiver (chiamante) di uno specifico metodo.
@@ -117,7 +117,7 @@ def _sink_method_call(uso, spec: dict, fstring_nodes: list, adapter=None, import
     return False
 
 
-def _sink_call_with_var_arg(uso, spec, fstring_nodes, adapter=None, imports=None):
+def _sink_call_with_var_arg(uso, spec, fstring_nodes, adapter, imports):
     """
     {"type": "call_with_var_arg", "call": ["re.sub", "sub", "executeQuery"], "literal_contains": ["SELECT"]}
     """
@@ -137,7 +137,6 @@ def _sink_call_with_var_arg(uso, spec, fstring_nodes, adapter=None, imports=None
             continue
             
         # verifichiamo se è una delle chiamate ricercate
-        # if not any(call_name == c or call_name.endswith(f".{c}") for c in target_calls):
         if not any(call_matches(call_name,c) for c in target_calls):
             continue
 
@@ -169,7 +168,7 @@ def _sink_call_with_var_arg(uso, spec, fstring_nodes, adapter=None, imports=None
     return False
 
 
-def _sink_flat_call_arg(uso, spec: dict, fstring_nodes: list, adapter=None, imports=None) -> bool:
+def _sink_flat_call_arg(uso, spec: dict, fstring_nodes: list, adapter, imports) -> bool:
     """{"type": "flat_call_arg"}
         Rileva se la variabile taintata è passata come argomento a una call, purché quella call non contenga altre call annidate 
         tra i suoi argomenti (nessuna coppia di parentesi extra oltre a quella della call stessa).
@@ -188,7 +187,7 @@ def _sink_flat_call_arg(uso, spec: dict, fstring_nodes: list, adapter=None, impo
     return not nested_calls
 
 
-def _sink_return_method_call(uso, spec: dict, fstring_nodes: list, adapter=None, imports=None) -> bool:
+def _sink_return_method_call(uso, spec: dict, fstring_nodes: list, adapter, imports) -> bool:
 
     """{"type": "return_method_call", "method": "match"}"""
     method = spec.get("method")
@@ -216,7 +215,7 @@ def _sink_return_method_call(uso, spec: dict, fstring_nodes: list, adapter=None,
 
     
 
-def _sink_method_call_in_if(uso, spec: dict, fstring_nodes: list, adapter=None, imports=None) -> bool:
+def _sink_method_call_in_if(uso, spec: dict, fstring_nodes: list, adapter, imports) -> bool:
 
     """{"type": "method_call_in_if", "method": "locked"}"""
     method = spec.get("method")
@@ -240,7 +239,7 @@ def _sink_method_call_in_if(uso, spec: dict, fstring_nodes: list, adapter=None, 
 
 
 
-def _sink_keyword_argument(uso, spec: dict, fstring_nodes: list, adapter=None, imports=None) -> bool:
+def _sink_keyword_argument(uso, spec: dict, fstring_nodes: list, adapter, imports) -> bool:
     """{"type": "keyword_argument", "keyword": "env"}"""
     keyword = spec.get("keyword")
     if not keyword:
@@ -257,7 +256,7 @@ def _sink_keyword_argument(uso, spec: dict, fstring_nodes: list, adapter=None, i
 
     return False
 
-def _sink_subscript_key_assign_rhs(uso, spec: dict, fstring_nodes: list, adapter=None, imports=None) -> bool:
+def _sink_subscript_key_assign_rhs(uso, spec: dict, fstring_nodes: list, adapter, imports) -> bool:
     """{"type": "subscript_key_assign_rhs"}"""
     assign_op = adapter.assignment_operator_token()
     rhs_holder = uso.xpath(
@@ -278,7 +277,7 @@ def _sink_subscript_key_assign_rhs(uso, spec: dict, fstring_nodes: list, adapter
  
     return bool(lhs.xpath("./src:index//src:literal[@type='string']", namespaces=NS))
 
-def _sink_subscript_usage(uso, spec: dict, fstring_nodes: list, adapter=None, imports=None) -> bool:
+def _sink_subscript_usage(uso, spec: dict, fstring_nodes: list, adapter, imports) -> bool:
     """
     Motore universale per i sink basati su subscript.
     Accorpa: assign_or_concat, return, method_call.
@@ -322,7 +321,7 @@ def _sink_subscript_usage(uso, spec: dict, fstring_nodes: list, adapter=None, im
     return False
 
 
-def _sink_matches_xpath(uso, spec: dict, fstring_nodes: list, adapter=None, imports=None) -> bool:
+def _sink_matches_xpath(uso, spec: dict, fstring_nodes: list, adapter, imports) -> bool:
     """{"type": "matches_xpath", "xpath": "./src:index and (ancestor::src:argument or ancestor::src:index)"}"""
     xpath_query = spec.get("xpath")
     if not xpath_query:
@@ -331,7 +330,7 @@ def _sink_matches_xpath(uso, spec: dict, fstring_nodes: list, adapter=None, impo
     return bool(uso.xpath(xpath_query, namespaces=NS))
 
 
-def _sink_loop_condition(uso, spec: dict, fstring_nodes: list, adapter=None, imports=None) -> bool:
+def _sink_loop_condition(uso, spec: dict, fstring_nodes: list, adapter, imports) -> bool:
     """{"type": "loop_condition"}
     Verifica se la variabile taintata viene usata nel costrutto di controllo di un ciclo.
     Copre le condizioni classiche (while, do, for C/Java) e gli iteratori (for Python/Java).
@@ -359,7 +358,7 @@ SINK_MATCHERS = {
 }
 
 
-def match_sink(uso, sink_spec, fstring_nodes: list, adapter=None, imports=None) -> bool:
+def match_sink(uso, sink_spec, fstring_nodes: list, adapter, imports) -> bool:
     """
     Dispatcher potenziato: 
     Supporta pattern semplici (str), tipizzati (dict) e aggiunge un
@@ -433,7 +432,7 @@ def match_sink(uso, sink_spec, fstring_nodes: list, adapter=None, imports=None) 
     return True
 
 
-def matches_any_sink(uso, sinks, fstring_nodes, adapter=None, imports=None):
+def matches_any_sink(uso, sinks, fstring_nodes, adapter, imports):
     if not sinks:
         return True
     return any(match_sink(uso, s, fstring_nodes, adapter, imports) for s in sinks)

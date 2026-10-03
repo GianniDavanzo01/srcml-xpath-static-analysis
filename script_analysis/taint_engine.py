@@ -8,8 +8,6 @@ safe-context o un sanitizer.
 
 """
 
-import re
-
 from common import NS, build_finding, is_sanitized, source_present, get_call_name, _pos_key, name_text, get_scope_index,  \
     extract_output_buffer_name, enclosing_scope, in_opaque_tag, macro_map, expand_macro_name, call_matches
 from sink_matchers import matches_any_sink
@@ -52,7 +50,7 @@ def _sanitized_reassign_reaches(uso, var, scope_node, assign_infos, tainted_name
     return all(c in anc for c in last.stmt.xpath(_COND_ANCESTORS, namespaces=NS))
 
 
-def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> list:
+def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
     macros = macro_map(imports)
 
     findings = []
@@ -117,7 +115,6 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
     source_origin_pos = {}     # (var, id(scope)) -> posizione della prima call che riempie var
     source_call_nodes = set()  # call-sorgente: gli usi al loro interno non sono usi reali
 
-    # active_output_sources = {s for s in sources if s in output_arg_table}
     active_output_sources = {
     s for s in sources
     if s not in PSEUDO_SOURCES
@@ -138,7 +135,6 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
 
             source_call_nodes.add(call)
 
-            # spec = output_arg_table[matched]
 
             args = call.xpath("./src:argument_list/src:argument", namespaces=NS)
             idxs = set(spec.get("indices", []))
@@ -197,9 +193,7 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
                 return False
             for c in n.xpath("ancestor::src:call", namespaces=NS):
                 cname = get_call_name(c, adapter, imports)
-                # if not cname or not any(
-                #     cname == a or cname.endswith(f".{a}") for a in only_through
-                # ):
+
                 if not cname or not any(
                     call_matches(cname, a) for a in only_through
                 ):

@@ -84,7 +84,6 @@ def _run_source_operator_usage(tree, rule, findings, adapter, imports, catalog=N
                 # CASO 1: La sorgente è una funzione 
                 if sibling.tag.endswith("call"):
                     c_name = get_call_name(sibling, adapter, imports)
-                    # if c_name in source_names:
                     if any(call_matches(c_name, s) for s in source_names):
                         match_found = True
                         matched_source = c_name
@@ -366,18 +365,16 @@ def _check_use_after_free(tree, rule, findings, adapter, imports):
     if not spec:
         return
 
-    _adapter = adapter 
     target_calls = spec.get("deallocation_calls")
     safe_allocations = spec.get("safe_allocation_calls", [])
     safe_reassignments = spec.get("safe_reassignments", [])
 
     for node in tree.xpath(".//src:call", namespaces=NS):
-        call_name = get_call_name(node, _adapter, imports)
-        # if not call_name or call_name not in target_calls:
+        call_name = get_call_name(node, adapter, imports)
         if not call_name or not any(call_matches(call_name, t) for t in target_calls):
             continue
 
-        scope = enclosing_scope(node, _adapter)
+        scope = enclosing_scope(node, adapter)
         if scope is None:
             continue
 
@@ -398,7 +395,7 @@ def _check_use_after_free(tree, rule, findings, adapter, imports):
         node_key = _pos_key(node)
 
         # --- BACKWARD SCAN ---
-        all_assignments = find_assignments(scope, _adapter)
+        all_assignments = find_assignments(scope, adapter)
         prior_assignments = sorted(
             [(s, l, r) for s, l, r in all_assignments if _pos_key(s) < node_key],
             key=lambda t: _pos_key(t[0]),
@@ -438,13 +435,13 @@ def _check_use_after_free(tree, rule, findings, adapter, imports):
             )
             is_sanitized = False
 
-            if enclosing_stmt and _adapter.is_assignment(enclosing_stmt[0], NS):
-                lhs, rhs = _adapter.get_assignment_lhs_rhs(enclosing_stmt[0], NS)
+            if enclosing_stmt and adapter.is_assignment(enclosing_stmt[0], NS):
+                lhs, rhs = adapter.get_assignment_lhs_rhs(enclosing_stmt[0], NS)
                 if lhs is not None and rhs is not None and (uso in lhs.iter() or uso is lhs):
                     rhs_names = [n.text for n in rhs.xpath("descendant-or-self::src:name", namespaces=NS) if n.text]
                     if p not in rhs_names:
                         rhs_text = "".join(rhs.itertext()).strip()
-                        is_safe_val = _adapter.is_none_literal(rhs_text) or rhs_text in safe_reassignments
+                        is_safe_val = adapter.is_none_literal(rhs_text) or rhs_text in safe_reassignments
                         is_safe_alloc = False
 
                         if safe_allocations:
@@ -452,7 +449,7 @@ def _check_use_after_free(tree, rule, findings, adapter, imports):
                                 "descendant-or-self::src:call | following-sibling::src:call | "
                                 "following-sibling::*//src:call", namespaces=NS)
                             is_safe_alloc = any(
-                                (cn := get_call_name(c, _adapter, imports))
+                                (cn := get_call_name(c, adapter, imports))
                                 and any(call_matches(cn, a) for a in safe_allocations)
                                 for c in calls
                             )
@@ -466,7 +463,7 @@ def _check_use_after_free(tree, rule, findings, adapter, imports):
                 call_ancestor = uso.xpath("ancestor::src:call[1]", namespaces=NS)
                 is_double_free = False
                 if call_ancestor:
-                    ancestor_call_name = get_call_name(call_ancestor[0], _adapter, imports)
+                    ancestor_call_name = get_call_name(call_ancestor[0], adapter, imports)
 
                     if ancestor_call_name and any(call_matches(ancestor_call_name, t) for t in target_calls):
                         is_double_free = True
@@ -607,7 +604,7 @@ def run_structural_rule(tree, rule: dict, adapter, imports, ctx) -> list:
 
                     for fs in fstrings:
                         fs_text = "".join(fs.itertext()).strip()
-                        if adapter and adapter.is_interpolated_string(fs_text):
+                        if adapter.is_interpolated_string(fs_text):
                             has_fstring_with_interpolation = True
                             break
                     if has_fstring_with_interpolation:
@@ -829,7 +826,7 @@ def run_structural_rule(tree, rule: dict, adapter, imports, ctx) -> list:
                 findings.append(build_finding(rule, node))
 
     # Estrae il catalogo dal contesto (se disponibile)
-    catalog_obj = getattr(ctx, "catalog", {}) if ctx else {}
+    catalog_obj = ctx.catalog
     
     _run_source_operator_usage(tree, rule, findings, adapter, imports, catalog=catalog_obj)
 

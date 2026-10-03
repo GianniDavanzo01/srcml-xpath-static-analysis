@@ -79,7 +79,7 @@ def enclosing_scope(node, adapter):
     r = node.xpath(scope_xpath(adapter), namespaces=NS)
     return r[0] if r else None
 
-def block_exits_flow(block, adapter, imports=None) -> bool:
+def block_exits_flow(block, adapter, imports) -> bool:
     fn = scope_xpath(adapter, with_lambda=True)
     my_scope = block.xpath(fn, namespaces=NS)
     same = lambda n: n.xpath(fn, namespaces=NS) == my_scope
@@ -91,7 +91,6 @@ def block_exits_flow(block, adapter, imports=None) -> bool:
     exits = adapter.flow_exit_calls()
     for c in block.xpath(".//src:call", namespaces=NS):
         cn = get_call_name(c, adapter, imports)
-        # if cn and any(cn == e or cn.endswith(f".{e}") for e in exits) and same(c):
         if cn and any(call_matches(cn, e) for e in exits) and same(c):
             return True
     return False
@@ -260,22 +259,6 @@ def assignment_pairs(scope_node, adapter) -> list:
         _assign_pairs_cache[scope_node] = pairs
     return pairs
 
-# def get_call_name(call, adapter=None, imports=None):
-#     resolved = adapter is not None and imports is not None
-#     key = (call, resolved)
-#     if key in _call_name_cache:
-#         return _call_name_cache[key]
-
-#     name_nodes = call.xpath("./src:name", namespaces=NS)
-#     if not name_nodes:
-#         result = None
-#     elif resolved:
-#         result = adapter.resolve_call_name(call, NS, imports)
-#     else:
-#         result = "".join(name_nodes[0].itertext()).strip()
-
-#     _call_name_cache[key] = result
-#     return result
 def get_call_name(call, adapter, imports):
     
     if call in _call_name_cache:
@@ -305,19 +288,18 @@ def build_finding(rule: dict, node, extra: dict | None = None) -> dict:
 
 
 
-def is_sanitized(node, sanitizers: list, adapter=None, imports=None) -> bool:
+def is_sanitized(node, sanitizers: list, adapter, imports) -> bool:
     """Verifica se `node` e' passato come argomento a una delle funzioni sanitizer."""
     call_ancestors = node.xpath("ancestor::src:call", namespaces=NS)
     for call in call_ancestors:
         cname = get_call_name(call, adapter, imports)
-        # if cname and any(cname == san or cname.endswith(f".{san}") for san in sanitizers):
         if cname and any(call_matches(cname, san) for san in sanitizers):
             return True
     return False
 
 
 def source_present(sources: list, rhs_node, source_form: str | None = None,
-                   node=None, adapter=None, imports=None) -> bool:
+                   *, adapter, imports) -> bool:
     op = adapter.member_access_operator()[0]
 
     # 1. Estraiamo solo i nomi completi reali
@@ -384,7 +366,7 @@ def own_literals(call_node, lit_type: str) -> list:
     )
 
 
-def call_arguments_match_ast(call_node, spec: dict, adapter=None, imports=None) -> bool:
+def call_arguments_match_ast(call_node, spec: dict, adapter, imports) -> bool:
     """
     Motore universale AST per validare gli argomenti di una chiamata a funzione.
     """
@@ -395,7 +377,6 @@ def call_arguments_match_ast(call_node, spec: dict, adapter=None, imports=None) 
 
     if target_calls:
         call_name = get_call_name(call_node, adapter, imports)
-        # if not call_name or not any(call_name == c or call_name.endswith(f".{c}") for c in target_calls):
         if not call_name or not any(call_matches(call_name, c) for c in target_calls):
             return False
 
@@ -474,20 +455,18 @@ def call_arguments_match_ast(call_node, spec: dict, adapter=None, imports=None) 
 
     banned_numbers = spec.get("contains_numbers", [])
     if banned_numbers:
-        _adapter = adapter
-        found_values = {v for _, v in _resolve_numeric_args(call_node, _adapter, NS)}
+        found_values = {v for _, v in _resolve_numeric_args(call_node, adapter, NS)}
         found_texts = [str(v) for v in found_values]
 
         def _num_ok(req):
-            return req in found_texts or _adapter.parse_numeric_literal(str(req)) in found_values
+            return req in found_texts or adapter.parse_numeric_literal(str(req)) in found_values
 
         if not any(_num_ok(req) for req in banned_numbers):
             return False
 
     if "arg_less_than" in spec:
         limit_spec = spec["arg_less_than"]
-        _adapter = adapter
-        found_pairs = _resolve_numeric_args(call_node, _adapter, NS)
+        found_pairs = _resolve_numeric_args(call_node, adapter, NS)
 
         if isinstance(limit_spec, dict):
             # Forma posizionale: {"index": N, "value": X} -> controlla SOLO
