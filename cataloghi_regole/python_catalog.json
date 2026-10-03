@@ -84,14 +84,15 @@
       {
         "type": "call_with_var_arg",
         "call": [
-          "*.cursor.execute",
-          "*.cursor.executemany",
-          "*.connection.execute",
-          "*.conn.execute",
-          "sqlalchemy.orm.Session.execute",
-          "sqlalchemy.engine.Engine.execute",
-          "sqlalchemy.engine.Connection.execute"
-        ]
+        "*.cursor.execute", "*.cursor.executemany",
+        "*.connection.execute", "*.conn.execute",
+        "sqlalchemy.orm.Session.execute",
+        "sqlalchemy.engine.Engine.execute",
+        "sqlalchemy.engine.Connection.execute",
+        "sqlite3.connect.execute",        
+        "sqlite3.connect.executemany",     
+        "sqlite3.connect.executescript"     
+      ]
       }
     ],
     "os_command_execution": [
@@ -256,12 +257,12 @@
       {
         "type": "call_with_var_arg",
         "call": [
-          "logging.info",
-          "logging.warning",
-          "logging.error",
-          "logging.debug",
-          "*.logger.info",
-          "*.logger.error"
+          "logging.info", "logging.warning", "logging.error", "logging.debug",
+          "*.logger.info", "*.logger.error",
+          "logging.getLogger.info",          
+          "logging.getLogger.warning",       
+          "logging.getLogger.error",          
+          "logging.getLogger.debug"          
         ]
       }
     ],
@@ -291,13 +292,12 @@
       {
         "type": "call_with_var_arg",
         "call": [
-          "logging.info",
-          "logging.warning",
-          "logging.error",
-          "logging.debug",
-          "*.logger.info",
-          "*.logger.warning",
-          "*.logger.error",
+          "logging.info", "logging.warning", "logging.error", "logging.debug",
+          "*.logger.info", "*.logger.warning", "*.logger.error",
+          "logging.getLogger.info",         
+          "logging.getLogger.warning",        
+          "logging.getLogger.error",       
+          "logging.getLogger.debug",   
           "print"
         ]
       }
@@ -453,14 +453,12 @@
       {
         "type": "call_matches_ast",
         "call": [
-          "logging.debug",
-          "logging.info",
-          "logging.warning",
-          "logging.error",
-          "*.logger.debug",
-          "*.logger.info",
-          "*.logger.warning",
-          "*.logger.error"
+          "logging.debug", "logging.info", "logging.warning", "logging.error",
+          "*.logger.debug", "*.logger.info", "*.logger.warning", "*.logger.error",
+          "logging.getLogger.debug",        
+          "logging.getLogger.info",       
+          "logging.getLogger.warning",   
+          "logging.getLogger.error"        
         ],
         "contains_any_name": [
           "password",
@@ -559,7 +557,12 @@
     "sql_parameterization": [
       {
         "type": "parametrized_query",
-        "call": ["*.cursor.execute", "*.cursor.executemany", "*.connection.execute", "*.conn.execute"],
+        "call": [
+        "*.cursor.execute", "*.cursor.executemany",
+        "*.connection.execute", "*.conn.execute",
+        "sqlite3.connect.execute",         
+        "sqlite3.connect.executemany"       
+      ],
         "placeholders": ["%s", "?"]
       }
     ],
@@ -719,16 +722,14 @@
       {
         "type": "check_format_arg_position",
         "vulnerable_indices": {
-          "logging.info": 0,
-          "logging.warning": 0,
-          "logging.error": 0,
-          "logging.debug": 0,
-          "*.logger.info": 0,
-          "*.logger.warning": 0,
-          "*.logger.error": 0,
-          "*.printf": 0,
-          "*.format": 0
-        }
+      "logging.info": 0, "logging.warning": 0, "logging.error": 0, "logging.debug": 0,
+      "*.logger.info": 0, "*.logger.warning": 0, "*.logger.error": 0,
+      "logging.getLogger.info": 0,        
+      "logging.getLogger.warning": 0,    
+      "logging.getLogger.error": 0,       
+      "logging.getLogger.debug": 0,       
+      "*.printf": 0, "*.format": 0
+    }
       }
     ],
     "return_value_used": [
@@ -789,15 +790,14 @@
       "forbidden_calls_with_kwargs": [
         {
           "call": [
-            "requests.get",
-            "requests.post",
-            "requests.put",
-            "requests.delete",
-            "requests.head",
-            "requests.patch",
-            "requests.request",
-            "*.session.get",
-            "*.session.post"
+            "requests.get", "requests.post", "requests.put", "requests.delete",
+            "requests.head", "requests.patch", "requests.request",
+            "*.session.get", "*.session.post",
+            "requests.Session.get",         
+            "requests.Session.post",      
+            "requests.Session.put",           
+            "requests.Session.delete",        
+            "requests.Session.request"        
           ],
           "kwargs": {
             "verify": "False"

@@ -286,6 +286,16 @@ class LanguageAdapter(ABC):
         return text
 
     
+    def _chain_receiver(self, call_node, ns):
+        """Call che precede call_node in una catena 'a().b()', altrimenti None."""
+        op = call_node.xpath(
+            "preceding-sibling::*[1][self::src:operator and text()='.']", namespaces=ns)
+        if not op:
+            return None
+        prev = op[0].xpath("preceding-sibling::*[1][self::src:call]", namespaces=ns)
+        return prev[0] if prev else None
+
+    
 
 # ---------------------------------------------------------------------- #
 # Implementazione Python
@@ -391,14 +401,6 @@ class PythonAdapter(LanguageAdapter):
  
             else:
                 # # import MODULO [as alias] [, MODULO2 [as alias2]]
-                # names = imp.xpath("./src:name[not(ancestor::src:alias)]", namespaces=ns)
-                # for n in names:
-                #     canonical = "".join(n.itertext()).strip()
-                #     if not canonical:
-                #         continue
-                #     alias_nodes = n.xpath("following-sibling::src:alias[1]//src:name", namespaces=ns)
-                #     local = "".join(alias_nodes[0].itertext()).strip() if alias_nodes else canonical.split(".")[0]
-                #     bindings.append(ImportBinding(local_name=local, canonical_name=canonical,node=imp))
                 names = imp.xpath("./src:name[not(ancestor::src:alias)]", namespaces=ns)
                 for n in names:
                     canonical = "".join(n.itertext()).strip()
@@ -418,7 +420,12 @@ class PythonAdapter(LanguageAdapter):
  
         return bindings
 
-    def resolve_call_name(self, call_node, ns, imports: list) -> str:
+    _MAX_RESOLVE_DEPTH = 5
+
+    def resolve_call_name(self, call_node, ns, imports: list, _depth: int = 0) -> str:
+        if _depth > self._MAX_RESOLVE_DEPTH:
+            return None
+
         name_nodes = call_node.xpath("./src:name", namespaces=ns)
         if not name_nodes:
             return None
@@ -426,58 +433,37 @@ class PythonAdapter(LanguageAdapter):
         if not raw:
             return None
 
-        # 1. PREVENZIONE DOPPIO PREFISSO
+        # 0. call concatenata: 'a.b().c()'
+        if "." not in raw:
+            recv = self._chain_receiver(call_node, ns)
+            if recv is not None:
+                recv_name = self.resolve_call_name(recv, ns, imports, _depth + 1)
+                if recv_name:
+                    return f"{recv_name}.{raw}"
+
+        # 1. prevenzione doppio prefisso
         for binding in imports:
             if raw == binding.canonical_name or raw.startswith(f"{binding.canonical_name}."):
                 return raw
 
         head, _, rest = raw.partition(".")
-        
-        # 2. MATCH SUI MODULI IMPORTATI (Rimosso il check restrittivo su is_module)
+
+        # 2. moduli importati
         for binding in imports:
             if binding.local_name == head:
-                # Se c'è un resto (es. modes.CBC), comportati come se "modes" fosse un modulo
-                if rest:
-                    return f"{binding.canonical_name}.{rest}"
-                return binding.canonical_name
+                return f"{binding.canonical_name}.{rest}" if rest else binding.canonical_name
 
-        # 3. INSTANCE TRACKING (Risolto il bug di XPath)
+        # 3. instance tracking con risalita lessicale
         if rest:
-            from common import _pos_key, find_assignments
-
-            # scope_candidates = call_node.xpath(
-            #     "ancestor::*[self::src:function or self::src:unit][1]", namespaces=ns
-            # )
-            scope_candidates = call_node.xpath(
-                self.scope_axis(("unit",)), namespaces=ns
-            )
-            scope_node = scope_candidates[0] if scope_candidates else call_node
-
-            valid_assignments = [
-                (stmt, rhs) for stmt, lhs, rhs in find_assignments(scope_node, self, head)
-            ]
-
-            if valid_assignments:
-                call_key = _pos_key(call_node)
-                prior = [(stmt, rhs) for stmt, rhs in valid_assignments if _pos_key(stmt) < call_key]
-
-                if prior:
-                    assign_node, rhs = max(prior, key=lambda t: _pos_key(t[0]))
-
-                    if rhs is not None:
-                        chain = self._call_chain_names(rhs, ns)
-                        if chain:
-                            constructor_name = chain[0]
-                            resolved_constructor = constructor_name
-                            c_head, _, c_rest = constructor_name.partition(".")
-                            for binding in imports:
-                                if binding.local_name == c_head:
-                                    resolved_constructor = (f"{binding.canonical_name}.{c_rest}"
-                                                            if c_rest else binding.canonical_name)
-                                    break
-                            if len(chain) > 1:
-                                resolved_constructor += "." + ".".join(chain[1:])
-                            return f"{resolved_constructor}.{rest}"
+            rhs = self._reaching_rhs(call_node, head, ns)
+            if rhs is not None:
+                first_call = rhs.xpath("descendant-or-self::src:call[1]", namespaces=ns)
+                chain = self._call_chain_names(rhs, ns)
+                if first_call and chain:
+                    resolved = self.resolve_call_name(first_call[0], ns, imports, _depth + 1) or chain[0]
+                    if len(chain) > 1:
+                        resolved += "." + ".".join(chain[1:])
+                    return f"{resolved}.{rest}"
 
         return raw
                 
@@ -660,6 +646,44 @@ class PythonAdapter(LanguageAdapter):
         return names
 
 
+
+    def _reaching_rhs(self, call_node, head, ns):
+        """RHS dell'assegnazione di `head` che raggiunge `call_node`, cercando dallo
+        scope più interno verso l'esterno (funzioni annidate -> funzione -> modulo).
+        Ritorna None se non c'è, o se `head` è un parametro (shadowing)."""
+        from common import _pos_key, find_assignments, enclosing_scope
+
+        call_key = _pos_key(call_node)
+        call_ancestors = set(call_node.iterancestors())      # NEW
+        fn_cond = " or ".join(f"self::src:{t}" for t in self.function_tags())
+
+        funcs = call_node.xpath(f"ancestor::*[{fn_cond}]", namespaces=ns)
+        unit = call_node.xpath("ancestor::src:unit[1]", namespaces=ns)
+        scopes = list(reversed(funcs)) + unit
+
+        for scope_node in scopes:
+            is_unit = scope_node.tag.endswith("}unit")
+
+            if not is_unit:
+                for p in scope_node.xpath("./src:parameter_list/src:parameter", namespaces=ns):
+                    n = self.get_parameter_name_node(p, ns)
+                    if n is not None and "".join(n.itertext()).strip() == head:
+                        return None
+
+            prior = []
+            for stmt, lhs, rhs in find_assignments(scope_node, self, head):
+                if rhs is None or _pos_key(stmt) >= call_key:
+                    continue
+                if stmt in call_ancestors:                    # NEW: la call sta dentro questo statement
+                    continue
+                owner = enclosing_scope(stmt, self)
+                if (owner is None) if is_unit else (owner is scope_node):
+                    prior.append((stmt, rhs))
+
+            if prior:
+                return max(prior, key=lambda t: _pos_key(t[0]))[1]
+
+        return None
 
 
 # ---------------------------------------------------------------------- #
@@ -1004,16 +1028,6 @@ class JavaAdapter(LanguageAdapter):
 
     def resolve_name_text(self, text, imports):
         return self._canonicalize(text, imports) if text else text
-
-
-    def _chain_receiver(self, call_node, ns):
-        """Call che precede call_node in una catena 'a().b()', altrimenti None."""
-        op = call_node.xpath(
-            "preceding-sibling::*[1][self::src:operator and text()='.']", namespaces=ns)
-        if not op:
-            return None
-        prev = op[0].xpath("preceding-sibling::*[1][self::src:call]", namespaces=ns)
-        return prev[0] if prev else None
 
     # CWE-595: distinguere confronto di riferimenti da confronto di valori
     # ------------------------------------------------------------------ #
