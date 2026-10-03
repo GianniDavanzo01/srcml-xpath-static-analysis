@@ -6,8 +6,6 @@ Predicati SAFE-CONTEXT per il motore. Include contesti semplici basati su string
 con il relativo registro e dispatcher.
 """
 
-import re
-
 from common import NS, get_call_name, call_arguments_match_ast, find_assignments,_pos_key, block_exits_flow, enclosing_scope, call_matches, own_literals
 
 
@@ -77,7 +75,7 @@ def _safe_context_parametrized_query(node, spec, var_name=None, adapter=None, im
     # placeholder solo nei letterali stringa di QUESTA call (non di call annidate)
     for lit in own_literals(call_node, "string"):
         text = "".join(lit.itertext()).strip()
-        normalized = adapter.normalize_string_literal(text) if adapter else text
+        normalized = adapter.normalize_string_literal(text)
         if any(p in normalized for p in placeholders):
             return True
     return False
@@ -125,7 +123,7 @@ def _safe_context_function_has_method_call(node, spec, var_name=None, adapter=No
 
         for lit in own_literals(c, "string"):
             text = "".join(lit.itertext()).strip()
-            found_literals.add(adapter.normalize_string_literal(text) if adapter else text)
+            found_literals.add(adapter.normalize_string_literal(text) )
 
     return all(a in found_literals for a in args_contain)
 
@@ -152,7 +150,7 @@ def _safe_context_args_contain_string_literal(node, spec: dict, var_name: str | 
     for arg in arguments:
         names = arg.xpath(".//src:name", namespaces=NS)
         if names:
-            if adapter and hasattr(adapter, 'is_kwarg') and adapter.is_kwarg(arg, NS):
+            if adapter.is_kwarg(arg, NS):
                 # Se è un kwarg e ha più di un nome, significa che anche il valore è una variabile
                 if len(names) > 1:
                     return False
@@ -173,7 +171,7 @@ def _safe_context_args_contain_string_literal(node, spec: dict, var_name: str | 
     for literal in string_literals:
         # L'adapter gestirà l'estrazione testuale o l'analisi dei sottonodi
         testo = "".join(literal.itertext())
-        if adapter and adapter.is_interpolated_string(testo):
+        if adapter.is_interpolated_string(testo):
             return False
             
     return True
@@ -886,7 +884,7 @@ def _safe_context_all_args_are_literals(node, spec: dict, var_name=None, adapter
         # C. Valutazione logica basata esclusivamente sul conteggio dei nodi
         if names:
             # Deleghiamo all'adapter (Indipendenza dal Linguaggio) la verifica del Keyword Argument
-            if adapter and adapter.is_kwarg(arg, NS):
+            if adapter.is_kwarg(arg, NS):
                 # Strutturalmente, in un kwarg il primo <src:name> e' la chiave (es. 'timeout' in timeout=5)
                 # Se c'e' PIU' di un <src:name>, significa che anche il valore assegnato e' una variabile.
                 if len(names) > 1:
@@ -897,12 +895,12 @@ def _safe_context_all_args_are_literals(node, spec: dict, var_name=None, adapter
                 return False
 
         # D. Controllo interpolazione: una f-string e' un <src:literal> "opaco"
-        if adapter:
-            string_literals = arg.xpath(".//src:literal[@type='string']", namespaces=NS)
-            for lit in string_literals:
-                testo = "".join(lit.itertext())
-                if adapter.is_interpolated_string(testo):
-                    return False
+        
+        string_literals = arg.xpath(".//src:literal[@type='string']", namespaces=NS)
+        for lit in string_literals:
+            testo = "".join(lit.itertext())
+            if adapter.is_interpolated_string(testo):
+                return False
 
     # Se arriviamo qui, gli argomenti contengono solo nodi <src:literal> non
     # interpolati o nodi strutturali innocui (come <src:operator> per creare
@@ -935,8 +933,7 @@ def _safe_context_member_access_name(node, spec: dict, var_name: str | None = No
 
 
 def _safe_context_check_format_arg_position(node, spec, var_name, adapter, imports=None):
-    if imports is None:
-        imports = []
+
         
     vulnerable_indices = spec.get("vulnerable_indices", {})
     if not vulnerable_indices:

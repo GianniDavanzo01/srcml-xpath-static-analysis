@@ -16,9 +16,6 @@ from sink_matchers import matches_any_sink
 from safe_context_matchers import is_in_safe_context
 
 
-# [MODIFICA 1] helper che pre-calcola lhs/rhs/scope di ogni assegnazione
-from unit_context import build_assign_infos
-
 
 
 PSEUDO_SOURCES = {"function_parameters", "exception_variable"}
@@ -56,8 +53,6 @@ def _sanitized_reassign_reaches(uso, var, scope_node, assign_infos, tainted_name
 
 
 def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> list:
-    adapter = adapter 
-    imports = imports if imports is not None else []
     macros = macro_map(imports)
 
     findings = []
@@ -94,19 +89,11 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
         for var_name, scope_node in adapter.find_exception_bindings(tree, NS):
             tainted_vars_with_scope.append((var_name, scope_node))
 
-    # [MODIFICA 2] Assegnazioni: se c'e' il ctx si riusano quelle GIA' calcolate
-    # per l'unit (una volta sola, condivise da tutte le regole). Altrimenti si
-    # calcolano qui con lo stesso helper.
-    if ctx is not None:
-        assign_infos = ctx.assign_infos
-        assign_by_stmt = ctx.assign_by_stmt
-    else:
-        assignments = [
-            stmt for stmt in tree.xpath(".//src:expr_stmt | .//src:decl_stmt", namespaces=NS)
-            if adapter.is_assignment(stmt, NS)
-        ]
-        assign_infos = build_assign_infos(assignments, adapter, tree)
-        assign_by_stmt = {i.stmt: i for i in assign_infos}
+    # [MODIFICA 2] Assegnazioni si riusano quelle GIA' calcolate
+
+    assign_infos = ctx.assign_infos
+    assign_by_stmt = ctx.assign_by_stmt
+
 
     # (la vecchia funzione _scope_of e' stata eliminata: lo scope e' in info.scope)
 
@@ -130,24 +117,29 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
     source_origin_pos = {}     # (var, id(scope)) -> posizione della prima call che riempie var
     source_call_nodes = set()  # call-sorgente: gli usi al loro interno non sono usi reali
 
-    active_output_sources = {s for s in sources if s in output_arg_table}
+    # active_output_sources = {s for s in sources if s in output_arg_table}
+    active_output_sources = {
+    s for s in sources
+    if s not in PSEUDO_SOURCES
+    and any(call_matches(k, s) for k in output_arg_table)
+}
     if active_output_sources:
-        all_calls = ctx.calls if ctx is not None else tree.xpath(".//src:call", namespaces=NS)
-        for call in all_calls:
+        
+        for call in ctx.calls:
             cname = get_call_name(call, adapter, imports)
             if not cname:
                 continue
 
-            matched = next(
-                (s for s in active_output_sources if call_matches(cname, s)),
-                None,
-            )
+            matched = next((s for s in active_output_sources if call_matches(cname, s)), None)
             if matched is None:
                 continue
 
+            spec = next(output_arg_table[k] for k in output_arg_table if call_matches(k, matched))
+
             source_call_nodes.add(call)
 
-            spec = output_arg_table[matched]
+            # spec = output_arg_table[matched]
+
             args = call.xpath("./src:argument_list/src:argument", namespaces=NS)
             idxs = set(spec.get("indices", []))
             if "variadic_from" in spec:

@@ -63,7 +63,7 @@ def call_lookup_keys(call_name: str) -> list:
 
 def in_opaque_tag(node, adapter) -> bool:
     """True se `node` sta dentro un costrutto che non propaga taint (es. sizeof)."""
-    tags = adapter.taint_opaque_tags() if adapter else []
+    tags = adapter.taint_opaque_tags()
     if not tags:
         return False
     cond = " or ".join(f"self::src:{t}" for t in tags)
@@ -260,21 +260,33 @@ def assignment_pairs(scope_node, adapter) -> list:
         _assign_pairs_cache[scope_node] = pairs
     return pairs
 
-def get_call_name(call, adapter=None, imports=None):
-    resolved = adapter is not None and imports is not None
-    key = (call, resolved)
-    if key in _call_name_cache:
-        return _call_name_cache[key]
+# def get_call_name(call, adapter=None, imports=None):
+#     resolved = adapter is not None and imports is not None
+#     key = (call, resolved)
+#     if key in _call_name_cache:
+#         return _call_name_cache[key]
 
-    name_nodes = call.xpath("./src:name", namespaces=NS)
-    if not name_nodes:
-        result = None
-    elif resolved:
+#     name_nodes = call.xpath("./src:name", namespaces=NS)
+#     if not name_nodes:
+#         result = None
+#     elif resolved:
+#         result = adapter.resolve_call_name(call, NS, imports)
+#     else:
+#         result = "".join(name_nodes[0].itertext()).strip()
+
+#     _call_name_cache[key] = result
+#     return result
+def get_call_name(call, adapter, imports):
+    
+    if call in _call_name_cache:
+        return _call_name_cache[call]
+
+    if call.xpath("./src:name", namespaces=NS):
         result = adapter.resolve_call_name(call, NS, imports)
     else:
-        result = "".join(name_nodes[0].itertext()).strip()
+        result = None
 
-    _call_name_cache[key] = result
+    _call_name_cache[call] = result
     return result
 
 def build_finding(rule: dict, node, extra: dict | None = None) -> dict:
@@ -306,7 +318,7 @@ def is_sanitized(node, sanitizers: list, adapter=None, imports=None) -> bool:
 
 def source_present(sources: list, rhs_node, source_form: str | None = None,
                    node=None, adapter=None, imports=None) -> bool:
-    op = adapter.member_access_operator()[0] if adapter and adapter.member_access_operator() else "."
+    op = adapter.member_access_operator()[0]
 
     # 1. Estraiamo solo i nomi completi reali
     keys = _rhs_keys_cache.get(rhs_node)
@@ -322,7 +334,7 @@ def source_present(sources: list, rhs_node, source_form: str | None = None,
             text = text.split('[')[0].split('(')[0].strip()
             parent = name_node.getparent()
             is_inner = parent is not None and parent.tag == name_node.tag
-            if adapter is not None and imports is not None and not is_inner:
+            if not is_inner:
                 text = adapter.resolve_name_text(text, imports)
             var_names.add(text)
 
@@ -348,10 +360,7 @@ def source_present(sources: list, rhs_node, source_form: str | None = None,
             for outer_name in rhs_node.xpath(".//src:name[src:index] | self::src:name[src:index]", namespaces=NS):
                 parts = outer_name.xpath("./src:name", namespaces=NS)
                 dotted = op.join("".join(p.itertext()).strip() for p in parts) if parts else (outer_name.text or "").strip()
-                if adapter is not None and imports is not None:
-                    dotted = adapter.resolve_name_text(dotted, imports)
-                if call_matches(dotted, source):
-                    return True
+                dotted = adapter.resolve_name_text(dotted, imports)
                 if call_matches(dotted, source):
                     return True
             continue
@@ -404,7 +413,7 @@ def call_arguments_match_ast(call_node, spec: dict, adapter=None, imports=None) 
         for arg, expected in zip(arguments, bool_sequence):
             if expected is None:
                 continue
-            if adapter is not None and adapter.is_kwarg(arg, NS):
+            if adapter.is_kwarg(arg, NS):
                 return False  # kwarg: la posizione nel sorgente non è affidabile
             bool_lits = arg.xpath(
                 "./src:expr/src:literal[@type='boolean'] | ./src:literal[@type='boolean']",
@@ -423,12 +432,12 @@ def call_arguments_match_ast(call_node, spec: dict, adapter=None, imports=None) 
         found_names = ["".join(n.itertext()).strip() for n in names]
 
         # Estende la ricerca dentro le stringhe interpolate (es. f-string):
-        if adapter is not None:
-            str_lits = call_node.xpath(".//src:argument_list//src:literal[@type='string']", namespaces=NS)
-            for lit in str_lits:
-                testo = "".join(lit.itertext())
-                if adapter.is_interpolated_string(testo):
-                    found_names.extend(adapter.get_interpolated_variables(testo))
+        
+        str_lits = call_node.xpath(".//src:argument_list//src:literal[@type='string']", namespaces=NS)
+        for lit in str_lits:
+            testo = "".join(lit.itertext())
+            if adapter.is_interpolated_string(testo):
+                found_names.extend(adapter.get_interpolated_variables(testo))
 
         if not all(req in found_names for req in required_names):
             return False
@@ -439,12 +448,11 @@ def call_arguments_match_ast(call_node, spec: dict, adapter=None, imports=None) 
         names = call_node.xpath(".//src:argument_list//src:name", namespaces=NS)
         found_names = ["".join(n.itertext()).strip() for n in names]
 
-        if adapter is not None:
-            str_lits = call_node.xpath(".//src:argument_list//src:literal[@type='string']", namespaces=NS)
-            for lit in str_lits:
-                testo = "".join(lit.itertext())
-                if adapter.is_interpolated_string(testo):
-                    found_names.extend(adapter.get_interpolated_variables(testo))
+        str_lits = call_node.xpath(".//src:argument_list//src:literal[@type='string']", namespaces=NS)
+        for lit in str_lits:
+            testo = "".join(lit.itertext())
+            if adapter.is_interpolated_string(testo):
+                found_names.extend(adapter.get_interpolated_variables(testo))
         
         #case-insensitive e matcha sottostringhe
         lowered = [f.lower() for f in found_names]
@@ -454,8 +462,7 @@ def call_arguments_match_ast(call_node, spec: dict, adapter=None, imports=None) 
     substr_targets = spec.get("contains_string_containing", [])
     if substr_targets:
         found_texts = [
-            adapter.normalize_string_literal("".join(l.itertext())) if adapter
-            else "".join(l.itertext()).strip()
+            adapter.normalize_string_literal("".join(l.itertext()))
             for l in own_literals(call_node, "string")
         ]
         if spec.get("case_insensitive", False):
@@ -508,20 +515,13 @@ def call_arguments_match_ast(call_node, spec: dict, adapter=None, imports=None) 
     return True
 
 
-def check_required_imports(unit_node, rule_spec: dict, namespaces: dict, imports=None) -> bool:
-    required_imports = rule_spec.get("required_imports")
-    if not required_imports:
+def check_required_imports(rule_spec, imports) -> bool:
+    required = rule_spec.get("required_imports")
+    if not required:
         return True
-
-    if imports is not None:
-        imports = [b for b in imports if not b.is_macro]
-        imported_modules = {b.canonical_name for b in imports} | {b.canonical_name.split(".")[0] for b in imports}
-    else:
-        xpath_query = ".//src:import//src:name"
-        imported_modules = {"".join(n.itertext()).replace(" ", "")
-                             for n in unit_node.xpath(xpath_query, namespaces=namespaces)}
-
-    return any(req in imported_modules for req in required_imports)
+    imports = [b for b in imports if not b.is_macro]
+    imported = {b.canonical_name for b in imports} | {b.canonical_name.split(".")[0] for b in imports}
+    return any(req in imported for req in required)
 
 
 def _pos_key(node) -> tuple:

@@ -17,6 +17,8 @@ def _sink_string_pattern(uso, pattern_name: str, adapter=None, imports=None, fst
     """
     if pattern_name == "concat":
         ops = adapter.string_concat_operators()
+        if not ops:
+            return False
         op_xpath = " | ".join([f"preceding-sibling::src:operator[1][text()='{op}']" for op in ops]) + " | " + \
                    " | ".join([f"following-sibling::src:operator[1][text()='{op}']" for op in ops])
         return bool(uso.xpath(op_xpath, namespaces=NS))
@@ -45,7 +47,7 @@ def _sink_string_pattern(uso, pattern_name: str, adapter=None, imports=None, fst
     
     if pattern_name == "reassign":
         
-        assign_op = adapter.assignment_operator_token() if adapter else "="
+        assign_op = adapter.assignment_operator_token()
         return bool(uso.xpath(f"following-sibling::src:operator[1][text()='{assign_op}']", namespaces=NS))
 
     if pattern_name == "return":
@@ -83,7 +85,7 @@ def _sink_method_call(uso, spec: dict, fstring_nodes: list, adapter=None, import
     if not method:
         return False
 
-    ops = adapter.member_access_operator() if adapter else ["."]
+    ops = adapter.member_access_operator()
     ops_xpath = " or ".join(f"text()='{op}'" for op in ops)
 
     method_nodes = uso.xpath(
@@ -108,7 +110,7 @@ def _sink_method_call(uso, spec: dict, fstring_nodes: list, adapter=None, import
     string_literals = arg_list[0].xpath(".//src:literal[@type='string']", namespaces=NS)
     for literal_node in string_literals:
         raw_text = "".join(literal_node.itertext())
-        clean_text = adapter.normalize_string_literal(raw_text) if adapter else raw_text
+        clean_text = adapter.normalize_string_literal(raw_text)
         if any(val in clean_text for val in arg_contains):
             return True
             
@@ -158,7 +160,7 @@ def _sink_call_with_var_arg(uso, spec, fstring_nodes, adapter=None, imports=None
         
         for literal_node in string_literals:
             raw_text = "".join(literal_node.itertext())
-            clean_text = adapter.normalize_string_literal(raw_text) if adapter else raw_text
+            clean_text = adapter.normalize_string_literal(raw_text)
             
             # Cerchiamo la parola (es. "SELECT") solo dentro le vere stringhe
             if any(val in clean_text for val in literal_contains):
@@ -193,7 +195,7 @@ def _sink_return_method_call(uso, spec: dict, fstring_nodes: list, adapter=None,
     if not method:
         return False
 
-    ops = adapter.member_access_operator() if adapter else ["."]
+    ops = adapter.member_access_operator()
     ops_xpath = " or ".join(f"text()='{op}'" for op in ops)
 
     method_nodes = uso.xpath(
@@ -221,7 +223,7 @@ def _sink_method_call_in_if(uso, spec: dict, fstring_nodes: list, adapter=None, 
     if not method:
         return False
 
-    ops = adapter.member_access_operator() if adapter else ["."]
+    ops = adapter.member_access_operator()
     ops_xpath = " or ".join(f"text()='{op}'" for op in ops)
 
     method_nodes = uso.xpath(
@@ -247,7 +249,7 @@ def _sink_keyword_argument(uso, spec: dict, fstring_nodes: list, adapter=None, i
     parent_arg = uso.xpath("ancestor::src:argument[1]", namespaces=NS)
     if parent_arg:
         arg_node = parent_arg[0]
-        if adapter and adapter.is_kwarg(arg_node, NS):
+        if adapter.is_kwarg(arg_node, NS):
             name_nodes = arg_node.xpath("./src:name[1]", namespaces=NS)
             kw_name = "".join(name_nodes[0].itertext()).strip()
             if kw_name == keyword:
@@ -257,7 +259,7 @@ def _sink_keyword_argument(uso, spec: dict, fstring_nodes: list, adapter=None, i
 
 def _sink_subscript_key_assign_rhs(uso, spec: dict, fstring_nodes: list, adapter=None, imports=None) -> bool:
     """{"type": "subscript_key_assign_rhs"}"""
-    assign_op = adapter.assignment_operator_token() if adapter else "="
+    assign_op = adapter.assignment_operator_token()
     rhs_holder = uso.xpath(
         f"ancestor-or-self::*[preceding-sibling::src:operator[1][text()='{assign_op}']]",
         namespaces=NS,
@@ -313,7 +315,7 @@ def _sink_subscript_usage(uso, spec: dict, fstring_nodes: list, adapter=None, im
         return bool(target.xpath("boolean(ancestor::src:return[1] and not(ancestor::src:call))", namespaces=NS))
         
     elif subtype == "method_call":
-        ops = adapter.member_access_operator() if adapter else ["."]
+        ops = adapter.member_access_operator()
         ops_xpath = " or ".join(f"text()='{op}'" for op in ops)
         return bool(target.xpath(f"following-sibling::src:operator[1][{ops_xpath}]", namespaces=NS))
         
@@ -380,19 +382,6 @@ def match_sink(uso, sink_spec, fstring_nodes: list, adapter=None, imports=None) 
 
     if not is_match:
         return False
-
-    # if isinstance(sink_spec, dict):
-    #     # 1. FILTRO TESTUALE GLOBALE (Cerca ovunque: metodi, variabili, codice)
-    #     # Ideale per regole Java come: "requires_text_any": ["getHeaders"]
-    #     if "requires_text_any" in sink_spec:
-    #         required_keywords = sink_spec["requires_text_any"]
-    #         if required_keywords:
-    #             stmt = uso.xpath("ancestor::src:expr_stmt | ancestor::src:return | ancestor::src:if_stmt", namespaces=NS)
-    #             target_node = stmt[-1] if stmt else uso
-    #             node_text = "".join(target_node.itertext()).upper()
-
-    #             if not any(kw.upper() in node_text for kw in required_keywords):
-    #                 return False
     
     if isinstance(sink_spec, dict):
         # 1. FILTRO STRUTTURALE SUGLI IDENTIFICATORI (Cerca solo nei nomi di variabili/funzioni)
@@ -432,7 +421,7 @@ def match_sink(uso, sink_spec, fstring_nodes: list, adapter=None, imports=None) 
                 
                 for lit in string_literals:
                     raw_text = "".join(lit.itertext())
-                    clean_text = (adapter.normalize_string_literal(raw_text) if adapter else raw_text).upper()
+                    clean_text = (adapter.normalize_string_literal(raw_text)).upper()
                     
                     if any(kw.upper() in clean_text for kw in required_literals):
                         keyword_found = True

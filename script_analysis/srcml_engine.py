@@ -96,7 +96,7 @@ def analyze_unit(unit_node, raw_rules: list, xml_source: str) -> dict:
     run_forbidden_functions_indexed(ctx, compiled, findings, adapter, imports)
 
     for rule in compiled.rules:
-        if not check_required_imports(unit_node, rule, NS, imports=imports):
+        if not check_required_imports(rule, imports):
             continue
         rule_type = rule.get("type")
         if rule_type == "taint":
@@ -145,7 +145,7 @@ def analyze_file(xml_file: Path, raw_rules: list) -> list:
 
         for rule in compiled.rules:
             # Passiamo 'root' anziché 'tree' per coerenza con il context
-            if not check_required_imports(root, rule, NS, imports):
+            if not check_required_imports(rule, imports):
                 continue
                 
             rule_type = rule.get("type")

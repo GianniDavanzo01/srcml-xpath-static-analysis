@@ -16,7 +16,7 @@ from safe_context_matchers import is_in_safe_context
 def _run_source_operator_usage(tree, rule, findings, adapter, imports, catalog=None):
     catalog = catalog or {}
     op_roles = adapter.string_formatting_operator_roles()
-    eq_op = adapter.equality_operator() if hasattr(adapter, "equality_operator") else "=="
+    eq_op = adapter.equality_operator()
 
     mappings = {"source_comparisons": {"operator": eq_op}}
     if "concat" in op_roles:
@@ -98,7 +98,7 @@ def _run_source_operator_usage(tree, rule, findings, adapter, imports, catalog=N
                 # request.args['id'] non contamina il confronto col contenuto tra [ ].
                 names = sibling.xpath("descendant-or-self::src:name", namespaces=NS)
                 for n in names:
-                    op = adapter.member_access_operator()[0] if adapter and adapter.member_access_operator() else "."
+                    op = adapter.member_access_operator()[0]
                     parts = n.xpath("./src:name", namespaces=NS)
                     if parts:
                         n_text = op.join("".join(p.itertext()).strip() for p in parts)
@@ -367,7 +367,7 @@ def _check_use_after_free(tree, rule, findings, adapter, imports):
         return
 
     _adapter = adapter 
-    target_calls = spec.get("deallocation_calls", ["free"])
+    target_calls = spec.get("deallocation_calls")
     safe_allocations = spec.get("safe_allocation_calls", [])
     safe_reassignments = spec.get("safe_reassignments", [])
 
@@ -476,14 +476,9 @@ def _check_use_after_free(tree, rule, findings, adapter, imports):
                 aliased_pointers.discard(p)
 
 
-def run_structural_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> list:
-    adapter = adapter
-    imports = imports if imports is not None else []
+def run_structural_rule(tree, rule: dict, adapter, imports, ctx) -> list:
 
     findings = []
-
-    if not check_required_imports(tree, rule, NS, imports):
-        return findings
 
     if "required_calls" in rule:
 
@@ -842,6 +837,17 @@ def run_structural_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) 
 
 
 def run_forbidden_functions_indexed(ctx, compiled, findings, adapter, imports):
+    # Applicabilità della regola in base agli import: dipende solo da (rule, imports),
+    # quindi è costante per tutta la unit. Calcolata una volta per regola, al bisogno.
+    applicable = {}
+
+    def rule_applies(rule) -> bool:
+        rid = id(rule)
+        res = applicable.get(rid)
+        if res is None:
+            res = check_required_imports(rule, imports)
+            applicable[rid] = res
+        return res
 
     for call in ctx.calls:
         call_name = get_call_name(call, adapter, imports)
@@ -857,25 +863,21 @@ def run_forbidden_functions_indexed(ctx, compiled, findings, adapter, imports):
                     candidates.append((rule_obj, spec))
 
         for rule_obj, spec in compiled.unindexed_forbidden_functions:
-            key = (id(rule_obj), id(spec))
-            if key not in seen:
-                seen.add(key)
+            k = (id(rule_obj), id(spec))
+            if k not in seen:
+                seen.add(k)
                 candidates.append((rule_obj, spec))
-
-        # 2. Validazione: al massimo un finding per regola per call,
-        #    ma DOPO aver verificato che la spec abbia davvero matchato.
 
         reported_rules = set()
         for rule, spec in candidates:
             if id(rule) in reported_rules:
                 continue
-            if not check_required_imports(ctx.unit, rule, NS, imports=imports):
+            if not rule_applies(rule):
                 continue
             if any(call_matches(call_name, e) for e in rule.get("excluded_functions", [])):
                 continue
-            if is_in_safe_context(call, rule.get("safe_contexts", []), None, adapter, imports):
-                continue
 
+            # Prima il match della spec (economico), poi il safe_context (costoso).
             if isinstance(spec, str):
                 matched = call_matches(call_name, spec)
             elif spec.get("type") == "exact_name":
@@ -885,6 +887,10 @@ def run_forbidden_functions_indexed(ctx, compiled, findings, adapter, imports):
             else:
                 matched = False
 
-            if matched:
-                findings.append(build_finding(rule, call))
-                reported_rules.add(id(rule))
+            if not matched:
+                continue
+            if is_in_safe_context(call, rule.get("safe_contexts", []), None, adapter, imports):
+                continue
+
+            findings.append(build_finding(rule, call))
+            reported_rules.add(id(rule))
