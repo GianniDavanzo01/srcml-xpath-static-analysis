@@ -121,8 +121,11 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
     return_sources = [
     s for s in sources
     if s not in PSEUDO_SOURCES
-    and (s not in output_arg_table or output_arg_table[s].get("return_tainted", False))
-    ]
+    and not any(
+        call_matches(k, s) and not output_arg_table[k].get("return_tainted", False)
+        for k in output_arg_table
+    )
+]
 
     source_origin_pos = {}     # (var, id(scope)) -> posizione della prima call che riempie var
     source_call_nodes = set()  # call-sorgente: gli usi al loro interno non sono usi reali
@@ -134,10 +137,7 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
             cname = get_call_name(call, adapter, imports)
             if not cname:
                 continue
-            # matched = next(
-            #     (s for s in active_output_sources if cname == s or cname.endswith(f".{s}")),
-            #     None,
-            # )
+
             matched = next(
                 (s for s in active_output_sources if call_matches(cname, s)),
                 None,
@@ -153,8 +153,7 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
             if "variadic_from" in spec:
                 idxs.update(range(spec["variadic_from"], len(args)))
 
-            # parent_func = call.xpath("ancestor::src:function[1]", namespaces=NS)
-            # call_scope = parent_func[0] if parent_func else tree
+
             call_scope = enclosing_scope(call, adapter)
             if call_scope is None:
                 call_scope = tree
@@ -240,8 +239,7 @@ def run_taint_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) -> li
                         continue
                     for call in scope_node.xpath(".//src:call", namespaces=NS):
                         cname = get_call_name(call, adapter, imports)
-                        # if cname not in propagating_calls:
-                        #     continue
+
 
                         if not cname:
                             continue

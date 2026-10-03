@@ -142,17 +142,10 @@
       {
         "type": "call_with_var_arg",
         "call": [
-          "*.print",
-          "*.println",
-          "*.write",
+          "*.getWriter.println",
+          "*.getWriter.print",
+          "*.getWriter.write",
           "*.HttpServletResponse.sendError"
-        ],
-        "requires_text_any": [
-          "response",
-          "getWriter",
-          "HttpServletResponse",
-          "JspWriter",
-          "out"
         ]
       },
       {
@@ -731,11 +724,8 @@
     "manual_string_sanitization": [
       {
         "type": "function_has_method_call",
-        "method": "replace",
-        "args_contain": [
-          ";",
-          "&"
-        ]
+        "call": ["*.replace"],
+        "args_contain": [";", "&"]
       }
     ],
     "null_checked": [

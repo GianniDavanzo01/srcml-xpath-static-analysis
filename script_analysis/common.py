@@ -316,10 +316,16 @@ def source_present(sources: list, rhs_node, source_form: str | None = None,
             cname = get_call_name(call, adapter, imports)
             if cname:
                 call_names.add(cname)
+
         for name_node in rhs_node.xpath(".//src:name | self::src:name", namespaces=NS):
             text = "".join(name_node.itertext()).strip()
             text = text.split('[')[0].split('(')[0].strip()
+            parent = name_node.getparent()
+            is_inner = parent is not None and parent.tag == name_node.tag
+            if adapter is not None and imports is not None and not is_inner:
+                text = adapter.resolve_name_text(text, imports)
             var_names.add(text)
+
         _rhs_keys_cache[rhs_node] = (call_names, var_names)
         call_keys, name_keys = call_names, var_names
     else:
@@ -342,6 +348,10 @@ def source_present(sources: list, rhs_node, source_form: str | None = None,
             for outer_name in rhs_node.xpath(".//src:name[src:index] | self::src:name[src:index]", namespaces=NS):
                 parts = outer_name.xpath("./src:name", namespaces=NS)
                 dotted = op.join("".join(p.itertext()).strip() for p in parts) if parts else (outer_name.text or "").strip()
+                if adapter is not None and imports is not None:
+                    dotted = adapter.resolve_name_text(dotted, imports)
+                if call_matches(dotted, source):
+                    return True
                 if call_matches(dotted, source):
                     return True
             continue
@@ -617,9 +627,7 @@ class CompiledRuleset:
                 flattened_rules.append(r)
                 
         self.rules = flattened_rules
-        self.forbidden_functions_index = {}   
-        self.forbidden_names_index = {}       
-        self.forbidden_name_prefixes = []     
+        self.forbidden_functions_index = {}     
         self.unindexed_forbidden_functions = [] 
 
         for rule in self.rules:
@@ -638,12 +646,6 @@ class CompiledRuleset:
                             self.forbidden_functions_index.setdefault(_norm(c), []).append((rule, spec))
                     else:
                         self.unindexed_forbidden_functions.append((rule, spec))
-
-            for name in rule.get("forbidden_names", []):
-                self.forbidden_names_index.setdefault(name, []).append(rule)
-
-            for prefix in rule.get("forbidden_name_prefixes", []):
-                self.forbidden_name_prefixes.append((prefix, rule))
 
     def __iter__(self):
         return iter(self.rules)

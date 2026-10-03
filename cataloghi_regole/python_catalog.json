@@ -1,382 +1,765 @@
 {
   "sources": {
     "http_input": [
-          "request.args", "request.args.get", "request.form", "request.data", 
-          "request.files", "request.headers", "request.cookies", "request.values", 
-          "request.json", "request.view_args", "request.path", "request.url", 
-          "request.base_url", "request.query_string", "request.endpoint",
-
-          "request.GET", "request.POST", "request.COOKIES", "request.META", 
-          "request.body", "request.resolver_match.kwargs", 
-          "django.http.HttpRequest.GET", "django.http.HttpRequest.POST", 
-          "django.http.HttpRequest.COOKIES", "django.http.HttpRequest.META",
-
-          "request.query_params", "request.path_params", "request.client", 
-          "request.json", "request.body", "request.form",
-          "fastapi.Request", "starlette.requests.Request"    
-        ],
-      "cli_input": [
-          "input",
-          "sys.argv",
-          "os.environ","os.environ.get","os.getenv",
-          "argparse.ArgumentParser.parse_args"
-      ],
-    "nullable_returning_calls":["re.match", "re.search", "re.fullmatch","os.environ.get", "os.getenv",
-                                "request.args.get", "request.form.get", "request.headers.get", "request.cookies.get","fetchone"
-                              ],
-    "file_upload_input": ["request.files", "request.files.get", "request.files.getlist","request.FILES", "request.FILES.get","cgi.FieldStorage"],
-    "socket_input": ["socket.recv", "socket.recvfrom", "socket.recvmsg", "socket.recv_into","StreamReader.read","StreamReader.readline"]
+      "*.request.args",
+      "*.request.args.get",
+      "*.request.form",
+      "*.request.data",
+      "*.request.files",
+      "*.request.headers",
+      "*.request.cookies",
+      "*.request.values",
+      "*.request.json",
+      "*.request.view_args",
+      "*.request.path",
+      "*.request.url",
+      "*.request.base_url",
+      "*.request.query_string",
+      "*.request.endpoint",
+      "*.request.GET",
+      "*.request.POST",
+      "*.request.COOKIES",
+      "*.request.META",
+      "*.request.body",
+      "*.request.resolver_match.kwargs",
+      "django.http.HttpRequest.GET",
+      "django.http.HttpRequest.POST",
+      "django.http.HttpRequest.COOKIES",
+      "django.http.HttpRequest.META",
+      "*.request.query_params",
+      "*.request.path_params",
+      "*.request.client",
+      "fastapi.Request",
+      "starlette.requests.Request"
+    ],
+    "cli_input": [
+      "input",
+      "sys.argv",
+      "os.environ",
+      "os.environ.get",
+      "os.getenv",
+      "argparse.ArgumentParser.parse_args"
+    ],
+    "nullable_returning_calls": [
+      "re.match",
+      "re.search",
+      "re.fullmatch",
+      "os.environ.get",
+      "os.getenv",
+      "*.request.args.get",
+      "*.request.form.get",
+      "*.request.headers.get",
+      "*.request.cookies.get",
+      "*.fetchone"
+    ],
+    "file_upload_input": [
+      "*.request.files",
+      "*.request.files.get",
+      "*.request.files.getlist",
+      "*.request.FILES",
+      "*.request.FILES.get",
+      "cgi.FieldStorage"
+    ],
+    "socket_input": [
+      "*.socket.recv",
+      "*.socket.recvfrom",
+      "*.socket.recvmsg",
+      "*.socket.recv_into",
+      "*.StreamReader.read",
+      "*.StreamReader.readline"
+    ],
+    "file_input": [
+      "open.read",
+      "open.readline",
+      "open.readlines",
+      "*.read_text",
+      "*.read_bytes",
+      "os.read",
+      "fileinput.input",
+      "linecache.getline"
+    ]
   },
-    "sinks": {
-      "sql_execution": [
-          {"type": "call_with_var_arg", "call": [
-            "cursor.execute", 
-            "cursor.executemany",
-            "connection.execute",
-            "conn.execute",
-            "sqlalchemy.orm.Session.execute",
-            "sqlalchemy.engine.Engine.execute",
-            "sqlalchemy.engine.Connection.execute"
-          ]}
-          ],
-      "os_command_execution": [
-          {"type": "call_with_var_arg", "call": ["subprocess.run", "subprocess.Popen", "subprocess.call", "subprocess.check_output",
-                                                  "os.system", "os.popen", "os.execv", "os.execl", "os.spawnl", "os.spawnv",
-                                                  "pty.spawn", "commands.getoutput", "commands.getstatusoutput"
-                                                  ]}
-          ],
-      "file_system_access": [
-          {
-            "type": "call_with_var_arg",
-            "call": ["open", "send_file", "send_static_file", "os.remove", "os.rmdir", "shutil.rmtree",
-                    "FileResponse", "flask.send_from_directory", "django.http.FileResponse"]
-          }
-          ],
-      "path_concatenation": [
-        {
-            "type": "concat",
-            "requires_literal_any": ["/", "\\", ".."],
-            "requires_text_any": ["open", "os.os.path", "shutil.", "Path", "send_file", "FileResponse", "read", "write"]
-          },
-          {
-            "type": "fstring",
-            "requires_literal_any": ["/", "\\", ".."],
-            "requires_text_any": ["open", "os.path", "shutil.", "Path", "send_file", "FileResponse", "read", "write"]
-          },
-          {
-            "type": "call_with_var_arg",
-            "call": ["os.path.join", "join","Path", "pathlib.Path"]
-          }
-        ],
-      "html_output": [
-        {
-          "type": "call_with_var_arg",
-          "call": [
-            "make_response","Response","HttpResponse",
-            "HttpResponseBadRequest","HttpResponseNotFound","HttpResponseForbidden",
-            "Markup","mark_safe","render_template_string"
-          ]
-        }
-        ],
-      "http_redirect": [
+  "sinks": {
+    "sql_execution": [
       {
         "type": "call_with_var_arg",
-        "call": ["redirect","HttpResponseRedirect","HttpResponsePermanentRedirect","RedirectResponse"]
+        "call": [
+          "*.cursor.execute",
+          "*.cursor.executemany",
+          "*.connection.execute",
+          "*.conn.execute",
+          "sqlalchemy.orm.Session.execute",
+          "sqlalchemy.engine.Engine.execute",
+          "sqlalchemy.engine.Connection.execute"
+        ]
+      }
+    ],
+    "os_command_execution": [
+      {
+        "type": "call_with_var_arg",
+        "call": [
+          "subprocess.run",
+          "subprocess.Popen",
+          "subprocess.call",
+          "subprocess.check_output",
+          "os.system",
+          "os.popen",
+          "os.execv",
+          "os.execl",
+          "os.spawnl",
+          "os.spawnv",
+          "pty.spawn",
+          "commands.getoutput",
+          "commands.getstatusoutput"
+        ]
+      }
+    ],
+    "file_system_access": [
+      {
+        "type": "call_with_var_arg",
+        "call": [
+          "open",
+          "io.open",
+          "os.open",
+          "codecs.open",
+          "gzip.open",
+          "bz2.open",
+          "lzma.open",
+          "tarfile.open",
+          "flask.send_file",
+          "*.send_static_file",
+          "os.remove",
+          "os.rmdir",
+          "shutil.rmtree",
+          "*.FileResponse",
+          "flask.send_from_directory"
+        ]
+      }
+    ],
+    "path_concatenation": [
+      {
+        "type": "concat",
+        "requires_literal_any": ["/", "\\", ".."],
+        "requires_text_any": [
+          "open",
+          "os.path",
+          "shutil.",
+          "Path",
+          "send_file",
+          "FileResponse",
+          "read",
+          "write"
+        ]
+      },
+      {
+        "type": "fstring",
+        "requires_literal_any": ["/", "\\", ".."],
+        "requires_text_any": [
+          "open",
+          "os.path",
+          "shutil.",
+          "Path",
+          "send_file",
+          "FileResponse",
+          "read",
+          "write"
+        ]
+      },
+      {
+        "type": "call_with_var_arg",
+        "call": ["os.path.join", "pathlib.Path"]
+      }
+    ],
+    "html_output": [
+      {
+        "type": "call_with_var_arg",
+        "call": [
+          "*.make_response",
+          "flask.Response",
+          "*.HttpResponse",
+          "*.HttpResponseBadRequest",
+          "*.HttpResponseNotFound",
+          "*.HttpResponseForbidden",
+          "*.Markup",
+          "*.mark_safe",
+          "*.render_template_string"
+        ]
+      }
+    ],
+    "http_redirect": [
+      {
+        "type": "call_with_var_arg",
+        "call": [
+          "*.HttpResponseRedirect",
+          "*.HttpResponsePermanentRedirect",
+          "*.RedirectResponse"
+        ]
       }
     ],
     "http_request": [
       {
         "type": "call_with_var_arg",
-        "call": ["requests.get", "requests.post", "requests.request","requests.put","urllib.request.urlopen", "urlopen",
-                  "httpx.get", "httpx.post","Session.get","Session.post","urllib3.PoolManager.request","ldap.initialize",
-                  "urllib3.HTTPConnectionPool.request","http.client.HTTPConnection.request","http.client.HTTPSConnection.request"
+        "call": [
+          "requests.get",
+          "requests.post",
+          "requests.request",
+          "requests.put",
+          "urllib.request.urlopen",
+          "httpx.get",
+          "httpx.post",
+          "*.Session.get",
+          "*.Session.post",
+          "urllib3.PoolManager.request",
+          "ldap.initialize",
+          "urllib3.HTTPConnectionPool.request",
+          "http.client.HTTPConnection.request",
+          "http.client.HTTPSConnection.request"
         ]
       }
     ],
     "http_header_setters": [
-        {
+      {
         "type": "call_with_var_arg",
-        "call":["BaseHTTPRequestHandler.send_header","HttpResponse.set_cookie","Response.set_cookie",
-                "django.http.HttpResponse.set_cookie","headers.add"
+        "call": [
+          "*.BaseHTTPRequestHandler.send_header",
+          "*.HttpResponse.set_cookie",
+          "*.Response.set_cookie",
+          "*.headers.add"
         ]
       }
     ],
-      "ldap_execution": [
-        {
-          "type": "call_with_var_arg",
-          "call": ["search_s","search_st","search_ext", "search_ext_s","ldap3.Connection.search"]
-        }
-      ],
-      "csv_writing": [
-        {
-          "type": "call_with_var_arg",
-          "call": ["writerow","writerows","to_csv"]
-        }
-      ],
-      "exception_stringify_calls": [
-        {"type": "call_with_var_arg", "call": ["str", "repr", "format"]}
-      ],
-      "logging_functions": [
-        {
-          "type":"call_with_var_arg",
-          "call":["logging.info", "logging.warning", "logging.error", "logging.debug","logger.info", "logger.error"]
-        }
-      ],
-      "unbounded_resource_read": [
-        {"type": "method_call", "method": "read"},
-        {"type": "method_call", "method": "readlines"},
-        {"type": "method_call", "method": "readline"},
-        {"type": "method_call", "method": "extractall"},
-        {"type": "method_call", "method": "save"}
-      ],
-        "format_string_functions": [
-        {
-          "type": "call_with_var_arg", 
-          "call": ["logging.info", "logging.warning", "logging.error", "logging.debug","logger.info", "logger.warning", "logger.error", "print"]
-        }
-      ],
-      "file_write": [
-        {"type": "method_call", "method": "save"}
-      ],
-      "resource_injection_sinks": [
-        {
-          "type": "call_with_var_arg",
-          "call": ["__import__","importlib.import_module","flask.send_file","flask.send_static_file","django.utils.module_loading.import_string","urllib.request.urlopen"]
-        }
-      ],
-      "null_dereference": [
-        {
-          "type": "matches_xpath",
-          "xpath": "following-sibling::src:operator[1][text()='.'] | following-sibling::src:index[1]"
-        }
-      ],
-      "authentication_sinks": [
+    "ldap_execution": [
       {
         "type": "call_with_var_arg",
-        "call": ["authenticate", "check_password_hash", "checkpw", "pam.authenticate","ldap.bind_s","ldap.simple_bind_s"]
+        "call": [
+          "*.search_s",
+          "*.search_st",
+          "*.search_ext",
+          "*.search_ext_s",
+          "ldap3.Connection.search"
+        ]
       }
     ],
-      "array_index_use": [],
-      "array_alloc_size": []
-  },
-    "forbidden_functions": {
-        "socket_primitives": [
-          "socket.socket","socket.connect","socket.bind","socket.listen",
-          "socket.accept","socket.send","socket.recv","socket.sendto",
-          "socket.recvfrom","socket.sendmsg","socket.recvmsg","socket.setsockopt",
-          "socket.getsockopt","socket.getsockname","socket.getpeername","socket.shutdown","socket.create_connection","socket.create_server"
-        ],
-        "weak_ciphers_and_modes": ["DES.new", "modes.ECB", "modes.CBC", "padding.PKCS1v15"],
-        "weak_hash_functions": ["md5", "sha1","sha256", "hashlib.new"],
-        "weak_prngs": ["random.randint","random.randrange","random.random","random.uniform",
-          "random.getrandbits","random.sample","random.shuffle","random.seed","choice","random.choices",
-          {
-            "type": "call_matches_ast", 
-            "call": ["urandom"], 
-            "contains_numbers": ["0", "1", "2", "4", "8", "16", "32"]
-          }
-        ],
-        "weak_key_generation": [
-          {
-            "type": "call_matches_ast",
-            "call": ["RSA.generate", "DSA.generate", "rsa.generate_private_key", "dsa.generate_private_key"
-            ],
-            "arg_less_than": 2048
-          }
-        ],
-        "dynamic_code_execution": ["eval", "exec","zip_importer.exec_module"],
-        "unsafe_xml_parsers": [
-            "xml.sax.make_parser","xml.sax.parse","xml.sax.parseString",
-            "xml.etree.ElementTree.parse","xml.etree.ElementTree.fromstring","xml.dom.minidom.parse","xml.dom.pulldom.parse"
-          ],
-        "unsafe_deserializers": [
-          "pickle.load", "pickle.loads","_pickle.load", "_pickle.loads","cPickle.load", "cPickle.loads",
-          "marshal.load", "marshal.loads","shelve.open","yaml.unsafe_load","pandas.read_pickle","pickle.Unpickler.load"
-          ],
-        "insecure_temp_functions": ["tempfile.mktemp","mktemp"],
-        "insecure_cookie_configuration":["set_cookie","response.set_cookie","HttpResponse.set_cookie"],
-
-        "insecure_network_protocols": ["ftplib.FTP","telnetlib.Telnet","poplib.POP3","imaplib.IMAP4","smtplib.SMTP"],  
-        "logging_calls_with_sensitive_content": [
-          {
-            "type": "call_matches_ast",
-            "call": ["logging.debug", "logging.info", "logging.warning", "logging.error",
-                      "logger.debug", "logger.info", "logger.warning", "logger.error"],
-            "contains_any_name": ["password", "secret",
-                                  "auth_token", "access_token", "api_key", "apikey", "private_key"]
-          }
-        ],
-        "obsolete_functions": ["os.tempnam", "os.tmpnam", "platform.linux_distribution"],
-        "weak_password_hashing": [
-          {
-            "type": "call_matches_ast",
-            "call": ["hashlib.md5", "hashlib.sha1", "md5", "sha1"],
-            "contains_any_name": ["password", "passwd", "pwd", "passphrase"]
-          }
-        ],
-        "insecure_default_permissions": [
-            {
-                "type": "call_matches_ast",
-                "call": ["umask", "os.umask"],
-                "exact_args_count": 1,
-                "contains_numbers": [0]
-            }
-        ],
-        "return_value_must_be_checked": ["subprocess.call","os.system","os.fork","subprocess.Popen",
-                                         "urllib.parse.quote","urllib.parse.quote_plus","shlex.quote",
-                                         "re.sub","re.match","re.search","re.fullmatch",
-                                         "hmac.compare_digest","secrets.compare_digest"
-        ],
-        "loop_condition": [{"type": "loop_condition"}],
-        "buffer_overflow_function":[]
+    "csv_writing": [
+      {
+        "type": "call_with_var_arg",
+        "call": ["*.writerow", "*.writerows", "*.to_csv"]
+      }
+    ],
+    "exception_stringify_calls": [
+      {
+        "type": "call_with_var_arg",
+        "call": ["str", "repr", "*.format"]
+      }
+    ],
+    "logging_functions": [
+      {
+        "type": "call_with_var_arg",
+        "call": [
+          "logging.info",
+          "logging.warning",
+          "logging.error",
+          "logging.debug",
+          "*.logger.info",
+          "*.logger.error"
+        ]
+      }
+    ],
+    "unbounded_resource_read": [
+      {
+        "type": "method_call",
+        "method": "read"
       },
-    "excluded_functions": {
-      "safe_prng_exceptions": ["secrets.choice","secrets.randbelow","secrets.randbits"],
-      "eval_false_positive_exceptions": ["context.eval","ctx.eval"]
-    },
-    "forbidden_imports":{
-      "weak_crypto_modules": ["md5", "Crypto.Cipher.DES"]
-    },
-    "xpath_rules":{
-      "off_by_one_loop_condition":[".//src:while[./src:condition//src:operator[text()='<='] and ./src:condition//src:call[./src:name[text()='len']]]"]
-    },
-    "sanitizers": {
-        "html_escape": ["escape", "escape_filter_chars", "escape_rdn","html.escape"],
-        "path_sanitizers": ["secure_filename","os.path.basename","basename"],
-        "cast_to_integer": ["int","float"],
-        "shell_escape_sanitizers": ["shlex.quote","quote"],
-        "XSS_sanitizers": ["markupsafe.escape", "flask.escape", "escape", "html.escape", "bleach.clean"],
-        "url_encode_sanitizers": ["urllib.parse.quote", "urllib.parse.quote_plus"],
-        "crlf_sanitizers": ["urllib.parse.quote","urllib.parse.quote_plus","werkzeug.urls.url_quote"],
-        "ldap_escape_sanitizers":["ldap3.utils.conv.escape_filter_chars","ldap.filter.escape_filter_chars"],
-        "crypto_decryption_functions": ["decrypt", "Fernet.decrypt", "AES.decrypt","Cipher.decrypt"]
-    },
+      {
+        "type": "method_call",
+        "method": "readlines"
+      },
+      {
+        "type": "method_call",
+        "method": "readline"
+      },
+      {
+        "type": "method_call",
+        "method": "extractall"
+      },
+      {
+        "type": "method_call",
+        "method": "save"
+      }
+    ],
+    "format_string_functions": [
+      {
+        "type": "call_with_var_arg",
+        "call": [
+          "logging.info",
+          "logging.warning",
+          "logging.error",
+          "logging.debug",
+          "*.logger.info",
+          "*.logger.warning",
+          "*.logger.error",
+          "print"
+        ]
+      }
+    ],
+    "file_write": [
+      {
+        "type": "method_call",
+        "method": "save"
+      }
+    ],
+    "resource_injection_sinks": [
+      {
+        "type": "call_with_var_arg",
+        "call": [
+          "__import__",
+          "importlib.import_module",
+          "flask.send_file",
+          "flask.send_static_file",
+          "django.utils.module_loading.import_string",
+          "urllib.request.urlopen"
+        ]
+      }
+    ],
+    "null_dereference": [
+      {
+        "type": "matches_xpath",
+        "xpath": "following-sibling::src:operator[1][text()='.'] | following-sibling::src:index[1]"
+      }
+    ],
+    "authentication_sinks": [
+      {
+        "type": "call_with_var_arg",
+        "call": [
+          "*.authenticate",
+          "*.check_password_hash",
+          "*.checkpw",
+          "ldap.bind_s",
+          "ldap.simple_bind_s"
+        ]
+      }
+    ],
+        "loop_condition": [
+      {
+        "type": "loop_condition"
+      }
+    ],
+    "array_index_use": [],
+    "array_alloc_size": []
+  },
+  "forbidden_functions": {
+    "socket_primitives": [
+      "socket.socket",
+      "*.socket.connect",
+      "*.socket.bind",
+      "*.socket.listen",
+      "*.socket.accept",
+      "*.socket.send",
+      "*.socket.recv",
+      "*.socket.sendto",
+      "*.socket.recvfrom",
+      "*.socket.sendmsg",
+      "*.socket.recvmsg",
+      "*.socket.setsockopt",
+      "*.socket.getsockopt",
+      "*.socket.getsockname",
+      "*.socket.getpeername",
+      "*.socket.shutdown",
+      "socket.create_connection",
+      "socket.create_server"
+    ],
+    "weak_ciphers_and_modes": [
+      "*.DES.new",
+      "*.modes.ECB",
+      "*.modes.CBC",
+      "*.padding.PKCS1v15"
+    ],
+    "weak_hash_functions": [
+      "hashlib.md5",
+      "hashlib.sha1",
+      "hashlib.new"
+    ],
+    "weak_prngs": [
+      "random.randint",
+      "random.randrange",
+      "random.random",
+      "random.uniform",
+      "random.getrandbits",
+      "random.sample",
+      "random.shuffle",
+      "random.seed",
+      "random.choice",
+      "random.choices",
+      {
+        "type": "call_matches_ast",
+        "call": ["os.urandom"],
+        "contains_numbers": [
+          "0",
+          "1",
+          "2",
+          "4",
+          "8",
+          "16",
+          "32"
+        ]
+      }
+    ],
+    "weak_key_generation": [
+      {
+        "type": "call_matches_ast",
+        "call": [
+          "*.RSA.generate",
+          "Crypto.PublicKey.DSA.generate",
+          "*.rsa.generate_private_key",
+          "*.dsa.generate_private_key"
+        ],
+        "arg_less_than": 2048
+      }
+    ],
+    "dynamic_code_execution": ["eval", "exec", "*.zip_importer.exec_module"],
+    "unsafe_xml_parsers": [
+      "xml.sax.make_parser",
+      "xml.sax.parse",
+      "xml.sax.parseString",
+      "xml.etree.ElementTree.parse",
+      "xml.etree.ElementTree.fromstring",
+      "xml.dom.minidom.parse",
+      "xml.dom.pulldom.parse"
+    ],
+    "unsafe_deserializers": [
+      "pickle.load",
+      "pickle.loads",
+      "_pickle.load",
+      "_pickle.loads",
+      "cPickle.load",
+      "cPickle.loads",
+      "marshal.load",
+      "marshal.loads",
+      "shelve.open",
+      "yaml.unsafe_load",
+      "pandas.read_pickle",
+      "pickle.Unpickler.load"
+    ],
+    "insecure_temp_functions": ["tempfile.mktemp"],
+    "insecure_cookie_configuration": ["*.set_cookie"],
+    "insecure_network_protocols": [
+      "ftplib.FTP",
+      "telnetlib.Telnet",
+      "poplib.POP3",
+      "imaplib.IMAP4",
+      "smtplib.SMTP"
+    ],
+    "logging_calls_with_sensitive_content": [
+      {
+        "type": "call_matches_ast",
+        "call": [
+          "logging.debug",
+          "logging.info",
+          "logging.warning",
+          "logging.error",
+          "*.logger.debug",
+          "*.logger.info",
+          "*.logger.warning",
+          "*.logger.error"
+        ],
+        "contains_any_name": [
+          "password",
+          "secret",
+          "auth_token",
+          "access_token",
+          "api_key",
+          "apikey",
+          "private_key"
+        ]
+      }
+    ],
+    "obsolete_functions": ["os.tempnam", "os.tmpnam", "platform.linux_distribution"],
+    "weak_password_hashing": [
+      {
+        "type": "call_matches_ast",
+        "call": ["hashlib.md5", "hashlib.sha1"],
+        "contains_any_name": [
+          "password",
+          "passwd",
+          "pwd",
+          "passphrase"
+        ]
+      }
+    ],
+    "insecure_default_permissions": [
+      {
+        "type": "call_matches_ast",
+        "call": ["os.umask"],
+        "exact_args_count": 1,
+        "contains_numbers": [
+          0
+        ]
+      }
+    ],
+    "return_value_must_be_checked": [
+      "subprocess.call",
+      "os.system",
+      "os.fork",
+      "subprocess.Popen",
+      "urllib.parse.quote",
+      "urllib.parse.quote_plus",
+      "shlex.quote",
+      "re.sub",
+      "re.match",
+      "re.search",
+      "re.fullmatch",
+      "hmac.compare_digest",
+      "secrets.compare_digest"
+    ],
+    "buffer_overflow_function": []
+  },
+  "excluded_functions": {
+    "safe_prng_exceptions": ["secrets.choice", "secrets.randbelow", "secrets.randbits"],
+    "eval_false_positive_exceptions": ["context.eval", "ctx.eval"]
+  },
+  "forbidden_imports": {
+    "weak_crypto_modules": ["md5", "Crypto.Cipher.DES"]
+  },
+  "xpath_rules": {
+    "off_by_one_loop_condition": [".//src:while[./src:condition//src:operator[text()='<='] and ./src:condition//src:call[./src:name[text()='len']]]"]
+  },
+  "sanitizers": {
+    "html_escape": [
+      "markupsafe.escape",
+      "flask.escape",
+      "cgi.escape",
+      "django.utils.html.escape",
+      "django.utils.html.conditional_escape",
+      "werkzeug.escape",
+      "werkzeug.utils.escape",
+      "*.escape_filter_chars",
+      "*.escape_rdn",
+      "html.escape"
+    ],
+    "path_sanitizers": ["*.secure_filename", "os.path.basename"],
+    "cast_to_integer": ["int", "float"],
+    "shell_escape_sanitizers": ["shlex.quote", "pipes.quote"],
+    "XSS_sanitizers": [
+      "markupsafe.escape",
+      "flask.escape",
+      "cgi.escape",
+      "django.utils.html.escape",
+      "django.utils.html.conditional_escape",
+      "werkzeug.escape",
+      "werkzeug.utils.escape",
+      "html.escape",
+      "bleach.clean"
+    ],
+    "url_encode_sanitizers": ["urllib.parse.quote", "urllib.parse.quote_plus"],
+    "crlf_sanitizers": ["urllib.parse.quote", "urllib.parse.quote_plus", "werkzeug.urls.url_quote"],
+    "ldap_escape_sanitizers": ["ldap3.utils.conv.escape_filter_chars", "ldap.filter.escape_filter_chars"],
+    "crypto_decryption_functions": ["*.decrypt"]
+  },
   "safe_contexts": {
-    "sql_parameterization": [{"type": "parametrized_query"}],
+    "sql_parameterization": [
+      {
+        "type": "parametrized_query",
+        "call": ["*.cursor.execute", "*.cursor.executemany", "*.connection.execute", "*.conn.execute"],
+        "placeholders": ["%s", "?"]
+      }
+    ],
     "try_block": ["try"],
     "if_block": ["if"],
     "safe_permission_defaults": [
-        {"type": "call_with_kwarg", "call": ["os.makedirs"], "kwargs": {"mode": "0o700"}},
-        {"type": "current_call_matches_ast", "call": ["os.chmod", "chmod"], "contains_names": ["stat.S_IRWXU"]},
-        {"type": "current_call_matches_ast", "call": ["os.chmod", "chmod"], "contains_names": ["stat.S_IRUSR"]},
-        {"type": "current_call_matches_ast", "call": ["os.chmod", "chmod"], "contains_names": ["stat.S_IWUSR"]}
-        ],
+      {
+        "type": "call_with_kwarg",
+        "call": ["os.makedirs"],
+        "kwargs": {
+          "mode": "0o700"
+        }
+      },
+      {
+        "type": "current_call_matches_ast",
+        "call": ["os.chmod"],
+        "contains_names": ["stat.S_IRWXU"]
+      },
+      {
+        "type": "current_call_matches_ast",
+        "call": ["os.chmod"],
+        "contains_names": ["stat.S_IRUSR"]
+      },
+      {
+        "type": "current_call_matches_ast",
+        "call": ["os.chmod"],
+        "contains_names": ["stat.S_IWUSR"]
+      }
+    ],
     "secure_cookie_contexts": [
-          {
-            "type": "call_with_kwarg",
-            "call": ["set_cookie", "response.set_cookie", "HttpResponse.set_cookie"],
-            "kwargs": {
-              "secure": "True",
-              "httponly": "True"
-            },
-            "require": "all"
-          }
-        ],
-      "non_security_hash_usage": [
-          {"type": "call_with_kwarg", "call": ["md5", "sha1", "hashlib.new"], "kwargs": {"usedforsecurity": "False"}}
-        ],
-      "resource_safe_contexts": [
-          {"type": "function_has_file_size_check","size_properties": ["file_size", "size","content_length"]},
-          {"type": "binary_comparison", "operators": ["<", "<="], "left_exact": ["$VAR"]},
-          {"type": "binary_comparison", "operators": ["<", "<="], "right_exact": ["$VAR"]},    
-          {
-            "type": "condition_matches_xpath",
-            "xpath": ".//src:call[src:name[text()='len']]"
-          }
-        ],
-        "starttls_upgrade": [
-          {
-            "type": "function_has_call_matching_ast",
-            "call": ["starttls"]
-          }
-        ],
-        "url_validation": [
-          {
-            "type": "condition_matches_xpath",
-            "scope": "enclosing",
-            "xpath": ".//src:call[.//src:name[text()='is_safe_url' or text()='url_has_allowed_host_and_scheme']][.//src:argument_list//src:name[text()='$VAR']]"
-          }
-        ],
-        "allowlist_validation": [
-          {
-            "type": "membership_check",
-            "scope": "enclosing",
-            "require_var_left": true,
-            "right_is_bare_identifier": true,
-            "allowed_negation": [false]
-          }
-        ],
-        "file_extension_validation": [
-          {
-            "type": "receiver_of_method_with_arg",
-            "method": "endswith",
-            "dangerous_values": [
-              ".php", ".php3", ".php4", ".php5",
-              ".exe", ".dll", ".so", ".sh", ".bat", ".cmd",
-              ".cgi", ".pl", ".py", ".jar"
-            ] 
-          }
-        ],
-        "manual_string_sanitization": [
-          {
-            "type": "function_has_method_call",
-            "method": "replace",
-            "args_contain": [";", "&"]
-          }
-        ],
-        "null_checked": [
-          {"type": "var_truthiness_check", "scope": "enclosing", "require_state": "truthy"},
-          {"type": "var_falsy_guard_clause"}
-        ],
-        "safe_metadata_extraction": [
-          {"type": "var_has_attribute", "attribute": "size"},
-          {"type": "var_has_attribute", "attribute": "content_length"},
-          {"type": "var_has_attribute", "attribute": "content_type"}
-        ],
-        "xxe_safe_configuration": [
-          {"type": "call_with_kwarg", "call": ["XMLParser"], "kwargs": {"resolve_entities": "False"}}
-        ],
-        "format_string_position": [
-              {
-                  "type": "check_format_arg_position",
-                  "vulnerable_indices": {
-                      "logging.info": 0,
-                      "logging.warning": 0,
-                      "logging.error": 0,
-                      "logging.debug":0,
-                      "logger.info":0,
-                      "logger.warning":0,
-                      "logger.error":0,
-                      "printf":0,
-                      "format": 0
-                  }
-              }
-          ],
-        "return_value_used": [
-              {
-                "type": "node_matches_xpath",
-                "xpath": "ancestor::src:condition or ancestor::src:return or ancestor::src:argument or ancestor::src:with or ancestor-or-self::*[preceding-sibling::src:operator[1][text()='=' or text()='+=' or text()='-=']]"
-              },
-              {
-                "type": "call_with_kwarg",
-                "call": ["subprocess.call", "subprocess.Popen"],
-                "kwargs": {"check": "True"}
-              }
-            ],
-        "curl_non_url_option": [],
-        "bounds_checked_array_access":[],
-        "alloc_size_positive_checked":[]
+      {
+        "type": "call_with_kwarg",
+        "call": ["*.set_cookie"],
+        "kwargs": {
+          "secure": "True",
+          "httponly": "True"
+        },
+        "require": "all"
+      }
+    ],
+    "non_security_hash_usage": [
+      {
+        "type": "call_with_kwarg",
+        "call": ["hashlib.md5", "hashlib.sha1", "hashlib.new"],
+        "kwargs": {
+          "usedforsecurity": "False"
+        }
+      }
+    ],
+    "resource_safe_contexts": [
+      {
+        "type": "function_has_file_size_check",
+        "size_properties": ["file_size", "size", "content_length"]
+      },
+      {
+        "type": "binary_comparison",
+        "operators": ["<", "<="],
+        "left_exact": ["$VAR"]
+      },
+      {
+        "type": "binary_comparison",
+        "operators": ["<", "<="],
+        "right_exact": ["$VAR"]
+      },
+      {
+        "type": "condition_matches_xpath",
+        "xpath": ".//src:call[src:name[text()='len']]"
+      }
+    ],
+    "starttls_upgrade": [
+      {
+        "type": "function_has_call_matching_ast",
+        "call": ["*.starttls"]
+      }
+    ],
+    "url_validation": [
+      {
+        "type": "condition_matches_xpath",
+        "scope": "enclosing",
+        "xpath": ".//src:call[.//src:name[text()='is_safe_url' or text()='url_has_allowed_host_and_scheme']][.//src:argument_list//src:name[text()='$VAR']]"
+      }
+    ],
+    "allowlist_validation": [
+      {
+        "type": "membership_check",
+        "scope": "enclosing",
+        "require_var_left": true,
+        "right_is_bare_identifier": true,
+        "allowed_negation": [
+          false
+        ]
+      }
+    ],
+    "file_extension_validation": [
+      {
+        "type": "receiver_of_method_with_arg",
+        "method": "endswith",
+        "dangerous_values": [
+          ".php",
+          ".php3",
+          ".php4",
+          ".php5",
+          ".exe",
+          ".dll",
+          ".so",
+          ".sh",
+          ".bat",
+          ".cmd",
+          ".cgi",
+          ".pl",
+          ".py",
+          ".jar"
+        ]
+      }
+    ],
+    "manual_string_sanitization": [
+      {
+        "type": "function_has_method_call",
+        "call": "*.replace",
+        "args_contain": [";", "&"]
+      }
+    ],
+    "null_checked": [
+      {
+        "type": "var_truthiness_check",
+        "scope": "enclosing",
+        "require_state": "truthy"
+      },
+      {
+        "type": "var_falsy_guard_clause"
+      }
+    ],
+    "safe_metadata_extraction": [
+      {
+        "type": "var_has_attribute",
+        "attribute": "size"
+      },
+      {
+        "type": "var_has_attribute",
+        "attribute": "content_length"
+      },
+      {
+        "type": "var_has_attribute",
+        "attribute": "content_type"
+      }
+    ],
+    "xxe_safe_configuration": [
+      {
+        "type": "call_with_kwarg",
+        "call": ["*.XMLParser"],
+        "kwargs": {
+          "resolve_entities": "False"
+        }
+      }
+    ],
+    "format_string_position": [
+      {
+        "type": "check_format_arg_position",
+        "vulnerable_indices": {
+          "logging.info": 0,
+          "logging.warning": 0,
+          "logging.error": 0,
+          "logging.debug": 0,
+          "*.logger.info": 0,
+          "*.logger.warning": 0,
+          "*.logger.error": 0,
+          "*.printf": 0,
+          "*.format": 0
+        }
+      }
+    ],
+    "return_value_used": [
+      {
+        "type": "node_matches_xpath",
+        "xpath": "ancestor::src:condition or ancestor::src:return or ancestor::src:argument or ancestor::src:with or ancestor-or-self::*[preceding-sibling::src:operator[1][text()='=' or text()='+=' or text()='-=']]"
+      },
+      {
+        "type": "call_with_kwarg",
+        "call": ["subprocess.call", "subprocess.Popen"],
+        "kwargs": {
+          "check": "True"
+        }
+      }
+    ],
+    "curl_non_url_option": [],
+    "bounds_checked_array_access": [],
+    "alloc_size_positive_checked": []
   },
   "patterns": {
     "active_debug": {
       "forbidden_calls_with_kwargs": [
         {
-          "call": "run",
-          "kwargs": {"debug": "True"}
+          "call": "*.run",
+          "kwargs": {
+            "debug": "True"
+          }
         }
       ],
       "bad_assignments": {
-        "debug": "True"
+        "*.debug": "True"
       }
     },
     "insecure_permission_assignment": {
@@ -386,48 +769,84 @@
         {
           "type": "call_matches_ast",
           "call": ["os.chmod"],
-          "contains_numbers": ["0", "0000", "0o000", "755", "0o755", "777", "0o777", "0o400", "128", "664", "0o644"]
+          "contains_numbers": [
+            "0",
+            "0000",
+            "0o000",
+            "755",
+            "0o755",
+            "777",
+            "0o777",
+            "0o400",
+            "128",
+            "664",
+            "0o644"
+          ]
         }
       ]
     },
     "insecure_certificate_validation": {
       "forbidden_calls_with_kwargs": [
         {
-          "call": ["requests.get", "requests.post", "requests.put", "requests.delete", "requests.head", "requests.patch", "requests.request", "session.get", "session.post"],
-          "kwargs": {"verify": "False"}
+          "call": [
+            "requests.get",
+            "requests.post",
+            "requests.put",
+            "requests.delete",
+            "requests.head",
+            "requests.patch",
+            "requests.request",
+            "*.session.get",
+            "*.session.post"
+          ],
+          "kwargs": {
+            "verify": "False"
+          }
         }
       ],
       "bad_assignments": {
-        "verify_mode": "ssl.CERT_NONE",
-        "check_hostname": "False"
+        "*.verify_mode": "ssl.CERT_NONE",
+        "*.check_hostname": "False"
       },
       "forbidden_functions": [
-          "ssl.wrap_socket",
-          {
-            "type": "call_matches_ast",
-            "call": ["ssl._create_unverified_context"],
-            "exact_args_count": 0
-          },
-          {
-            "type": "call_matches_ast",
-            "call": ["ssl._create_stdlib_context"],
-            "exact_args_count": 0
-          }
-        ]
-    },
-    "unsafe_deserialization_kwargs":{
-      "forbidden_calls_with_kwargs":[{"call": ["numpy.load"], "kwargs": {"allow_pickle": "True"}}]
-    },
-    "unsafe_dict_access": {
-      "forbidden_subscripts": ["request.form", "request.args", "os.environ"]
-    },
-    "assignment_in_condition": {
-      "xpath_rules": [
-        ".//src:condition/src:expr[src:operator[text()='='] and not(src:operator[text()='==' or text()='!=' or text()='<' or text()='>' or text()='<=' or text()='>=' or text()='&&' or text()='||'])]"
+        "ssl.wrap_socket",
+        {
+          "type": "call_matches_ast",
+          "call": ["ssl._create_unverified_context"],
+          "exact_args_count": 0
+        },
+        {
+          "type": "call_matches_ast",
+          "call": ["ssl._create_stdlib_context"],
+          "exact_args_count": 0
+        }
       ]
     },
+    "unsafe_deserialization_kwargs": {
+      "forbidden_calls_with_kwargs": [
+        {
+          "call": ["numpy.load"],
+          "kwargs": {
+            "allow_pickle": "True"
+          }
+        }
+      ]
+    },
+    "unsafe_dict_access": {
+      "forbidden_subscripts": ["*.request.form", "*.request.args", "os.environ"]
+    },
+    "assignment_in_condition": {
+      "xpath_rules": [".//src:condition/src:expr[src:operator[text()='='] and not(src:operator[text()='==' or text()='!=' or text()='<' or text()='>' or text()='<=' or text()='>=' or text()='&&' or text()='||'])]"]
+    },
     "string_to_int_propagation": {
-  "propagate_only_through_calls": ["int","float","strip","lstrip","rstrip"]},
-    "use_after_free_check":{}
+      "propagate_only_through_calls": [
+        "int",
+        "float",
+        "*.strip",
+        "*.lstrip",
+        "*.rstrip"
+      ]
+    },
+    "use_after_free_check": {}
   }
 }

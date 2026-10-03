@@ -280,6 +280,11 @@ class LanguageAdapter(ABC):
         """True se il confronto va segnalato. Default: nel dubbio segnala."""
         return True
 
+
+    def resolve_name_text(self, text: str, imports: list) -> str:
+        """Nome puntato (non call) -> nome canonico. Default: invariato."""
+        return text
+
     
 
 # ---------------------------------------------------------------------- #
@@ -460,21 +465,18 @@ class PythonAdapter(LanguageAdapter):
                     assign_node, rhs = max(prior, key=lambda t: _pos_key(t[0]))
 
                     if rhs is not None:
-                        rhs_call_names = rhs.xpath("descendant-or-self::src:call[1]/src:name", namespaces=ns)
-
-                        if rhs_call_names:
-                            constructor_name = "".join(rhs_call_names[0].itertext()).strip()
+                        chain = self._call_chain_names(rhs, ns)
+                        if chain:
+                            constructor_name = chain[0]
                             resolved_constructor = constructor_name
                             c_head, _, c_rest = constructor_name.partition(".")
-
                             for binding in imports:
                                 if binding.local_name == c_head:
-                                    if c_rest:
-                                        resolved_constructor = f"{binding.canonical_name}.{c_rest}"
-                                    else:
-                                        resolved_constructor = binding.canonical_name
+                                    resolved_constructor = (f"{binding.canonical_name}.{c_rest}"
+                                                            if c_rest else binding.canonical_name)
                                     break
-
+                            if len(chain) > 1:
+                                resolved_constructor += "." + ".".join(chain[1:])
                             return f"{resolved_constructor}.{rest}"
 
         return raw
@@ -616,6 +618,50 @@ class PythonAdapter(LanguageAdapter):
     def flow_exit_tags(self):  return ["return", "throw", "continue", "break"]
     def flow_exit_calls(self): return ["sys.exit", "exit", "quit", "os._exit"]
 
+
+    def resolve_name_text(self, text, imports):
+        if not text or not imports:
+            return text
+        # già canonico: 'os.environ' con 'import os' (evita il doppio prefisso)
+        for b in imports:
+            if b.is_macro:
+                continue
+            if text == b.canonical_name or text.startswith(b.canonical_name + "."):
+                return text
+        head, _, rest = text.partition(".")
+        for b in imports:
+            if not b.is_macro and b.local_name == head:
+                return f"{b.canonical_name}.{rest}" if rest else b.canonical_name
+        return text
+
+    #HELPER PER call concatenate
+    def _call_chain_names(self, rhs, ns):
+        """Nomi delle call concatenate a destra di '=': a.b().c().d() -> ['a.b', 'c', 'd']."""
+        start = rhs.xpath("descendant-or-self::src:call[1]", namespaces=ns)
+        if not start:
+            return None
+        node = start[0]
+        first = node.xpath("./src:name", namespaces=ns)
+        if not first:
+            return None
+        names = ["".join(first[0].itertext()).strip()]
+        while True:
+            op = node.xpath("following-sibling::*[1][self::src:operator and text()='.']", namespaces=ns)
+            if not op:
+                break
+            nxt = op[0].xpath("following-sibling::*[1][self::src:call]", namespaces=ns)
+            if not nxt:
+                break
+            nm = nxt[0].xpath("./src:name", namespaces=ns)
+            if not nm:
+                break
+            names.append("".join(nm[0].itertext()).strip())
+            node = nxt[0]
+        return names
+
+
+
+
 # ---------------------------------------------------------------------- #
 # Implementazione Java
 # ---------------------------------------------------------------------- #
@@ -753,6 +799,13 @@ class JavaAdapter(LanguageAdapter):
             return None
 
         raw_name = "".join(name_nodes[0].itertext()).strip()
+
+        if not name_nodes[0].xpath("./src:name", namespaces=ns):   # nome semplice
+            recv = self._chain_receiver(call_node, ns)
+            if recv is not None:
+                recv_name = self.resolve_call_name(recv, ns, imports)
+                if recv_name:
+                    return f"{recv_name}.{raw_name}"
 
         parts = name_nodes[0].xpath("./src:name", namespaces=ns)
         ops = name_nodes[0].xpath("./src:operator[text()='.']", namespaces=ns)
@@ -948,6 +1001,19 @@ class JavaAdapter(LanguageAdapter):
     def flow_exit_tags(self):  return ["return", "throw", "continue", "break"]
     def flow_exit_calls(self): return ["System.exit"]
 
+
+    def resolve_name_text(self, text, imports):
+        return self._canonicalize(text, imports) if text else text
+
+
+    def _chain_receiver(self, call_node, ns):
+        """Call che precede call_node in una catena 'a().b()', altrimenti None."""
+        op = call_node.xpath(
+            "preceding-sibling::*[1][self::src:operator and text()='.']", namespaces=ns)
+        if not op:
+            return None
+        prev = op[0].xpath("preceding-sibling::*[1][self::src:call]", namespaces=ns)
+        return prev[0] if prev else None
 
     # CWE-595: distinguere confronto di riferimenti da confronto di valori
     # ------------------------------------------------------------------ #
@@ -1420,11 +1486,11 @@ def get_adapter(unit_node) -> LanguageAdapter:
     """Sceglie l'adapter leggendo l'attributo language="..." che srcML scrive
     su ogni <unit> (es. language="Python", language="Java", language="C").
     """
-    lang = (unit_node.get("language") or "python").lower()
-    adapter = ADAPTERS.get(lang)
+    raw = unit_node.get("language")
+    if not raw:
+        raise ValueError(f"<unit> senza attributo language (file: {unit_node.get('filename')}). "
+                         "Rigenera l'XML con srcML indicando --language.")
+    adapter = ADAPTERS.get(raw.lower())
     if adapter is None:
-        raise NotImplementedError(
-            f"Nessun LanguageAdapter registrato per '{lang}'. "
-            f"Linguaggi disponibili: {sorted(ADAPTERS)}"
-        )
+        raise NotImplementedError(f"Nessun adapter per '{raw}'. Disponibili: {sorted(ADAPTERS)}")
     return adapter

@@ -16,7 +16,7 @@ from collections import Counter
 
 from common import NS, load_rules, check_required_imports, compile_rules, CompiledRuleset, reset_caches
 from taint_engine import run_taint_rule
-from structural_engine import run_structural_rule, run_forbidden_functions_indexed, run_forbidden_names_indexed
+from structural_engine import run_structural_rule, run_forbidden_functions_indexed 
 from unit_context import UnitContext
 
 from language_adapter import get_adapter
@@ -94,7 +94,6 @@ def analyze_unit(unit_node, raw_rules: list, xml_source: str) -> dict:
     findings = []
 
     run_forbidden_functions_indexed(ctx, compiled, findings, adapter, imports)
-    run_forbidden_names_indexed(ctx, compiled, findings, adapter, imports)
 
     for rule in compiled.rules:
         if not check_required_imports(unit_node, rule, NS, imports=imports):
@@ -143,7 +142,6 @@ def analyze_file(xml_file: Path, raw_rules: list) -> list:
         
         # 3. Esecuzione delle regole indicizzate (mancavano nel fallback!)
         run_forbidden_functions_indexed(ctx, compiled, findings, adapter, imports)
-        run_forbidden_names_indexed(ctx, compiled, findings, adapter, imports)
 
         for rule in compiled.rules:
             # Passiamo 'root' anziché 'tree' per coerenza con il context

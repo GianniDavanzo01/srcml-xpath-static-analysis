@@ -8,9 +8,19 @@ con il relativo registro e dispatcher.
 
 import re
 
-from common import NS, get_call_name, call_arguments_match_ast, find_assignments,_pos_key, block_exits_flow, enclosing_scope, call_matches
+from common import NS, get_call_name, call_arguments_match_ast, find_assignments,_pos_key, block_exits_flow, enclosing_scope, call_matches, own_literals
 
-# from language_adapter import PythonAdapter
+
+#HELPER PER _safe_context_parametrized_query e _safe_context_function_has_method_call
+def _spec_call_patterns(spec: dict) -> list:
+    """Pattern di call dallo spec. 'call' ha la precedenza; 'method' = '*.method' (retrocompatibile)."""
+    calls = spec.get("call")
+    if isinstance(calls, str):
+        calls = [calls]
+    if calls:
+        return calls
+    method = spec.get("method")
+    return [f"*.{method}"] if method else []
 
 
 
@@ -39,37 +49,37 @@ def _function_or_unit_scope(node, adapter=None):
     return scope if scope is not None else node.xpath("ancestor::src:unit[1]", namespaces=NS)[0]
 
 
-def _safe_context_parametrized_query(node, spec: dict, var_name: str | None = None, adapter=None, imports=None) -> bool:
-    """{"type": "parametrized_query", "method": "execute", "placeholders": ["%s", "?"]}"""
-
-    target_method = spec.get("method")
+def _safe_context_parametrized_query(node, spec, var_name=None, adapter=None, imports=None) -> bool:
+    """{"type": "parametrized_query", "call": ["*.cursor.execute"], "placeholders": ["%s", "?"]}"""
+    targets = _spec_call_patterns(spec)
     placeholders = spec.get("placeholders")
-    
-    # 1. Trova la chiamata al metodo di esecuzione
-    call_node = node.xpath(f"ancestor::src:call[.//src:name[last()][text()='{target_method}']][1]", namespaces=NS)
-    if not call_node:
+    if not targets:
         return False
 
-    arg_list = call_node[0].xpath("./src:argument_list", namespaces=NS)
+    # call più vicina che racchiude il nodo ed è tra quelle cercate
+    call_node = None
+    for c in reversed(node.xpath("ancestor::src:call", namespaces=NS)):
+        cn = get_call_name(c, adapter, imports)
+        if cn and any(call_matches(cn, t) for t in targets):
+            call_node = c
+            break
+    if call_node is None:
+        return False
+
+    arg_list = call_node.xpath("./src:argument_list", namespaces=NS)
     if not arg_list:
         return False
-        
-    # 2. Verifica strutturale: ci deve essere più di un argomento (es. execute(query, parametri))
-    arguments = arg_list[0].xpath("./src:argument", namespaces=NS)
-    if len(arguments) < 2:
+
+    # execute(query, parametri): servono almeno due argomenti
+    if len(arg_list[0].xpath("./src:argument", namespaces=NS)) < 2:
         return False
 
-    _adapter = adapter 
-    
-    # 3. Cerca i placeholder ESCLUSIVAMENTE all'interno dei letterali stringa reali
-    for lit in arg_list[0].xpath(".//src:literal[@type='string']", namespaces=NS):
-        lit_text = "".join(lit.itertext()).strip()
-        normalized_lit = _adapter.normalize_string_literal(lit_text)
-        
-        # Verifica se uno dei placeholder è presente nella stringa SQL normalizzata
-        if any(p in normalized_lit for p in placeholders):
+    # placeholder solo nei letterali stringa di QUESTA call (non di call annidate)
+    for lit in own_literals(call_node, "string"):
+        text = "".join(lit.itertext()).strip()
+        normalized = adapter.normalize_string_literal(text) if adapter else text
+        if any(p in normalized for p in placeholders):
             return True
-            
     return False
 
 
@@ -89,59 +99,35 @@ def _safe_context_rhs_call(node, spec: dict, var_name: str | None = None, adapte
     return False
 
 
-def _safe_context_function_has_method_call(node, spec: dict, var_name: str | None = None, adapter=None, imports=None) -> bool:
-    """{"type": "function_has_method_call", "method": "replace", "args_contain": [";", "&"]}
-        ES: value.replace(";", ""); value.replace("&", "")
-    """
-    method = spec.get("method")
+def _safe_context_function_has_method_call(node, spec, var_name=None, adapter=None, imports=None) -> bool:
+    """{"type": "function_has_method_call", "call": ["*.replace"], "args_contain": [";", "&"]}"""
+    targets = _spec_call_patterns(spec)
     args_contain = spec.get("args_contain", [])
-    
-    if not method or not args_contain:
+    if not targets or not args_contain:
         return False
-        
-    _adapter = adapter
-        
-    target_node = _function_or_unit_scope(node, adapter)
-    
-    # 1. Trova tutte le chiamate che riguardano il metodo specificato (es. replace) nello scope
-    calls = target_node.xpath(
-        f".//src:call[./src:name//src:name[text()='{method}'] or ./src:name[text()='{method}']]", 
-        namespaces=NS
-    )
-    
+
+    scope = _function_or_unit_scope(node, adapter)
     found_literals = set()
-    for c in calls:
-        # 2. Controllo di pertinenza tramite Method Chaining:
-        # Verifichiamo se var_name è presente nell'intera espressione (<src:expr>) che racchiude la chiamata,
-        # coprendo così sia la chiamata iniziale che le successive concatenate con il punto (.)
-        if var_name:
-            enclosing_expr = c.xpath("ancestor::src:expr[1]", namespaces=NS)
-            if enclosing_expr:
-                expr_names = enclosing_expr[0].xpath(".//src:name", namespaces=NS)
-                variable_matched = any("".join(n.itertext()).strip() == var_name for n in expr_names)
-                if not variable_matched:
-                    continue
-            else:
-                continue
-                
-        # 3. Estrazione sicura dei letterali stringa dagli argomenti
-        arg_list = c.xpath("./src:argument_list", namespaces=NS)
-        if not arg_list:
+
+    for c in scope.xpath(".//src:call", namespaces=NS):
+        cn = get_call_name(c, adapter, imports)
+        if not cn or not any(call_matches(cn, t) for t in targets):
             continue
-            
-        arguments = arg_list[0].xpath("./src:argument", namespaces=NS)
-        for arg in arguments:
-            literals = arg.xpath(".//src:literal[@type='string']", namespaces=NS)
-            for lit in literals:
-                lit_text = "".join(lit.itertext()).strip()
-                normalized_val = _adapter.normalize_string_literal(lit_text)
-                found_literals.add(normalized_val)
-                
-    # 4. Verifica finale: l'insieme globale dei caratteri neutralizzati copre tutto ciò che è richiesto?
-    if all(required_arg in found_literals for required_arg in args_contain):
-        return True
-        
-    return False
+
+        # pertinenza: var_name compare nell'espressione che racchiude la call (method chaining)
+        if var_name:
+            expr = c.xpath("ancestor::src:expr[1]", namespaces=NS)
+            if not expr:
+                continue
+            names = expr[0].xpath(".//src:name", namespaces=NS)
+            if not any("".join(n.itertext()).strip() == var_name for n in names):
+                continue
+
+        for lit in own_literals(c, "string"):
+            text = "".join(lit.itertext()).strip()
+            found_literals.add(adapter.normalize_string_literal(text) if adapter else text)
+
+    return all(a in found_literals for a in args_contain)
 
 
 def _safe_context_args_contain_string_literal(node, spec: dict, var_name: str | None = None, adapter=None, imports=None) -> bool:
@@ -833,13 +819,7 @@ def _safe_context_var_falsy_guard_clause(node, spec: dict, var_name=None, adapte
         cond = cond[0]
 
         block = if_stmt.xpath("./src:if/src:block[1]", namespaces=NS)
-        # exits_flow = block and block[0].xpath(
-        #     ".//src:return[not(ancestor::src:function)] | .//src:raise[not(ancestor::src:function)] | "
-        #     ".//src:continue[not(ancestor::src:function)] | .//src:break[not(ancestor::src:function)]",
-        #     namespaces=NS
-        # )
-        # if not exits_flow:
-        #     continue
+
         if not block or not block_exits_flow(block[0], _adapter, imports):
             continue
 

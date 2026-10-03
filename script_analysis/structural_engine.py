@@ -74,6 +74,7 @@ def _run_source_operator_usage(tree, rule, findings, adapter, imports, catalog=N
             
             match_found = False
             matched_source = None
+            matched_node = None
             
             # Valuta sia la sinistra che la destra
             for sibling in (lhs, rhs):
@@ -87,6 +88,7 @@ def _run_source_operator_usage(tree, rule, findings, adapter, imports, catalog=N
                     if any(call_matches(c_name, s) for s in source_names):
                         match_found = True
                         matched_source = c_name
+                        matched_node = sibling
                         break
                         
                 # CASO 2: La sorgente è una variabile o proprietà (es. request.data)
@@ -102,10 +104,12 @@ def _run_source_operator_usage(tree, rule, findings, adapter, imports, catalog=N
                         n_text = op.join("".join(p.itertext()).strip() for p in parts)
                     else:
                         n_text = "".join(n.itertext()).replace(" ", "")
-                    # if n_text in source_names:
+
+                    n_text = adapter.resolve_name_text(n_text, imports)
                     if any(call_matches(n_text, s) for s in source_names):
                         match_found = True
                         matched_source = n_text
+                        matched_node = n
                         break
                         
                 if match_found:
@@ -127,12 +131,9 @@ def _run_source_operator_usage(tree, rule, findings, adapter, imports, catalog=N
             if resolved_sanitizers:
                 for c_node in expr_node.xpath(".//src:call", namespaces=NS):
                     c_name = get_call_name(c_node, adapter, imports)
-                    # Se trova una chiamata al sanitizer (es. int())
-                    # if c_name in resolved_sanitizers:
-                    if any(call_matches(c_name, s) for s in resolved_sanitizers):
-                        c_text = "".join(c_node.itertext()).replace(" ", "")
-                        # Se la nostra sorgente si trova dentro la chiamata del sanitizer
-                        if matched_source in c_text:
+                    if c_name and any(call_matches(c_name, s) for s in resolved_sanitizers):
+                        # il nodo sorgente deve stare davvero dentro la call sanitizer
+                        if matched_node is c_node or matched_node in c_node.iterdescendants():
                             is_escaped = True
                             break
                             
@@ -445,14 +446,18 @@ def _check_use_after_free(tree, rule, findings, adapter, imports):
                         rhs_text = "".join(rhs.itertext()).strip()
                         is_safe_val = _adapter.is_none_literal(rhs_text) or rhs_text in safe_reassignments
                         is_safe_alloc = False
+
                         if safe_allocations:
-                            xp = " or ".join(f"text()='{a}'" for a in safe_allocations)
-                            query = (
-                                f"descendant-or-self::src:call[.//src:name[{xp}]] | "
-                                f"following-sibling::src:call[.//src:name[{xp}]] | "
-                                f"following-sibling::*//src:call[.//src:name[{xp}]]"
+                            calls = rhs.xpath(
+                                "descendant-or-self::src:call | following-sibling::src:call | "
+                                "following-sibling::*//src:call", namespaces=NS)
+                            is_safe_alloc = any(
+                                (cn := get_call_name(c, _adapter, imports))
+                                and any(call_matches(cn, a) for a in safe_allocations)
+                                for c in calls
                             )
-                            is_safe_alloc = bool(rhs.xpath(query, namespaces=NS))
+
+
                         if is_safe_val or is_safe_alloc:
                             is_sanitized = True
                             aliased_pointers.discard(p)
@@ -462,7 +467,7 @@ def _check_use_after_free(tree, rule, findings, adapter, imports):
                 is_double_free = False
                 if call_ancestor:
                     ancestor_call_name = get_call_name(call_ancestor[0], _adapter, imports)
-                    # if ancestor_call_name in target_calls:
+
                     if ancestor_call_name and any(call_matches(ancestor_call_name, t) for t in target_calls):
                         is_double_free = True
 
@@ -481,9 +486,7 @@ def run_structural_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) 
         return findings
 
     if "required_calls" in rule:
-        # all_calls = {node.text for node in tree.xpath(".//src:call//src:name", namespaces=NS) if node.text}
-        # if not all(req in all_calls for req in rule["required_calls"]):
-        #     return findings
+
         all_calls = {get_call_name(c, adapter, imports)
              for c in tree.xpath(".//src:call", namespaces=NS)} - {None}
         if not all(any(call_matches(c, r) for c in all_calls) for r in rule["required_calls"]):
@@ -499,15 +502,17 @@ def run_structural_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) 
             
             # Estraiamo il testo della parte sinistra preservando la struttura dei nomi (es. app.debug)
             lhs_text = "".join(lhs_node.itertext()).strip().replace(" ", "")
+            lhs_text = adapter.resolve_name_text(lhs_text, imports)
             
             # Normalizziamo la parte destra usando l'adapter (gestisce apici, booleani, ecc.)
             rhs_text = "".join(rhs_node.itertext()).strip()
             
             rhs_text = adapter.normalize_string_literal(rhs_text)
+            if rhs_node.tag.endswith("}name"):          # solo identificatori, mai stringhe
+                rhs_text = adapter.resolve_name_text(rhs_text, imports)
             
             for attr, val in bad_assignments.items():
                 # Confronto strutturale sicuro
-                # if (lhs_text == attr or lhs_text.endswith(f".{attr}")) and rhs_text == val:
                 if call_matches(lhs_text, attr) and rhs_text == val:
                     if is_in_safe_context(assign, safe_contexts, None, adapter, imports): 
                         continue
@@ -701,7 +706,6 @@ def run_structural_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) 
                     targets = [targets]
                 kwargs = fcwk.get("kwargs", {})
 
-                # is_target = any(call_name == t or call_name.endswith(f".{t}") for t in targets)
                 is_target = any(call_matches(call_name,t) for t in targets)
                 if is_target:
                     all_kwargs_match = True
@@ -751,6 +755,8 @@ def run_structural_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) 
                 # Gestisce nomi singoli come 'environ'
                 base_name = (node.text or "").strip()
 
+            base_name = adapter.resolve_name_text(base_name, imports)
+
             index_var = None
             index_expr = node.xpath("./src:index/src:expr", namespaces=NS)
             
@@ -787,8 +793,7 @@ def run_structural_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) 
                 
             # Verifica se l'oggetto a cui si accede è nella blacklist
             for subscript in forbidden_subscripts:
-                # Ora questo controllo con il punto funzionerà perfettamente per ogni linguaggio
-                # if base_name == subscript or base_name.endswith(f".{subscript}"):
+
                 if call_matches(base_name, subscript):
                     if is_in_safe_context(node, safe_contexts, var_name=index_var, adapter=adapter, imports=imports):
                         break
@@ -812,9 +817,6 @@ def run_structural_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) 
 
     if rule.get("empty_catch_blocks"):
         _run_empty_catch_blocks(tree, rule, findings, adapter, imports)
-
-    # if rule.get("unsafe_file_reads"):
-    #     _run_unsafe_file_reads(tree, rule, findings, adapter, imports)
 
     if rule.get("reference_comparisons"):
         _run_reference_comparisons(tree, rule, findings, adapter, imports)
@@ -840,26 +842,7 @@ def run_structural_rule(tree, rule: dict, adapter=None, imports=None, ctx=None) 
 
 
 def run_forbidden_functions_indexed(ctx, compiled, findings, adapter, imports):
-    # for call in ctx.calls:
-    #     call_name = get_call_name(call, adapter, imports)
-    #     if not call_name:
-    #         continue
 
-    #     parts = call_name.split('.')
-    #     suffixes = [".".join(parts[i:]) for i in range(len(parts))]
-
-    #     # 1. Candidati: dedup per (regola, spec), non per sola regola.
-    #     #    Serve solo a non contare due volte la stessa spec trovata
-    #     #    tramite suffissi diversi ('os.system' e 'system').
-    #     seen = set()
-    #     candidates = []
-
-    #     for suff in suffixes:
-    #         for rule_obj, spec in compiled.forbidden_functions_index.get(suff, []):
-    #             key = (id(rule_obj), id(spec))
-    #             if key not in seen:
-    #                 seen.add(key)
-    #                 candidates.append((rule_obj, spec))
     for call in ctx.calls:
         call_name = get_call_name(call, adapter, imports)
         if not call_name:
@@ -881,30 +864,6 @@ def run_forbidden_functions_indexed(ctx, compiled, findings, adapter, imports):
 
         # 2. Validazione: al massimo un finding per regola per call,
         #    ma DOPO aver verificato che la spec abbia davvero matchato.
-        # reported_rules = set()
-        # for rule, spec in candidates:
-        #     if id(rule) in reported_rules:
-        #         continue
-        #     if not check_required_imports(ctx.unit, rule, NS, imports=imports):
-        #         continue
-        #     if call_name in rule.get("excluded_functions", []):
-        #         continue
-        #     if is_in_safe_context(call, rule.get("safe_contexts", []), None, adapter, imports):
-        #         continue
-
-        #     if isinstance(spec, str):
-        #         matched = call_name == spec or call_name.endswith(f".{spec}")
-        #     elif spec.get("type") == "exact_name":
-        #         matched = call_name == spec.get("name")
-        #     elif spec.get("type") == "call_matches_ast":
-        #         matched = call_arguments_match_ast(call, spec, adapter, imports)
-        #     else:
-        #         matched = False
-
-        #     if matched:
-        #         findings.append(build_finding(rule, call))
-        #         reported_rules.add(id(rule))
-
 
         reported_rules = set()
         for rule, spec in candidates:
@@ -929,29 +888,3 @@ def run_forbidden_functions_indexed(ctx, compiled, findings, adapter, imports):
             if matched:
                 findings.append(build_finding(rule, call))
                 reported_rules.add(id(rule))
-
-def run_forbidden_names_indexed(ctx, compiled, findings, adapter, imports):
-
-    for name_node in ctx.names:
-        # Ottimizzazione: usiamo la cache di ctx invece di join e itertext ripetuti
-        full_text = ctx.text_of(name_node).strip()
-
-        for rule in compiled.forbidden_names_index.get(full_text, []):
-            if not check_required_imports(ctx.unit, rule, NS, imports=imports):
-                continue
-            # Propaga adapter e imports
-            if is_in_safe_context(name_node, rule.get("safe_contexts", []), None, adapter, imports):
-                continue
-            findings.append(build_finding(rule, name_node))
-
-        t = _norm(full_text)
-        for prefix, rule in compiled.forbidden_name_prefixes:
-            # if full_text.startswith(prefix):
-            p = _norm(prefix)
-            if t == p or t.startswith(p + "."):
-                if not check_required_imports(ctx.unit, rule, NS, imports=imports):
-                    continue
-                # Propaga adapter e imports
-                if is_in_safe_context(name_node, rule.get("safe_contexts", []), None, adapter, imports):
-                    continue
-                findings.append(build_finding(rule, name_node))

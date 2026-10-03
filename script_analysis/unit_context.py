@@ -2,7 +2,6 @@ from collections import namedtuple
 
 from common import NS, name_text, assignment_pairs, enclosing_scope, in_opaque_tag
 
-# [MODIFICA] due campi nuovi: rhs_names e rhs_interp (vedi build_assign_infos)
 AssignInfo = namedtuple("AssignInfo", "stmt lhs rhs var scope rhs_all rhs_names rhs_interp")
 
 
@@ -18,8 +17,7 @@ def build_assign_infos(assignments, adapter, unit):
             lhs, rhs = adapter.get_assignment_lhs_rhs(stmt, NS)
         if lhs is None or not lhs.tag.endswith("name"):
             continue
-        # parent_func = stmt.xpath("ancestor::src:function[1]", namespaces=NS)
-        # scope = parent_func[0] if parent_func else unit
+
         scope = enclosing_scope(stmt, adapter)
         if scope is None:
             scope = unit
@@ -48,33 +46,18 @@ def build_assign_infos(assignments, adapter, unit):
         infos.append(AssignInfo(stmt, lhs, rhs, name_text(lhs), scope, rhs_all, rhs_names, rhs_interp))
     return infos
 
-
 class UnitContext:
     __slots__ = (
-        "unit", "calls", "names", "strings", "imports_nodes",
-        "assignments", "conditions", "_itertext_cache", "catalog",
+        "unit", "calls", "assignments", "catalog",
         "assign_infos", "assign_by_stmt",
     )
 
     def __init__(self, unit, adapter, catalog=None):
         self.unit = unit
         self.calls = unit.xpath(".//src:call", namespaces=NS)
-        self.names = unit.xpath(".//src:name", namespaces=NS)
-        self.strings = unit.xpath(".//src:literal[@type='string']", namespaces=NS)
-        self.imports_nodes = unit.xpath(".//src:import", namespaces=NS)
-        self.conditions = unit.xpath(".//src:if_stmt//src:condition", namespaces=NS)
 
         self.assignments = [stmt for stmt, _, _ in assignment_pairs(unit, adapter)]
         self.assign_infos = build_assign_infos(self.assignments, adapter, unit)
         self.assign_by_stmt = {i.stmt: i for i in self.assign_infos}
 
-        self._itertext_cache = {}
         self.catalog = catalog or {}
-
-    def text_of(self, node) -> str:
-        key = id(node)
-        cached = self._itertext_cache.get(key)
-        if cached is None:
-            cached = "".join(node.itertext())
-            self._itertext_cache[key] = cached
-        return cached

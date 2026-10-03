@@ -4,6 +4,7 @@
         "nullable_returning_calls": ["malloc", "calloc", "realloc", "fopen", "getenv","tmpfile", "opendir","getcwd"],
         "cli_input": ["getenv","argv","optarg","fgets", "scanf","fscanf"],
         "socket_input": ["recv", "recvfrom", "recvmsg", "read", "WSARecv", "WSARecvFrom"],
+        "file_input": ["fgets", "fread", "getline", "getdelim","fgetc", "getc","fscanf", "read", "pread"],
         "file_upload_input":[]
     },
     "sinks":{
