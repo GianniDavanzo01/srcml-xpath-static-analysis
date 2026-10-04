@@ -3,7 +3,7 @@ import json
 class RuleCompiler:
     def __init__(self, catalog_path: str):
         self.catalog_path = catalog_path
-        with open(catalog_path, 'r') as f:
+        with open(catalog_path, 'r', encoding='utf-8') as f:
             self.catalog = json.load(f)
 
     def _expand_tags(self, items_list: list, catalog_section: str) -> list:

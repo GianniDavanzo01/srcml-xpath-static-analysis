@@ -14,7 +14,7 @@ from lxml import etree
 from collections import Counter
 
 
-from common import NS, load_rules, check_required_imports, compile_rules, CompiledRuleset, reset_caches
+from common import NS, load_rules, check_required_imports, compile_rules, reset_caches
 from taint_engine import run_taint_rule
 from structural_engine import run_structural_rule, run_forbidden_functions_indexed 
 from unit_context import UnitContext
@@ -24,7 +24,7 @@ from language_adapter import get_adapter
 from RuleCompiler import RuleCompiler
 
 
-_COMPILED_RULESETS_CACHE = {}
+_COMPILED_RULESETS_CACHE = {} # language -> (compiled, catalog_obj)
 
 def collect_xml_files(xml_args: list[str] | None, xml_dir: str | None) -> list[Path]:
     """
@@ -62,34 +62,28 @@ def get_units(tree) -> list:
         return [root]
     return root.xpath(".//src:unit[@filename]", namespaces=NS)
 
-def _get_compiled_ruleset(adapter, raw_rules: list) -> "CompiledRuleset":
-    """Compila (traduce i tag del catalogo) le regole per un linguaggio, una sola volta, con cache."""
-    language_name = adapter.name.lower()
-    if language_name not in _COMPILED_RULESETS_CACHE:
-        catalog_path = Path(f"{language_name}_catalog.json")
-        if catalog_path.exists():
-            compiler = RuleCompiler(str(catalog_path))
-            translated_rules = [compiler.compile(r) for r in raw_rules]
-        else:
-            translated_rules = raw_rules
-        _COMPILED_RULESETS_CACHE[language_name] = compile_rules(translated_rules, adapter)
-    return _COMPILED_RULESETS_CACHE[language_name]
+
+CATALOG_DIR = Path(__file__).resolve().parent
+
+def _get_compiled_ruleset(adapter, raw_rules):
+    lang = adapter.name.lower()
+    cached = _COMPILED_RULESETS_CACHE.get(lang)
+    if cached is None:
+        catalog_path = CATALOG_DIR / f"{lang}_catalog.json"
+        if not catalog_path.exists():
+            raise FileNotFoundError(f"Catalogo mancante per '{lang}': {catalog_path}")
+        compiler = RuleCompiler(str(catalog_path))
+        translated = [compiler.compile(r) for r in raw_rules]
+        cached = (compile_rules(translated, adapter), compiler.catalog)
+        _COMPILED_RULESETS_CACHE[lang] = cached
+    return cached
 
 
-def analyze_unit(unit_node, raw_rules: list, xml_source: str) -> dict:
+def analyze_unit(unit_node, raw_rules: list, xml_source: str, source_file: str | None = None) -> dict:
     reset_caches()
     adapter = get_adapter(unit_node)
     imports = adapter.resolve_imports(unit_node, NS)
-    language_name = getattr(adapter, 'name').lower()
-
-    # compiled = _get_compiled_ruleset(language_name, raw_rules)
-    compiled = _get_compiled_ruleset(adapter, raw_rules)
-
-    catalog_obj = {}
-    catalog_path = Path(f"{language_name}_catalog.json")
-    if catalog_path.exists():
-        with open(catalog_path, 'r', encoding='utf-8') as f:
-            catalog_obj = json.load(f)
+    compiled, catalog_obj = _get_compiled_ruleset(adapter, raw_rules)
 
     ctx = UnitContext(unit_node, adapter, catalog=catalog_obj)
     findings = []
@@ -106,7 +100,7 @@ def analyze_unit(unit_node, raw_rules: list, xml_source: str) -> dict:
             findings.extend(run_structural_rule(unit_node, rule, adapter, imports, ctx=ctx))
 
     return {
-        "source_file": unit_node.get("filename", "Sconosciuto"),
+        "source_file": source_file or unit_node.get("filename", "Sconosciuto"),
         "xml_source": xml_source,
         "vulnerable": len(findings) > 0,
         "rules_summary": sorted({f.get("rule_id", "UNKNOWN") for f in findings}),
@@ -116,59 +110,24 @@ def analyze_unit(unit_node, raw_rules: list, xml_source: str) -> dict:
     }
 
 
-def analyze_file(xml_file: Path, raw_rules: list) -> list:
-    reset_caches()
+def analyze_file(xml_file, raw_rules):
     tree = etree.parse(str(xml_file))
-    units = get_units(tree)
-
-    if not units:
-        root = tree.getroot() if hasattr(tree, "getroot") else tree
-        adapter = get_adapter(root)
-        imports = adapter.resolve_imports(root, NS)
-        language_name = getattr(adapter, 'name').lower()
-
-        # compiled = _get_compiled_ruleset(language_name, raw_rules)
-        compiled = _get_compiled_ruleset(adapter, raw_rules)
-
-        # 1. Caricamento del catalogo (come in analyze_unit)
-        catalog_obj = {}
-        catalog_path = Path(f"{language_name}_catalog.json")
-        if catalog_path.exists():
-            with open(catalog_path, 'r', encoding='utf-8') as f:
-                catalog_obj = json.load(f)
-
-        # 2. Creazione dello UnitContext sul nodo root
-        ctx = UnitContext(root, adapter, catalog=catalog_obj)
-
-        findings = []
-        
-        # 3. Esecuzione delle regole indicizzate (mancavano nel fallback!)
-        run_forbidden_functions_indexed(ctx, compiled, findings, adapter, imports)
-
-        for rule in compiled.rules:
-            # Passiamo 'root' anziché 'tree' per coerenza con il context
-            if not check_required_imports(rule, imports):
-                continue
-                
-            rule_type = rule.get("type")
-            # 4. Passaggio esplicito del ctx per sfruttare la cache
-            if rule_type == "taint":
-                findings.extend(run_taint_rule(root, rule, adapter, imports, ctx=ctx))
-            elif rule_type == "structural":
-                findings.extend(run_structural_rule(root, rule, adapter, imports, ctx=ctx))
-                
-        return [{
-            "source_file": xml_file.name,
-            "xml_source": xml_file.name,
-            "vulnerable": len(findings) > 0,
-            "rules_summary": sorted({f.get("rule_id", "UNKNOWN") for f in findings}),
-            "vulnerabilities_summary": sorted({v for f in findings for v in f.get("vulnerabilities", [])}),
-            "findings_count": len(findings),
-            "findings": findings,
-        }]
-
-    # Se ci sono 'units' normali, deleghiamo alla funzione apposita (che gestiva già bene il ctx)
-    return [analyze_unit(u, raw_rules, xml_source=xml_file.name) for u in units]
+    units = get_units(tree) or [tree.getroot()]
+    results = []
+    for u in units:
+        try:
+            results.append(analyze_unit(u, raw_rules, xml_source=xml_file.name,
+                                        source_file=None if u.get("filename") else xml_file.name))
+        except (FileNotFoundError, NotImplementedError, ValueError) as e:
+            results.append({
+                "source_file": u.get("filename") or xml_file.name,
+                "xml_source": xml_file.name,
+                "vulnerable": False,
+                "error": str(e),
+                "findings_count": 0,
+                "findings": [],
+            })
+    return results
 
 
 def main():
@@ -194,8 +153,13 @@ def main():
 
 
     report = []
+    errors = []
     for xml in xml_files:
-        report.extend(analyze_file(xml, raw_rules))
+        try:
+            report.extend(analyze_file(xml, raw_rules))
+        except (FileNotFoundError, NotImplementedError, ValueError) as e:
+            print(f"[ERRORE] {xml.name}: {e}", file=sys.stderr)
+            errors.append({"xml_source": xml.name, "error": str(e)})
     
     
     elapsed = time.perf_counter() - t0               #TEMPO PER VERIFICARE PERFORMANCE
@@ -204,7 +168,10 @@ def main():
     total_findings = 0
     vulnerable_files_count = 0
 
-    for file_report in report:
+    failed = [r for r in report if "error" in r]
+    ok = [r for r in report if "error" not in r]
+
+    for file_report in ok:
         if file_report.get("vulnerable"):
             vulnerable_files_count += 1
             
@@ -216,12 +183,17 @@ def main():
 
     final_output = {
         "summary": {
-            "total_files_analyzed": len(report),
+            "units_analyzed": len(ok),
+            "units_failed": len(failed) + len(errors),
             "vulnerable_files": vulnerable_files_count,
             "total_findings": total_findings,
-            "categories_count": dict(category_counter) 
+            "categories_count": dict(category_counter),
         },
-        "details": report  
+        "errors": errors + [
+        {"xml_source": r["xml_source"], "source_file": r["source_file"], "error": r["error"]}
+        for r in failed
+    ],
+        "details": ok, 
     }
 
     output_text = json.dumps(final_output, indent=2, ensure_ascii=False)
