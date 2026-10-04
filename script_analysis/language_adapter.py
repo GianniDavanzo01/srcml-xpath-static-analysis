@@ -369,6 +369,21 @@ class LanguageAdapter(ABC):
         """Costrutti che catturano un 'break' (un break dentro un loop annidato o uno switch
         non esce dal ciclo esterno)."""
         return ["while", "do", "for", "switch"]
+
+    def canonical_literal(self, text: str) -> str:
+        """Forma canonica per confrontare valori letterali (True/true -> true, None/null -> null)."""
+        t = text.strip()
+        if self.is_boolean_literal(t):
+            return t.lower()
+        if self.is_none_literal(t):
+            return "null"
+        return self.normalize_string_literal(t)
+
+
+    def get_dict_entry_value_node(self, key_node, ns):
+        """Dato il letterale-chiave di un dizionario, ritorna il nodo del valore
+        associato, o None (default: il linguaggio non ha dizionari letterali)."""
+        return None
     
 
 # ---------------------------------------------------------------------- #
@@ -781,6 +796,14 @@ class PythonAdapter(LanguageAdapter):
 
     def is_identifier(self, text: str) -> bool:
         return text.isidentifier()
+
+
+    def get_dict_entry_value_node(self, key_node, ns):
+        colon = key_node.xpath("following-sibling::src:operator[1][text()=':']", namespaces=ns)
+        if not colon:
+            return None
+        val = colon[0].xpath("following-sibling::*[1]", namespaces=ns)
+        return val[0] if val else None
 
 # ---------------------------------------------------------------------- #
 # Implementazione Java

@@ -658,7 +658,7 @@ def run_structural_rule(tree, rule: dict, adapter, imports, ctx) -> list:
                 
                 # Ripuliamo l'input del catalogo (trasforma "return true;" in "true")
                 raw_return = bfd.get("return_expr", bfd.get("return_value", ""))
-                target_return = raw_return.replace("return", "").replace(";", "").strip().lower()
+                target_return = adapter.canonical_literal(re.sub(r"^\s*return\b", "", raw_return).strip().rstrip(";"))
                 
                 if func_name == target_name and target_param in param_names:
                     returns = func.xpath(".//src:block/src:block_content/src:return", namespaces=NS)
@@ -669,7 +669,7 @@ def run_structural_rule(tree, rule: dict, adapter, imports, ctx) -> list:
                         expr = ret.xpath("./src:expr", namespaces=NS)
                         if expr:
                             # Estraiamo solo l'espressione (es. "true" o "True") e normalizziamo
-                            expr_text = "".join(expr[0].itertext()).strip().lower()
+                            expr_text = adapter.canonical_literal("".join(expr[0].itertext()))
                             if expr_text == target_return:
                                 match_return = True
                                 break

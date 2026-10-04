@@ -609,15 +609,12 @@ def _safe_context_call_has_kwargs(node, spec: dict, var_name, adapter, imports) 
         for kl in value_node.xpath(".//src:literal[@type='string']", namespaces=NS):
             if adapter.normalize_string_literal("".join(kl.itertext()).strip()) != dict_key:
                 continue
-            colon = kl.xpath("following-sibling::src:operator[1][text()=':']", namespaces=NS)
-            if not colon:
+            val_node = adapter.get_dict_entry_value_node(kl, NS)
+            if val_node is None:
                 continue
-            val_sib = colon[0].xpath("following-sibling::*[1]", namespaces=NS)
-            if val_sib:
-                raw_val = "".join(val_sib[0].itertext()).strip()
-                normalized_val = adapter.normalize_string_literal(raw_val)
-                if normalized_val == str(dict_val):
-                    return True
+            raw_val = "".join(val_node.itertext()).strip()
+            if adapter.normalize_string_literal(raw_val) == str(dict_val):
+                return True
         return False
 
     # Caso: valore del kwarg e' una lista letterale, richiediamo uno degli elementi ammessi

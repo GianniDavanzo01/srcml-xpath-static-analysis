@@ -318,6 +318,12 @@ def own_literals(call_node, lit_type: str) -> list:
         namespaces=NS, t=lit_type, c=call_node,
     )
 
+#HELPER PER I VALORI BOOL per ogni linguaggio
+def _bool_text(value, adapter) -> str:
+    """Valore atteso dal catalogo (bool JSON o stringa) -> forma canonica."""
+    if isinstance(value, bool):
+        value = "true" if value else "false"
+    return adapter.canonical_literal(str(value))
 
 def call_arguments_match_ast(call_node, spec: dict, adapter, imports) -> bool:
     """
@@ -355,8 +361,8 @@ def call_arguments_match_ast(call_node, spec: dict, adapter, imports) -> bool:
             )
             if not bool_lits:
                 return False
-            actual = "".join(bool_lits[0].itertext()).strip().lower()
-            if actual != str(expected).lower():
+            actual = adapter.canonical_literal("".join(bool_lits[0].itertext()))
+            if actual != _bool_text(expected, adapter):
                 return False
             
     #Richiede esattamente i nomi indicati
@@ -439,9 +445,9 @@ def call_arguments_match_ast(call_node, spec: dict, adapter, imports) -> bool:
 
     banned_booleans = spec.get("contains_booleans", [])
     if banned_booleans:
-        found_bools = ["".join(b.itertext()).strip().lower()
-                    for b in own_literals(call_node, "boolean")]
-        if not any(str(req).lower() in found_bools for req in banned_booleans):
+        found_bools = [adapter.canonical_literal("".join(b.itertext()))
+               for b in own_literals(call_node, "boolean")]
+        if not any(_bool_text(req, adapter) in found_bools for req in banned_booleans):
             return False
 
     return True
