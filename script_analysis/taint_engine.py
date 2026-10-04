@@ -9,7 +9,7 @@ safe-context o un sanitizer.
 """
 
 from common import NS, build_finding, is_sanitized, source_present, get_call_name, _pos_key, name_text, get_scope_index,  \
-    extract_output_buffer_name, enclosing_scope, in_opaque_tag, macro_map, expand_macro_name, call_matches
+    enclosing_scope, in_opaque_tag, macro_map, expand_macro_name, call_matches
 from sink_matchers import matches_any_sink
 from safe_context_matchers import is_in_safe_context
 
@@ -153,7 +153,7 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
                 if i >= len(args):
                     continue
 
-                out_var = expand_macro_name(extract_output_buffer_name(args[i]) or "", macros) or None
+                out_var = expand_macro_name(adapter.extract_output_buffer_name(args[i], NS) or "", macros) or None
                 if not out_var:
                     continue
 
@@ -241,7 +241,7 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
                         if out_idx >= len(args):
                             continue
 
-                        out_var = expand_macro_name(extract_output_buffer_name(args[out_idx]) or "", macros) or None
+                        out_var = expand_macro_name(adapter.extract_output_buffer_name(args[out_idx], NS) or "", macros) or None
                         if not out_var or out_var in already_tainted:
                             continue
 

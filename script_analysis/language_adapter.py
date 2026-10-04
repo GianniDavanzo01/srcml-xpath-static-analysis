@@ -285,6 +285,30 @@ class LanguageAdapter(ABC):
             return None
         return self.resolve_variable_type(node, text, ns)
 
+
+    def is_cast_type_name(self, name_node) -> bool:
+        """True se <name> fa parte del tipo di un cast. Default: nessun cast sintattico
+        riconoscibile (Python, Java: il cast è un nodo a parte o non esiste)."""
+        return False
+
+    def extract_output_buffer_name(self, arg_node, ns) -> str | None:
+        """Nome della variabile in un <src:argument>, ignorando tipi, indici,
+        costrutti opachi (taint_opaque_tags) e cast."""
+        from common import name_text          
+        skip = ["ancestor::src:index", "ancestor::src:type"]
+        skip += [f"ancestor::src:{t}" for t in self.taint_opaque_tags()]
+        skip_xpath = " | ".join(skip)
+
+        for n in arg_node.xpath(".//src:name[not(src:name)]", namespaces=ns):
+            if n.xpath(skip_xpath, namespaces=ns):
+                continue
+            if self.is_cast_type_name(n):
+                continue
+            txt = name_text(n)
+            if txt:
+                return txt
+        return None
+
     def is_reference_comparison(self, lhs_type, rhs_type) -> bool:
         """True se il confronto va segnalato. Default: nel dubbio segnala."""
         return True
@@ -1291,10 +1315,6 @@ class CAdapter(LanguageAdapter):
             var_name = "".join(parts[0].itertext()).strip()
             method_name = "".join(parts[-1].itertext()).strip()
 
-            # xpath_query_local = (
-            #     f"ancestor::*[self::src:function or self::src:unit][1]"
-            #     f"//src:decl[src:name[text()='{var_name}']]"
-            # )
             xpath_query_local = (
                 f"{self.scope_axis(('unit',))}"
                 f"//src:decl[src:name[text()='{var_name}']]"
@@ -1502,6 +1522,29 @@ class CAdapter(LanguageAdapter):
         return bool(lhs_type and rhs_type and "*" in lhs_type and "*" in rhs_type)
 
 
+    def is_cast_type_name(self, name_node) -> bool:
+        """'(char*)x', '(struct foo *)x': sequenza piatta '(' name+ '*'* ')'."""
+        if _ntxt(name_node) in C_TYPE_WORDS:
+            return True
+
+        prev = name_node.getprevious()
+        while prev is not None and _lname(prev) == "name":
+            prev = prev.getprevious()
+        if prev is None or _lname(prev) != "operator" or _ntxt(prev) != "(":
+            return False
+
+        nxt = name_node.getnext()
+        while nxt is not None and _lname(nxt) == "name":
+            nxt = nxt.getnext()
+        stars = 0
+        while nxt is not None and _lname(nxt) == "operator" and _ntxt(nxt) == "*":
+            stars += 1
+            nxt = nxt.getnext()
+
+        # serve almeno un '*' (altrimenti '(buf)' sembrerebbe un cast) e la ')' finale
+        return stars > 0 and nxt is not None and _lname(nxt) == "operator" and _ntxt(nxt) == ")"
+
+
     
 # ---------------------------------------------------------------------- #
 # Registro / dispatch
@@ -1512,7 +1555,6 @@ ADAPTERS = {
     "java": JavaAdapter(),
     "c": CAdapter(),
 }
-
 
 def get_adapter(unit_node) -> LanguageAdapter:
     """Sceglie l'adapter leggendo l'attributo language="..." che srcML scrive

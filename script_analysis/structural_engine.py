@@ -7,7 +7,7 @@ Motore Strutturale
 import re
 
 from common import NS, get_call_name, build_finding, call_arguments_match_ast, check_required_imports,_pos_key, find_assignments,_is_pure_literal_expr,  \
-assignment_pairs, enclosing_scope, extract_output_buffer_name, node_snippet, call_matches, call_lookup_keys, function_nodes
+assignment_pairs, enclosing_scope, node_snippet, call_matches, call_lookup_keys, function_nodes
 from safe_context_matchers import is_in_safe_context
 
 
@@ -384,7 +384,7 @@ def _check_use_after_free(tree, rule, findings, adapter, imports):
         if arg_nodes[0].xpath(".//src:name[src:name]", namespaces=NS):
             continue
 
-        original_target = extract_output_buffer_name(arg_nodes[0])
+        original_target = adapter.extract_output_buffer_name(arg_nodes[0], NS)
         if not original_target:
             continue
 
