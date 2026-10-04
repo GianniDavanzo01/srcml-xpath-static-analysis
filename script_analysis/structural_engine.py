@@ -7,9 +7,8 @@ Motore Strutturale
 import re
 
 from common import NS, get_call_name, build_finding, call_arguments_match_ast, check_required_imports,_pos_key, find_assignments,_is_pure_literal_expr,  \
-assignment_pairs, enclosing_scope, node_snippet, call_matches, call_lookup_keys, function_nodes
+assignment_pairs, enclosing_scope, node_snippet, call_matches, call_lookup_keys, function_nodes, scope_xpath
 from safe_context_matchers import is_in_safe_context
-
 
 
 
@@ -192,6 +191,32 @@ def _run_forbidden_function_defs(tree, rule, findings, adapter, imports):
             findings.append(build_finding(rule, func_node))
 
 
+#HELPER PER _run_missing_while_increments
+def _loop_has_exit(loop_node, block, adapter) -> bool:
+    """True se nel corpo c'è un'uscita che riguarda DAVVERO questo ciclo."""
+    exit_tags = adapter.loop_exit_tags()
+    if not exit_tags:
+        return False
+
+    exits_xp = " | ".join(f".//src:{t}" for t in exit_tags)
+    target_xp = " or ".join(f"self::src:{t}" for t in adapter.break_target_tags())
+    scope_xp = scope_xpath(adapter, with_lambda=True)
+    my_scope = loop_node.xpath(scope_xp, namespaces=NS)
+    break_tag = f"{{{NS['src']}}}break"
+
+    for n in block.xpath(exits_xp, namespaces=NS):
+        # return/throw dentro una lambda o funzione annidata non esce dal nostro ciclo
+        if n.xpath(scope_xp, namespaces=NS) != my_scope:
+            continue
+        # break semplice: vale solo se il costrutto più vicino che lo cattura è questo ciclo
+        # (un break con etichetta, 'break outer;', lo conto sempre come uscita: scelta prudente)
+        if n.tag == break_tag and not n.xpath("./src:name", namespaces=NS):
+            nearest = n.xpath(f"ancestor::*[{target_xp}][1]", namespaces=NS)
+            if not nearest or nearest[0] is not loop_node:
+                continue
+        return True
+    return False
+
 
 def _run_missing_while_increments(tree, rule, findings, adapter, imports):
     specs = rule.get("missing_while_increments", [])
@@ -205,27 +230,23 @@ def _run_missing_while_increments(tree, rule, findings, adapter, imports):
 
     for loop_node in loop_nodes:
         # Cerca qualsiasi operatore di confronto, non solo '<'
+        cmp_xp = " or ".join(f"text()='{o}'" for o in adapter.comparison_operators())
         cond_ops = loop_node.xpath(
-            "./src:condition//src:operator[text()='<' or text()='<=' or text()='>' or text()='>=' or text()='!=' or text()='==']", 
+            f"./src:condition//src:operator[{cmp_xp}]",
             namespaces=NS
         )
         
         # Gestione speciale per cicli palesemente infiniti: while(1), while(true)
-        is_literal_true = False
-        literals = loop_node.xpath("./src:condition//src:literal", namespaces=NS)
-        if literals:
-            lit_text = "".join(literals[0].itertext()).strip()
-            if lit_text == "1" or adapter.is_boolean_literal(lit_text):
-                if lit_text not in ("0", "false", "False"): # Assicurati che non sia while(0)
-                    is_literal_true = True
-
+        literals = loop_node.xpath("./src:condition/src:expr[count(*)=1]/src:literal", namespaces=NS)
+        is_literal_true = bool(literals) and adapter.is_true_constant("".join(literals[0].itertext()))
+        
         block = loop_node.xpath("./src:block", namespaces=NS)
         if not block:
             continue
             
         # Se il ciclo è infinito (while(true) o while(1)), DEVE esserci un break/return
         if is_literal_true:
-            has_break_or_return = bool(block[0].xpath(".//src:break | .//src:return", namespaces=NS))
+            has_break_or_return = _loop_has_exit(loop_node, block[0], adapter)
             if not has_break_or_return:
                 if not is_in_safe_context(loop_node, safe_contexts, None, adapter, imports):
                     findings.append(build_finding(rule, loop_node))
@@ -241,17 +262,22 @@ def _run_missing_while_increments(tree, rule, findings, adapter, imports):
             continue
 
         var_name = "".join(lhs_nodes[-1].itertext()).strip()
-        if not var_name.isidentifier():
+        if not adapter.is_identifier(var_name):
             continue
 
         # Cerca l'incremento: +=, -=, ++, --, oppure var = var + X
+        upd = adapter.loop_update_operators()
+        op_cond = lambda ops: " or ".join(f"text()='{o}'" for o in ops) or "false()"
+        comp_xp = op_cond(upd["compound"])
+        unary_xp = op_cond(upd["unary"])
+
         aug_assign = block[0].xpath(
-            f".//src:expr[src:name[1][text()='{var_name}'] and src:operator[1][text()='+=' or text()='-=']]",
+            f".//src:expr[src:name[1][text()='{var_name}'] and src:operator[1][{comp_xp}]]",
             namespaces=NS
         )
         
         inc_dec = block[0].xpath(
-            f".//src:expr[.//src:name[text()='{var_name}'] and .//src:operator[text()='++' or text()='--']]",
+            f".//src:expr[.//src:name[text()='{var_name}'] and .//src:operator[{unary_xp}]]",
             namespaces=NS
         )
 
@@ -265,7 +291,7 @@ def _run_missing_while_increments(tree, rule, findings, adapter, imports):
         has_increment = bool(aug_assign or exp_assign or inc_dec)
         
         # Controlla anche se c'è un break (che rende sicuro il ciclo anche se manca l'incremento palese)
-        has_break = bool(block[0].xpath(".//src:break | .//src:return", namespaces=NS))
+        has_break = _loop_has_exit(loop_node, block[0], adapter)
 
         if not has_increment and not has_break:
             if is_in_safe_context(loop_node, safe_contexts, None, adapter, imports):

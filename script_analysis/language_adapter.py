@@ -339,6 +339,36 @@ class LanguageAdapter(ABC):
     def is_async_function(self, func_node, ns) -> bool:
         """True se la funzione è dichiarata async. Default: False (C, Java)."""
         return False
+
+    def is_true_constant(self, text: str) -> bool:
+        """True se il letterale è una costante sempre vera (while(true))."""
+        t = text.strip()
+        return self.is_boolean_literal(t) and t.lower() == "true"
+
+
+    def loop_update_operators(self) -> dict:
+        """Operatori che modificano la variabile di un ciclo.
+        compound: 'x op= n'; unary: 'x++' / '--x'."""
+        return {
+            "compound": ["+=", "-=", "*=", "/=", "%=", "<<=", ">>=", "&=", "|=", "^="],
+            "unary": ["++", "--"],
+        }
+
+    def is_identifier(self, text: str) -> bool:
+        """True se `text` è un identificatore semplice (non un accesso a membro)."""
+        return bool(re.match(r"^[A-Za-z_$][\w$]*$", text))
+
+    def comparison_operators(self) -> list:
+        return ["<", "<=", ">", ">=", "!=", "=="]
+
+    def loop_exit_tags(self) -> list:
+        """Tag che possono far uscire dal ciclo che li racchiude (come flow_exit_tags, senza 'continue')."""
+        return [t for t in self.flow_exit_tags() if t != "continue"]
+
+    def break_target_tags(self) -> list:
+        """Costrutti che catturano un 'break' (un break dentro un loop annidato o uno switch
+        non esce dal ciclo esterno)."""
+        return ["while", "do", "for", "switch"]
     
 
 # ---------------------------------------------------------------------- #
@@ -736,6 +766,21 @@ class PythonAdapter(LanguageAdapter):
 
     def is_async_function(self, func_node, ns) -> bool:
         return bool(func_node.xpath("./src:type/src:modifier[text()='async']", namespaces=ns))
+
+
+    def is_true_constant(self, text: str) -> bool:
+        '''anche 1 è una condizione sempre vera, quindi esegue l'override'''
+        return text.strip() == "1" or super().is_true_constant(text)
+
+
+    def loop_update_operators(self) -> dict:
+        return {
+            "compound": ["+=", "-=", "*=", "/=", "//=", "%=", "**=", "<<=", ">>=", "&=", "|=", "^="],
+            "unary": [],
+        }
+
+    def is_identifier(self, text: str) -> bool:
+        return text.isidentifier()
 
 # ---------------------------------------------------------------------- #
 # Implementazione Java
@@ -1557,6 +1602,11 @@ class CAdapter(LanguageAdapter):
 
         # serve almeno un '*' (altrimenti '(buf)' sembrerebbe un cast) e la ')' finale
         return stars > 0 and nxt is not None and _lname(nxt) == "operator" and _ntxt(nxt) == ")"
+
+
+    def is_true_constant(self, text: str) -> bool:
+        '''anche 1 è una condizione sempre vera, quindi esegue l'override'''
+        return text.strip() == "1" or super().is_true_constant(text)
 
 
     
