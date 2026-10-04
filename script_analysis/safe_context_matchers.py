@@ -59,7 +59,7 @@ def _safe_context_parametrized_query(node, spec, var_name, adapter, imports) -> 
     call_node = None
     for c in reversed(node.xpath("ancestor::src:call", namespaces=NS)):
         cn = get_call_name(c, adapter, imports)
-        if cn and any(call_matches(cn, t) for t in targets):
+        if cn and any(call_matches(cn, t, adapter) for t in targets):
             call_node = c
             break
     if call_node is None:
@@ -92,7 +92,7 @@ def _safe_context_rhs_call(node, spec: dict, var_name, adapter, imports) -> bool
     expr = node.xpath("ancestor::src:expr_stmt[1]//src:call | ancestor::src:condition[1]//src:call", namespaces=NS)
     for c in expr:
         cn = get_call_name(c, adapter, imports)
-        if cn and any(call_matches(cn, t) for t in calls):
+        if cn and any(call_matches(cn, t, adapter) for t in calls):
             return True
     return False
 
@@ -109,7 +109,7 @@ def _safe_context_function_has_method_call(node, spec, var_name, adapter, import
 
     for c in scope.xpath(".//src:call", namespaces=NS):
         cn = get_call_name(c, adapter, imports)
-        if not cn or not any(call_matches(cn, t) for t in targets):
+        if not cn or not any(call_matches(cn, t, adapter) for t in targets):
             continue
 
         # pertinenza: var_name compare nell'espressione che racchiude la call (method chaining)
@@ -571,7 +571,7 @@ def _safe_context_call_has_kwargs(node, spec: dict, var_name, adapter, imports) 
         return False
         
     call_name = get_call_name(call_node[0], adapter, imports)
-    if call_name is None or not any(call_matches(call_name, c) for c in calls):
+    if call_name is None or not any(call_matches(call_name, c, adapter) for c in calls):
         return False
 
     arg_list_nodes = call_node[0].xpath("./src:argument_list", namespaces=NS)
@@ -718,7 +718,7 @@ def _safe_context_function_has_call_with_var_arg(node, spec: dict, var_name, ada
     target = _function_or_unit_scope(node, adapter)
     for call_node in target.xpath(".//src:call", namespaces=NS):
         call_name = get_call_name(call_node, adapter, imports)
-        if not call_name or not any(call_matches(call_name,c) for c in target_calls):
+        if not call_name or not any(call_matches(call_name,c, adapter) for c in target_calls):
             continue
 
         arg_list = call_node.xpath("./src:argument_list", namespaces=NS)
@@ -925,7 +925,7 @@ def _safe_context_check_format_arg_position(node, spec, var_name, adapter, impor
         
     target_index = None
     for target_name, idx in vulnerable_indices.items():
-        if call_matches(call_name, target_name):
+        if call_matches(call_name, target_name, adapter):
             target_index = idx
             break
             

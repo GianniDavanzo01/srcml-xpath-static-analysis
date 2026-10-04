@@ -62,9 +62,9 @@ def get_units(tree) -> list:
         return [root]
     return root.xpath(".//src:unit[@filename]", namespaces=NS)
 
-
-def _get_compiled_ruleset(language_name: str, raw_rules: list) -> "CompiledRuleset":
+def _get_compiled_ruleset(adapter, raw_rules: list) -> "CompiledRuleset":
     """Compila (traduce i tag del catalogo) le regole per un linguaggio, una sola volta, con cache."""
+    language_name = adapter.name.lower()
     if language_name not in _COMPILED_RULESETS_CACHE:
         catalog_path = Path(f"{language_name}_catalog.json")
         if catalog_path.exists():
@@ -72,7 +72,7 @@ def _get_compiled_ruleset(language_name: str, raw_rules: list) -> "CompiledRules
             translated_rules = [compiler.compile(r) for r in raw_rules]
         else:
             translated_rules = raw_rules
-        _COMPILED_RULESETS_CACHE[language_name] = compile_rules(translated_rules)
+        _COMPILED_RULESETS_CACHE[language_name] = compile_rules(translated_rules, adapter)
     return _COMPILED_RULESETS_CACHE[language_name]
 
 
@@ -82,7 +82,8 @@ def analyze_unit(unit_node, raw_rules: list, xml_source: str) -> dict:
     imports = adapter.resolve_imports(unit_node, NS)
     language_name = getattr(adapter, 'name').lower()
 
-    compiled = _get_compiled_ruleset(language_name, raw_rules)
+    # compiled = _get_compiled_ruleset(language_name, raw_rules)
+    compiled = _get_compiled_ruleset(adapter, raw_rules)
 
     catalog_obj = {}
     catalog_path = Path(f"{language_name}_catalog.json")
@@ -126,7 +127,8 @@ def analyze_file(xml_file: Path, raw_rules: list) -> list:
         imports = adapter.resolve_imports(root, NS)
         language_name = getattr(adapter, 'name').lower()
 
-        compiled = _get_compiled_ruleset(language_name, raw_rules)
+        # compiled = _get_compiled_ruleset(language_name, raw_rules)
+        compiled = _get_compiled_ruleset(adapter, raw_rules)
 
         # 1. Caricamento del catalogo (come in analyze_unit)
         catalog_obj = {}

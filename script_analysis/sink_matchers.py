@@ -137,7 +137,7 @@ def _sink_call_with_var_arg(uso, spec, fstring_nodes, adapter, imports):
             continue
             
         # verifichiamo se è una delle chiamate ricercate
-        if not any(call_matches(call_name,c) for c in target_calls):
+        if not any(call_matches(call_name,c, adapter) for c in target_calls):
             continue
 
         # 3. Definiamo arg_list all'interno del ciclo per questa specifica chiamata

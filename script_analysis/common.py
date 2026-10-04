@@ -39,23 +39,25 @@ def expand_macro_name(name, macros):
 
 
 #RISOLVONO IL MATCH ESATTO E NON PIù PER SUFFISSO---------------------
-def _norm(name: str) -> str:
-    return name.replace("->", ".")          # C: s->fn == s.fn
 
-def call_matches(call_name: str | None, pattern: str) -> bool:
+#Le concatenazioni vengono rappresentate tutte come var1.var2.var3 per semplificazione evitanto var1->var2
+def _norm(name: str, adapter) -> str:
+    return adapter.normalize_member_access(name)          # C: s->fn == s.fn
+
+def call_matches(call_name, pattern, adapter) -> bool:
     """Esatto sul nome canonico risolto.
     '*.x[.y]' = 'x[.y]' oppure '<qualsiasi>.x[.y]' (ricevente non risolto, dichiarato)."""
     if not call_name or not pattern:
         return False
-    cn, pat = _norm(call_name), _norm(pattern)
+    cn, pat = _norm(call_name, adapter), _norm(pattern, adapter)
     if pat.startswith("*."):
         pat = pat[2:]
         return cn == pat or cn.endswith("." + pat)
     return cn == pat
 
-def call_lookup_keys(call_name: str) -> list:
+def call_lookup_keys(call_name, adapter) -> list:
     """Chiavi da cercare nell'indice: nome esatto + tutte le forme '*.<coda>'."""
-    cn = _norm(call_name)
+    cn = _norm(call_name, adapter)
     parts = cn.split(".")
     return [cn] + ["*." + ".".join(parts[i:]) for i in range(len(parts))]
 
@@ -99,7 +101,7 @@ def block_exits_flow(block, adapter, imports) -> bool:
     exits = adapter.flow_exit_calls()
     for c in block.xpath(".//src:call", namespaces=NS):
         cn = get_call_name(c, adapter, imports)
-        if cn and any(call_matches(cn, e) for e in exits) and same(c):
+        if cn and any(call_matches(cn, e, adapter) for e in exits) and same(c):
             return True
     return False
 
@@ -244,7 +246,7 @@ def is_sanitized(node, sanitizers: list, adapter, imports) -> bool:
     call_ancestors = node.xpath("ancestor::src:call", namespaces=NS)
     for call in call_ancestors:
         cname = get_call_name(call, adapter, imports)
-        if cname and any(call_matches(cname, san) for san in sanitizers):
+        if cname and any(call_matches(cname, san, adapter) for san in sanitizers):
             return True
     return False
 
@@ -285,7 +287,7 @@ def source_present(sources: list, rhs_node, source_form: str | None = None,
             continue
 
         if source_form == "call":
-            if any(call_matches(ck, source) for ck in call_keys):
+            if any(call_matches(ck, source, adapter) for ck in call_keys):
                 return True
             continue
 
@@ -294,12 +296,12 @@ def source_present(sources: list, rhs_node, source_form: str | None = None,
                 parts = outer_name.xpath("./src:name", namespaces=NS)
                 dotted = op.join("".join(p.itertext()).strip() for p in parts) if parts else (outer_name.text or "").strip()
                 dotted = adapter.resolve_name_text(dotted, imports)
-                if call_matches(dotted, source):
+                if call_matches(dotted, source, adapter):
                     return True
             continue
 
         # Nessuna forma: controlla se una qualsiasi chiamata o variabile matcha il pattern della sorgente
-        if any(call_matches(k, source) for k in call_keys | name_keys):
+        if any(call_matches(k, source, adapter) for k in call_keys | name_keys):
             return True
 
     return False
@@ -328,7 +330,7 @@ def call_arguments_match_ast(call_node, spec: dict, adapter, imports) -> bool:
 
     if target_calls:
         call_name = get_call_name(call_node, adapter, imports)
-        if not call_name or not any(call_matches(call_name, c) for c in target_calls):
+        if not call_name or not any(call_matches(call_name, c, adapter) for c in target_calls):
             return False
 
     arg_list_nodes = call_node.xpath("./src:argument_list", namespaces=NS)
@@ -547,7 +549,7 @@ def _resolve_numeric_args(call_node, adapter, ns) -> list:
 
 class CompiledRuleset:
     
-    def __init__(self, rules: list):
+    def __init__(self, rules: list, adapter):
         # Appiattisce eventuali liste annidate per evitare errori di tipo
         flattened_rules = []
         for r in rules:
@@ -563,17 +565,17 @@ class CompiledRuleset:
         for rule in self.rules:
             for spec in rule.get("forbidden_functions", []):
                 if isinstance(spec, str):
-                    self.forbidden_functions_index.setdefault(_norm(spec), []).append((rule, spec))
+                    self.forbidden_functions_index.setdefault(_norm(spec, adapter), []).append((rule, spec))
                 elif isinstance(spec, dict):
                     stype = spec.get("type")
                     if stype == "exact_name" and spec.get("name"):
-                        self.forbidden_functions_index.setdefault(_norm(spec["name"]), []).append((rule, spec))
+                        self.forbidden_functions_index.setdefault(_norm(spec["name"],adapter), []).append((rule, spec))
                     elif stype == "call_matches_ast" and spec.get("call"):
                         calls = spec.get("call")
                         if isinstance(calls, str):
                             calls = [calls]
                         for c in calls:
-                            self.forbidden_functions_index.setdefault(_norm(c), []).append((rule, spec))
+                            self.forbidden_functions_index.setdefault(_norm(c,adapter), []).append((rule, spec))
                     else:
                         self.unindexed_forbidden_functions.append((rule, spec))
 
@@ -583,5 +585,5 @@ class CompiledRuleset:
     def __len__(self):
         return len(self.rules)
 
-def compile_rules(rules: list) -> "CompiledRuleset":
-    return CompiledRuleset(rules)
+def compile_rules(rules: list, adapter) -> "CompiledRuleset":
+    return CompiledRuleset(rules, adapter)

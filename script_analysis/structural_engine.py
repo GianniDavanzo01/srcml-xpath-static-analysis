@@ -84,7 +84,7 @@ def _run_source_operator_usage(tree, rule, findings, adapter, imports, catalog=N
                 # CASO 1: La sorgente è una funzione 
                 if sibling.tag.endswith("call"):
                     c_name = get_call_name(sibling, adapter, imports)
-                    if any(call_matches(c_name, s) for s in source_names):
+                    if any(call_matches(c_name, s, adapter) for s in source_names):
                         match_found = True
                         matched_source = c_name
                         matched_node = sibling
@@ -105,7 +105,7 @@ def _run_source_operator_usage(tree, rule, findings, adapter, imports, catalog=N
                         n_text = "".join(n.itertext()).replace(" ", "")
 
                     n_text = adapter.resolve_name_text(n_text, imports)
-                    if any(call_matches(n_text, s) for s in source_names):
+                    if any(call_matches(n_text, s, adapter) for s in source_names):
                         match_found = True
                         matched_source = n_text
                         matched_node = n
@@ -130,7 +130,7 @@ def _run_source_operator_usage(tree, rule, findings, adapter, imports, catalog=N
             if resolved_sanitizers:
                 for c_node in expr_node.xpath(".//src:call", namespaces=NS):
                     c_name = get_call_name(c_node, adapter, imports)
-                    if c_name and any(call_matches(c_name, s) for s in resolved_sanitizers):
+                    if c_name and any(call_matches(c_name, s, adapter) for s in resolved_sanitizers):
                         # il nodo sorgente deve stare davvero dentro la call sanitizer
                         if matched_node is c_node or matched_node in c_node.iterdescendants():
                             is_escaped = True
@@ -170,10 +170,8 @@ def _run_forbidden_function_defs(tree, rule, findings, adapter, imports):
         fn = " or ".join(f"self::src:{t}" for t in adapter.function_tags())
         noop = " or ".join(f"self::src:{t}" for t in ["comment"] + adapter.noop_statement_tags())
         for func_node in function_nodes(tree, adapter, name=target_name):
-            if is_async:
-                modifiers = func_node.xpath("./src:type/src:modifier[text()='async']", namespaces=NS)
-                if not modifiers:
-                    continue
+            if is_async and not adapter.is_async_function(func_node, NS):
+                continue
                     
             if max_params is not None:
                 params = func_node.xpath(".//src:parameter_list//src:parameter", namespaces=NS)
@@ -368,7 +366,7 @@ def _check_use_after_free(tree, rule, findings, adapter, imports):
 
     for node in tree.xpath(".//src:call", namespaces=NS):
         call_name = get_call_name(node, adapter, imports)
-        if not call_name or not any(call_matches(call_name, t) for t in target_calls):
+        if not call_name or not any(call_matches(call_name, t, adapter) for t in target_calls):
             continue
 
         scope = enclosing_scope(node, adapter)
@@ -447,7 +445,7 @@ def _check_use_after_free(tree, rule, findings, adapter, imports):
                                 "following-sibling::*//src:call", namespaces=NS)
                             is_safe_alloc = any(
                                 (cn := get_call_name(c, adapter, imports))
-                                and any(call_matches(cn, a) for a in safe_allocations)
+                                and any(call_matches(cn, a, adapter) for a in safe_allocations)
                                 for c in calls
                             )
 
@@ -462,7 +460,7 @@ def _check_use_after_free(tree, rule, findings, adapter, imports):
                 if call_ancestor:
                     ancestor_call_name = get_call_name(call_ancestor[0], adapter, imports)
 
-                    if ancestor_call_name and any(call_matches(ancestor_call_name, t) for t in target_calls):
+                    if ancestor_call_name and any(call_matches(ancestor_call_name, t, adapter) for t in target_calls):
                         is_double_free = True
 
                 extra = {"vulnerabilities": ["CWE-415"]} if is_double_free else {"vulnerabilities": ["CWE-416"]}
@@ -478,7 +476,7 @@ def run_structural_rule(tree, rule: dict, adapter, imports, ctx) -> list:
 
         all_calls = {get_call_name(c, adapter, imports)
              for c in tree.xpath(".//src:call", namespaces=NS)} - {None}
-        if not all(any(call_matches(c, r) for c in all_calls) for r in rule["required_calls"]):
+        if not all(any(call_matches(c, r, adapter) for c in all_calls) for r in rule["required_calls"]):
             return findings
 
     bad_assignments = rule.get("bad_assignments", {})
@@ -502,7 +500,7 @@ def run_structural_rule(tree, rule: dict, adapter, imports, ctx) -> list:
             
             for attr, val in bad_assignments.items():
                 # Confronto strutturale sicuro
-                if call_matches(lhs_text, attr) and rhs_text == val:
+                if call_matches(lhs_text, attr, adapter) and rhs_text == val:
                     if is_in_safe_context(assign, safe_contexts, None, adapter, imports): 
                         continue
                     findings.append(build_finding(rule, assign))
@@ -695,7 +693,7 @@ def run_structural_rule(tree, rule: dict, adapter, imports, ctx) -> list:
                     targets = [targets]
                 kwargs = fcwk.get("kwargs", {})
 
-                is_target = any(call_matches(call_name,t) for t in targets)
+                is_target = any(call_matches(call_name,t, adapter) for t in targets)
                 if is_target:
                     all_kwargs_match = True
                     
@@ -783,7 +781,7 @@ def run_structural_rule(tree, rule: dict, adapter, imports, ctx) -> list:
             # Verifica se l'oggetto a cui si accede è nella blacklist
             for subscript in forbidden_subscripts:
 
-                if call_matches(base_name, subscript):
+                if call_matches(base_name, subscript, adapter):
                     if is_in_safe_context(node, safe_contexts, var_name=index_var, adapter=adapter, imports=imports):
                         break
                     findings.append(build_finding(rule, node))
@@ -849,7 +847,7 @@ def run_forbidden_functions_indexed(ctx, compiled, findings, adapter, imports):
             continue
 
         seen, candidates = set(), []
-        for key in call_lookup_keys(call_name):
+        for key in call_lookup_keys(call_name, adapter):
             for rule_obj, spec in compiled.forbidden_functions_index.get(key, []):
                 k = (id(rule_obj), id(spec))
                 if k not in seen:
@@ -868,14 +866,14 @@ def run_forbidden_functions_indexed(ctx, compiled, findings, adapter, imports):
                 continue
             if not rule_applies(rule):
                 continue
-            if any(call_matches(call_name, e) for e in rule.get("excluded_functions", [])):
+            if any(call_matches(call_name, e, adapter) for e in rule.get("excluded_functions", [])):
                 continue
 
             # Prima il match della spec (economico), poi il safe_context (costoso).
             if isinstance(spec, str):
-                matched = call_matches(call_name, spec)
+                matched = call_matches(call_name, spec, adapter)
             elif spec.get("type") == "exact_name":
-                matched = call_matches(call_name, spec.get("name"))
+                matched = call_matches(call_name, spec.get("name"), adapter)
             elif spec.get("type") == "call_matches_ast":
                 matched = call_arguments_match_ast(call, spec, adapter, imports)
             else:

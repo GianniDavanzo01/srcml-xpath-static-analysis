@@ -110,7 +110,7 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
     s for s in sources
     if s not in PSEUDO_SOURCES
     and not any(
-        call_matches(k, s) and not output_arg_table[k].get("return_tainted", False)
+        call_matches(k, s, adapter) and not output_arg_table[k].get("return_tainted", False)
         for k in output_arg_table
     )
 ]
@@ -121,7 +121,7 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
     active_output_sources = {
     s for s in sources
     if s not in PSEUDO_SOURCES
-    and any(call_matches(k, s) for k in output_arg_table)
+    and any(call_matches(k, s, adapter) for k in output_arg_table)
 }
     if active_output_sources:
         
@@ -130,11 +130,11 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
             if not cname:
                 continue
 
-            matched = next((s for s in active_output_sources if call_matches(cname, s)), None)
+            matched = next((s for s in active_output_sources if call_matches(cname, s, adapter)), None)
             if matched is None:
                 continue
 
-            spec = next(output_arg_table[k] for k in output_arg_table if call_matches(k, matched))
+            spec = next(output_arg_table[k] for k in output_arg_table if call_matches(k, matched, adapter))
 
             source_call_nodes.add(call)
 
@@ -198,7 +198,7 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
                 cname = get_call_name(c, adapter, imports)
 
                 if not cname or not any(
-                    call_matches(cname, a) for a in only_through
+                    call_matches(cname, a, adapter) for a in only_through
                 ):
                     return True
             return False
@@ -232,7 +232,7 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
 
                         if not cname:
                             continue
-                        out_idx = next((i for k, i in propagating_calls.items() if call_matches(cname, k)), None)
+                        out_idx = next((i for k, i in propagating_calls.items() if call_matches(cname, k, adapter)), None)
                         if out_idx is None:
                             continue
 

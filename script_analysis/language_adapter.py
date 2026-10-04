@@ -328,6 +328,17 @@ class LanguageAdapter(ABC):
         prev = op[0].xpath("preceding-sibling::*[1][self::src:call]", namespaces=ns)
         return prev[0] if prev else None
 
+
+    def normalize_member_access(self, name: str) -> str:
+        """Riporta gli accessi a membro alla forma canonica '.' (C: s->fn == s.fn)."""
+        for op in self.member_access_operator():
+            if op != ".":
+                name = name.replace(op, ".")
+        return name
+
+    def is_async_function(self, func_node, ns) -> bool:
+        """True se la funzione è dichiarata async. Default: False (C, Java)."""
+        return False
     
 
 # ---------------------------------------------------------------------- #
@@ -722,6 +733,9 @@ class PythonAdapter(LanguageAdapter):
 
         return None
 
+
+    def is_async_function(self, func_node, ns) -> bool:
+        return bool(func_node.xpath("./src:type/src:modifier[text()='async']", namespaces=ns))
 
 # ---------------------------------------------------------------------- #
 # Implementazione Java
