@@ -49,7 +49,9 @@ def _function_or_unit_scope(node, adapter):
 
 
 def _safe_context_parametrized_query(node, spec, var_name, adapter, imports) -> bool:
-    """{"type": "parametrized_query", "call": ["*.cursor.execute"], "placeholders": ["%s", "?"]}"""
+    """{"type": "parametrized_query", "call": ["*.cursor.execute"],
+        "placeholders": ["%s", "?"], "min_args": 2, "query_arg_index": 0}"""
+     
     targets = _spec_call_patterns(spec)
     placeholders = spec.get("placeholders")
     if not targets:
@@ -69,17 +71,52 @@ def _safe_context_parametrized_query(node, spec, var_name, adapter, imports) -> 
     if not arg_list:
         return False
 
-    # execute(query, parametri): servono almeno due argomenti
-    if len(arg_list[0].xpath("./src:argument", namespaces=NS)) < 2:
+    args = arg_list[0].xpath("./src:argument", namespaces=NS)
+    if len(args) < spec.get("min_args", 1):
         return False
 
+    q_idx = spec.get("query_arg_index", 0)
+    if q_idx >= len(args):
+        return False
+    query_arg = args[q_idx]
+
+    if node is query_arg or query_arg in node.iterancestors():
+        return False
+
+    def _query_literals(call_node, query_arg, adapter):
+        """Letterali stringa della query: diretti, oppure dell'ultima assegnazione
+        della variabile se l'argomento e' un nome semplice."""
+        direct = [l for l in own_literals(call_node, "string")
+                if query_arg in l.iterancestors()]
+        if direct:
+            return direct
+
+        expr = query_arg.xpath("./src:expr", namespaces=NS)
+        expr = expr[0] if expr else query_arg
+        names = expr.xpath("./src:name[not(src:index)]", namespaces=NS)
+        if len(names) != 1 or len(list(expr)) != 1:
+            return []
+        var = "".join(names[0].itertext()).strip()
+
+        scope = _function_or_unit_scope(call_node, adapter)
+        key = _pos_key(call_node)
+        prior = [(s, r) for s, _, r in find_assignments(scope, adapter, var)
+                if r is not None and _pos_key(s) < key]
+        if not prior:
+            return []
+        _, rhs = max(prior, key=lambda t: _pos_key(t[0]))
+        return rhs.xpath("self::src:literal[@type='string'] | .//src:literal[@type='string']",
+                        namespaces=NS)
+
     # placeholder solo nei letterali stringa di QUESTA call (non di call annidate)
-    for lit in own_literals(call_node, "string"):
+    for lit in _query_literals(call_node, query_arg, adapter):
         text = "".join(lit.itertext()).strip()
-        normalized = adapter.normalize_string_literal(text)
-        if any(p in normalized for p in placeholders):
+        if adapter.is_interpolated_string(text):
+            continue
+        if any(p in adapter.normalize_string_literal(text) for p in placeholders):
             return True
     return False
+
 
 
 
