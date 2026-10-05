@@ -814,14 +814,6 @@ def run_structural_rule(tree, rule: dict, adapter, imports, ctx) -> list:
                     break
 
     
-    if rule.get("forbidden_asserts"):
-        safe_contexts = rule.get("safe_contexts", [])
-        asserts = tree.xpath(".//src:assert", namespaces=NS)
-        for ass_node in asserts:
-            if is_in_safe_context(ass_node, safe_contexts, None, adapter, imports):
-                continue
-            findings.append(build_finding(rule, ass_node))
-
     if rule.get("forbidden_function_defs"):
         _run_forbidden_function_defs(tree, rule, findings, adapter, imports)
 

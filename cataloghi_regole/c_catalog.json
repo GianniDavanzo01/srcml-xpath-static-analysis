@@ -104,6 +104,7 @@
             }
         ],
         "loop_condition": [{"type": "loop_condition"}],
+        "assert_conditions": [{"type": "matches_xpath", "xpath": "ancestor::src:call[src:name='assert']"}],
         "unbounded_resource_read": [],
         "html_output": [],
         "exception_stringify_calls": [],
@@ -313,6 +314,7 @@
                     "type": "node_matches_xpath",
                     "xpath": "ancestor::src:condition or ancestor::src:return or ancestor::src:argument or ancestor::src:init or ancestor::src:expr[src:operator[text()='=' or text()='+=' or text()='-=']] or preceding-sibling::*[1][self::src:operator[text()=')']]/preceding-sibling::*[1][self::src:name[text()='void']]"                }
                 ],
+            "non_security_hash_usage":[],
             "sql_parameterization": [],
             "try_block": [],
             "allowlist_validation": [],
@@ -346,9 +348,9 @@
         },
         "active_debug": {
             "bad_assignments": {
-                "debug": "1",
-                "DEBUG": "1",
-                "debug_mode": "1"
+                "*.debug": "1",
+                "*.DEBUG": "1",
+                "*.debug_mode": "1"
             }
         },
           "insecure_permission_assignment": {

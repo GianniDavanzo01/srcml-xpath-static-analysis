@@ -355,7 +355,8 @@
       {
         "type": "loop_condition"
       }
-    ]
+    ],
+    "assert_conditions": [{"type": "matches_xpath", "xpath": "ancestor::src:assert"}]
   },
   "forbidden_functions": {
     "socket_primitives": [
@@ -833,6 +834,7 @@
         ]
       }
     ],
+    "non_security_hash_usage":[],
     "curl_non_url_option": [],
     "sql_parameterization": []
   },

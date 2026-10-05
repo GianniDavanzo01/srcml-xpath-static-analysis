@@ -69,7 +69,8 @@
   "type": "taint",
   "vulnerabilities": ["CWE-79"],
   "sources": [
-    {"tag": "http_input"}
+    {"tag": "http_input"},
+    {"tag": "file_input"}
   ],
   "sinks": [
     {"tag": "html_output"}
@@ -318,7 +319,7 @@
   "forbidden_functions": [
     {"tag": "weak_hash_functions"}
   ],
-  "safe_contexts":[{"type":"non_security_hash_usage"}]
+  "safe_contexts":[{"tag":"non_security_hash_usage"}]
 },
 {
   "rule_id": "CWE-338-WEAK-PRNG",
@@ -460,7 +461,8 @@
   "type": "taint",
   "vulnerabilities": ["CWE-601"],
   "sources": [
-    {"tag": "http_input"}
+    {"tag": "http_input"},
+    {"tag": "file_input"}
   ],
   "sinks": [
     {"tag": "http_redirect"}
@@ -486,6 +488,18 @@
   ],
   "safe_contexts": [
     {"tag": "secure_cookie_contexts"}
+  ]
+},
+{
+  "rule_id": "CWE-617-REACHABLE-ASSERTION",
+  "type": "taint",
+  "vulnerabilities": ["CWE-617"],
+  "sources": [
+    {"tag": "http_input"},
+    {"tag": "cli_input"}
+  ],
+  "sinks": [
+    {"tag": "assert_conditions"}
   ]
 },
 {

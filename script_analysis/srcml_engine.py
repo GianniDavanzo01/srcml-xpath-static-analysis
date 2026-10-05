@@ -79,7 +79,7 @@ def _get_compiled_ruleset(adapter, raw_rules):
         compiled = compile_rules(translated, adapter)
         validate_or_exit(compiled.rules, lang)
 
-        cached = (compile_rules(translated, adapter), compiler.catalog)
+        cached = (compiled, compiler.catalog)
         _COMPILED_RULESETS_CACHE[lang] = cached
     return cached
 
