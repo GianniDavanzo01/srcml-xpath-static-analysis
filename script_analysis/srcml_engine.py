@@ -23,6 +23,8 @@ from language_adapter import get_adapter
 
 from RuleCompiler import RuleCompiler
 
+from validator_rules import validate_or_exit
+
 
 _COMPILED_RULESETS_CACHE = {} # language -> (compiled, catalog_obj)
 
@@ -74,6 +76,9 @@ def _get_compiled_ruleset(adapter, raw_rules):
             raise FileNotFoundError(f"Catalogo mancante per '{lang}': {catalog_path}")
         compiler = RuleCompiler(str(catalog_path))
         translated = [compiler.compile(r) for r in raw_rules]
+        compiled = compile_rules(translated, adapter)
+        validate_or_exit(compiled.rules, lang)
+
         cached = (compile_rules(translated, adapter), compiler.catalog)
         _COMPILED_RULESETS_CACHE[lang] = cached
     return cached
@@ -184,7 +189,8 @@ def main():
     final_output = {
         "summary": {
             "units_analyzed": len(ok),
-            "units_failed": len(failed) + len(errors),
+            "units_failed": len(failed), 
+            "files_failed": len(errors),
             "vulnerable_files": vulnerable_files_count,
             "total_findings": total_findings,
             "categories_count": dict(category_counter),
