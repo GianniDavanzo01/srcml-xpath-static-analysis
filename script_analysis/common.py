@@ -130,6 +130,10 @@ def load_rules(rules_path: Path) -> list:
         seen_ids = {}
         for rule_file in sorted(rules_path.glob("*.json")):
             file_rules = json.loads(rule_file.read_text(encoding="utf-8"))
+            if not isinstance(file_rules, list):
+                raise ValueError(
+                    f"{rule_file.name}: atteso un array di regole, trovato {type(file_rules).__name__}. "
+                )
             for rule in file_rules:
                 rule_id = rule.get("rule_id", "UNKNOWN")
                 if rule_id in seen_ids:

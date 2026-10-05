@@ -64,20 +64,19 @@ def get_units(tree) -> list:
         return [root]
     return root.xpath(".//src:unit[@filename]", namespaces=NS)
 
+DEFAULT_CATALOG_DIR = Path(__file__).resolve().parent
 
-CATALOG_DIR = Path(__file__).resolve().parent
-
-def _get_compiled_ruleset(adapter, raw_rules):
+def _get_compiled_ruleset(adapter, raw_rules, catalog_dir):
     lang = adapter.name.lower()
     cached = _COMPILED_RULESETS_CACHE.get(lang)
     if cached is None:
-        catalog_path = CATALOG_DIR / f"{lang}_catalog.json"
+        catalog_path = Path(catalog_dir) / f"{lang}_catalog.json"
         if not catalog_path.exists():
             raise FileNotFoundError(f"Catalogo mancante per '{lang}': {catalog_path}")
         compiler = RuleCompiler(str(catalog_path))
         translated = [compiler.compile(r) for r in raw_rules]
         compiled = compile_rules(translated, adapter)
-        validate_or_exit(compiled.rules, lang, extra_errors=compiler.errors)
+        validate_or_exit(compiled.rules, lang)
         for w in compiler.warnings:
             print(f"[AVVISO] [{lang}] {w}", file=sys.stderr)
 
@@ -86,11 +85,11 @@ def _get_compiled_ruleset(adapter, raw_rules):
     return cached
 
 
-def analyze_unit(unit_node, raw_rules: list, xml_source: str, source_file: str | None = None) -> dict:
+def analyze_unit(unit_node, raw_rules: list, xml_source: str, source_file: str | None = None, catalog_dir: Path = DEFAULT_CATALOG_DIR) -> dict:
     reset_caches()
     adapter = get_adapter(unit_node)
     imports = adapter.resolve_imports(unit_node, NS)
-    compiled, catalog_obj = _get_compiled_ruleset(adapter, raw_rules)
+    compiled, catalog_obj = _get_compiled_ruleset(adapter, raw_rules, catalog_dir)
 
     ctx = UnitContext(unit_node, adapter, catalog=catalog_obj)
     findings = []
@@ -117,14 +116,16 @@ def analyze_unit(unit_node, raw_rules: list, xml_source: str, source_file: str |
     }
 
 
-def analyze_file(xml_file, raw_rules):
+def analyze_file(xml_file, raw_rules, catalog_dir: Path = DEFAULT_CATALOG_DIR):
     tree = etree.parse(str(xml_file))
     units = get_units(tree) or [tree.getroot()]
     results = []
     for u in units:
         try:
-            results.append(analyze_unit(u, raw_rules, xml_source=xml_file.name,
-                                        source_file=None if u.get("filename") else xml_file.name))
+            results.append(analyze_unit(
+                u, raw_rules, xml_source=xml_file.name,
+                source_file=None if u.get("filename") else xml_file.name,
+                catalog_dir=catalog_dir))
         except (FileNotFoundError, NotImplementedError, ValueError) as e:
             results.append({
                 "source_file": u.get("filename") or xml_file.name,
@@ -142,13 +143,28 @@ def main():
     ap.add_argument("--xml", nargs="+", help="Uno o più file .xml generati da srcML")
     ap.add_argument("--xml-dir", help="Directory contenente più file .xml da analizzare in batch")
     ap.add_argument("--rules", required=True, help="File JSON con le regole, oppure cartella con più file .json")
+    ap.add_argument("--catalog-dir",help="Cartella con i cataloghi <linguaggio>_catalog.json ""(default: cartella dello script)")
     ap.add_argument("-o", "--output", help="File JSON di output (default: stdout)")
     args = ap.parse_args()
 
     if not args.xml and not args.xml_dir:
         ap.error("Specificare almeno uno tra --xml e --xml-dir")
 
-    raw_rules = load_rules(Path(args.rules))
+    catalog_dir = Path(args.catalog_dir) if args.catalog_dir else DEFAULT_CATALOG_DIR
+    if not catalog_dir.is_dir():
+        ap.error(f"--catalog-dir non è una cartella valida: {catalog_dir}")
+
+    rules_path = Path(args.rules)
+    if rules_path.is_dir() and rules_path.resolve() == catalog_dir.resolve():
+        ap.error("La cartella delle regole e quella dei cataloghi devono essere diverse: "
+                "i file *_catalog.json verrebbero letti come regole.")
+
+    try:
+        raw_rules = load_rules(rules_path)
+    except ValueError as e:
+        ap.error(str(e))
+
+    # raw_rules = load_rules(Path(args.rules))
     xml_files = collect_xml_files(args.xml, args.xml_dir)
 
     if not xml_files:
@@ -163,7 +179,7 @@ def main():
     errors = []
     for xml in xml_files:
         try:
-            report.extend(analyze_file(xml, raw_rules))
+            report.extend(analyze_file(xml, raw_rules, catalog_dir))
         except (FileNotFoundError, NotImplementedError, ValueError) as e:
             print(f"[ERRORE] {xml.name}: {e}", file=sys.stderr)
             errors.append({"xml_source": xml.name, "error": str(e)})
