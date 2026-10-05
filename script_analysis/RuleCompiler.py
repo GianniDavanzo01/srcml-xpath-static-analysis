@@ -55,9 +55,9 @@ class RuleCompiler:
                     continue
                 tag_name = item["tag"]
                 pattern_data = self.catalog.get("patterns", {}).get(tag_name)
-                where = f"{self._current_rule}/{catalog_section}"
+                where = f"{self._current_rule}/patterns"
                 if pattern_data is None:
-                    self.errors.append(f"{where}: tag '{tag_name}' non trovato in '{catalog_section}'")
+                    self.errors.append(f"{where}: tag '{tag_name}' non trovato in 'patterns'")
                     continue
                 for engine_key, engine_values in pattern_data.items():
                     if isinstance(engine_values, list):
