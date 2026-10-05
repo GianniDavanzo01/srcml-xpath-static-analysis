@@ -322,6 +322,18 @@ def own_literals(call_node, lit_type: str) -> list:
         namespaces=NS, t=lit_type, c=call_node,
     )
 
+def own_names(call_node) -> list:
+    """
+    Nomi di variabili che appartengono direttamente a `call_node`:
+    stanno nella sua argument_list e la call più vicina che li racchiude è
+    proprio `call_node`, ignorando call annidate.
+    """
+    return call_node.xpath(
+        "./src:argument_list//src:name"
+        "[count(ancestor::src:call[1] | $c) = 1]",
+        namespaces=NS, c=call_node,
+    )
+
 #HELPER PER I VALORI BOOL per ogni linguaggio
 def _bool_text(value, adapter) -> str:
     """Valore atteso dal catalogo (bool JSON o stringa) -> forma canonica."""
@@ -372,12 +384,17 @@ def call_arguments_match_ast(call_node, spec: dict, adapter, imports) -> bool:
     #Richiede esattamente i nomi indicati
     required_names = spec.get("contains_names", [])
     if required_names:
-        names = call_node.xpath(".//src:argument_list//src:name", namespaces=NS)
-        found_names = ["".join(n.itertext()).strip() for n in names]
+        # names = call_node.xpath(".//src:argument_list//src:name", namespaces=NS)
+        # found_names = ["".join(n.itertext()).strip() for n in names]
+        found_names = ["".join(n.itertext()).strip() for n in own_names(call_node)]
 
         # Estende la ricerca dentro le stringhe interpolate (es. f-string):
-        
-        str_lits = call_node.xpath(".//src:argument_list//src:literal[@type='string']", namespaces=NS)
+        # str_lits = call_node.xpath(".//src:argument_list//src:literal[@type='string']", namespaces=NS)
+        # for lit in str_lits:
+        #     testo = "".join(lit.itertext())
+        #     if adapter.is_interpolated_string(testo):
+        #         found_names.extend(adapter.get_interpolated_variables(testo))
+        str_lits = own_literals(call_node, "string")
         for lit in str_lits:
             testo = "".join(lit.itertext())
             if adapter.is_interpolated_string(testo):
@@ -389,20 +406,30 @@ def call_arguments_match_ast(call_node, spec: dict, adapter, imports) -> bool:
     #Richiede almeno uno dei nomi indicati (CWE-532)
     required_names_any = spec.get("contains_any_name", [])
     if required_names_any:
-        names = call_node.xpath(".//src:argument_list//src:name", namespaces=NS)
-        found_names = ["".join(n.itertext()).strip() for n in names]
+        # names = call_node.xpath(".//src:argument_list//src:name", namespaces=NS)
+        # found_names = ["".join(n.itertext()).strip() for n in names]
+        found_names = ["".join(n.itertext()).strip() for n in own_names(call_node)]
 
-        str_lits = call_node.xpath(".//src:argument_list//src:literal[@type='string']", namespaces=NS)
+        # str_lits = call_node.xpath(".//src:argument_list//src:literal[@type='string']", namespaces=NS)
+        # for lit in str_lits:
+        #     testo = "".join(lit.itertext())
+        #     if adapter.is_interpolated_string(testo):
+        #         found_names.extend(adapter.get_interpolated_variables(testo))
+
+        str_lits = own_literals(call_node, "string")
         for lit in str_lits:
             testo = "".join(lit.itertext())
             if adapter.is_interpolated_string(testo):
                 found_names.extend(adapter.get_interpolated_variables(testo))
         
         #case-insensitive e matcha sottostringhe
-        lowered = [f.lower() for f in found_names]
-        if not any(req.lower() in f for req in required_names_any for f in lowered):
+        lowered_found = [f.lower() for f in found_names]
+        lowered_reqs = [req.lower() for req in required_names_any]
+        
+        if not any(req in lowered_found for req in lowered_reqs):
             return False
 
+        
     substr_targets = spec.get("contains_string_containing", [])
     if substr_targets:
         found_texts = [

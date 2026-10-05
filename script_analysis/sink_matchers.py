@@ -387,19 +387,31 @@ def match_sink(uso, sink_spec, fstring_nodes: list, adapter, imports) -> bool:
         if "requires_text_any" in sink_spec:
             required_keywords = [kw.upper() for kw in sink_spec["requires_text_any"]]
             if required_keywords:
-                stmt = uso.xpath("ancestor::src:expr_stmt | ancestor::src:return | ancestor::src:if_stmt", namespaces=NS)
+                stmt = uso.xpath("ancestor::src:expr_stmt | ancestor::src:decl_stmt | ancestor::src:return | ancestor::src:condition", namespaces=NS)
                 target_node = stmt[-1] if stmt else uso
 
                 # Estraiamo SOLO i nodi <name> (ignorando literal, comment, operatori)
                 name_nodes = target_node.xpath(".//src:name", namespaces=NS)
+
+                # Isoliamo i nodi <name> che appartengono alla variabile taintata per ignorarli
+                uso_names = set(uso.xpath("descendant-or-self::src:name", namespaces=NS))
                 
                 keyword_found = False
                 for name_node in name_nodes:
+                    # Ignoriamo il nome della variabile taintata stessa per evitare auto-match
+                    if name_node in uso_names:
+                        continue
+
                     # itertext qui è sicuro perché stiamo guardando SOLO un identificatore
                     node_text = "".join(name_node.itertext()).upper()
                     
-                    # Controllo se l'identificatore contiene la keyword
-                    if any(kw in node_text for kw in required_keywords):
+                    # # Controllo se l'identificatore contiene la keyword
+                    # if any(kw in node_text for kw in required_keywords):
+                    #     keyword_found = True
+                    #     break
+                    
+                    # MATCH ESATTO per risolvere il problema "sql" == "mysql_version"
+                    if any(kw == node_text for kw in required_keywords):
                         keyword_found = True
                         break
 
@@ -412,7 +424,7 @@ def match_sink(uso, sink_spec, fstring_nodes: list, adapter, imports) -> bool:
         if "requires_literal_any" in sink_spec:
             required_literals = sink_spec["requires_literal_any"]
             if required_literals:
-                stmt = uso.xpath("ancestor::src:expr_stmt | ancestor::src:return | ancestor::src:if_stmt", namespaces=NS)
+                stmt = uso.xpath("ancestor::src:expr_stmt | ancestor::src:decl_stmt | ancestor::src:return | ancestor::src:condition", namespaces=NS)
                 target_node = stmt[-1] if stmt else uso
                 
                 string_literals = target_node.xpath(".//src:literal[@type='string']", namespaces=NS)

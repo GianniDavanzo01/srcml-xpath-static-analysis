@@ -7,7 +7,7 @@ Motore Strutturale
 import re
 
 from common import NS, get_call_name, build_finding, call_arguments_match_ast, check_required_imports,_pos_key, find_assignments,_is_pure_literal_expr,  \
-assignment_pairs, enclosing_scope, node_snippet, call_matches, call_lookup_keys, function_nodes, scope_xpath
+assignment_pairs, enclosing_scope, node_snippet, call_matches, call_lookup_keys, function_nodes, scope_xpath, name_text
 from safe_context_matchers import is_in_safe_context
 
 
@@ -99,9 +99,13 @@ def _run_source_operator_usage(tree, rule, findings, adapter, imports, catalog=N
                     op = adapter.member_access_operator()[0]
                     parts = n.xpath("./src:name", namespaces=NS)
                     if parts:
-                        n_text = op.join("".join(p.itertext()).strip() for p in parts)
+                        # Utilizziamo name_text() su ciascun sotto-nome per scartare eventuali indici
+                        # n_text = op.join("".join(p.itertext()).strip() for p in parts)
+                        n_text = op.join(name_text(p) for p in parts)
                     else:
-                        n_text = "".join(n.itertext()).replace(" ", "")
+                        # Utilizziamo name_text() sul nome semplice
+                        # n_text = "".join(n.itertext()).replace(" ", "")
+                        n_text = name_text(n).replace(" ", "")
 
                     n_text = adapter.resolve_name_text(n_text, imports)
                     if any(call_matches(n_text, s, adapter) for s in source_names):
@@ -514,7 +518,8 @@ def run_structural_rule(tree, rule: dict, adapter, imports, ctx) -> list:
                 continue
             
             # Estraiamo il testo della parte sinistra preservando la struttura dei nomi (es. app.debug)
-            lhs_text = "".join(lhs_node.itertext()).strip().replace(" ", "")
+            # USIAMO name_text PER EVITARE L'INCLUSIONE DEGLI INDICI
+            lhs_text = name_text(lhs_node).replace(" ", "")
             lhs_text = adapter.resolve_name_text(lhs_text, imports)
             
             # Normalizziamo la parte destra usando l'adapter (gestisce apici, booleani, ecc.)
@@ -657,8 +662,8 @@ def run_structural_rule(tree, rule: dict, adapter, imports, ctx) -> list:
                 target_param = bfd.get("param")
                 
                 # Ripuliamo l'input del catalogo (trasforma "return true;" in "true")
-                raw_return = bfd.get("return_expr", bfd.get("return_value", ""))
-                target_return = adapter.canonical_literal(bfd.get("return_expr", ""))
+                raw_expected = bfd.get("return_expr", bfd.get("return_value", ""))
+                target_return = adapter.canonical_literal(raw_expected)
                 
                 if func_name == target_name and target_param in param_names:
                     returns = func.xpath(".//src:block/src:block_content/src:return", namespaces=NS)
