@@ -42,9 +42,9 @@ def collect_errors(rules: list) -> list[str]:
     return errors
 
 
-def validate_or_exit(rules: list, lang: str = "") -> None:
+def validate_or_exit(rules: list, lang: str = "", extra_errors=None) -> None:
     """Stampa tutti gli errori trovati e interrompe l'esecuzione."""
-    errors = collect_errors(rules)
+    errors = list(extra_errors or []) + collect_errors(rules)
     if not errors:
         return
     prefix = f"[{lang}] " if lang else ""

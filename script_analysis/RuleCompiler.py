@@ -5,6 +5,9 @@ class RuleCompiler:
         self.catalog_path = catalog_path
         with open(catalog_path, 'r', encoding='utf-8') as f:
             self.catalog = json.load(f)
+        self.errors = []      # tag non risolti
+        self.warnings = []    # tag presenti ma vuoti
+        self._current_rule = "?"
 
     def _expand_tags(self, items_list: list, catalog_section: str) -> list:
         expanded = []
@@ -12,9 +15,14 @@ class RuleCompiler:
             if isinstance(item, dict) and "tag" in item:
                 tag_name = item["tag"]
                 values = self.catalog.get(catalog_section, {}).get(tag_name)
+                where = f"{self._current_rule}/{catalog_section}"
                 if values is None:
-                    print(f"[ATTENZIONE] tag '{tag_name}' non trovato nella sezione '{catalog_section}' del catalogo {self.catalog_path}")
-                    values = []
+                    self.errors.append(
+                        f"{where}: tag '{tag_name}' non trovato in '{catalog_section}'")
+                    continue
+                # if not values:
+                #     self.warnings.append(
+                #         f"{where}: tag '{tag_name}' presente ma vuoto")
                 expanded.extend(values)
             else:
                 expanded.append(item)
@@ -25,6 +33,7 @@ class RuleCompiler:
             return [self.compile(r) for r in abstract_rule]
 
         concrete_rule = abstract_rule.copy()
+        self._current_rule = abstract_rule.get("rule_id", "UNKNOWN")
 
         mapping = {
             "sources": "sources",
@@ -46,8 +55,9 @@ class RuleCompiler:
                     continue
                 tag_name = item["tag"]
                 pattern_data = self.catalog.get("patterns", {}).get(tag_name)
+                where = f"{self._current_rule}/{catalog_section}"
                 if pattern_data is None:
-                    print(f"[ATTENZIONE] tag '{tag_name}' non trovato in 'patterns' ({self.catalog_path})")
+                    self.errors.append(f"{where}: tag '{tag_name}' non trovato in '{catalog_section}'")
                     continue
                 for engine_key, engine_values in pattern_data.items():
                     if isinstance(engine_values, list):

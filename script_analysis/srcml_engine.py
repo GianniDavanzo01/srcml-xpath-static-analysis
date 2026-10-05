@@ -77,7 +77,9 @@ def _get_compiled_ruleset(adapter, raw_rules):
         compiler = RuleCompiler(str(catalog_path))
         translated = [compiler.compile(r) for r in raw_rules]
         compiled = compile_rules(translated, adapter)
-        validate_or_exit(compiled.rules, lang)
+        validate_or_exit(compiled.rules, lang, extra_errors=compiler.errors)
+        for w in compiler.warnings:
+            print(f"[AVVISO] [{lang}] {w}", file=sys.stderr)
 
         cached = (compiled, compiler.catalog)
         _COMPILED_RULESETS_CACHE[lang] = cached
