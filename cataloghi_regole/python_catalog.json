@@ -142,20 +142,11 @@
     ],
     "path_concatenation": [
       {
-        "type": "concat",
-        "requires_literal_any": ["/", "\\\\", ".."],
-        "requires_text_any": ["open", "pathlib.Path", "send_file", "FileResponse", "*.read", "*.write",
-                      "os.path.exists", "os.path.isfile", "shutil.copyfile", "shutil.move"]
-      },
-      {
-        "type": "fstring",
-        "requires_literal_any": ["/", "\\\\", ".."],
-        "requires_text_any": ["open", "pathlib.Path", "send_file", "FileResponse", "read", "write",
-                              "os.path.exists", "os.path.isfile", "shutil.copyfile", "shutil.move"]
-      },
-      {
         "type": "call_with_var_arg",
-        "call": ["os.path.join", "pathlib.Path"]
+        "call": ["os.path.join", "pathlib.Path",
+                 "os.path.exists", "os.path.isfile",
+                 "shutil.copyfile", "shutil.move"],
+        "literal_contains": ["/", "\\\\", ".."]
       }
     ],
     "html_output": [

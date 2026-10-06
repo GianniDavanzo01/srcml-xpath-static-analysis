@@ -6,7 +6,7 @@ Predicati SINK per il motore: sia i pattern semplici basati su stringa
 (oggetto {"type": "..."}), con il relativo registro e dispatcher.
 """
 
-from common import NS, get_call_name, call_matches, name_text
+from common import NS, get_call_name, call_matches
 
 
 
@@ -176,9 +176,7 @@ SINK_MATCHERS = {
 
 def match_sink(uso, sink_spec, fstring_nodes: list, adapter, imports) -> bool:
     """
-    Dispatcher potenziato: 
-    Supporta pattern semplici (str), tipizzati (dict) e aggiunge un
-    filtro globale 'requires_text_any' per validazioni ibride AST+Testo (es. SQLi).
+    Dispatcher: supporta pattern semplici (str) e tipizzati (dict).
     """
     is_match = False
 
@@ -198,67 +196,6 @@ def match_sink(uso, sink_spec, fstring_nodes: list, adapter, imports) -> bool:
     if not is_match:
         return False
     
-    if isinstance(sink_spec, dict):
-        # 1. FILTRO STRUTTURALE SUGLI IDENTIFICATORI (Cerca solo nei nomi di variabili/funzioni)
-        if "requires_text_any" in sink_spec:
-            keywords = sink_spec["requires_text_any"]
-            if keywords:
-                stmt = uso.xpath(
-                    "ancestor::src:expr_stmt | ancestor::src:decl_stmt | "
-                    "ancestor::src:return | ancestor::src:condition", namespaces=NS)
-                target_node = stmt[-1] if stmt else uso
-
-                # nomi della variabile taintata: esclusi per evitare auto-match
-                uso_names = set(uso.xpath("descendant-or-self::src:name", namespaces=NS))
-
-                candidates = set()
-                for n in target_node.xpath(".//src:name", namespaces=NS):
-                    if n in uso_names:
-                        continue
-                    parent = n.getparent()
-                    if parent is not None and parent.tag == n.tag:
-                        continue                      # figlio di un nome composto: ignorato
-                    txt = name_text(n)
-                    candidates.add(txt)
-                    candidates.add(adapter.resolve_name_text(txt, imports))
-
-                # 2. nomi canonici delle call dello statement
-                call_names = []
-                for c in target_node.xpath(".//src:call", namespaces=NS):
-                    cn = get_call_name(c, adapter, imports)
-                    if cn:
-                        call_names.append(cn)
-
-                key = {kw for kw in keywords}
-                keyword_found = bool(candidates & key) or any(
-                    call_matches(cn, kw, adapter) for cn in call_names for kw in keywords
-                )
-                if not keyword_found:
-                    return False
-                
-
-        # 2. FILTRO SUI LETTERALI (Cerca SOLO nelle stringhe hardcodate)
-        # Ideale per Path Traversal o SQLi: "requires_literal_any": ["/", "..", "SELECT"]
-        if "requires_literal_any" in sink_spec:
-            required_literals = sink_spec["requires_literal_any"]
-            if required_literals:
-                stmt = uso.xpath("ancestor::src:expr_stmt | ancestor::src:decl_stmt | ancestor::src:return | ancestor::src:condition", namespaces=NS)
-                target_node = stmt[-1] if stmt else uso
-                
-                string_literals = target_node.xpath(".//src:literal[@type='string']", namespaces=NS)
-                keyword_found = False
-                
-                for lit in string_literals:
-                    raw_text = "".join(lit.itertext())
-                    clean_text = (adapter.normalize_string_literal(raw_text)).upper()
-                    
-                    if any(kw.upper() in clean_text for kw in required_literals):
-                        keyword_found = True
-                        break
-                        
-                if not keyword_found:
-                    return False
-
     return True
 
 

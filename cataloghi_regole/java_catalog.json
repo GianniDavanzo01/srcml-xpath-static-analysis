@@ -72,12 +72,6 @@
     ],
     "path_concatenation": [
       {
-        "type": "concat",
-        "requires_literal_any": ["/", "\\\\", ".."],
-        "requires_text_any": ["File", "Path", "FileInputStream", "FileOutputStream",
-                              "FileReader", "FileWriter"]
-      },
-      {
         "type": "call_with_var_arg",
         "call": ["*.Paths.get", "*.Path.of",
                 "*.Path.resolve", "*.Path.resolveSibling",
