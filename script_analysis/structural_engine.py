@@ -105,7 +105,7 @@ def _run_source_operator_usage(tree, rule, findings, adapter, imports, catalog=N
                     else:
                         # Utilizziamo name_text() sul nome semplice
                         # n_text = "".join(n.itertext()).replace(" ", "")
-                        n_text = name_text(n).replace(" ", "")
+                        n_text = name_text(n)
 
                     n_text = adapter.resolve_name_text(n_text, imports)
                     if any(call_matches(n_text, s, adapter) for s in source_names):
@@ -519,7 +519,7 @@ def run_structural_rule(tree, rule: dict, adapter, imports, ctx) -> list:
             
             # Estraiamo il testo della parte sinistra preservando la struttura dei nomi (es. app.debug)
             # USIAMO name_text PER EVITARE L'INCLUSIONE DEGLI INDICI
-            lhs_text = name_text(lhs_node).replace(" ", "")
+            lhs_text = name_text(lhs_node)
             lhs_text = adapter.resolve_name_text(lhs_text, imports)
             
             # Normalizziamo la parte destra usando l'adapter (gestisce apici, booleani, ecc.)

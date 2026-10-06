@@ -406,27 +406,24 @@ def call_arguments_match_ast(call_node, spec: dict, adapter, imports) -> bool:
     #Richiede almeno uno dei nomi indicati (CWE-532)
     required_names_any = spec.get("contains_any_name", [])
     if required_names_any:
-        # names = call_node.xpath(".//src:argument_list//src:name", namespaces=NS)
-        # found_names = ["".join(n.itertext()).strip() for n in names]
-        found_names = ["".join(n.itertext()).strip() for n in own_names(call_node)]
+        found_names = [name_text(n) for n in own_names(call_node)]
 
-        # str_lits = call_node.xpath(".//src:argument_list//src:literal[@type='string']", namespaces=NS)
-        # for lit in str_lits:
-        #     testo = "".join(lit.itertext())
-        #     if adapter.is_interpolated_string(testo):
-        #         found_names.extend(adapter.get_interpolated_variables(testo))
+        # chiavi di subscript con letterale stringa: creds["password"]
+        for lit in call_node.xpath(
+                "./src:argument_list//src:index//src:literal[@type='string']"
+                "[count(ancestor::src:call[1] | $c) = 1]", namespaces=NS):
+            found_names.append(adapter.normalize_string_literal("".join(lit.itertext()).strip()))
 
-        str_lits = own_literals(call_node, "string")
-        for lit in str_lits:
+        for lit in own_literals(call_node, "string"):
             testo = "".join(lit.itertext())
             if adapter.is_interpolated_string(testo):
                 found_names.extend(adapter.get_interpolated_variables(testo))
-        
-        #case-insensitive e matcha sottostringhe
+
+        # case-insensitive, match per sottostringa
         lowered_found = [f.lower() for f in found_names]
         lowered_reqs = [req.lower() for req in required_names_any]
-        
-        if not any(req in lowered_found for req in lowered_reqs):
+
+        if not any(req in f for req in lowered_reqs for f in lowered_found):
             return False
 
         

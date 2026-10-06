@@ -10,8 +10,7 @@ import sys
 from safe_context_matchers import SAFE_CONTEXT_MATCHERS
 from sink_matchers import SINK_MATCHERS
 
-SIMPLE_SINKS = {"concat", "fstring", "call_arg", "method_chain",
-                "reassign", "return", "any_use", "assign_rhs"}
+SIMPLE_SINKS = {"concat", "fstring", "return"}
 FORBIDDEN_FN_TYPES = {"exact_name", "call_matches_ast"}
 
 REGISTRIES = {

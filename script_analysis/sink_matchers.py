@@ -2,11 +2,11 @@
 sink_matchers.py
 ----------------
 Predicati SINK per il motore: sia i pattern semplici basati su stringa
-(concat/fstring/call_arg/method_chain/...) sia quelli tipizzati
+(concat/fstring/call_arg/...) sia quelli tipizzati
 (oggetto {"type": "..."}), con il relativo registro e dispatcher.
 """
 
-from common import NS, get_call_name, call_matches
+from common import NS, get_call_name, call_matches, name_text
 
 
 
@@ -29,50 +29,9 @@ def _sink_string_pattern(uso, pattern_name: str, adapter, imports, fstring_nodes
             return uso in fstring_nodes
         return False
 
-    if pattern_name == "call_arg":
-        return bool(uso.xpath("ancestor::src:argument", namespaces=NS))
-
-    if pattern_name == "method_chain":
-        # 1. Recupera la lista degli operatori dall'adapter (es. ["."] o [".", "->"])
-        ops = adapter.member_access_operator()
-        
-        # 2. Costruisce la condizione OR per l'XPath
-        ops_xpath = " or ".join(f"text()='{op}'" for op in ops)
-        
-        # 3. Valuta l'accesso usando la condizione dinamica
-        has_member_access = uso.xpath(f"following-sibling::src:operator[1][{ops_xpath}]", namespaces=NS)
-        is_method_call = uso.xpath("parent::src:name/parent::src:call", namespaces=NS)
-        
-        return bool(has_member_access and is_method_call)
-    
-    if pattern_name == "reassign":
-        
-        assign_op = adapter.assignment_operator_token()
-        return bool(uso.xpath(f"following-sibling::src:operator[1][text()='{assign_op}']", namespaces=NS))
-
     if pattern_name == "return":
         return uso.xpath("boolean(ancestor::src:return[1] and not(ancestor::src:call))", namespaces=NS)
     
-    if pattern_name == "assign_rhs":
-        if uso.xpath("ancestor::src:call", namespaces=NS):
-            return False
-            
-        # Troviamo il blocco di codice che contiene l'assegnazione
-        assign_stmt = uso.xpath("ancestor::src:expr_stmt | ancestor::src:decl_stmt", namespaces=NS)
-        if not assign_stmt or not adapter:
-            return False
-            
-        # l'adapter dividere LHS e RHS per noi!
-        lhs, rhs = adapter.get_assignment_lhs_rhs(assign_stmt[0], NS)
-        if rhs is not None:
-            # Controlliamo se il nostro "uso" fa parte del sotto-albero di destra (RHS)
-            return uso in rhs.iter() or uso == rhs
-            
-        return False
-
-    if pattern_name == "any_use":
-        return True
-
     return False
 
 
@@ -167,78 +126,6 @@ def _sink_call_with_var_arg(uso, spec, fstring_nodes, adapter, imports):
 
     return False
 
-
-def _sink_flat_call_arg(uso, spec: dict, fstring_nodes: list, adapter, imports) -> bool:
-    """{"type": "flat_call_arg"}
-        Rileva se la variabile taintata è passata come argomento a una call, purché quella call non contenga altre call annidate 
-        tra i suoi argomenti (nessuna coppia di parentesi extra oltre a quella della call stessa).
-    """
-    call = uso.xpath("ancestor::src:call[1]", namespaces=NS)
-    if not call:
-        return False
-    call = call[0]
-
-    arg_list = call.xpath("./src:argument_list", namespaces=NS)
-    if not arg_list:
-        return False
-    arg_list = arg_list[0]
-
-    nested_calls = arg_list.xpath(".//src:call", namespaces=NS)
-    return not nested_calls
-
-
-def _sink_return_method_call(uso, spec: dict, fstring_nodes: list, adapter, imports) -> bool:
-
-    """{"type": "return_method_call", "method": "match"}"""
-    method = spec.get("method")
-    if not method:
-        return False
-
-    ops = adapter.member_access_operator()
-    ops_xpath = " or ".join(f"text()='{op}'" for op in ops)
-
-    method_nodes = uso.xpath(
-        f"following-sibling::src:operator[1][{ops_xpath}]/following-sibling::src:name[1]",
-        namespaces=NS,
-    )
-
-    if not method_nodes or "".join(method_nodes[0].itertext()).strip() != method:
-        return False
-
-    call_node = uso.xpath("ancestor::src:call[1]", namespaces=NS)
-    if not call_node:
-        return False
-
-    is_returned = call_node[0].xpath("parent::src:expr/parent::src:return", namespaces=NS)
-    
-    return bool(is_returned)
-
-    
-
-def _sink_method_call_in_if(uso, spec: dict, fstring_nodes: list, adapter, imports) -> bool:
-
-    """{"type": "method_call_in_if", "method": "locked"}"""
-    method = spec.get("method")
-    if not method:
-        return False
-
-    ops = adapter.member_access_operator()
-    ops_xpath = " or ".join(f"text()='{op}'" for op in ops)
-
-    method_nodes = uso.xpath(
-        f"following-sibling::src:operator[1][{ops_xpath}]/following-sibling::src:name[1]",
-        namespaces=NS,
-    )
-
-    if not method_nodes or "".join(method_nodes[0].itertext()).strip() != method:
-        return False
-
-    in_condition = uso.xpath("ancestor::src:if_stmt//src:condition", namespaces=NS)
-    
-    return bool(in_condition)
-
-
-
 def _sink_keyword_argument(uso, spec: dict, fstring_nodes: list, adapter, imports) -> bool:
     """{"type": "keyword_argument", "keyword": "env"}"""
     keyword = spec.get("keyword")
@@ -254,70 +141,6 @@ def _sink_keyword_argument(uso, spec: dict, fstring_nodes: list, adapter, import
             if kw_name == keyword:
                 return True
 
-    return False
-
-def _sink_subscript_key_assign_rhs(uso, spec: dict, fstring_nodes: list, adapter, imports) -> bool:
-    """{"type": "subscript_key_assign_rhs"}"""
-    assign_op = adapter.assignment_operator_token()
-    rhs_holder = uso.xpath(
-        f"ancestor-or-self::*[preceding-sibling::src:operator[1][text()='{assign_op}']]",
-        namespaces=NS,
-    )
-    if not rhs_holder or uso.xpath("ancestor::src:argument_list", namespaces=NS):
-        return False
- 
-    op = rhs_holder[0].xpath("preceding-sibling::src:operator[1]", namespaces=NS)[0]
-    lhs_nodes = op.xpath("preceding-sibling::*", namespaces=NS)
-    if not lhs_nodes:
-        return False
-    lhs = lhs_nodes[-1] 
- 
-    if not lhs.tag.endswith("name"):
-        return False
- 
-    return bool(lhs.xpath("./src:index//src:literal[@type='string']", namespaces=NS))
-
-def _sink_subscript_usage(uso, spec: dict, fstring_nodes: list, adapter, imports) -> bool:
-    """
-    Motore universale per i sink basati su subscript.
-    Accorpa: assign_or_concat, return, method_call.
-    """
-    if not uso.xpath("following-sibling::src:index[1]", namespaces=NS):
-        return False
-
-    outer = uso.xpath("parent::src:name[1]", namespaces=NS)
-    target = outer[0] if outer else uso
-
-    subtype = spec.get("subtype")
-    if not subtype:
-        subtype = spec.get("type", "").replace("subscript_", "")
-
-    if subtype == "assign_or_concat":
-        op = target.xpath("preceding-sibling::src:operator[1]", namespaces=NS)
-        if not op:
-            return False
-        op_text = "".join(op[0].itertext()).strip()
-        
-        # Chiediamo i token corretti all'adattatore
-        assign_op = adapter.assignment_operator_token() 
-        concat_ops = adapter.string_concat_operators()
-        
-        # Verifichiamo se l'operatore finisce con il token di assegnazione (es: "=" o "+=")
-        is_assign = op_text == assign_op
-        # Verifichiamo se l'operatore finisce con un token di concatenazione
-        is_concat = op_text in concat_ops or op_text in {c + assign_op for c in concat_ops}
-        
-        return is_assign or is_concat
-
-        
-    elif subtype == "return":
-        return bool(target.xpath("boolean(ancestor::src:return[1] and not(ancestor::src:call))", namespaces=NS))
-        
-    elif subtype == "method_call":
-        ops = adapter.member_access_operator()
-        ops_xpath = " or ".join(f"text()='{op}'" for op in ops)
-        return bool(target.xpath(f"following-sibling::src:operator[1][{ops_xpath}]", namespaces=NS))
-        
     return False
 
 
@@ -345,14 +168,7 @@ def _sink_loop_condition(uso, spec: dict, fstring_nodes: list, adapter, imports)
 SINK_MATCHERS = {
     "method_call": _sink_method_call,
     "call_with_var_arg": _sink_call_with_var_arg,
-    "flat_call_arg": _sink_flat_call_arg,
-    "return_method_call": _sink_return_method_call,
-    "method_call_in_if": _sink_method_call_in_if,
     "keyword_argument": _sink_keyword_argument,
-    "subscript_key_assign_rhs": _sink_subscript_key_assign_rhs,
-    "subscript_assign_or_concat": _sink_subscript_usage,
-    "subscript_return": _sink_subscript_usage,              
-    "subscript_method_call": _sink_subscript_usage,
     "matches_xpath": _sink_matches_xpath,
     "loop_condition": _sink_loop_condition,
 }
@@ -372,7 +188,7 @@ def match_sink(uso, sink_spec, fstring_nodes: list, adapter, imports) -> bool:
     elif isinstance(sink_spec, dict):
         sink_type = sink_spec.get("type")
 
-        simple_patterns = ["concat", "fstring", "call_arg", "method_chain", "reassign", "return", "any_use", "assign_rhs"]
+        simple_patterns = ["concat", "fstring", "return"]
         if sink_type in simple_patterns:
             is_match = _sink_string_pattern(uso, sink_type, adapter, imports, fstring_nodes)
         else:
@@ -385,36 +201,38 @@ def match_sink(uso, sink_spec, fstring_nodes: list, adapter, imports) -> bool:
     if isinstance(sink_spec, dict):
         # 1. FILTRO STRUTTURALE SUGLI IDENTIFICATORI (Cerca solo nei nomi di variabili/funzioni)
         if "requires_text_any" in sink_spec:
-            required_keywords = [kw.upper() for kw in sink_spec["requires_text_any"]]
-            if required_keywords:
-                stmt = uso.xpath("ancestor::src:expr_stmt | ancestor::src:decl_stmt | ancestor::src:return | ancestor::src:condition", namespaces=NS)
+            keywords = sink_spec["requires_text_any"]
+            if keywords:
+                stmt = uso.xpath(
+                    "ancestor::src:expr_stmt | ancestor::src:decl_stmt | "
+                    "ancestor::src:return | ancestor::src:condition", namespaces=NS)
                 target_node = stmt[-1] if stmt else uso
 
-                # Estraiamo SOLO i nodi <name> (ignorando literal, comment, operatori)
-                name_nodes = target_node.xpath(".//src:name", namespaces=NS)
-
-                # Isoliamo i nodi <name> che appartengono alla variabile taintata per ignorarli
+                # nomi della variabile taintata: esclusi per evitare auto-match
                 uso_names = set(uso.xpath("descendant-or-self::src:name", namespaces=NS))
-                
-                keyword_found = False
-                for name_node in name_nodes:
-                    # Ignoriamo il nome della variabile taintata stessa per evitare auto-match
-                    if name_node in uso_names:
+
+                candidates = set()
+                for n in target_node.xpath(".//src:name", namespaces=NS):
+                    if n in uso_names:
                         continue
+                    parent = n.getparent()
+                    if parent is not None and parent.tag == n.tag:
+                        continue                      # figlio di un nome composto: ignorato
+                    txt = name_text(n)
+                    candidates.add(txt)
+                    candidates.add(adapter.resolve_name_text(txt, imports))
 
-                    # itertext qui è sicuro perché stiamo guardando SOLO un identificatore
-                    node_text = "".join(name_node.itertext()).upper()
-                    
-                    # # Controllo se l'identificatore contiene la keyword
-                    # if any(kw in node_text for kw in required_keywords):
-                    #     keyword_found = True
-                    #     break
-                    
-                    # MATCH ESATTO per risolvere il problema "sql" == "mysql_version"
-                    if any(kw == node_text for kw in required_keywords):
-                        keyword_found = True
-                        break
+                # 2. nomi canonici delle call dello statement
+                call_names = []
+                for c in target_node.xpath(".//src:call", namespaces=NS):
+                    cn = get_call_name(c, adapter, imports)
+                    if cn:
+                        call_names.append(cn)
 
+                key = {kw for kw in keywords}
+                keyword_found = bool(candidates & key) or any(
+                    call_matches(cn, kw, adapter) for cn in call_names for kw in keywords
+                )
                 if not keyword_found:
                     return False
                 
