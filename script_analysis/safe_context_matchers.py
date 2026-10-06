@@ -7,7 +7,9 @@ con il relativo registro e dispatcher.
 """
 
 from common import NS, get_call_name, call_arguments_match_ast, find_assignments,_pos_key, block_exits_flow, enclosing_scope, \
-    call_matches, own_literals, assignment_pairs
+    call_matches, own_literals, assignment_pairs, name_text
+
+import re
 
 
 #HELPER PER _safe_context_parametrized_query e _safe_context_function_has_method_call
@@ -358,7 +360,8 @@ def _safe_context_var_truthiness_check(node, spec: dict, var_name, adapter, impo
         for nop in negations:
             next_node = nop.xpath("./following-sibling::*[not(self::src:comment)][1]", namespaces=NS)
             if next_node and next_node[0].tag.endswith("name"):
-                if "".join(next_node[0].itertext()).strip() == var_name:
+                # if "".join(next_node[0].itertext()).strip() == var_name:
+                if name_text(next_node[0]) == var_name:
                     if required_state in ("falsy", "any"):
                         return True
 
@@ -372,8 +375,11 @@ def _safe_context_var_truthiness_check(node, spec: dict, var_name, adapter, impo
             if not lhs or not rhs:
                 continue
 
-            lhs_text = "".join(lhs[0].itertext()).strip()
-            rhs_text = "".join(rhs[0].itertext()).strip()
+            # lhs_text = "".join(lhs[0].itertext()).strip()
+            # rhs_text = "".join(rhs[0].itertext()).strip()
+            # name_text() per i nomi di variabili, altrimenti teniamo il testo grezzo (es. per 'null')
+            lhs_text = name_text(lhs[0]) if lhs[0].tag.endswith("name") else "".join(lhs[0].itertext()).strip()
+            rhs_text = name_text(rhs[0]) if rhs[0].tag.endswith("name") else "".join(rhs[0].itertext()).strip()
 
             is_null_check = (lhs_text == var_name and adapter.is_none_literal(rhs_text)) or \
                             (adapter.is_none_literal(lhs_text) and rhs_text == var_name)
@@ -392,7 +398,8 @@ def _safe_context_var_truthiness_check(node, spec: dict, var_name, adapter, impo
             if len(expr_children) == 1:
                 bare_names = expr_children[0].xpath("./src:name", namespaces=NS)
                 if len(bare_names) == 1 and len(list(expr_children[0])) == 1:
-                    if "".join(bare_names[0].itertext()).strip() == var_name:
+                    # if "".join(bare_names[0].itertext()).strip() == var_name:
+                    if name_text(bare_names[0]) == var_name:
                         return True
 
     return False
@@ -488,20 +495,29 @@ def _safe_context_binary_comparison(node, spec: dict, var_name, adapter, imports
                     if operand_node.tag.endswith("literal") and operand_node.get("type") == "string":
                         lit_text = "".join(operand_node.itertext()).strip()
                         return adapter.normalize_string_literal(lit_text)
-                        
+
+                    if operand_node.tag.endswith("name"):
+                        return name_text(operand_node)
+                    
                     return "".join(operand_node.itertext()).replace(" ", "").replace("\n", "")
 
                 lhs_text = _extract_operand_text(lhs_nodes[0])
                 rhs_text = _extract_operand_text(rhs_nodes[0])
 
-                # VERIFICA
+                # # VERIFICA CON REGEX WORD BOUNDARIES PER I 'CONTAINS'
                 left_ok = True
                 if left_exact or left_contains:
-                    left_ok = (lhs_text in left_exact) or any(c in lhs_text for c in left_contains)
+                    # left_ok = (lhs_text in left_exact) or any(c in lhs_text for c in left_contains)
+                    left_ok = (lhs_text in left_exact) or any(
+                        re.search(rf'\b{re.escape(c)}\b', lhs_text) for c in left_contains
+                    )
 
                 right_ok = True
                 if right_exact or right_contains:
-                    right_ok = (rhs_text in right_exact) or any(c in rhs_text for c in right_contains)
+                    # right_ok = (rhs_text in right_exact) or any(c in rhs_text for c in right_contains)
+                    right_ok = (rhs_text in right_exact) or any(
+                        re.search(rf'\b{re.escape(c)}\b', rhs_text) for c in right_contains
+                    )
 
                 if left_not and lhs_text in left_not:
                     left_ok = False
@@ -557,6 +573,10 @@ def _safe_context_membership_check(node, spec: dict, var_name, adapter, imports)
             if is_negated not in allowed_negation:
                 continue
 
+            # HELPER PER L'ESTRAZIONE CORRETTA: name_text() per le variabili, itertext per i letterali
+            def _get_node_val(n):
+                return name_text(n) if n.tag.endswith("name") else "".join(n.itertext()).strip()
+
             # --- LATO SINISTRO (LHS) ---
             left_ok = True
             if require_var_left and var_name:
@@ -566,7 +586,11 @@ def _safe_context_membership_check(node, spec: dict, var_name, adapter, imports)
                     
             if left_exact:
                 # Estrae in modo sicuro solo i valori letterali, ignorando commenti o token spuri
-                lhs_values = [n.text for n in lhs_node.xpath("descendant-or-self::src:name | descendant-or-self::src:literal", namespaces=NS) if n.text]
+                # lhs_values = [n.text for n in lhs_node.xpath("descendant-or-self::src:name | descendant-or-self::src:literal", namespaces=NS) if n.text]
+                raw_lhs = lhs_node.xpath("descendant-or-self::src:name | descendant-or-self::src:literal", namespaces=NS)
+                lhs_values = [_get_node_val(n) for n in raw_lhs]
+                lhs_values = [v for v in lhs_values if v]  # filtra stringhe vuote
+
                 if not any(val in left_exact for val in lhs_values):
                     left_ok = False
 
@@ -577,7 +601,10 @@ def _safe_context_membership_check(node, spec: dict, var_name, adapter, imports)
                     right_ok = False
                     
             if right_exact:
-                rhs_values = [n.text for n in rhs_node.xpath("descendant-or-self::src:name | descendant-or-self::src:literal", namespaces=NS) if n.text]
+                # rhs_values = [n.text for n in rhs_node.xpath("descendant-or-self::src:name | descendant-or-self::src:literal", namespaces=NS) if n.text]
+                raw_rhs = rhs_node.xpath("descendant-or-self::src:name | descendant-or-self::src:literal", namespaces=NS)
+                rhs_values = [_get_node_val(n) for n in raw_rhs]
+                rhs_values = [v for v in rhs_values if v]  # filtra stringhe vuote
                 if not any(val in right_exact for val in rhs_values):
                     right_ok = False
 
@@ -683,6 +710,10 @@ def _safe_context_receiver_of_method_with_arg(node, spec: dict, var_name, adapte
     if not target_method or not var_name or (dangerous_values is None and not target_arg):
         return False
 
+    # Normalizzazione MAIUSCOLA per il catalogo
+    dangerous_values_upper = [v.upper() for v in dangerous_values] if dangerous_values else None
+    target_arg_upper = target_arg.upper() if target_arg else None
+
     op = adapter.member_access_operator()
     ops_xpath = " or ".join(f"text()='{o}'" for o in op) if isinstance(op, list) else f"text()='{op}'"
     neg_op = adapter.negation_operator()
@@ -701,42 +732,72 @@ def _safe_context_receiver_of_method_with_arg(node, spec: dict, var_name, adapte
                 if not next_hop:
                     break
                 method_nodes = next_hop
-                if "".join(next_hop[0].itertext()).strip() == target_method:
+                # if "".join(next_hop[0].itertext()).strip() == target_method:
+                if name_text(next_hop[0]).strip() == target_method:
                     break
                 current = next_hop[0]
 
-            if not method_nodes or "".join(method_nodes[0].itertext()).strip() != target_method:
+            # if not method_nodes or "".join(method_nodes[0].itertext()).strip() != target_method:
+            if not method_nodes or name_text(method_nodes[0]).strip() != target_method:
                 continue
 
             call_node = method_nodes[0].xpath("ancestor::src:call[1]", namespaces=NS)
             if not call_node:
                 continue
-            arg_list = call_node[0].xpath("./src:argument_list", namespaces=NS)
-            if not arg_list:
+
+            # arg_list = call_node[0].xpath("./src:argument_list", namespaces=NS)
+            # if not arg_list:
+            #     continue
+
+    #         found_values = [
+    #             adapter.normalize_string_literal("".join(lit.itertext()).strip())
+    #             for lit in arg_list[0].xpath(".//src:literal[@type='string']", namespaces=NS)
+    #         ]
+    #         if not found_values:
+    #             continue
+
+    #         # La call e' preceduta da un operatore di negazione (es. !filename.endsWith(".exe"))?
+    #         is_negated = bool(
+    #             call_node[0].xpath(f"preceding-sibling::src:operator[1][text()='{neg_op}']", namespaces=NS)
+    #         )
+
+    #         if dangerous_values is not None:
+    #             any_dangerous = any(v in dangerous_values for v in found_values)
+    #             # Sicuro se: nessun valore pericoloso presente, OPPURE
+    #             # il valore pericoloso e' presente ma la call e' negata (rifiuto esplicito)
+    #             if not any_dangerous:
+    #                 return True
+    #             if any_dangerous and is_negated:
+    #                 return True
+    #         else:
+    #             if target_arg in found_values:
+    #                 return True
+
+            string_literals = own_literals(call_node[0], "string")
+            if not string_literals:
                 continue
 
-            found_values = [
-                adapter.normalize_string_literal("".join(lit.itertext()).strip())
-                for lit in arg_list[0].xpath(".//src:literal[@type='string']", namespaces=NS)
+            # Normalizzazione MAIUSCOLA per i valori trovati nell'AST
+            found_values_upper = [
+                adapter.normalize_string_literal("".join(lit.itertext()).strip()).upper()
+                for lit in string_literals
             ]
-            if not found_values:
+            if not found_values_upper:
                 continue
 
-            # La call e' preceduta da un operatore di negazione (es. !filename.endsWith(".exe"))?
             is_negated = bool(
                 call_node[0].xpath(f"preceding-sibling::src:operator[1][text()='{neg_op}']", namespaces=NS)
             )
 
-            if dangerous_values is not None:
-                any_dangerous = any(v in dangerous_values for v in found_values)
-                # Sicuro se: nessun valore pericoloso presente, OPPURE
-                # il valore pericoloso e' presente ma la call e' negata (rifiuto esplicito)
+            if dangerous_values_upper is not None:
+                # Confronto case-insensitive sicuro
+                any_dangerous = any(v in dangerous_values_upper for v in found_values_upper)
                 if not any_dangerous:
                     return True
                 if any_dangerous and is_negated:
                     return True
             else:
-                if target_arg in found_values:
+                if target_arg_upper in found_values_upper:
                     return True
     return False
 
@@ -794,7 +855,6 @@ def _safe_context_var_falsy_guard_clause(node, spec: dict, var_name, adapter, im
     if not var_name:
         return False
 
-
     neg_op = adapter.negation_operator()
     null_ops = adapter.null_comparison_operators()
     falsy_ops = null_ops["falsy"]
@@ -829,7 +889,8 @@ def _safe_context_var_falsy_guard_clause(node, spec: dict, var_name, adapter, im
         for nop in cond.xpath(f".//src:operator[text()='{neg_op}']", namespaces=NS):
             next_node = nop.xpath("./following-sibling::*[not(self::src:comment)][1]", namespaces=NS)
             if next_node and next_node[0].tag.endswith("name"):
-                if "".join(next_node[0].itertext()).strip() == var_name:
+                # if "".join(next_node[0].itertext()).strip() == var_name:
+                if name_text(next_node[0]) == var_name:
                     #scarta se "not var" e' congiunto in AND con altro -->anche se fosse True che la variabile è nulla 
                     #se l'altra condizione è False non si entra nell'if e si rischia di eseguire un operazione con la variabile nulla.
                     if _adjacent_is_and(nop, "prev",adapter) or _adjacent_is_and(next_node[0], "next",adapter):
@@ -845,8 +906,13 @@ def _safe_context_var_falsy_guard_clause(node, spec: dict, var_name, adapter, im
             rhs = eq_op.xpath("./following-sibling::*[not(self::src:comment)][1]", namespaces=NS)
             if not lhs or not rhs:
                 continue
-            lhs_text = "".join(lhs[0].itertext()).strip()
-            rhs_text = "".join(rhs[0].itertext()).strip()
+            # lhs_text = "".join(lhs[0].itertext()).strip()
+            # rhs_text = "".join(rhs[0].itertext()).strip()
+
+            # name_text() per i nomi di variabili
+            lhs_text = name_text(lhs[0]) if lhs[0].tag.endswith("name") else "".join(lhs[0].itertext()).strip()
+            rhs_text = name_text(rhs[0]) if rhs[0].tag.endswith("name") else "".join(rhs[0].itertext()).strip()
+
             if (lhs_text == var_name and adapter.is_none_literal(rhs_text)) or \
                (adapter.is_none_literal(lhs_text) and rhs_text == var_name):
                 # NUOVO: scarta se "var is None" e' congiunto in AND con altro

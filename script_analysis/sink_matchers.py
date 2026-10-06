@@ -6,7 +6,7 @@ Predicati SINK per il motore: sia i pattern semplici basati su stringa
 (oggetto {"type": "..."}), con il relativo registro e dispatcher.
 """
 
-from common import NS, get_call_name, call_matches
+from common import NS, get_call_name, call_matches, own_literals, name_text
 
 
 
@@ -36,7 +36,6 @@ def _sink_string_pattern(uso, pattern_name: str, adapter, imports, fstring_nodes
 
 
 def _sink_method_call(uso, spec: dict, fstring_nodes: list, adapter, imports) -> bool:
-
     """{"type": "method_call", "method": "endswith", "arg_contains": [".com/"]}
         Cerca l'uso della variabile taintata uso come receiver (chiamante) di uno specifico metodo.
     """
@@ -52,7 +51,8 @@ def _sink_method_call(uso, spec: dict, fstring_nodes: list, adapter, imports) ->
         namespaces=NS,
     )
 
-    if not method_nodes or "".join(method_nodes[0].itertext()).strip() != method:
+    # 1. Utilizzo name_text() per evitare inclusioni di sottonodi
+    if not method_nodes or name_text(method_nodes[0]).strip() != method:
         return False
 
     arg_contains = spec.get("arg_contains", [])
@@ -62,15 +62,16 @@ def _sink_method_call(uso, spec: dict, fstring_nodes: list, adapter, imports) ->
     call_node = uso.xpath("ancestor::src:call[1]", namespaces=NS)
     if not call_node:
         return False
-    arg_list = call_node[0].xpath("./src:argument_list", namespaces=NS)
-    if not arg_list:
-        return False
 
-    string_literals = arg_list[0].xpath(".//src:literal[@type='string']", namespaces=NS)
+    # 2. Confiniamo la ricerca dei letterali ESCLUSIVAMENTE a questa chiamata
+    string_literals = own_literals(call_node[0], "string")
+    
     for literal_node in string_literals:
         raw_text = "".join(literal_node.itertext())
-        clean_text = adapter.normalize_string_literal(raw_text)
-        if any(val in clean_text for val in arg_contains):
+        # 3. Normalizzazione e check case-insensitive coerente col resto del motore
+        clean_text = adapter.normalize_string_literal(raw_text).upper()
+        
+        if any(val.upper() in clean_text for val in arg_contains):
             return True
             
     return False
@@ -113,15 +114,16 @@ def _sink_call_with_var_arg(uso, spec, fstring_nodes, adapter, imports):
         if not literal_contains:
             return True 
 
-        # Peschiamo SOLO i letterali di tipo stringa appartenenti a QUESTA argument_list
-        string_literals = arg_list[0].xpath(".//src:literal[@type='string']", namespaces=NS)
+        # Usiamo own_literals per ignorare i letterali delle call annidate
+        string_literals = own_literals(call_node, "string")
         
         for literal_node in string_literals:
             raw_text = "".join(literal_node.itertext())
-            clean_text = adapter.normalize_string_literal(raw_text)
+            # Normalizziamo e portiamo tutto in maiuscolo per il confronto case-insensitive
+            clean_text = adapter.normalize_string_literal(raw_text).upper()
             
             # Cerchiamo la parola (es. "SELECT") solo dentro le vere stringhe
-            if any(val in clean_text for val in literal_contains):
+            if any(val.upper() in clean_text for val in literal_contains):
                 return True
 
     return False
