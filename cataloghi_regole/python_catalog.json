@@ -120,6 +120,7 @@
         "type": "call_with_var_arg",
         "call": [
           "open",
+          "builtins.open",
           "io.open",
           "os.open",
           "codecs.open",
@@ -127,44 +128,30 @@
           "bz2.open",
           "lzma.open",
           "tarfile.open",
-          "flask.send_file",
-          "*.send_static_file",
           "os.remove",
           "os.rmdir",
           "shutil.rmtree",
-          "*.FileResponse",
-          "flask.send_from_directory"
+          "flask.send_file",
+          "flask.send_from_directory",
+          "*.send_static_file",
+          "fastapi.responses.FileResponse",
+          "starlette.responses.FileResponse",
+          "django.http.FileResponse"
         ]
       }
     ],
     "path_concatenation": [
       {
         "type": "concat",
-        "requires_literal_any": ["/", "\\", ".."],
-        "requires_text_any": [
-          "open",
-          "os.path",
-          "shutil.",
-          "Path",
-          "send_file",
-          "FileResponse",
-          "read",
-          "write"
-        ]
+        "requires_literal_any": ["/", "\\\\", ".."],
+        "requires_text_any": ["open", "pathlib.Path", "send_file", "FileResponse", "*.read", "*.write",
+                      "os.path.exists", "os.path.isfile", "shutil.copyfile", "shutil.move"]
       },
       {
         "type": "fstring",
-        "requires_literal_any": ["/", "\\", ".."],
-        "requires_text_any": [
-          "open",
-          "os.path",
-          "shutil.",
-          "Path",
-          "send_file",
-          "FileResponse",
-          "read",
-          "write"
-        ]
+        "requires_literal_any": ["/", "\\\\", ".."],
+        "requires_text_any": ["open", "pathlib.Path", "send_file", "FileResponse", "read", "write",
+                              "os.path.exists", "os.path.isfile", "shutil.copyfile", "shutil.move"]
       },
       {
         "type": "call_with_var_arg",
@@ -473,7 +460,10 @@
           "access_token",
           "api_key",
           "apikey",
-          "private_key"
+          "private_key",
+          "authtoken",
+          "accesstoken",
+          "privatekey"
         ]
       }
     ],
@@ -568,8 +558,9 @@
         "*.connection.execute", "*.conn.execute",
         "sqlite3.connect.execute",         
         "sqlite3.connect.executemany"       
-      ],
-        "placeholders": ["%s", "?"]
+        ],
+        "placeholders": ["%s", "?"], 
+        "min_args": 2
       }
     ],
     "try_block": ["try"],
@@ -728,14 +719,14 @@
       {
         "type": "check_format_arg_position",
         "vulnerable_indices": {
-      "logging.info": 0, "logging.warning": 0, "logging.error": 0, "logging.debug": 0,
-      "*.logger.info": 0, "*.logger.warning": 0, "*.logger.error": 0,
-      "logging.getLogger.info": 0,        
-      "logging.getLogger.warning": 0,    
-      "logging.getLogger.error": 0,       
-      "logging.getLogger.debug": 0,       
-      "*.printf": 0, "*.format": 0
-    }
+            "logging.info": 0, "logging.warning": 0, "logging.error": 0, "logging.debug": 0,
+            "*.logger.info": 0, "*.logger.warning": 0, "*.logger.error": 0,
+            "logging.getLogger.info": 0,        
+            "logging.getLogger.warning": 0,    
+            "logging.getLogger.error": 0,       
+            "logging.getLogger.debug": 0,       
+            "*.printf": 0, "*.format": 0
+          }
       }
     ],
     "return_value_used": [

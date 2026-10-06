@@ -73,38 +73,15 @@
     "path_concatenation": [
       {
         "type": "concat",
-        "requires_literal_any": [
-          "/",
-          "\\",
-          ".."
-        ],
-        "requires_text_any": [
-          "File",
-          "Path",
-          "Paths",
-          "FileInputStream",
-          "FileOutputStream",
-          "Reader",
-          "Writer"
-        ]
+        "requires_literal_any": ["/", "\\\\", ".."],
+        "requires_text_any": ["File", "Path", "FileInputStream", "FileOutputStream",
+                              "FileReader", "FileWriter"]
       },
       {
         "type": "call_with_var_arg",
-        "call": [
-          "*.Paths.get",
-          "*.Path.of"
-        ]
-      },
-      {
-        "type": "call_with_var_arg",
-        "call": [
-          "*.resolve",
-          "*.resolveSibling"
-        ],
-        "requires_text_any": [
-          "Path",
-          "FileSystem"
-        ]
+        "call": ["*.Paths.get", "*.Path.of",
+                "*.Path.resolve", "*.Path.resolveSibling",
+                "*.Paths.get.resolve", "*.Path.of.resolve"]
       }
     ],
     "os_command_execution": [
@@ -145,28 +122,14 @@
           "*.getWriter.println",
           "*.getWriter.print",
           "*.getWriter.write",
-          "*.HttpServletResponse.sendError"
-        ]
-      },
-      {
-        "type": "call_with_var_arg",
-        "call": [
-          "*.ok",
-          "*.body"
-        ],
-        "requires_text_any": [
-          "ResponseEntity",
-          "RestResponse"
-        ]
-      },
-      {
-        "type": "call_with_var_arg",
-        "call": [
-          "*.setViewName",
-          "*.addObject"
-        ],
-        "requires_text_any": [
-          "ModelAndView"
+          "*.HttpServletResponse.sendError",
+          "*.ResponseEntity.ok",
+          "*.ResponseEntity.ok.body",
+          "*.ResponseEntity.status.body",
+          "*.ResponseEntity.badRequest.body",
+          "*.RestResponse.ok",
+          "*.ModelAndView.setViewName", 
+          "*.ModelAndView.addObject"
         ]
       }
     ],
@@ -205,12 +168,8 @@
       {
         "type": "call_with_var_arg",
         "call": [
-          "*.add",
-          "*.set"
-        ],
-        "requires_text_any": [
-          "ServerHttpResponse.getHeaders",
-          "getHeaders"
+          "*.ServerHttpResponse.getHeaders.add",
+          "*.ServerHttpResponse.getHeaders.set"
         ]
       }
     ],

@@ -18,7 +18,7 @@
             {
                 "type": "call_with_var_arg",
                 "call": ["strcat", "strncat", "sprintf", "snprintf", "asprintf"],
-                "literal_contains": ["/", "\\", ".."]
+                "literal_contains": ["/", "\\\\", ".."]
             }
         ],
         "os_command_execution": [
@@ -163,7 +163,8 @@
             {
                 "type": "call_matches_ast",
                 "call": ["mg_printf", "MHD_add_response_header", "kore_http_response_header"],
-                "contains_string_containing": ["Set-Cookie"]
+                "contains_string_containing": ["Set-Cookie"],
+                "case_insensitive": true
             }
         ],
         "socket_primitives": [
@@ -189,7 +190,7 @@
                 "type": "call_matches_ast",
                 "call": ["printf", "fprintf", "syslog"],
                 "contains_any_name": ["password", "Secret",
-                            "auth_token", "access_token", "api_key", "apikey", "private_key"]
+                            "auth_token", "access_token", "api_key", "apikey", "private_key","authtoken","accesstoken","privatekey"]
             }
         ],
         "obsolete_functions": ["gets", "strtok", "scanf", "sprintf", "strcpy", "strcat"],
