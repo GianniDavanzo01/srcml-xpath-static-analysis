@@ -1503,7 +1503,8 @@ class CAdapter(LanguageAdapter):
             "sprintf": 0, "snprintf": 0,
             "strcpy": 0, "strncpy": 0,
             "strcat": 0, "strncat": 0,
-            "memcpy": 0,  "_snprintf": 0
+            "memcpy": 0,  "_snprintf": 0,
+            "sscanf": {"in": [0], "out_variadic_from": 2},
         }
 
     def extract_membership_relations(self, condition_node, ns) -> list[dict]:

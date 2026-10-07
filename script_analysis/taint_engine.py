@@ -232,26 +232,24 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
                         continue
                     for call in scope_node.xpath(".//src:call", namespaces=NS):
                         cname = get_call_name(call, adapter, imports)
-
-
                         if not cname:
                             continue
-                        out_idx = next((i for k, i in propagating_calls.items() if call_matches(cname, k, adapter)), None)
-                        if out_idx is None:
+                        spec = next((v for k, v in propagating_calls.items()
+                                    if call_matches(cname, k, adapter)), None)
+                        if spec is None:
                             continue
+                        if isinstance(spec, int):                     # retrocompatibile
+                            spec = {"out": [spec]}
 
-                        
                         args = call.xpath("./src:argument_list/src:argument", namespaces=NS)
-                        if out_idx >= len(args):
-                            continue
-
-                        out_var = expand_macro_name(adapter.extract_output_buffer_name(args[out_idx], NS) or "", macros) or None
-                        if not out_var or out_var in already_tainted:
-                            continue
+                        out_idxs = set(spec.get("out", []))
+                        if "out_variadic_from" in spec:
+                            out_idxs.update(range(spec["out_variadic_from"], len(args)))
+                        in_idxs = spec.get("in")                      # None = tutti gli altri argomenti
 
                         source_found = False
                         for i, arg in enumerate(args):
-                            if i == out_idx:
+                            if i in out_idxs or (in_idxs is not None and i not in in_idxs):
                                 continue
                             for n in arg.xpath(".//src:name", namespaces=NS):
                                 if in_opaque_tag(n, adapter):
@@ -262,11 +260,18 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
                                     break
                             if source_found:
                                 break
+                        if not source_found:
+                            continue
 
-                        if source_found:
-                            tainted_vars_with_scope.append((out_var, scope_node))
-                            already_tainted.add(out_var)
-                            changed = True
+                        for out_idx in sorted(out_idxs):
+                            if out_idx >= len(args):
+                                continue
+                            out_var = expand_macro_name(
+                                adapter.extract_output_buffer_name(args[out_idx], NS) or "", macros) or None
+                            if out_var and out_var not in already_tainted:
+                                tainted_vars_with_scope.append((out_var, scope_node))
+                                already_tainted.add(out_var)
+                                changed = True
 
             # [MODIFICA 4] Propagazione via assegnazione: nessuna query XPath
             # per ricavare lhs/rhs/scope/rhs_all, sono gia' in `info`.
