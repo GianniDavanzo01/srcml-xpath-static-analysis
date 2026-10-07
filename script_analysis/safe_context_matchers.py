@@ -745,34 +745,6 @@ def _safe_context_receiver_of_method_with_arg(node, spec: dict, var_name, adapte
             if not call_node:
                 continue
 
-            # arg_list = call_node[0].xpath("./src:argument_list", namespaces=NS)
-            # if not arg_list:
-            #     continue
-
-    #         found_values = [
-    #             adapter.normalize_string_literal("".join(lit.itertext()).strip())
-    #             for lit in arg_list[0].xpath(".//src:literal[@type='string']", namespaces=NS)
-    #         ]
-    #         if not found_values:
-    #             continue
-
-    #         # La call e' preceduta da un operatore di negazione (es. !filename.endsWith(".exe"))?
-    #         is_negated = bool(
-    #             call_node[0].xpath(f"preceding-sibling::src:operator[1][text()='{neg_op}']", namespaces=NS)
-    #         )
-
-    #         if dangerous_values is not None:
-    #             any_dangerous = any(v in dangerous_values for v in found_values)
-    #             # Sicuro se: nessun valore pericoloso presente, OPPURE
-    #             # il valore pericoloso e' presente ma la call e' negata (rifiuto esplicito)
-    #             if not any_dangerous:
-    #                 return True
-    #             if any_dangerous and is_negated:
-    #                 return True
-    #         else:
-    #             if target_arg in found_values:
-    #                 return True
-
             string_literals = own_literals(call_node[0], "string")
             if not string_literals:
                 continue
