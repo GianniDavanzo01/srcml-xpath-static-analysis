@@ -11,7 +11,7 @@
         "file_system_access": [
             {
                 "type": "call_with_var_arg",
-                "call":["fopen","open","remove","unlink","rename","mkdir","rmdir","stat","lstat"]
+                "call":["*.fopen","*.open","*.remove","*.unlink","*.rename","*.mkdir","*.rmdir","*.stat","*.lstat"]
             }
         ],
         "path_concatenation": [
@@ -24,7 +24,7 @@
         "os_command_execution": [
             {
                 "type": "call_with_var_arg",
-                "call": ["system", "popen", "execl", "execlp", "execle", "execv", "execvp", "execvpe", "execve","_wsystem", "_wpopen", "_execl", "_wexecl"]
+                "call": ["system", "popen", "execl", "execlp", "execle", "execv", "execvp", "execvpe", "execve","_wsystem", "_wpopen", "_execl", "_wexecl","_spawnv"]
             }
         ],
         "sql_execution": [
@@ -98,13 +98,27 @@
             }
         ],
         "array_index_use": [
-            {
-                "type": "matches_xpath",
-                "xpath": "ancestor::src:index[not(parent::src:name/parent::src:decl)][not(parent::src:name/preceding-sibling::*[1][self::src:operator and text()='new'])]"
-            }
+                {
+                    "type": "matches_xpath",
+                    "xpath": "ancestor::src:index[not(parent::src:name/parent::src:decl)]"
+                }
         ],
         "loop_condition": [{"type": "loop_condition"}],
         "assert_conditions": [{"type": "matches_xpath", "xpath": "ancestor::src:call[src:name='assert']"}],
+        "sleep_functions": [
+            {
+                "type": "call_with_var_arg",
+                "call": ["sleep", "usleep", "Sleep", "nanosleep", "SLEEP"]
+            }
+        ],
+        "search_path_sinks": [
+            {
+                "type": "call_with_var_arg",
+                "call": ["putenv", "_putenv", "setenv", "_wputenv",
+                        "SetEnvironmentVariable", "SetEnvironmentVariableA", "SetEnvironmentVariableW",
+                        "SetDllDirectory", "SetDllDirectoryA", "SetDllDirectoryW"]
+            }
+        ],
         "unbounded_resource_read": [],
         "html_output": [],
         "exception_stringify_calls": [],
@@ -156,8 +170,7 @@
                 "type": "call_matches_ast",
                 "call": ["xmlReadFile", "xmlReadMemory", "xmlReadDoc", "xmlCtxtReadFile", "xmlCtxtReadMemory"],
                 "contains_names": ["XML_PARSE_NOENT", "XML_PARSE_DTDLOAD"]
-            },
-            "xmlSubstituteEntitiesDefault"
+            }
         ],
         "insecure_cookie_configuration":[
             {
@@ -168,9 +181,7 @@
             }
         ],
         "socket_primitives": [
-            "socket", "connect", "bind", "listen", "accept",
-            "send", "recv", "sendto", "recvfrom", "sendmsg", "recvmsg",
-            "setsockopt", "getsockopt", "getsockname", "getpeername", "shutdown"
+            "gethostbyname", "inet_ntoa"
         ],
         "insecure_network_protocols": [
             {
@@ -193,7 +204,7 @@
                             "auth_token", "access_token", "api_key", "apikey", "private_key","authtoken","accesstoken","privatekey"]
             }
         ],
-        "obsolete_functions": ["gets", "strtok", "scanf", "sprintf", "strcpy", "strcat"],
+        "obsolete_functions": ["gets", "strtok", "sprintf", "strcpy", "strcat"],
         "weak_password_hashing": [
             "crypt",
             {

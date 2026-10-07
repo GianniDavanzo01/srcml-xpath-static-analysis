@@ -323,6 +323,23 @@
       }
     ],
     "assert_conditions": [{"type": "matches_xpath", "xpath": "ancestor::src:condition[parent::src:assert]"}],
+    "search_path_sinks": [
+      {
+        "type": "call_with_var_arg",
+        "call": ["os.putenv", "os.environ.update", "os.environ.setdefault",
+                "sys.path.append", "sys.path.insert", "sys.path.extend",
+                "ctypes.CDLL", "ctypes.cdll.LoadLibrary", "ctypes.WinDLL",
+                "importlib.import_module", "__import__"]
+      }
+    ],
+    "sleep_functions": [{
+        "type": "call_with_var_arg",
+        "call": [
+            "sleep", 
+            "time.sleep", 
+            "asyncio.sleep"
+        ]
+    }],
     "array_index_use": [],
     "array_alloc_size": []
   },

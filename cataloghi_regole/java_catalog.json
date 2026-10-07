@@ -17,8 +17,6 @@
       "*.Console.readPassword"
     ],
     "nullable_returning_calls": [
-      "System.getenv",
-      "System.getProperty",
       "*.Map.get",
       "*.HashMap.get",
       "*.HttpServletRequest.getHeader",
@@ -309,7 +307,29 @@
         "type": "loop_condition"
       }
     ],
-    "assert_conditions": [{"type": "matches_xpath", "xpath": "ancestor::src:assert"}]
+    "assert_conditions": [{"type": "matches_xpath", "xpath": "ancestor::src:assert"}],
+    "search_path_sinks": [
+      {
+        "type": "call_with_var_arg",
+         "call": [
+          "System.setProperty", "System.load", "System.loadLibrary",
+          "Runtime.load", "Runtime.loadLibrary",
+          "Runtime.getRuntime.load", "Runtime.getRuntime.loadLibrary"
+        ]
+      }
+    ],
+    "sleep_functions": [
+      {
+        "type": "call_with_var_arg",
+        "call": [
+            "sleep", 
+            "*.sleep", 
+            "Thread.sleep", 
+            "TimeUnit.SECONDS.sleep", 
+            "TimeUnit.MILLISECONDS.sleep"
+        ]
+    }
+    ]
   },
   "forbidden_functions": {
     "socket_primitives": [

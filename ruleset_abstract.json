@@ -237,8 +237,6 @@
   "vulnerabilities": ["CWE-259"],
   "sensitive_var_patterns": [
     "password", "passwd", "pwd",
-    "secretkey", "secret_key",
-    "credential", "credentials",
     "passphrase", "pass_phrase"
   ]
 },
@@ -342,16 +340,17 @@
 },
 {
   "rule_id": "CWE-400-UNCONTROLLED-RESOURCE-CONSUMPTION",
-  "description":"Applicata a Java e Python (DISCOURAGED)",
   "type": "taint",
   "vulnerabilities": ["CWE-400"],
-  "sources": ["function_parameters",{"tag": "file_upload_input"}],
-  "sinks": [{"tag": "unbounded_resource_read"}],
+  "sources": [{"tag": "file_upload_input"},{"tag": "socket_input"}],
+  "sinks": [{"tag": "unbounded_resource_read"},{"tag": "sleep_functions"}],
+  "patterns": [
+    {"tag": "string_to_int_propagation"}
+  ],
   "safe_contexts": [{"tag": "resource_safe_contexts"}]
 },
 {
   "rule_id": "CWE-400-UNCONTROLLED-LOOP-BOUND",
-  "description": "Rileva l'uso di input non fidati (es. variabili d'ambiente o parametri HTTP) come limite di un ciclo senza validazione dei confini.",
   "type": "taint",
   "vulnerabilities": ["CWE-400"],
   "sources": [
@@ -385,6 +384,14 @@
   "patterns": [{"tag": "use_after_free_check"}]
 },
 {
+  "rule_id": "CWE-427-UNCONTROLLED-SEARCH-PATH",
+  "type": "taint",
+  "vulnerabilities": ["CWE-427"],
+  "sources": [{"tag": "http_input"}, {"tag": "cli_input"}],
+  "sinks": [{"tag": "search_path_sinks"}],
+  "safe_contexts": [{"tag": "allowlist_validation"}]
+},
+{
   "rule_id": "CWE-434-UNRESTRICTED-FILE-UPLOAD",
   "type": "taint",
   "description": "Applicabile a Python e Java. Rileva il salvataggio di un file caricato dall'utente senza previa validazione dell'estensione/tipo.",
@@ -402,7 +409,7 @@
   "vulnerabilities": ["CWE-476"],
   "propagate_taint": false,
   "sources": [
-    {"tag": "nullable_returning_calls"}
+    {"tag": "nullable_returning_calls"}, "null_literal"
   ],
   "sinks": [
     {"tag": "null_dereference"}
@@ -498,6 +505,7 @@
     {"tag": "http_input"},
     {"tag": "cli_input"}
   ],
+  "ignore_taint_block_functions":true,
   "sinks": [
     {"tag": "assert_conditions"}
   ]
@@ -514,7 +522,6 @@
 {
   "rule_id": "CWE-703-IMPROPER-EXCEPTION-HANDLING",
   "type": "structural",
-  "description": "Applicabile a Python e Java (linguaggi con gestione eccezioni strutturata) (DISCOURAGED)",
   "vulnerabilities": ["CWE-703"],
   "empty_catch_blocks": true
 },
@@ -550,9 +557,10 @@
   "type": "structural",
   "vulnerabilities": ["CWE-798"],
   "sensitive_var_patterns": [
-    "password", "passwd", "pwd", "secret",
+    "secret",
     "api_key", "apikey", "access_key", "accesskey",
-    "token", "auth_token", "private_key", "privatekey"
+    "token", "auth_token", "private_key", "privatekey",
+    "credential", "credentials"
   ]
 },
 {
@@ -578,6 +586,12 @@
     {"tag": "http_request"}
   ],
   "safe_contexts":[{"tag": "curl_non_url_option"},{"tag": "allowlist_validation"}]
+},
+{
+  "rule_id": "CWE-1071-EMPTY-CODE-BLOCK",
+  "type": "structural",
+  "vulnerabilities": ["CWE-1071"],
+  "empty_if_blocks": true
 },
 {
   "rule_id": "CWE-1236-CSV-INJECTION",
