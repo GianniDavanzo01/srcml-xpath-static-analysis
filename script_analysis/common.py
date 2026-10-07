@@ -10,9 +10,10 @@ import json
 import re
 from pathlib import Path
 
-# from language_adapter import  C_TYPE_WORDS as _C_TYPE_WORDS
 
 from collections import defaultdict
+
+from functools import lru_cache
 
 NS = {"src": "http://www.srcML.org/srcML/src", "pos": "http://www.srcML.org/srcML/position", "cpp": "http://www.srcML.org/srcML/cpp",}
 
@@ -49,30 +50,49 @@ def _branch_const(br, adapter):
     if adapter.is_false_constant(t): return False
     return None
 
-#POTREBBE COPRIRE LA CWE 561 DEAD-CODE, PERò NEI TESTCASES, SOPRATTUTTO DELLA JULIET TEST-SUITE GENERA MOLTO RUMORE
-def is_dead_code(node, adapter) -> bool:
-    """True se `node` sta in un ramo if/elseif/else che non può eseguire."""
-    anc = set(node.iterancestors())
-    for br in anc:
+def _branch_is_dead(br, adapter):
+    r = _branch_dead_cache.get(br)
+    if r is None:
         tag = br.tag.rsplit("}", 1)[-1]
-        if tag not in ("if", "elseif", "else"):
-            continue
-        blk = br.xpath("./src:block | ./src:if/src:block", namespaces=NS)
-        if not blk or blk[0] not in anc:        # nodo nella condizione: viene valutata
-            continue
-        if tag != "else" and _branch_const(br, adapter) is False:
-            return True
-        # ramo successivo a uno sempre vero => mai raggiunto
-        for prev in br.xpath("preceding-sibling::*[self::src:if or self::src:elseif]", namespaces=NS):
-            if _branch_const(prev, adapter) is True:
+        # <elseif><if>...</if></elseif>: i fratelli precedenti stanno a livello di <elseif>
+        parent = br.getparent()
+        owner = parent if (tag == "if" and parent is not None
+                           and parent.tag.endswith("}elseif")) else br
+        r = (tag != "else" and _branch_const(br, adapter) is False) or any(
+            _branch_const(p, adapter) is True
+            for p in owner.xpath("preceding-sibling::*[self::src:if or self::src:elseif]",
+                                 namespaces=NS)
+        )
+        _branch_dead_cache[br] = r
+    return r
+
+#POTREBBE COPRIRE LA CWE 561 DEAD-CODE, PERò NEI TESTCASES, SOPRATTUTTO DELLA JULIET TEST-SUITE GENERA MOLTO RUMORE
+_BRANCH_TAGS = ("if", "elseif", "else")
+def _is_dead_code_uncached(node, adapter) -> bool:
+    """True se `node` sta nel blocco di un ramo if/elseif/else che non può eseguire."""
+    child = node
+    for br in node.iterancestors():
+        tag = br.tag.rsplit("}", 1)[-1]
+        # il ramo conta solo se il nodo è nel suo <block> (non nella condizione)
+        if tag in _BRANCH_TAGS and child.tag.endswith("}block"):
+            if _branch_is_dead(br, adapter):
                 return True
+        child = br
     return False
+
+def is_dead_code(node, adapter) -> bool:
+    r = _dead_code_cache.get(node)
+    if r is None:
+        r = _is_dead_code_uncached(node, adapter)
+        _dead_code_cache[node] = r
+    return r
 
 
 
 #RISOLVONO IL MATCH ESATTO E NON PIù PER SUFFISSO---------------------
 
 #Le concatenazioni vengono rappresentate tutte come var1.var2.var3 per semplificazione evitanto var1->var2
+@lru_cache(maxsize=None)
 def _norm(name: str, adapter) -> str:
     return adapter.normalize_member_access(name)          # C: s->fn == s.fn
 
@@ -200,12 +220,16 @@ _call_name_cache = {}
 _rhs_keys_cache = {}
 _assign_pairs_cache = {}
 _scope_index_cache = {}
+_dead_code_cache = {}
+_branch_dead_cache = {}
 
 def reset_caches():
     _call_name_cache.clear()
     _rhs_keys_cache.clear()
     _assign_pairs_cache.clear()
     _scope_index_cache.clear()
+    _dead_code_cache.clear() 
+    _branch_dead_cache.clear()
 
 
 def get_scope_index(scope_node, adapter, macros=None):
