@@ -38,4 +38,6 @@ I casi di test presenti nella cartella `Testset/` derivano dalle seguenti reposi
 * **[DeVAIC](https://github.com/dessertlab/DeVAIC/tree/main)**
 * **[PoisonPy](https://github.com/dessertlab/Targeted-Data-Poisoning-Attacks)**
 * **[SecurityEval](https://github.com/s2e-lab/SecurityEval)**
+* **[juliet-test-suite-c](https://github.com/arichardson/juliet-test-suite-c/tree/master)**
+* **[juliet-java-test-suite](https://github.com/UnitTestBot/juliet-java-test-suite)**
 
