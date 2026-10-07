@@ -1,6 +1,6 @@
 from collections import namedtuple
 
-from common import NS, name_text, assignment_pairs, enclosing_scope, in_opaque_tag
+from common import NS, name_text, assignment_pairs, enclosing_scope, in_opaque_tag, is_dead_code
 
 AssignInfo = namedtuple("AssignInfo", "stmt lhs rhs var scope rhs_all rhs_names rhs_interp")
 
@@ -11,6 +11,8 @@ def build_assign_infos(assignments, adapter, unit):
 
     infos = []
     for stmt in assignments:
+        if is_dead_code(stmt, adapter):
+            continue
         if stmt in pair_map:
             lhs, rhs = pair_map[stmt]
         else:  # sicurezza: statement non presente nella cache

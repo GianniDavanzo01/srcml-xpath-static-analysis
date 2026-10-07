@@ -19,8 +19,6 @@ NS = {"src": "http://www.srcML.org/srcML/src", "pos": "http://www.srcML.org/srcM
 
 
 #VERIFICA DELLE MACRO
-
-
 def macro_map(imports) -> dict:
     return {b.local_name: b.canonical_name for b in (imports or []) if getattr(b, "is_macro", False)}
 
@@ -35,6 +33,40 @@ def expand_macro_name(name, macros):
 # --------------------------------------------------------------------------- #
 # Utility di base
 # --------------------------------------------------------------------------- #
+
+
+
+def _branch_const(br, adapter):
+    """True/False se la condizione del ramo è un letterale costante, altrimenti None."""
+    cond = br.xpath("./src:condition | ./src:if/src:condition", namespaces=NS)
+    if not cond:
+        return None
+    lit = cond[0].xpath("./src:expr[count(*)=1]/src:literal", namespaces=NS)
+    if not lit:
+        return None
+    t = "".join(lit[0].itertext())
+    if adapter.is_true_constant(t):  return True
+    if adapter.is_false_constant(t): return False
+    return None
+
+#POTREBBE COPRIRE LA CWE 561 DEAD-CODE, PERò NEI TESTCASES, SOPRATTUTTO DELLA JULIET TEST-SUITE GENERA MOLTO RUMORE
+def is_dead_code(node, adapter) -> bool:
+    """True se `node` sta in un ramo if/elseif/else che non può eseguire."""
+    anc = set(node.iterancestors())
+    for br in anc:
+        tag = br.tag.rsplit("}", 1)[-1]
+        if tag not in ("if", "elseif", "else"):
+            continue
+        blk = br.xpath("./src:block | ./src:if/src:block", namespaces=NS)
+        if not blk or blk[0] not in anc:        # nodo nella condizione: viene valutata
+            continue
+        if tag != "else" and _branch_const(br, adapter) is False:
+            return True
+        # ramo successivo a uno sempre vero => mai raggiunto
+        for prev in br.xpath("preceding-sibling::*[self::src:if or self::src:elseif]", namespaces=NS):
+            if _branch_const(prev, adapter) is True:
+                return True
+    return False
 
 
 
@@ -384,16 +416,9 @@ def call_arguments_match_ast(call_node, spec: dict, adapter, imports) -> bool:
     #Richiede esattamente i nomi indicati
     required_names = spec.get("contains_names", [])
     if required_names:
-        # names = call_node.xpath(".//src:argument_list//src:name", namespaces=NS)
-        # found_names = ["".join(n.itertext()).strip() for n in names]
         found_names = ["".join(n.itertext()).strip() for n in own_names(call_node)]
 
         # Estende la ricerca dentro le stringhe interpolate (es. f-string):
-        # str_lits = call_node.xpath(".//src:argument_list//src:literal[@type='string']", namespaces=NS)
-        # for lit in str_lits:
-        #     testo = "".join(lit.itertext())
-        #     if adapter.is_interpolated_string(testo):
-        #         found_names.extend(adapter.get_interpolated_variables(testo))
         str_lits = own_literals(call_node, "string")
         for lit in str_lits:
             testo = "".join(lit.itertext())

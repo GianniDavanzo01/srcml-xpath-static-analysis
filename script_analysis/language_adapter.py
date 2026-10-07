@@ -345,6 +345,10 @@ class LanguageAdapter(ABC):
         t = text.strip()
         return self.is_boolean_literal(t) and t.lower() == "true"
 
+    def is_false_constant(self, text: str) -> bool:
+        t = text.strip()
+        return self.is_boolean_literal(t) and t.lower() == "false"
+
 
     def loop_update_operators(self) -> dict:
         """Operatori che modificano la variabile di un ciclo.
@@ -786,6 +790,9 @@ class PythonAdapter(LanguageAdapter):
     def is_true_constant(self, text: str) -> bool:
         '''anche 1 è una condizione sempre vera, quindi esegue l'override'''
         return text.strip() == "1" or super().is_true_constant(text)
+
+    def is_false_constant(self, text: str) -> bool:
+        return text.strip() == "0" or super().is_false_constant(text)
 
 
     def loop_update_operators(self) -> dict:
@@ -1630,6 +1637,9 @@ class CAdapter(LanguageAdapter):
     def is_true_constant(self, text: str) -> bool:
         '''anche 1 è una condizione sempre vera, quindi esegue l'override'''
         return text.strip() == "1" or super().is_true_constant(text)
+
+    def is_false_constant(self, text: str) -> bool:
+        return text.strip() == "0" or super().is_false_constant(text)
 
 
     

@@ -353,8 +353,6 @@ def _run_reference_comparisons(tree, rule, findings, adapter, imports):
                    "operand_types": [lhs_type, rhs_type]},
         ))
 
-
-
 def _run_empty_catch_blocks(tree, rule, findings, adapter, imports):
     if not rule.get("empty_catch_blocks"):
         return
@@ -378,6 +376,35 @@ def _run_empty_catch_blocks(tree, rule, findings, adapter, imports):
             continue
 
         findings.append(build_finding(rule, catch))
+
+
+def _run_empty_if_blocks(tree, rule, findings, adapter, imports):
+    if not rule.get("empty_if_blocks"):
+        return
+
+    safe_contexts = rule.get("safe_contexts", [])
+    noop = " or ".join(f"self::src:{t}" for t in ["comment"] + adapter.noop_statement_tags())
+
+    # srcML raggruppa <if>, <elseif> ed <else> dentro <if_stmt>. Li analizziamo tutti.
+    for block_container in tree.xpath(".//src:if | .//src:elseif | .//src:else", namespaces=NS):
+        
+        # Per limitare i falsi positivi (es. if(true) o if(x == 5)), verifichiamo 
+        # che la condizione contenga effettivamente una chiamata a funzione.
+        if rule.get("require_call_in_condition") and block_container.tag.endswith(("if", "elseif")):
+            calls = block_container.xpath("./src:condition//src:call", namespaces=NS)
+            if not calls:
+                continue
+
+        block_content = block_container.xpath("./src:block/src:block_content", namespaces=NS)
+        if not block_content:
+            continue
+
+        # Verifica se il blocco è completamente vuoto (ignorando commenti o pass)
+        valid_stmts = block_content[0].xpath(f"./*[not({noop})]", namespaces=NS)
+        if len(valid_stmts) == 0:
+            if is_in_safe_context(block_container, safe_contexts, None, adapter, imports):
+                continue
+            findings.append(build_finding(rule, block_container))
 
 
 def _check_use_after_free(tree, rule, findings, adapter, imports):
@@ -833,6 +860,9 @@ def run_structural_rule(tree, rule: dict, adapter, imports, ctx) -> list:
 
     if rule.get("use_after_free"):
         _check_use_after_free(tree, rule, findings, adapter, imports)
+
+    if rule.get("empty_if_blocks"):
+        _run_empty_if_blocks(tree, rule, findings, adapter, imports)
 
     xpath_queries = rule.get("xpath_rules", [])
     if xpath_queries:

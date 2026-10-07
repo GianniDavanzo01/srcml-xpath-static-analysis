@@ -9,14 +9,14 @@ safe-context o un sanitizer.
 """
 
 from common import NS, build_finding, is_sanitized, source_present, get_call_name, _pos_key, name_text, get_scope_index,  \
-    enclosing_scope, in_opaque_tag, macro_map, expand_macro_name, call_matches
+    enclosing_scope, in_opaque_tag, macro_map, expand_macro_name, call_matches, is_dead_code
 from sink_matchers import matches_any_sink
 from safe_context_matchers import is_in_safe_context
 
 
 
 
-PSEUDO_SOURCES = {"function_parameters", "exception_variable"}
+PSEUDO_SOURCES = {"function_parameters", "exception_variable","null_literal"}
 
 _COND_ANCESTORS = (
     "ancestor::*[self::src:if or self::src:else or self::src:while or "
@@ -167,9 +167,13 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
                     source_origin_pos[key] = pos
 
     # [MODIFICA 3] Seed: assegnazioni da source. lhs/scope sono gia' pronti.
+    null_seed = "null_literal" in sources
 
     for info in assign_infos:
         if info.rhs is None:
+            continue
+        if null_seed and adapter.is_none_literal("".join(info.rhs.itertext())):
+            tainted_vars_with_scope.append((info.var, info.scope))
             continue
         if any(
             source_present(return_sources, n, source_form, adapter=adapter, imports=imports)
@@ -312,6 +316,18 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
                     tainted_by_scope.setdefault(id(scope_node), set()).add(var_name)
                     changed = True
 
+    # if not tainted_vars_with_scope:
+    #     return findings
+        # Deduplica (variabile, scope) mantenendo l'ordine di inserimento
+    _seen = set()
+    _unique = []
+    for _var, _scope in tainted_vars_with_scope:
+        _k = (_var, id(_scope))
+        if _k not in _seen:
+            _seen.add(_k)
+            _unique.append((_var, _scope))
+    tainted_vars_with_scope = _unique
+
     if not tainted_vars_with_scope:
         return findings
 
@@ -342,6 +358,9 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
 
         for uso in tutti_gli_usi:
             if in_opaque_tag(uso, adapter):
+                continue
+
+            if is_dead_code(uso, adapter):
                 continue
             # uso interno a una call-sorgente (buf, sizeof(buf), ...) -> non è un uso reale
             if source_call_nodes and any(
