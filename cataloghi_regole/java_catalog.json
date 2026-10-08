@@ -273,11 +273,11 @@
       }
     ],
     "null_dereference": [
-      {
-        "type": "matches_xpath",
-        "xpath": "following-sibling::src:operator[1][text()='.'] | following-sibling::src:index[1]"
-      }
-    ],
+        {
+          "type": "matches_xpath",
+          "xpath": "not(parent::src:name/parent::src:decl) and (following-sibling::src:operator[1][text()='.'] | following-sibling::src:index[1])"
+        }
+      ],
     "authentication_sinks": [
       {
         "type": "call_with_var_arg",
