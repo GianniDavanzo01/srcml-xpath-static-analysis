@@ -408,6 +408,7 @@
   "type": "taint",
   "vulnerabilities": ["CWE-476"],
   "propagate_taint": false,
+  "null_reassign_kills_taint": true,
   "sources": [
     {"tag": "nullable_returning_calls"}, "null_literal"
   ],

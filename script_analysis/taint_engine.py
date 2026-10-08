@@ -39,7 +39,7 @@ def _decl_name_xp(adapter):
 
 PSEUDO_SOURCES = {"function_parameters", "exception_variable","null_literal"}
 
-_RULE_PRE = {}   # (id(rule), adapter.name) -> (rule, table, return_sources, active)
+_RULE_PRE = {}   # (id(rule), adapter.name) -> (rule, return_sources, active, spec_by_source)
 
 def _rule_pre(rule, sources, adapter):
     key = (id(rule), adapter.name)
@@ -63,8 +63,8 @@ def _rule_pre(rule, sources, adapter):
             {s: next(table[k] for k in table if call_matches(k, s, adapter)) for s in active},
             adapter,
         )
-        ent = _RULE_PRE[key] = (rule, table, return_sources, active, spec_by_source)
-    return ent[1], ent[2], ent[3], ent[4]
+        ent = _RULE_PRE[key] = (rule, return_sources, active, spec_by_source)
+    return ent[1], ent[2], ent[3]
 
 
 _PROP_TABLES = {}
@@ -106,11 +106,28 @@ def _sanitized_reassign_reaches(uso, var, scope_node, assign_infos, tainted_name
     return all(c in anc for c in last.stmt.xpath(_COND_ANCESTORS, namespaces=NS))
 
 
+def _nonnull_reassign_dominates(uso, var, scope_node, assign_infos,
+                                return_sources, source_form, adapter, imports) -> bool:
+    key = _pos_key(uso)
+    prior = [i for i in assign_infos
+             if i.var == var and i.scope is scope_node and _pos_key(i.stmt) < key]
+    if not prior:
+        return False
+    last = max(prior, key=lambda i: _pos_key(i.stmt))
+    if last.rhs is None or adapter.is_none_literal("".join(last.rhs.itertext())):
+        return False
+
+    # NUOVO: se il nuovo valore è esso stesso una source nullable, il null è ancora possibile
+    if any(source_present(return_sources, n, source_form, adapter=adapter, imports=imports)
+           for n in last.rhs_all):
+        return False
+
+    anc = set(uso.iterancestors())
+    return all(c in anc for c in last.stmt.xpath(_COND_ANCESTORS, namespaces=NS))
+
+
 def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
     macros = macro_map(imports)
-
-    decl_tags = adapter.function_tags() + adapter.class_tags()
-    decl_name_xpath = "parent::*[" + " or ".join(f"self::src:{t}" for t in decl_tags) + "]"
 
     findings = []
     sources = rule.get("sources", [])
@@ -156,25 +173,7 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
     # Source "per side-effect": funzioni che RIEMPIONO un argomento
     # (C: recv, read, fread, scanf, ...) invece di restituire il dato.
     # ------------------------------------------------------------------ #
-    # output_arg_table = adapter.taint_source_output_args()
-
-    # # Source valide per il pattern "var = func()": escludiamo quelle che
-    # # restituiscono solo un contatore (recv, read, scanf, ...)
-    # return_sources = [
-    # s for s in sources
-    # if s not in PSEUDO_SOURCES
-    # and not any(
-    #     call_matches(k, s, adapter) and not output_arg_table[k].get("return_tainted", False)
-    #     for k in output_arg_table
-    # )
-    # ]
-
-    # active_output_sources = {
-    # s for s in sources
-    # if s not in PSEUDO_SOURCES
-    # and any(call_matches(k, s, adapter) for k in output_arg_table)
-    # }
-    output_arg_table, return_sources, active_output_sources, out_spec_table = _rule_pre(rule, sources, adapter)
+    return_sources, active_output_sources, out_spec_table = _rule_pre(rule, sources, adapter)
 
     source_origin_pos = {}     # (var, id(scope)) -> posizione della prima call che riempie var
     source_call_nodes = set()  # call-sorgente: gli usi al loro interno non sono usi reali
@@ -465,6 +464,11 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
 
             if is_in_safe_context(uso, safe_contexts, var, adapter, imports):
                 continue
+
+            if rule.get("null_reassign_kills_taint", False):
+                if _nonnull_reassign_dominates(uso, var, scope_node, assign_infos,
+                                               return_sources, source_form, adapter, imports):
+                    continue
 
             if rule.get("sanitizer_kills_taint",True):
                 # tainted_names = {v for v, s in tainted_vars_with_scope if s is scope_node}

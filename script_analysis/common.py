@@ -171,11 +171,6 @@ _NAME_TEXT_XP = etree.XPath(
 def name_text(name_node) -> str:
     """Testo di un <name> senza i suffissi [..] della propria dichiarazione/accesso
     ('names[]' -> 'names', 'a[i].b[0]' -> 'a.b'). Per un nome semplice è identico a prima."""
-    # parts = name_node.xpath(
-    #     ".//text()[count(ancestor::src:index) = count($n/ancestor::src:index)]",
-    #     namespaces=NS, n=name_node,
-    # )
-    # return "".join(parts).strip()
     return "".join(_NAME_TEXT_XP(name_node, n=name_node)).strip()
 
 
@@ -330,60 +325,6 @@ def is_sanitized(node, sanitizers: list, adapter, imports) -> bool:
     return False
 
 
-# def source_present(sources: list, rhs_node, source_form: str | None = None,
-#                    *, adapter, imports) -> bool:
-#     op = adapter.member_access_operator()[0]
-
-#     # 1. Estraiamo solo i nomi completi reali
-#     keys = _rhs_keys_cache.get(rhs_node)
-#     if keys is None:
-#         call_names, var_names = set(), set()
-#         for call in rhs_node.xpath(".//src:call | self::src:call", namespaces=NS):
-#             cname = get_call_name(call, adapter, imports)
-#             if cname:
-#                 call_names.add(cname)
-
-#         for name_node in rhs_node.xpath(".//src:name | self::src:name", namespaces=NS):
-#             text = "".join(name_node.itertext()).strip()
-#             text = text.split('[')[0].split('(')[0].strip()
-#             parent = name_node.getparent()
-#             is_inner = parent is not None and parent.tag == name_node.tag
-#             if not is_inner:
-#                 text = adapter.resolve_name_text(text, imports)
-#             var_names.add(text)
-
-#         _rhs_keys_cache[rhs_node] = (call_names, var_names)
-#         call_keys, name_keys = call_names, var_names
-#     else:
-#         call_keys, name_keys = keys
-
-#     # 2. Match rigoroso tramite la tua funzione call_matches
-#     for source in sources:
-#         if source_form == "regex":
-#             text = "".join(rhs_node.itertext())
-#             if re.search(source, text):
-#                 return True
-#             continue
-
-#         if source_form == "call":
-#             if any(call_matches(ck, source, adapter) for ck in call_keys):
-#                 return True
-#             continue
-
-#         if source_form == "subscript":
-#             for outer_name in rhs_node.xpath(".//src:name[src:index] | self::src:name[src:index]", namespaces=NS):
-#                 parts = outer_name.xpath("./src:name", namespaces=NS)
-#                 dotted = op.join("".join(p.itertext()).strip() for p in parts) if parts else (outer_name.text or "").strip()
-#                 dotted = adapter.resolve_name_text(dotted, imports)
-#                 if call_matches(dotted, source, adapter):
-#                     return True
-#             continue
-
-#         # Nessuna forma: controlla se una qualsiasi chiamata o variabile matcha il pattern della sorgente
-#         if any(call_matches(k, source, adapter) for k in call_keys | name_keys):
-#             return True
-
-#     return False
 def source_present(sources: list, rhs_node, source_form: str | None = None,
                    *, adapter, imports) -> bool:
     op = adapter.member_access_operator()[0]
@@ -431,17 +372,26 @@ def source_present(sources: list, rhs_node, source_form: str | None = None,
     return any(matcher(k) for k in call_keys | name_keys)
 
 
+
+_OWN_LITERALS_XP = etree.XPath(
+    "./src:argument_list//src:literal[@type=$t]"
+    "[count(ancestor::src:call[1] | $c) = 1]",
+    namespaces=NS,
+)
+
+_OWN_NAMES_XP = etree.XPath(
+    "./src:argument_list//src:name"
+    "[count(ancestor::src:call[1] | $c) = 1]",
+    namespaces=NS,
+)
+
 def own_literals(call_node, lit_type: str) -> list:
     """
     Letterali di tipo `lit_type` che appartengono direttamente a `call_node`:
     stanno nella sua argument_list e la call più vicina che li racchiude è
     proprio `call_node`, non una call annidata.
     """
-    return call_node.xpath(
-        "./src:argument_list//src:literal[@type=$t]"
-        "[count(ancestor::src:call[1] | $c) = 1]",
-        namespaces=NS, t=lit_type, c=call_node,
-    )
+    return _OWN_LITERALS_XP(call_node, t=lit_type, c=call_node)
 
 def own_names(call_node) -> list:
     """
@@ -449,11 +399,7 @@ def own_names(call_node) -> list:
     stanno nella sua argument_list e la call più vicina che li racchiude è
     proprio `call_node`, ignorando call annidate.
     """
-    return call_node.xpath(
-        "./src:argument_list//src:name"
-        "[count(ancestor::src:call[1] | $c) = 1]",
-        namespaces=NS, c=call_node,
-    )
+    return _OWN_NAMES_XP(call_node, c=call_node)
 
 #HELPER PER I VALORI BOOL per ogni linguaggio
 def _bool_text(value, adapter) -> str:
