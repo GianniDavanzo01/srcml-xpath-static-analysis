@@ -14,6 +14,27 @@ from sink_matchers import matches_any_sink
 from safe_context_matchers import is_in_safe_context
 
 
+from lxml import etree
+
+_X = lambda s: etree.XPath(s, namespaces=NS)
+_X_PARENT_ARG = _X("parent::src:argument")
+_X_FIRST_NAME = _X("./src:name[1]")
+_X_ANC_CALL   = _X("ancestor::src:call")
+_X_ENCL_STMT  = _X("ancestor::src:expr_stmt[1] | ancestor::src:decl_stmt[1]")
+_X_ANC_PARAM  = _X("ancestor::src:parameter")
+_X_POS_ANC    = _X("ancestor::*[@pos:start][1]")
+_X_ARGS       = _X("./src:argument_list/src:argument")
+_X_NAMES      = _X(".//src:name")
+_X_CALLS      = _X(".//src:call")
+
+_DECL_NAME_XP = {}
+def _decl_name_xp(adapter):
+    x = _DECL_NAME_XP.get(adapter.name)
+    if x is None:
+        tags = adapter.function_tags() + adapter.class_tags()
+        x = _DECL_NAME_XP[adapter.name] = _X("parent::*[" + " or ".join(f"self::src:{t}" for t in tags) + "]")
+    return x
+
 
 
 PSEUDO_SOURCES = {"function_parameters", "exception_variable","null_literal"}
@@ -179,7 +200,7 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
             source_call_nodes.add(call)
 
 
-            args = call.xpath("./src:argument_list/src:argument", namespaces=NS)
+            args = _X_ARGS(call)
             idxs = set(spec.get("indices", []))
             if "variadic_from" in spec:
                 idxs.update(range(spec["variadic_from"], len(args)))
@@ -241,7 +262,7 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
             tutte le call che lo racchiudono sono nell'allowlist."""
             if not only_through:
                 return False
-            for c in n.xpath("ancestor::src:call", namespaces=NS):
+            for c in _X_ANC_CALL(n):
                 cname = get_call_name(c, adapter, imports)
 
                 if not cname or not any(
@@ -273,7 +294,7 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
                     already_tainted = tainted_by_scope.get(scope_id, set())
                     if not already_tainted:
                         continue
-                    for call in scope_node.xpath(".//src:call", namespaces=NS):
+                    for call in _X_CALLS(scope_node):
                         cname = get_call_name(call, adapter, imports)
                         if not cname:
                             continue
@@ -284,7 +305,7 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
                         if isinstance(spec, int):                     # retrocompatibile
                             spec = {"out": [spec]}
 
-                        args = call.xpath("./src:argument_list/src:argument", namespaces=NS)
+                        args = _X_ARGS(call)
                         out_idxs = set(spec.get("out", []))
                         if "out_variadic_from" in spec:
                             out_idxs.update(range(spec["out_variadic_from"], len(args)))
@@ -294,7 +315,7 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
                         for i, arg in enumerate(args):
                             if i in out_idxs or (in_idxs is not None and i not in in_idxs):
                                 continue
-                            for n in arg.xpath(".//src:name", namespaces=NS):
+                            for n in _X_NAMES(arg):
                                 if in_opaque_tag(n, adapter):
                                     continue
                                 n_text = expand_macro_name("".join(n.itertext()).strip(), macros)
@@ -343,7 +364,7 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
                             continue
                         if skip_source_args and source_call_nodes and any(
                             c in source_call_nodes
-                            for c in n.xpath("ancestor::src:call", namespaces=NS)
+                            for c in _X_ANC_CALL(n)
                         ):
                             continue
                         if _blocked_by_call_allowlist(n):
@@ -392,11 +413,11 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
         for uso in usi_potenziali:
 
             # Scartiamo il nodo se è il nome sinistro di un keyword argument (kwarg)
-            parent_arg = uso.xpath("parent::src:argument", namespaces=NS)
+            parent_arg = _X_PARENT_ARG(uso)
             if parent_arg and adapter.is_kwarg(parent_arg[0], NS):
 
                 # Verifichiamo se 'uso' è la CHIAVE (il primo nome) o il VALORE
-                name_node = parent_arg[0].xpath("./src:name[1]", namespaces=NS)
+                name_node = _X_FIRST_NAME(parent_arg[0])
                 if name_node and name_node[0] is uso:
                     continue
 
@@ -415,7 +436,7 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
             # uso interno a una call-sorgente (buf, sizeof(buf), ...) -> non è un uso reale
             if source_call_nodes and any(
                 c in source_call_nodes
-                for c in uso.xpath("ancestor::src:call", namespaces=NS)
+                for c in _X_ANC_CALL(uso)
             ):
                 continue
 
@@ -426,16 +447,16 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
 
             # [MODIFICA 5] Scarta l'uso se e' proprio il nome a sinistra di
             # un'assegnazione: lookup nel dizionario invece di get_assignment_lhs_rhs.
-            enclosing_stmt = uso.xpath("ancestor::src:expr_stmt[1] | ancestor::src:decl_stmt[1]", namespaces=NS)
+            enclosing_stmt = _X_ENCL_STMT(uso)
             if enclosing_stmt:
                 info = assign_by_stmt.get(enclosing_stmt[0])
                 if info is not None and info.lhs is uso:
                     continue
 
             # Filtri per ignorare dichiarazioni e definizioni (Evita FP sulle firme delle funzioni)
-            if uso.xpath("ancestor::src:parameter", namespaces=NS):
+            if _X_ANC_PARAM(uso):
                 continue
-            if uso.xpath(decl_name_xpath, namespaces=NS):
+            if _decl_name_xp(adapter)(uso):
                 continue
 
             # Verifica vulnerabilità (Sink, Mitigazioni, Sanitizzazioni)
@@ -455,7 +476,7 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
             if is_sanitized(uso, sanitizers, adapter, imports):
                 continue
 
-            stmt = uso.xpath("ancestor::*[@pos:start][1]", namespaces=NS)
+            stmt = _X_POS_ANC(uso)
             nodo_snippet = stmt[0] if stmt else uso
 
             findings.append(build_finding(rule, nodo_snippet, extra={"tainted_variable": var}))

@@ -165,15 +165,18 @@ def block_exits_flow(block, adapter, imports) -> bool:
     return False
 
 
+_NAME_TEXT_XP = etree.XPath(
+    ".//text()[count(ancestor::src:index) = count($n/ancestor::src:index)]", namespaces=NS)
 
 def name_text(name_node) -> str:
     """Testo di un <name> senza i suffissi [..] della propria dichiarazione/accesso
     ('names[]' -> 'names', 'a[i].b[0]' -> 'a.b'). Per un nome semplice è identico a prima."""
-    parts = name_node.xpath(
-        ".//text()[count(ancestor::src:index) = count($n/ancestor::src:index)]",
-        namespaces=NS, n=name_node,
-    )
-    return "".join(parts).strip()
+    # parts = name_node.xpath(
+    #     ".//text()[count(ancestor::src:index) = count($n/ancestor::src:index)]",
+    #     namespaces=NS, n=name_node,
+    # )
+    # return "".join(parts).strip()
+    return "".join(_NAME_TEXT_XP(name_node, n=name_node)).strip()
 
 
 
