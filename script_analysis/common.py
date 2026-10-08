@@ -15,6 +15,8 @@ from collections import defaultdict
 
 from functools import lru_cache
 
+from lxml import etree
+
 NS = {"src": "http://www.srcML.org/srcML/src", "pos": "http://www.srcML.org/srcML/position", "cpp": "http://www.srcML.org/srcML/cpp",}
 
 
@@ -123,13 +125,18 @@ def function_nodes(tree, adapter, name=None):
         return tree.xpath(f".//*[{cond}]", namespaces=NS)
     return tree.xpath(f".//*[({cond}) and src:name[text()=$n]]", namespaces=NS, n=name)
 
+_opaque_xpath_cache = {} #Dipende solo dall'adapter, non va svuotata ad ogni unit
 def in_opaque_tag(node, adapter) -> bool:
     """True se `node` sta dentro un costrutto che non propaga taint (es. sizeof)."""
-    tags = adapter.taint_opaque_tags()
-    if not tags:
-        return False
-    cond = " or ".join(f"self::src:{t}" for t in tags)
-    return bool(node.xpath(f"ancestor::*[{cond}]", namespaces=NS))
+    xp = _opaque_xpath_cache.get(adapter.name)
+    if xp is None:
+        tags = adapter.taint_opaque_tags()
+        xp = etree.XPath(
+            "ancestor::*[" + " or ".join(f"self::src:{t}" for t in tags) + "]",
+            namespaces=NS,
+        ) if tags else False
+        _opaque_xpath_cache[adapter.name] = xp
+    return bool(xp(node)) if xp else False
 
 
 def scope_xpath(adapter, with_lambda=False):
@@ -223,6 +230,14 @@ _scope_index_cache = {}
 _dead_code_cache = {}
 _branch_dead_cache = {}
 
+_matcher_cache = {} #Non deve essere svuotata, dipende solo da regola ed adapter, NON dalla Unit
+def _get_matcher(patterns, adapter):
+    key = (tuple(patterns), adapter.name)
+    m = _matcher_cache.get(key)
+    if m is None:
+        m = _matcher_cache[key] = CallMatcher(patterns, adapter)
+    return m
+
 def reset_caches():
     _call_name_cache.clear()
     _rhs_keys_cache.clear()
@@ -230,6 +245,7 @@ def reset_caches():
     _scope_index_cache.clear()
     _dead_code_cache.clear() 
     _branch_dead_cache.clear()
+
 
 
 def get_scope_index(scope_node, adapter, macros=None):
@@ -311,11 +327,65 @@ def is_sanitized(node, sanitizers: list, adapter, imports) -> bool:
     return False
 
 
+# def source_present(sources: list, rhs_node, source_form: str | None = None,
+#                    *, adapter, imports) -> bool:
+#     op = adapter.member_access_operator()[0]
+
+#     # 1. Estraiamo solo i nomi completi reali
+#     keys = _rhs_keys_cache.get(rhs_node)
+#     if keys is None:
+#         call_names, var_names = set(), set()
+#         for call in rhs_node.xpath(".//src:call | self::src:call", namespaces=NS):
+#             cname = get_call_name(call, adapter, imports)
+#             if cname:
+#                 call_names.add(cname)
+
+#         for name_node in rhs_node.xpath(".//src:name | self::src:name", namespaces=NS):
+#             text = "".join(name_node.itertext()).strip()
+#             text = text.split('[')[0].split('(')[0].strip()
+#             parent = name_node.getparent()
+#             is_inner = parent is not None and parent.tag == name_node.tag
+#             if not is_inner:
+#                 text = adapter.resolve_name_text(text, imports)
+#             var_names.add(text)
+
+#         _rhs_keys_cache[rhs_node] = (call_names, var_names)
+#         call_keys, name_keys = call_names, var_names
+#     else:
+#         call_keys, name_keys = keys
+
+#     # 2. Match rigoroso tramite la tua funzione call_matches
+#     for source in sources:
+#         if source_form == "regex":
+#             text = "".join(rhs_node.itertext())
+#             if re.search(source, text):
+#                 return True
+#             continue
+
+#         if source_form == "call":
+#             if any(call_matches(ck, source, adapter) for ck in call_keys):
+#                 return True
+#             continue
+
+#         if source_form == "subscript":
+#             for outer_name in rhs_node.xpath(".//src:name[src:index] | self::src:name[src:index]", namespaces=NS):
+#                 parts = outer_name.xpath("./src:name", namespaces=NS)
+#                 dotted = op.join("".join(p.itertext()).strip() for p in parts) if parts else (outer_name.text or "").strip()
+#                 dotted = adapter.resolve_name_text(dotted, imports)
+#                 if call_matches(dotted, source, adapter):
+#                     return True
+#             continue
+
+#         # Nessuna forma: controlla se una qualsiasi chiamata o variabile matcha il pattern della sorgente
+#         if any(call_matches(k, source, adapter) for k in call_keys | name_keys):
+#             return True
+
+#     return False
 def source_present(sources: list, rhs_node, source_form: str | None = None,
                    *, adapter, imports) -> bool:
     op = adapter.member_access_operator()[0]
 
-    # 1. Estraiamo solo i nomi completi reali
+    # 1. Calcolo delle chiavi 
     keys = _rhs_keys_cache.get(rhs_node)
     if keys is None:
         call_names, var_names = set(), set()
@@ -338,33 +408,25 @@ def source_present(sources: list, rhs_node, source_form: str | None = None,
     else:
         call_keys, name_keys = keys
 
-    # 2. Match rigoroso tramite la tua funzione call_matches
-    for source in sources:
-        if source_form == "regex":
-            text = "".join(rhs_node.itertext())
-            if re.search(source, text):
+    # 2. Match source_form è uguale per tutte le source, quindi si decide una volta
+    if source_form == "regex":
+        text = "".join(rhs_node.itertext())
+        return any(re.search(s, text) for s in sources)
+
+    if source_form == "subscript":
+        for outer_name in rhs_node.xpath(".//src:name[src:index] | self::src:name[src:index]", namespaces=NS):
+            parts = outer_name.xpath("./src:name", namespaces=NS)
+            dotted = op.join("".join(p.itertext()).strip() for p in parts) if parts else (outer_name.text or "").strip()
+            dotted = adapter.resolve_name_text(dotted, imports)
+            if any(call_matches(dotted, s, adapter) for s in sources):
                 return True
-            continue
+        return False
 
-        if source_form == "call":
-            if any(call_matches(ck, source, adapter) for ck in call_keys):
-                return True
-            continue
+    matcher = _get_matcher(sources, adapter)
+    if source_form == "call":
+        return any(matcher(k) for k in call_keys)
+    return any(matcher(k) for k in call_keys | name_keys)
 
-        if source_form == "subscript":
-            for outer_name in rhs_node.xpath(".//src:name[src:index] | self::src:name[src:index]", namespaces=NS):
-                parts = outer_name.xpath("./src:name", namespaces=NS)
-                dotted = op.join("".join(p.itertext()).strip() for p in parts) if parts else (outer_name.text or "").strip()
-                dotted = adapter.resolve_name_text(dotted, imports)
-                if call_matches(dotted, source, adapter):
-                    return True
-            continue
-
-        # Nessuna forma: controlla se una qualsiasi chiamata o variabile matcha il pattern della sorgente
-        if any(call_matches(k, source, adapter) for k in call_keys | name_keys):
-            return True
-
-    return False
 
 def own_literals(call_node, lit_type: str) -> list:
     """
@@ -670,3 +732,62 @@ class CompiledRuleset:
 
 def compile_rules(rules: list, adapter) -> "CompiledRuleset":
     return CompiledRuleset(rules, adapter)
+
+
+
+class CallMatcher:
+    """Equivalente di any(call_matches(n, p, adapter) for p in patterns), ma con lookup su set."""
+    __slots__ = ("adapter", "exact", "suffix")
+
+    def __init__(self, patterns, adapter):
+        self.adapter = adapter
+        self.exact, self.suffix = set(), set()
+        for p in patterns:
+            p = _norm(p, adapter)
+            if p.startswith("*."):
+                self.suffix.add(p[2:])
+            else:
+                self.exact.add(p)
+
+    def __call__(self, name) -> bool:
+        if not name:
+            return False
+        n = _norm(name, self.adapter)
+        if n in self.exact or n in self.suffix:
+            return True
+        # '*.x.y' matcha qualunque coda per segmenti: 'a.b.x.y' -> 'x.y'
+        i = n.find(".")
+        while i != -1:
+            if n[i + 1:] in self.suffix:
+                return True
+            i = n.find(".", i + 1)
+        return False
+
+
+class CallTable:
+    """Come next(v for k, v in mapping.items() if call_matches(name, k)), ma con dizionari."""
+    __slots__ = ("adapter", "exact", "suffix")
+
+    def __init__(self, mapping, adapter):
+        self.adapter = adapter
+        self.exact, self.suffix = {}, {}
+        for k, v in mapping.items():
+            k = _norm(k, adapter)
+            if k.startswith("*."):
+                self.suffix.setdefault(k[2:], v)
+            else:
+                self.exact.setdefault(k, v)
+
+    def get(self, name, default=None):
+        n = _norm(name, self.adapter)
+        if n in self.exact:
+            return self.exact[n]
+        if n in self.suffix:
+            return self.suffix[n]
+        i = n.find(".")
+        while i != -1:
+            r = self.suffix.get(n[i + 1:])
+            if r is not None:
+                return r
+            i = n.find(".", i + 1)
+        return default

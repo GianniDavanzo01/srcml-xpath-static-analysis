@@ -9,7 +9,7 @@ safe-context o un sanitizer.
 """
 
 from common import NS, build_finding, is_sanitized, source_present, get_call_name, _pos_key, name_text, get_scope_index,  \
-    enclosing_scope, in_opaque_tag, macro_map, expand_macro_name, call_matches, is_dead_code
+    enclosing_scope, in_opaque_tag, macro_map, expand_macro_name, call_matches, is_dead_code, CallTable
 from sink_matchers import matches_any_sink
 from safe_context_matchers import is_in_safe_context
 
@@ -17,6 +17,41 @@ from safe_context_matchers import is_in_safe_context
 
 
 PSEUDO_SOURCES = {"function_parameters", "exception_variable","null_literal"}
+
+_RULE_PRE = {}   # (id(rule), adapter.name) -> (rule, table, return_sources, active)
+
+def _rule_pre(rule, sources, adapter):
+    key = (id(rule), adapter.name)
+    ent = _RULE_PRE.get(key)
+    if ent is None:
+        table = adapter.taint_source_output_args()
+        return_sources = [
+            s for s in sources
+            if s not in PSEUDO_SOURCES
+            and not any(
+                call_matches(k, s, adapter) and not table[k].get("return_tainted", False)
+                for k in table
+            )
+        ]
+        active = {
+            s for s in sources
+            if s not in PSEUDO_SOURCES
+            and any(call_matches(k, s, adapter) for k in table)
+        }
+        spec_by_source = CallTable(
+            {s: next(table[k] for k in table if call_matches(k, s, adapter)) for s in active},
+            adapter,
+        )
+        ent = _RULE_PRE[key] = (rule, table, return_sources, active, spec_by_source)
+    return ent[1], ent[2], ent[3], ent[4]
+
+
+_PROP_TABLES = {}
+def _prop_table(adapter):
+    t = _PROP_TABLES.get(adapter.name)
+    if t is None:
+        t = _PROP_TABLES[adapter.name] = CallTable(adapter.taint_propagating_calls(), adapter)
+    return t
 
 _COND_ANCESTORS = (
     "ancestor::*[self::src:if or self::src:else or self::src:while or "
@@ -96,33 +131,35 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
     assign_by_stmt = ctx.assign_by_stmt
 
 
-    # (la vecchia funzione _scope_of e' stata eliminata: lo scope e' in info.scope)
-
     # ------------------------------------------------------------------ #
     # Source "per side-effect": funzioni che RIEMPIONO un argomento
     # (C: recv, read, fread, scanf, ...) invece di restituire il dato.
     # ------------------------------------------------------------------ #
-    output_arg_table = adapter.taint_source_output_args()
+    # output_arg_table = adapter.taint_source_output_args()
 
-    # Source valide per il pattern "var = func()": escludiamo quelle che
-    # restituiscono solo un contatore (recv, read, scanf, ...)
-    return_sources = [
-    s for s in sources
-    if s not in PSEUDO_SOURCES
-    and not any(
-        call_matches(k, s, adapter) and not output_arg_table[k].get("return_tainted", False)
-        for k in output_arg_table
-    )
-]
+    # # Source valide per il pattern "var = func()": escludiamo quelle che
+    # # restituiscono solo un contatore (recv, read, scanf, ...)
+    # return_sources = [
+    # s for s in sources
+    # if s not in PSEUDO_SOURCES
+    # and not any(
+    #     call_matches(k, s, adapter) and not output_arg_table[k].get("return_tainted", False)
+    #     for k in output_arg_table
+    # )
+    # ]
+
+    # active_output_sources = {
+    # s for s in sources
+    # if s not in PSEUDO_SOURCES
+    # and any(call_matches(k, s, adapter) for k in output_arg_table)
+    # }
+    output_arg_table, return_sources, active_output_sources, out_spec_table = _rule_pre(rule, sources, adapter)
 
     source_origin_pos = {}     # (var, id(scope)) -> posizione della prima call che riempie var
     source_call_nodes = set()  # call-sorgente: gli usi al loro interno non sono usi reali
 
-    active_output_sources = {
-    s for s in sources
-    if s not in PSEUDO_SOURCES
-    and any(call_matches(k, s, adapter) for k in output_arg_table)
-}
+
+
     if active_output_sources:
         
         for call in ctx.calls:
@@ -130,11 +167,14 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
             if not cname:
                 continue
 
-            matched = next((s for s in active_output_sources if call_matches(cname, s, adapter)), None)
-            if matched is None:
-                continue
+            # matched = next((s for s in active_output_sources if call_matches(cname, s, adapter)), None)
+            # if matched is None:
+            #     continue
 
-            spec = next(output_arg_table[k] for k in output_arg_table if call_matches(k, matched, adapter))
+            # spec = next(output_arg_table[k] for k in output_arg_table if call_matches(k, matched, adapter))
+            spec = out_spec_table.get(cname)
+            if spec is None:
+                continue
 
             source_call_nodes.add(call)
 
@@ -181,6 +221,9 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
         ):
             tainted_vars_with_scope.append((info.var, info.scope))
 
+    if not tainted_vars_with_scope:
+        return findings
+    
     # Passo 2: propagazione a catena
     if rule.get("propagate_taint", True):
 
@@ -223,7 +266,7 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
 
             # Propagazione via call che scrivono su un argomento "di
             # output" invece che tramite il valore di ritorno (es. C:
-            # sprintf(buf, fmt, tainted) -> buf diventa taintato)
+            # sprintf(buf, fmt, tainted) -> buf diventa taintato)   
             if propagating_calls:
                 scope_nodes = {id(s): s for _, s in tainted_vars_with_scope}
                 for scope_id, scope_node in scope_nodes.items():
@@ -234,8 +277,8 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
                         cname = get_call_name(call, adapter, imports)
                         if not cname:
                             continue
-                        spec = next((v for k, v in propagating_calls.items()
-                                    if call_matches(cname, k, adapter)), None)
+                        # spec = next((v for k, v in propagating_calls.items() if call_matches(cname, k, adapter)), None)
+                        spec = _prop_table(adapter).get(cname)
                         if spec is None:
                             continue
                         if isinstance(spec, int):                     # retrocompatibile
@@ -321,9 +364,7 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
                     tainted_by_scope.setdefault(id(scope_node), set()).add(var_name)
                     changed = True
 
-    # if not tainted_vars_with_scope:
-    #     return findings
-        # Deduplica (variabile, scope) mantenendo l'ordine di inserimento
+    # Deduplica (variabile, scope) mantenendo l'ordine di inserimento
     _seen = set()
     _unique = []
     for _var, _scope in tainted_vars_with_scope:
@@ -335,6 +376,10 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
 
     if not tainted_vars_with_scope:
         return findings
+
+    tainted_names_by_scope = {}
+    for _v, _s in tainted_vars_with_scope:
+        tainted_names_by_scope.setdefault(id(_s), set()).add(_v)
 
     # Cerca gli utilizzi SOLO all'interno dello Scope calcolato
     for var, scope_node in tainted_vars_with_scope:
@@ -401,7 +446,8 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
                 continue
 
             if rule.get("sanitizer_kills_taint",True):
-                tainted_names = {v for v, s in tainted_vars_with_scope if s is scope_node}
+                # tainted_names = {v for v, s in tainted_vars_with_scope if s is scope_node}
+                tainted_names = tainted_names_by_scope.get(id(scope_node), set())
                 if _sanitized_reassign_reaches(uso, var, scope_node, assign_infos,
                                                tainted_names, sanitizers, adapter, imports):
                     continue
