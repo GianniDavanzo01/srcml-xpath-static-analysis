@@ -23,6 +23,8 @@ from dataclasses import dataclass
 
 from lxml import etree
 
+from common import macro_map, expand_macro_name, _pos_key, find_assignments, enclosing_scope, name_text    
+
 
 _MACRO_ALIAS_RE = re.compile(r"^\s*\(?\s*([A-Za-z_]\w*)\s*\)?\s*$")  # #define FOPEN fopen
 _MACRO_FWD_RE   = re.compile(r"^\s*([A-Za-z_]\w*)\s*\(")             # #define F(p) fopen(p,"r")
@@ -37,7 +39,6 @@ class ImportBinding:
     """
     local_name: str
     canonical_name: str
-    is_module: bool = True  # False se il binding punta a una funzione/simbolo, non a un modulo intero
     node: etree._Element = None
     is_macro: bool = False 
 
@@ -287,8 +288,7 @@ class LanguageAdapter(ABC):
 
     def extract_output_buffer_name(self, arg_node, ns) -> str | None:
         """Nome della variabile in un <src:argument>, ignorando tipi, indici,
-        costrutti opachi (taint_opaque_tags) e cast."""
-        from common import name_text          
+        costrutti opachi (taint_opaque_tags) e cast."""      
         skip = ["ancestor::src:index", "ancestor::src:type"]
         skip += [f"ancestor::src:{t}" for t in self.taint_opaque_tags()]
         skip_xpath = " | ".join(skip)
@@ -376,12 +376,6 @@ class LanguageAdapter(ABC):
         if self.is_none_literal(t):
             return "null"
         return self.normalize_string_literal(t)
-
-
-    def get_dict_entry_value_node(self, key_node, ns):
-        """Dato il letterale-chiave di un dizionario, ritorna il nodo del valore
-        associato, o None (default: il linguaggio non ha dizionari letterali)."""
-        return None
     
 
 # ---------------------------------------------------------------------- #
@@ -486,7 +480,7 @@ class PythonAdapter(LanguageAdapter):
                     canonical = f"{module}.{symbol}" if module else symbol
                     alias_nodes = n.xpath("following-sibling::src:alias[1]//src:name", namespaces=ns)
                     local = "".join(alias_nodes[0].itertext()).strip() if alias_nodes else symbol
-                    bindings.append(ImportBinding(local_name=local, canonical_name=canonical, is_module=False, node=imp))
+                    bindings.append(ImportBinding(local_name=local, canonical_name=canonical, node=imp))
  
             else:
                 # # import MODULO [as alias] [, MODULO2 [as alias2]]
@@ -595,9 +589,9 @@ class PythonAdapter(LanguageAdapter):
         
         
         name_nodes = param_node.xpath("./src:name[1]", namespaces=namespaces)
-        name_text = "".join(name_nodes[0].itertext()).strip() if name_nodes else ""
+        pname = "".join(name_nodes[0].itertext()).strip() if name_nodes else ""
         
-        return name_text, type_text
+        return pname, type_text
 
 
     def member_access_operator(self) -> list:
@@ -739,10 +733,10 @@ class PythonAdapter(LanguageAdapter):
         """RHS dell'assegnazione di `head` che raggiunge `call_node`, cercando dallo
         scope più interno verso l'esterno (funzioni annidate -> funzione -> modulo).
         Ritorna None se non c'è, o se `head` è un parametro (shadowing)."""
-        from common import _pos_key, find_assignments, enclosing_scope
+        
 
         call_key = _pos_key(call_node)
-        call_ancestors = set(call_node.iterancestors())      # NEW
+        call_ancestors = set(call_node.iterancestors())     
         fn_cond = " or ".join(f"self::src:{t}" for t in self.function_tags())
 
         funcs = call_node.xpath(f"ancestor::*[{fn_cond}]", namespaces=ns)
@@ -762,7 +756,7 @@ class PythonAdapter(LanguageAdapter):
             for stmt, lhs, rhs in find_assignments(scope_node, self, head):
                 if rhs is None or _pos_key(stmt) >= call_key:
                     continue
-                if stmt in call_ancestors:                    # NEW: la call sta dentro questo statement
+                if stmt in call_ancestors:                  
                     continue
                 owner = enclosing_scope(stmt, self)
                 if (owner is None) if is_unit else (owner is scope_node):
@@ -795,13 +789,6 @@ class PythonAdapter(LanguageAdapter):
     def is_identifier(self, text: str) -> bool:
         return text.isidentifier()
 
-
-    def get_dict_entry_value_node(self, key_node, ns):
-        colon = key_node.xpath("following-sibling::src:operator[1][text()=':']", namespaces=ns)
-        if not colon:
-            return None
-        val = colon[0].xpath("following-sibling::*[1]", namespaces=ns)
-        return val[0] if val else None
 
 # ---------------------------------------------------------------------- #
 # Implementazione Java
@@ -919,7 +906,7 @@ class JavaAdapter(LanguageAdapter):
                 bindings.append(ImportBinding(
                     local_name="*", 
                     canonical_name=full_name[:-2], 
-                    is_module=True,
+                   
                     node=imp
                 ))
             else:
@@ -928,7 +915,7 @@ class JavaAdapter(LanguageAdapter):
                 bindings.append(ImportBinding(
                     local_name=local_name, 
                     canonical_name=full_name, 
-                    is_module=False,
+                    
                     node=imp
                 ))
                 
@@ -1007,7 +994,6 @@ class JavaAdapter(LanguageAdapter):
                         decl_node = None
 
                 if var_type:
-                    # return f"{var_type}.{method_name}"
                     return self._canonicalize(f"{var_type}.{method_name}", imports)
                 
         # return raw_name
@@ -1045,8 +1031,8 @@ class JavaAdapter(LanguageAdapter):
         type_nodes = decl[0].xpath("./src:type[1]", namespaces=namespaces)
         type_text = "".join(type_nodes[0].itertext()).strip() if type_nodes else ""
         name_nodes = decl[0].xpath("./src:name[1]", namespaces=namespaces)
-        name_text = "".join(name_nodes[0].itertext()).strip() if name_nodes else ""
-        return name_text, type_text
+        pname = "".join(name_nodes[0].itertext()).strip() if name_nodes else ""
+        return pname, type_text
 
 
     def member_access_operator(self) -> list:
@@ -1173,7 +1159,6 @@ class JavaAdapter(LanguageAdapter):
         return super().resolve_operand_type(node, ns)
 
     def resolve_variable_type(self, name_node, var_name, ns):
-        from common import _pos_key
         decls = name_node.xpath(
             f"{self.scope_axis(('class', 'unit'))}//src:decl[src:name[text()=$v]]",
             namespaces=ns, v=var_name,
@@ -1343,7 +1328,7 @@ class CAdapter(LanguageAdapter):
                 bindings.append(ImportBinding(
                     local_name=clean_name, 
                     canonical_name=clean_name, 
-                    is_module=True,
+                    
                     node=inc
                 ))
 
@@ -1364,17 +1349,10 @@ class CAdapter(LanguageAdapter):
 
             bindings.append(ImportBinding(
                 local_name=local, canonical_name=m.group(1),
-                is_module=False, node=d, is_macro=True))
+                 node=d, is_macro=True))
             
         return bindings
 
-    def _expand_macro(self, name, imports):
-        macros = {b.local_name: b.canonical_name for b in imports if b.is_macro}
-        seen = set()
-        while name in macros and name not in seen:   # A -> B -> fopen
-            seen.add(name)
-            name = macros[name]
-        return name
 
     def resolve_call_name(self, call_node, ns, imports) -> str:
         name_nodes = call_node.xpath("./src:name", namespaces=ns)
@@ -1383,7 +1361,7 @@ class CAdapter(LanguageAdapter):
 
         raw_name = "".join(name_nodes[0].itertext()).strip()
 
-        raw_name = self._expand_macro(raw_name, imports)
+        raw_name = expand_macro_name(raw_name, macro_map(imports))
 
         parts = name_nodes[0].xpath("./src:name", namespaces=ns)
         ops = name_nodes[0].xpath("./src:operator[text()='.' or text()='->']", namespaces=ns)
@@ -1468,9 +1446,9 @@ class CAdapter(LanguageAdapter):
         type_text = re.sub(r'\s+', ' ', type_text) # Pulisce spazi extra
         
         name_nodes = decl[0].xpath("./src:name[1]", namespaces=namespaces)
-        name_text = "".join(name_nodes[0].itertext()).strip() if name_nodes else ""
+        pname = "".join(name_nodes[0].itertext()).strip() if name_nodes else ""
         
-        return name_text, type_text
+        return pname, type_text
 
     def member_access_operator(self) -> list:
         # Operatore base per l'accesso ai membri. L'adapter gestisce esplicitamente 

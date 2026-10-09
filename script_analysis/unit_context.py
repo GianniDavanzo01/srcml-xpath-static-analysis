@@ -26,7 +26,7 @@ def build_assign_infos(assignments, adapter, unit):
 
         rhs_all = rhs.xpath("self::* | following-sibling::*", namespaces=NS) if rhs is not None else []
 
-        # [MODIFICA] Contenuti dell'RHS, indipendenti dalla regola: calcolati una volta
+        #  Contenuti dell'RHS, indipendenti dalla regola: calcolati una volta
         # e riusati dal ciclo di propagazione (che gira per ogni regola e iterazione).
         #   rhs_names:  [(testo, nodo <name>)]
         #   rhs_interp: [(nodo letterale, [variabili interpolate])]

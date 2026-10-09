@@ -345,8 +345,6 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
                         origin = source_origin_pos.get((eff, id(scope_node)))
                         if origin is not None and _pos_key(info.stmt) < origin:
                             continue
-                        # if in_opaque_tag(n, adapter):
-                        #     continue
                         if skip_source_args and source_call_nodes and any(
                             c in source_call_nodes
                             for c in _X_ANC_CALL(n)
@@ -379,9 +377,6 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
             _seen.add(_k)
             _unique.append((_var, _scope))
     tainted_vars_with_scope = _unique
-
-    if not tainted_vars_with_scope:
-        return findings
 
     def _null_kill(i):
         """Kill-by-reassign per null. (x = new Foo() blocca il taint; x = map.get(k) no, perché può restituire null)"""

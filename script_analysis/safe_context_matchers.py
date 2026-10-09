@@ -248,6 +248,22 @@ def _safe_context_function_has_file_size_check(node, spec: dict, var_name, adapt
 
 
 
+def _check_protects_use(cond, check_node, use_node, adapter) -> bool:
+            """Se uso e check sono nella stessa condition, tra i due deve esserci un AND short-circuit."""
+            if use_node not in cond.iterdescendants():
+                return True  # uso fuori dalla condition (corpo dell'if): il check protegge
+            if _pos_key(use_node) < _pos_key(check_node):
+                return False  # uso prima del check
+            and_ops = adapter.logical_and_operator()
+            # operatori tra check e uso, a livello di fratelli dell'antenato comune
+            between = [
+                "".join(o.itertext()).strip()
+                for o in cond.xpath(".//src:operator", namespaces=NS)
+                if _pos_key(check_node) < _pos_key(o) < _pos_key(use_node)
+            ]
+            return bool(between) and all(op in and_ops or op in ("(", ")") for op in between)
+
+
 def _safe_context_var_truthiness_check(node, spec: dict, var_name, adapter, imports) -> bool:
     """{"type": "var_truthiness_check", "scope": "enclosing", "require_state": "truthy"}
     "require_state": "truthy" quando il codice vulnerabile si trova all'interno del blocco if
@@ -284,27 +300,11 @@ def _safe_context_var_truthiness_check(node, spec: dict, var_name, adapter, impo
         for nop in negations:
             next_node = nop.xpath("./following-sibling::*[not(self::src:comment)][1]", namespaces=NS)
             if next_node and next_node[0].tag.endswith("name"):
-                # if "".join(next_node[0].itertext()).strip() == var_name:
                 if name_text(next_node[0]) == var_name:
                     if required_state in ("falsy", "any"):
                         return True
 
         # --- B. Controllo Esplicito con Null (es. var == null, var != null) ---
-        def _check_protects_use(cond, check_node, use_node, adapter) -> bool:
-            """Se uso e check sono nella stessa condition, tra i due deve esserci un AND short-circuit."""
-            if use_node not in cond.iterdescendants():
-                return True  # uso fuori dalla condition (corpo dell'if): il check protegge
-            if _pos_key(use_node) < _pos_key(check_node):
-                return False  # uso prima del check
-            and_ops = adapter.logical_and_operator()
-            # operatori tra check e uso, a livello di fratelli dell'antenato comune
-            between = [
-                "".join(o.itertext()).strip()
-                for o in cond.xpath(".//src:operator", namespaces=NS)
-                if _pos_key(check_node) < _pos_key(o) < _pos_key(use_node)
-            ]
-            return bool(between) and all(op in and_ops or op in ("(", ")") for op in between)
-        
         equality_ops = cond.xpath(f".//src:operator[{xpath_op_condition}]", namespaces=NS)
         for eq_op in equality_ops:
             op_text = "".join(eq_op.itertext()).strip()
@@ -337,7 +337,6 @@ def _safe_context_var_truthiness_check(node, spec: dict, var_name, adapter, impo
             if len(expr_children) == 1:
                 bare_names = expr_children[0].xpath("./src:name", namespaces=NS)
                 if len(bare_names) == 1 and len(list(expr_children[0])) == 1:
-                    # if "".join(bare_names[0].itertext()).strip() == var_name:
                     if name_text(bare_names[0]) == var_name:
                         return True
 
@@ -446,14 +445,12 @@ def _safe_context_binary_comparison(node, spec: dict, var_name, adapter, imports
                 # # VERIFICA CON REGEX WORD BOUNDARIES PER I 'CONTAINS'
                 left_ok = True
                 if left_exact or left_contains:
-                    # left_ok = (lhs_text in left_exact) or any(c in lhs_text for c in left_contains)
                     left_ok = (lhs_text in left_exact) or any(
                         re.search(rf'\b{re.escape(c)}\b', lhs_text) for c in left_contains
                     )
 
                 right_ok = True
                 if right_exact or right_contains:
-                    # right_ok = (rhs_text in right_exact) or any(c in rhs_text for c in right_contains)
                     right_ok = (rhs_text in right_exact) or any(
                         re.search(rf'\b{re.escape(c)}\b', rhs_text) for c in right_contains
                     )
@@ -615,7 +612,7 @@ def _safe_context_receiver_of_method_with_arg(node, spec: dict, var_name, adapte
     dangerous_values_upper = [v.upper() for v in dangerous_values] if dangerous_values else None
 
     op = adapter.member_access_operator()
-    ops_xpath = " or ".join(f"text()='{o}'" for o in op) if isinstance(op, list) else f"text()='{op}'"
+    ops_xpath = " or ".join(f"text()='{o}'" for o in op)
     neg_op = adapter.negation_operator()
     conditions = node.xpath("ancestor::src:if_stmt//src:condition", namespaces=NS)
 
@@ -709,7 +706,6 @@ def _safe_context_var_falsy_guard_clause(node, spec: dict, var_name, adapter, im
         for nop in cond.xpath(f".//src:operator[text()='{neg_op}']", namespaces=NS):
             next_node = nop.xpath("./following-sibling::*[not(self::src:comment)][1]", namespaces=NS)
             if next_node and next_node[0].tag.endswith("name"):
-                # if "".join(next_node[0].itertext()).strip() == var_name:
                 if name_text(next_node[0]) == var_name:
                     #scarta se "not var" e' congiunto in AND con altro -->anche se fosse True che la variabile è nulla 
                     #se l'altra condizione è False non si entra nell'if e si rischia di eseguire un operazione con la variabile nulla.

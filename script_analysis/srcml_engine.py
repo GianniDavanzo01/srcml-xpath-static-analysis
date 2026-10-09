@@ -164,7 +164,6 @@ def main():
     except ValueError as e:
         ap.error(str(e))
 
-    # raw_rules = load_rules(Path(args.rules))
     xml_files = collect_xml_files(args.xml, args.xml_dir)
 
     if not xml_files:

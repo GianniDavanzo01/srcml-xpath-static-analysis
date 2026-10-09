@@ -7,7 +7,7 @@ Motore Strutturale
 import re
 
 from common import NS, get_call_name, build_finding, call_arguments_match_ast, check_required_imports,_pos_key, find_assignments,_is_pure_literal_expr,  \
-assignment_pairs, enclosing_scope, node_snippet, call_matches, call_lookup_keys, function_nodes, scope_xpath, name_text
+assignment_pairs, enclosing_scope, node_snippet, call_matches, call_lookup_keys, function_nodes, scope_xp, name_text
 from safe_context_matchers import is_in_safe_context
 
 
@@ -198,13 +198,13 @@ def _loop_has_exit(loop_node, block, adapter) -> bool:
 
     exits_xp = " | ".join(f".//src:{t}" for t in exit_tags)
     target_xp = " or ".join(f"self::src:{t}" for t in adapter.break_target_tags())
-    scope_xp = scope_xpath(adapter, with_lambda=True)
-    my_scope = loop_node.xpath(scope_xp, namespaces=NS)
+    scope_of = scope_xp(adapter, with_lambda=True)
+    my_scope = scope_of(loop_node)  
     break_tag = f"{{{NS['src']}}}break"
 
     for n in block.xpath(exits_xp, namespaces=NS):
         # return/throw dentro una lambda o funzione annidata non esce dal nostro ciclo
-        if n.xpath(scope_xp, namespaces=NS) != my_scope:
+        if scope_of(n) != my_scope:
             continue
         # break semplice: vale solo se il costrutto più vicino che lo cattura è questo ciclo
         # (un break con etichetta, 'break outer;', lo conto sempre come uscita: scelta prudente)
@@ -226,12 +226,20 @@ def _run_missing_while_increments(tree, rule, findings, adapter, imports):
     # Intercetta sia while che do-while
     loop_nodes = tree.xpath(".//src:while | .//src:do", namespaces=NS)
 
-    for loop_node in loop_nodes:
         # Cerca qualsiasi operatore di confronto, non solo '<'
-        cmp_xp = " or ".join(f"text()='{o}'" for o in adapter.comparison_operators())
+    cmp_xp = " or ".join(f"text()='{o}'" for o in adapter.comparison_operators())
+    upd = adapter.loop_update_operators()
+    op_cond = lambda ops: " or ".join(f"text()='{o}'" for o in ops) or "false()"
+    comp_xp = op_cond(upd["compound"])
+    unary_xp = op_cond(upd["unary"])
+    assign_op = adapter.assignment_operator_token()
+    
+
+    for loop_node in loop_nodes:
+        
         cond_ops = loop_node.xpath(
-            f"./src:condition//src:operator[{cmp_xp}]",
-            namespaces=NS
+        f"./src:condition//src:operator[{cmp_xp}]",
+        namespaces=NS
         )
         
         # Gestione speciale per cicli palesemente infiniti: while(1), while(true)
@@ -264,11 +272,7 @@ def _run_missing_while_increments(tree, rule, findings, adapter, imports):
             continue
 
         # Cerca l'incremento: +=, -=, ++, --, oppure var = var + X
-        upd = adapter.loop_update_operators()
-        op_cond = lambda ops: " or ".join(f"text()='{o}'" for o in ops) or "false()"
-        comp_xp = op_cond(upd["compound"])
-        unary_xp = op_cond(upd["unary"])
-
+    
         aug_assign = block[0].xpath(
             f".//src:expr[src:name[1][text()='{var_name}'] and src:operator[1][{comp_xp}]]",
             namespaces=NS
@@ -279,7 +283,6 @@ def _run_missing_while_increments(tree, rule, findings, adapter, imports):
             namespaces=NS
         )
 
-        assign_op = adapter.assignment_operator_token()
         exp_assign = block[0].xpath(
             f".//src:expr[src:name[1][text()='{var_name}'] and src:operator[1][text()='{assign_op}']"
             f" and .//src:name[text()='{var_name}']]", 
@@ -648,7 +651,7 @@ def run_structural_rule(tree, rule: dict, adapter, imports, ctx) -> list:
                 target_name = bfd.get("name")
                 target_param = bfd.get("param")
                 
-                # Ripuliamo l'input del catalogo (trasforma "return true;" in "true")
+                
                 raw_expected = bfd.get("return_expr", bfd.get("return_value", ""))
                 target_return = adapter.canonical_literal(raw_expected)
                 
@@ -744,14 +747,13 @@ def run_structural_rule(tree, rule: dict, adapter, imports, ctx) -> list:
             
             
             if index_expr:
-                # 1. Controllo diretto: è un letterale puro? (es. array[2])
+                
                 is_literal_index = _is_pure_literal_expr(index_expr[0])
                 
                 idx_names = index_expr[0].xpath("./src:name", namespaces=NS)
                 if len(idx_names) == 1 and len(list(index_expr[0])) == 1:
                     index_var = "".join(idx_names[0].itertext()).strip()
                     
-                    # 2. Risoluzione basata su resolve_numeric_args
                     # Se non è un letterale diretto, facciamo un backward scan
                     # per vedere se l'ultima assegnazione era un letterale sicuro.
                     if not is_literal_index and rule.get("skip_literal_subscript_index"):

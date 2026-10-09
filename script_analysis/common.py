@@ -22,8 +22,15 @@ NS = {"src": "http://www.srcML.org/srcML/src", "pos": "http://www.srcML.org/srcM
 
 
 #VERIFICA DELLE MACRO
+_macro_map_cache = {}   # da svuotare in reset_caches() perché dipende dalla unit
 def macro_map(imports) -> dict:
-    return {b.local_name: b.canonical_name for b in (imports or []) if getattr(b, "is_macro", False)}
+    key = id(imports)
+    m = _macro_map_cache.get(key)
+    if m is None:
+        m = _macro_map_cache[key] = {b.local_name: b.canonical_name
+                                     for b in (imports or []) if getattr(b, "is_macro", False)}
+    return m
+
 
 def expand_macro_name(name, macros):
     seen = set()
@@ -36,7 +43,6 @@ def expand_macro_name(name, macros):
 # --------------------------------------------------------------------------- #
 # Utility di base
 # --------------------------------------------------------------------------- #
-
 
 
 def _branch_const(br, adapter):
@@ -139,19 +145,25 @@ def in_opaque_tag(node, adapter) -> bool:
     return bool(xp(node)) if xp else False
 
 
-def scope_xpath(adapter, with_lambda=False):
-    tags = adapter.function_tags() + (adapter.lambda_tags() if with_lambda else [])
-    return "ancestor::*[" + " or ".join(f"self::src:{t}" for t in tags) + "][1]"
+_scope_xp_cache = {}  #dipende solo dall'adapter, non va svuotata in reset_caches()
+
+def scope_xp(adapter, with_lambda=False):
+    """XPath precompilato verso la funzione (o lambda) che racchiude il nodo."""
+    key = (adapter.name, with_lambda)
+    xp = _scope_xp_cache.get(key)
+    if xp is None:
+        extra = adapter.lambda_tags() if with_lambda else ()
+        xp = _scope_xp_cache[key] = etree.XPath(adapter.scope_axis(extra), namespaces=NS)
+    return xp
 
 def enclosing_scope(node, adapter):
-    """Nodo funzione/costruttore che racchiude `node`, o None."""
-    r = node.xpath(scope_xpath(adapter), namespaces=NS)
+    r = scope_xp(adapter)(node)
     return r[0] if r else None
 
 def block_exits_flow(block, adapter, imports) -> bool:
-    fn = scope_xpath(adapter, with_lambda=True)
-    my_scope = block.xpath(fn, namespaces=NS)
-    same = lambda n: n.xpath(fn, namespaces=NS) == my_scope
+    fn = scope_xp(adapter, with_lambda=True)
+    my_scope = fn(block)
+    same = lambda n: fn(n) == my_scope
 
     tags = " | ".join(f".//src:{t}" for t in adapter.flow_exit_tags())
     if any(same(n) for n in block.xpath(tags, namespaces=NS)):
@@ -243,6 +255,7 @@ def reset_caches():
     _scope_index_cache.clear()
     _dead_code_cache.clear() 
     _branch_dead_cache.clear()
+    _macro_map_cache.clear()
 
 
 

@@ -84,28 +84,24 @@ def _sink_call_with_var_arg(uso, spec, fstring_nodes, adapter, imports):
     target_calls = spec.get("call", [])
     if not target_calls:
         return False
-
-    # 1. Prendiamo tutte per gestire i casi annidati
+    
     call_nodes = uso.xpath("ancestor::src:call", namespaces=NS)
     if not call_nodes:
         return False
 
-    # 2. Iteriamo dalla chiamata più profonda a quella più esterna
     for call_node in call_nodes:
         call_name = get_call_name(call_node, adapter, imports)
         if call_name is None:
             continue
-            
-        # verifichiamo se è una delle chiamate ricercate
+
         if not any(call_matches(call_name,c, adapter) for c in target_calls):
             continue
 
-        # 3. Definiamo arg_list all'interno del ciclo per questa specifica chiamata
         arg_list = call_node.xpath("./src:argument_list", namespaces=NS)
         if not arg_list:
             continue
             
-        # Assicuriamoci che 'uso' sia davvero un ARGOMENTO (e non il receiver)
+
         if uso not in arg_list[0].iter():
             continue
 
@@ -117,20 +113,19 @@ def _sink_call_with_var_arg(uso, spec, fstring_nodes, adapter, imports):
             if int(arg[0].xpath("count(preceding-sibling::src:argument)", namespaces=NS)) != idx:
                 continue
 
-        # 4. Controllo strutturale (AST puro) sui letterali stringa
         literal_contains = spec.get("literal_contains", [])
         if not literal_contains:
             return True 
 
-        # Usiamo own_literals per ignorare i letterali delle call annidate
+
         string_literals = own_literals(call_node, "string")
         
         for literal_node in string_literals:
             raw_text = "".join(literal_node.itertext())
-            # Normalizziamo e portiamo tutto in maiuscolo per il confronto case-insensitive
+
             clean_text = adapter.normalize_string_literal(raw_text).upper()
             
-            # Cerchiamo la parola (es. "SELECT") solo dentro le vere stringhe
+
             if any(val.upper() in clean_text for val in literal_contains):
                 return True
 
