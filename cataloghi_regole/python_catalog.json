@@ -341,6 +341,19 @@
             "asyncio.sleep"
         ]
     }],
+    "crypto_key_sinks": [
+      {
+        "type": "call_with_var_arg", "arg_index": 0,
+        "call": ["*.AES.new", "*.DES.new", "*.DES3.new", "*.ChaCha20.new",
+                "*.Fernet", "*.hmac.new", "hmac.new", "*.algorithms.AES"]
+      }
+    ],
+    "memory_alloc_size": [
+        {
+          "type": "call_with_var_arg", "arg_index": 0,
+          "call": ["bytearray", "bytes", "*.numpy.zeros", "*.numpy.empty"]
+        }
+      ],
     "array_index_use": [],
     "array_alloc_size": []
   },
@@ -610,17 +623,13 @@
     ],
     "resource_safe_contexts": [
       {
-        "type": "function_has_file_size_check",
-        "size_properties": ["file_size", "size", "content_length"]
-      },
-      {
         "type": "binary_comparison",
         "operators": ["<", "<="],
         "left_exact": ["$VAR"]
       },
       {
         "type": "binary_comparison",
-        "operators": ["<", "<="],
+        "operators": [">", ">="],
         "right_exact": ["$VAR"]
       },
       {

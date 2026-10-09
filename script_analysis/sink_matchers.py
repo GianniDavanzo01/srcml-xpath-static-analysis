@@ -109,6 +109,14 @@ def _sink_call_with_var_arg(uso, spec, fstring_nodes, adapter, imports):
         if uso not in arg_list[0].iter():
             continue
 
+        idx = spec.get("arg_index")
+        if idx is not None:
+            arg = uso.xpath("ancestor::src:argument[1]", namespaces=NS)
+            if not arg or arg[0].getparent() is not arg_list[0]:
+                continue
+            if int(arg[0].xpath("count(preceding-sibling::src:argument)", namespaces=NS)) != idx:
+                continue
+
         # 4. Controllo strutturale (AST puro) sui letterali stringa
         literal_contains = spec.get("literal_contains", [])
         if not literal_contains:
@@ -202,6 +210,6 @@ def match_sink(uso, sink_spec, fstring_nodes: list, adapter, imports) -> bool:
 
 
 def matches_any_sink(uso, sinks, fstring_nodes, adapter, imports):
-    if not sinks:
-        return True
+    # if not sinks:
+    #     return True
     return any(match_sink(uso, s, fstring_nodes, adapter, imports) for s in sinks)

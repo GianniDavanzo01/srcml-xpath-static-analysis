@@ -9,7 +9,7 @@ safe-context o un sanitizer.
 """
 
 from common import NS, build_finding, is_sanitized, source_present, get_call_name, _pos_key, name_text, get_scope_index,  \
-    enclosing_scope, in_opaque_tag, macro_map, expand_macro_name, call_matches, is_dead_code, CallTable
+    enclosing_scope, in_opaque_tag, macro_map, expand_macro_name, call_matches, is_dead_code, CallTable, _is_pure_literal_expr
 from sink_matchers import matches_any_sink
 from safe_context_matchers import is_in_safe_context
 
@@ -37,7 +37,7 @@ def _decl_name_xp(adapter):
 
 
 
-PSEUDO_SOURCES = {"function_parameters", "exception_variable","null_literal"}
+PSEUDO_SOURCES = {"function_parameters", "exception_variable","null_literal", "string_literal"}
 
 _RULE_PRE = {}   # (id(rule), adapter.name) -> (rule, return_sources, active, spec_by_source)
 
@@ -117,11 +117,31 @@ def _nonnull_reassign_dominates(uso, var, scope_node, assign_infos,
     if last.rhs is None or adapter.is_none_literal("".join(last.rhs.itertext())):
         return False
 
-    # NUOVO: se il nuovo valore è esso stesso una source nullable, il null è ancora possibile
+    # se il nuovo valore è esso stesso una source nullable, il null è ancora possibile
     if any(source_present(return_sources, n, source_form, adapter=adapter, imports=imports)
            for n in last.rhs_all):
         return False
 
+    anc = set(uso.iterancestors())
+    return all(c in anc for c in last.stmt.xpath(_COND_ANCESTORS, namespaces=NS))
+
+def _is_hardcoded_string(rhs, adapter) -> bool:
+    if not _is_pure_literal_expr(rhs):
+        return False
+    lits = rhs.xpath("self::src:literal[@type='string'] | .//src:literal[@type='string']",
+                     namespaces=NS)
+    return any(not adapter.is_interpolated_string("".join(l.itertext())) for l in lits)
+
+
+def _reassign_dominates(uso, var, scope_node, assign_infos, is_killing) -> bool:
+    key = _pos_key(uso)
+    prior = [i for i in assign_infos
+             if i.var == var and i.scope is scope_node and _pos_key(i.stmt) < key]
+    if not prior:
+        return False
+    last = max(prior, key=lambda i: _pos_key(i.stmt))
+    if last.rhs is None or not is_killing(last):
+        return False
     anc = set(uso.iterancestors())
     return all(c in anc for c in last.stmt.xpath(_COND_ANCESTORS, namespaces=NS))
 
@@ -140,9 +160,6 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
         return []
 
     tainted_vars_with_scope = []
-
-    for direct_name in rule.get("direct_taint_names", []):
-        tainted_vars_with_scope.append((direct_name, tree))
 
     # Parametri di funzione
     if "function_parameters" in sources:
@@ -187,11 +204,6 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
             if not cname:
                 continue
 
-            # matched = next((s for s in active_output_sources if call_matches(cname, s, adapter)), None)
-            # if matched is None:
-            #     continue
-
-            # spec = next(output_arg_table[k] for k in output_arg_table if call_matches(k, matched, adapter))
             spec = out_spec_table.get(cname)
             if spec is None:
                 continue
@@ -226,13 +238,17 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
                 elif pos < source_origin_pos[key]:
                     source_origin_pos[key] = pos
 
-    # [MODIFICA 3] Seed: assegnazioni da source. lhs/scope sono gia' pronti.
+    # Seed: assegnazioni da source. lhs/scope sono gia' pronti.
     null_seed = "null_literal" in sources
+    literal_seed = "string_literal" in sources
 
     for info in assign_infos:
         if info.rhs is None:
             continue
         if null_seed and adapter.is_none_literal("".join(info.rhs.itertext())):
+            tainted_vars_with_scope.append((info.var, info.scope))
+            continue
+        if literal_seed and _is_hardcoded_string(info.rhs, adapter):
             tainted_vars_with_scope.append((info.var, info.scope))
             continue
         if any(
@@ -297,7 +313,6 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
                         cname = get_call_name(call, adapter, imports)
                         if not cname:
                             continue
-                        # spec = next((v for k, v in propagating_calls.items() if call_matches(cname, k, adapter)), None)
                         spec = _prop_table(adapter).get(cname)
                         if spec is None:
                             continue
@@ -470,8 +485,12 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
                                                return_sources, source_form, adapter, imports):
                     continue
 
+            if rule.get("literal_reassign_kills_taint", False):
+                if _reassign_dominates(uso, var, scope_node, assign_infos,
+                                       lambda i: not _is_hardcoded_string(i.rhs, adapter)):
+                    continue
+
             if rule.get("sanitizer_kills_taint",True):
-                # tainted_names = {v for v, s in tainted_vars_with_scope if s is scope_node}
                 tainted_names = tainted_names_by_scope.get(id(scope_node), set())
                 if _sanitized_reassign_reaches(uso, var, scope_node, assign_infos,
                                                tainted_names, sanitizers, adapter, imports):

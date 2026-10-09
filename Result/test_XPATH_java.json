@@ -3,8 +3,8 @@
     "units_analyzed": 100,
     "units_failed": 0,
     "files_failed": 0,
-    "vulnerable_files": 48,
-    "total_findings": 70,
+    "vulnerable_files": 51,
+    "total_findings": 74,
     "categories_count": {
       "CWE-614": 10,
       "CWE-113": 1,
@@ -15,6 +15,7 @@
       "CWE-22": 8,
       "CWE-259": 3,
       "CWE-319": 1,
+      "CWE-321": 3,
       "CWE-326": 5,
       "CWE-327": 2,
       "CWE-328": 1,
@@ -26,6 +27,7 @@
       "CWE-595": 2,
       "CWE-601": 2,
       "CWE-78": 2,
+      "CWE-789": 1,
       "CWE-79": 4,
       "CWE-89": 2,
       "CWE-90": 2
@@ -569,20 +571,60 @@
     {
       "source_file": "juliet_java/CWE321_1_bad.java",
       "xml_source": "good_bad_archive_java.xml",
-      "vulnerable": false,
-      "rules_summary": [],
-      "vulnerabilities_summary": [],
-      "findings_count": 0,
-      "findings": []
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-321-HARDCODED-KEY-TAINT"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-321"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-321-HARDCODED-KEY-TAINT",
+          "vulnerabilities": [
+            "CWE-321"
+          ],
+          "source_file": "juliet_java/CWE321_1_bad.java",
+          "line": "52:61",
+          "snippet": "data.getBytes",
+          "tainted_variable": "data"
+        }
+      ]
     },
     {
       "source_file": "juliet_java/CWE321_1_good.java",
       "xml_source": "good_bad_archive_java.xml",
-      "vulnerable": false,
-      "rules_summary": [],
-      "vulnerabilities_summary": [],
-      "findings_count": 0,
-      "findings": []
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-321-HARDCODED-KEY-TAINT"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-321"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-321-HARDCODED-KEY-TAINT",
+          "vulnerabilities": [
+            "CWE-321"
+          ],
+          "source_file": "juliet_java/CWE321_1_good.java",
+          "line": "71:61",
+          "snippet": "data.getBytes",
+          "tainted_variable": "data"
+        },
+        {
+          "rule_id": "CWE-321-HARDCODED-KEY-TAINT",
+          "vulnerabilities": [
+            "CWE-321"
+          ],
+          "source_file": "juliet_java/CWE321_1_good.java",
+          "line": "113:61",
+          "snippet": "data.getBytes",
+          "tainted_variable": "data"
+        }
+      ]
     },
     {
       "source_file": "juliet_java/CWE327_1_bad.java",
@@ -1531,11 +1573,26 @@
     {
       "source_file": "juliet_java/CWE789_bad.java",
       "xml_source": "good_bad_archive_java.xml",
-      "vulnerable": false,
-      "rules_summary": [],
-      "vulnerabilities_summary": [],
-      "findings_count": 0,
-      "findings": []
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-789-UNCONTROLLED-MEMORY-ALLOCATION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-789"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-789-UNCONTROLLED-MEMORY-ALLOCATION",
+          "vulnerabilities": [
+            "CWE-789"
+          ],
+          "source_file": "juliet_java/CWE789_bad.java",
+          "line": "65:48",
+          "snippet": "data",
+          "tainted_variable": "data"
+        }
+      ]
     },
     {
       "source_file": "juliet_java/CWE789_good.java",

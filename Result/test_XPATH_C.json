@@ -4,7 +4,7 @@
     "units_failed": 0,
     "files_failed": 0,
     "vulnerable_files": 69,
-    "total_findings": 124,
+    "total_findings": 125,
     "categories_count": {
       "CWE-99": 2,
       "CWE-120": 35,
@@ -28,6 +28,7 @@
       "CWE-532": 1,
       "CWE-617": 2,
       "CWE-78": 3,
+      "CWE-789": 1,
       "CWE-835": 1,
       "CWE-90": 1
     }
@@ -2302,12 +2303,14 @@
       "xml_source": "good_bad_archive.xml",
       "vulnerable": true,
       "rules_summary": [
-        "CWE-120-BUFFER-OVERFLOW"
+        "CWE-120-BUFFER-OVERFLOW",
+        "CWE-789-UNCONTROLLED-MEMORY-ALLOCATION"
       ],
       "vulnerabilities_summary": [
-        "CWE-120"
+        "CWE-120",
+        "CWE-789"
       ],
-      "findings_count": 1,
+      "findings_count": 2,
       "findings": [
         {
           "rule_id": "CWE-120-BUFFER-OVERFLOW",
@@ -2317,6 +2320,16 @@
           "source_file": "juliet_c/CWE789_bad.c",
           "line": "120:13",
           "snippet": "strcpy(myString, HELLO_STRING)"
+        },
+        {
+          "rule_id": "CWE-789-UNCONTROLLED-MEMORY-ALLOCATION",
+          "vulnerabilities": [
+            "CWE-789"
+          ],
+          "source_file": "juliet_c/CWE789_bad.c",
+          "line": "117:39",
+          "snippet": "data*sizeof(char)",
+          "tainted_variable": "data"
         }
       ]
     },

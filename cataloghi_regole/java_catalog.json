@@ -329,7 +329,21 @@
             "TimeUnit.MILLISECONDS.sleep"
         ]
     }
-    ]
+    ],
+    "crypto_key_sinks": [
+      {
+        "type": "call_with_var_arg", 
+        "arg_index": 0,
+        "call": ["*.SecretKeySpec", "*.PBEKeySpec", "*.IvParameterSpec"]
+      }
+    ],
+    "memory_alloc_size": [
+        {
+        "type": "call_with_var_arg", "arg_index": 0,
+        "call": ["*.ArrayList", "*.Vector", "*.HashMap", "*.HashSet",
+                  "*.Hashtable", "*.LinkedHashMap", "*.ArrayDeque",
+                  "*.PriorityQueue", "*.StringBuilder", "*.ByteArrayOutputStream"]}
+      ]
   },
   "forbidden_functions": {
     "socket_primitives": [
@@ -585,14 +599,6 @@
     ],
     "resource_safe_contexts": [
       {
-        "type": "function_has_file_size_check",
-        "size_properties": [
-          "length",
-          "getSize",
-          "size"
-        ]
-      },
-      {
         "type": "binary_comparison",
         "operators": [
           "<",
@@ -605,8 +611,8 @@
       {
         "type": "binary_comparison",
         "operators": [
-          "<",
-          "<="
+          ">",
+          ">="
         ],
         "right_exact": [
           "$VAR"

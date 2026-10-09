@@ -119,6 +119,27 @@
                         "SetDllDirectory", "SetDllDirectoryA", "SetDllDirectoryW"]
             }
         ],
+        "crypto_key_sinks": [
+            {
+                "type": "call_with_var_arg", "arg_index": 0,
+                "call": ["AES_set_encrypt_key", "AES_set_decrypt_key", "DES_set_key",
+                        "DES_set_key_checked", "DES_set_key_unchecked"]
+            },
+            {
+                "type": "call_with_var_arg", "arg_index": 1, 
+                "call": ["CryptHashData"]
+            }
+        ],
+        "memory_alloc_size": [
+            {
+                "type": "call_with_var_arg", "arg_index": 0,
+                "call": ["malloc", "alloca", "_alloca", "calloc"]
+            },
+            {
+                "type": "call_with_var_arg", "arg_index": 1,
+                "call": ["calloc", "realloc"]
+            }
+        ],
         "unbounded_resource_read": [],
         "html_output": [],
         "exception_stringify_calls": [],
@@ -313,7 +334,7 @@
                 ],
             "resource_safe_contexts": [
                     {"type": "binary_comparison", "operators": ["<", "<="], "left_exact": ["$VAR"]},
-                    {"type": "binary_comparison", "operators": ["<", "<="], "right_exact": ["$VAR"]}
+                    {"type": "binary_comparison", "operators": [">", ">="], "right_exact": ["$VAR"]}
                 ],
             "format_string_position": [
                     {

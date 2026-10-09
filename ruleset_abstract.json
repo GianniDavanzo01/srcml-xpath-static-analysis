@@ -300,6 +300,14 @@
   ]
 },
 {
+  "rule_id": "CWE-321-HARDCODED-KEY-TAINT",
+  "type": "taint",
+  "vulnerabilities": ["CWE-321"],
+  "sources": ["string_literal"],
+  "sinks": [{"tag": "crypto_key_sinks"}],
+  "literal_reassign_kills_taint": true
+},
+{
   "rule_id": "CWE-326-INADEQUATE-ENCRYPTION",
   "type": "structural",
   "vulnerabilities": ["CWE-326"],
@@ -560,6 +568,15 @@
   "safe_contexts": [
     {"tag": "resource_safe_contexts"}
   ]
+},
+{
+  "rule_id": "CWE-789-UNCONTROLLED-MEMORY-ALLOCATION",
+  "type": "taint",
+  "vulnerabilities": ["CWE-789"],
+  "sources": [{"tag": "http_input"}, {"tag": "cli_input"}],
+  "sinks": [{"tag": "memory_alloc_size"}],
+  "patterns": [{"tag": "string_to_int_propagation"}],
+  "safe_contexts": [{"tag": "resource_safe_contexts"}]
 },
 {
   "rule_id": "CWE-798-HARDCODED-CREDENTIALS",
