@@ -215,6 +215,7 @@
           "*.search_st",
           "*.search_ext",
           "*.search_ext_s",
+          "ldap.initialize.search",
           "ldap3.Connection.search"
         ]
       }
@@ -475,7 +476,7 @@
         ]
       }
     ],
-    "obsolete_functions": ["os.tempnam", "os.tmpnam", "platform.linux_distribution"],
+    "obsolete_functions": ["os.tempnam", "os.tmpnam", "platform.linux_distribution","time.clock"],
     "weak_password_hashing": [
       {
         "type": "call_matches_ast",
@@ -523,21 +524,11 @@
     "weak_crypto_modules": ["md5", "Crypto.Cipher.DES"]
   },
   "xpath_rules": {
-    "off_by_one_loop_condition": [".//src:while[./src:condition//src:operator[text()='<='] and ./src:condition//src:call[./src:name[text()='len']]]"]
+    "off_by_one_loop_condition": [
+        ".//src:condition[parent::src:while]//src:operator[text()='<='][following-sibling::*[1][self::src:call[src:name='len']]][not(following-sibling::*[2][self::src:operator and text()='-'])]"
+    ]
   },
   "sanitizers": {
-    "html_escape": [
-      "markupsafe.escape",
-      "flask.escape",
-      "cgi.escape",
-      "django.utils.html.escape",
-      "django.utils.html.conditional_escape",
-      "werkzeug.escape",
-      "werkzeug.utils.escape",
-      "*.escape_filter_chars",
-      "*.escape_rdn",
-      "html.escape"
-    ],
     "path_sanitizers": ["*.secure_filename", "os.path.basename"],
     "cast_to_integer": ["int", "float"],
     "shell_escape_sanitizers": ["shlex.quote", "pipes.quote"],

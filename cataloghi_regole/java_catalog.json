@@ -518,8 +518,7 @@
   },
   "xpath_rules": {
     "off_by_one_loop_condition": [
-      ".//src:while[./src:condition//src:operator[text()='<='] and ./src:condition//src:name[text()='length']]",
-      ".//src:while[.//src:condition//src:operator[text()='<='] and .//src:condition//src:call[.//src:name[text()='size']]]"
+        ".//src:condition[parent::src:while or parent::src:do or parent::src:control/parent::src:for]//src:operator[text()='<='][following-sibling::*[1][(self::src:name and src:name[last()][text()='length']) or (self::src:call and src:name/src:name[last()][text()='length' or text()='size'])]][not(following-sibling::*[2][self::src:operator and text()='-'])]"
     ]
   },
   "sanitizers": {
@@ -533,11 +532,6 @@
       "*.getCanonicalPath",
       "*.getCanonicalFile",
       "*.FilenameUtils.getName"
-    ],
-    "html_escape": [
-      "*.HtmlUtils.htmlEscape",
-      "*.StringEscapeUtils.escapeHtml4",
-      "*.encodeForHTML"
     ],
     "XSS_sanitizers": [
       "*.HtmlUtils.htmlEscape",

@@ -1,15 +1,15 @@
 {
   "summary": {
-    "units_analyzed": 50,
+    "units_analyzed": 100,
     "units_failed": 0,
     "files_failed": 0,
-    "vulnerable_files": 50,
-    "total_findings": 165,
+    "vulnerable_files": 69,
+    "total_findings": 124,
     "categories_count": {
-      "CWE-120": 35,
-      "CWE-338": 59,
       "CWE-99": 2,
+      "CWE-120": 35,
       "CWE-129": 1,
+      "CWE-252": 13,
       "CWE-117": 2,
       "CWE-134": 1,
       "CWE-22": 4,
@@ -17,16 +17,16 @@
       "CWE-319": 6,
       "CWE-327": 3,
       "CWE-400": 6,
+      "CWE-338": 9,
       "CWE-377": 3,
       "CWE-416": 5,
       "CWE-1071": 1,
       "CWE-415": 1,
       "CWE-427": 2,
+      "CWE-476": 3,
       "CWE-481": 2,
       "CWE-532": 1,
       "CWE-617": 2,
-      "CWE-476": 2,
-      "CWE-252": 5,
       "CWE-78": 3,
       "CWE-835": 1,
       "CWE-90": 1
@@ -35,194 +35,173 @@
   "errors": [],
   "details": [
     {
-      "source_file": "C_CWE_juliet_testsuite/CWE114_1.c",
-      "xml_source": "C_2_archivio.xml",
+      "source_file": "juliet_c/CWE114_1_bad.c",
+      "xml_source": "good_bad_archive.xml",
       "vulnerable": true,
       "rules_summary": [
-        "CWE-120-BUFFER-OVERFLOW",
-        "CWE-338-WEAK-PRNG",
         "CWE-99-RESOURCE-INJECTION"
       ],
       "vulnerabilities_summary": [
-        "CWE-120",
-        "CWE-338",
         "CWE-99"
       ],
-      "findings_count": 3,
+      "findings_count": 1,
       "findings": [
-        {
-          "rule_id": "CWE-120-BUFFER-OVERFLOW",
-          "vulnerabilities": [
-            "CWE-120"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE114_1.c",
-          "line": "145:5",
-          "snippet": "strcpy(data, \"C:\\\\Windows\\\\System32\\\\winsrv.dll\")"
-        },
-        {
-          "rule_id": "CWE-338-WEAK-PRNG",
-          "vulnerabilities": [
-            "CWE-338"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE114_1.c",
-          "line": "181:5",
-          "snippet": "srand( (unsigned)time(NULL) )"
-        },
         {
           "rule_id": "CWE-99-RESOURCE-INJECTION",
           "vulnerabilities": [
             "CWE-99"
           ],
-          "source_file": "C_CWE_juliet_testsuite/CWE114_1.c",
-          "line": "121:32",
+          "source_file": "juliet_c/CWE114_1_bad.c",
+          "line": "120:32",
           "snippet": "data",
           "tainted_variable": "data"
         }
       ]
     },
     {
-      "source_file": "C_CWE_juliet_testsuite/CWE114_2.c",
-      "xml_source": "C_2_archivio.xml",
+      "source_file": "juliet_c/CWE114_1_good.c",
+      "xml_source": "good_bad_archive.xml",
       "vulnerable": true,
       "rules_summary": [
-        "CWE-120-BUFFER-OVERFLOW",
-        "CWE-338-WEAK-PRNG",
-        "CWE-99-RESOURCE-INJECTION"
+        "CWE-120-BUFFER-OVERFLOW"
       ],
       "vulnerabilities_summary": [
-        "CWE-120",
-        "CWE-338",
-        "CWE-99"
+        "CWE-120"
       ],
-      "findings_count": 4,
+      "findings_count": 1,
       "findings": [
         {
           "rule_id": "CWE-120-BUFFER-OVERFLOW",
           "vulnerabilities": [
             "CWE-120"
           ],
-          "source_file": "C_CWE_juliet_testsuite/CWE114_2.c",
-          "line": "161:9",
+          "source_file": "juliet_c/CWE114_1_good.c",
+          "line": "52:5",
           "snippet": "strcpy(data, \"C:\\\\Windows\\\\System32\\\\winsrv.dll\")"
-        },
-        {
-          "rule_id": "CWE-120-BUFFER-OVERFLOW",
-          "vulnerabilities": [
-            "CWE-120"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE114_2.c",
-          "line": "191:9",
-          "snippet": "strcpy(data, \"C:\\\\Windows\\\\System32\\\\winsrv.dll\")"
-        },
-        {
-          "rule_id": "CWE-338-WEAK-PRNG",
-          "vulnerabilities": [
-            "CWE-338"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE114_2.c",
-          "line": "234:5",
-          "snippet": "srand( (unsigned)time(NULL) )"
-        },
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_c/CWE114_2_bad.c",
+      "xml_source": "good_bad_archive.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-99-RESOURCE-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-99"
+      ],
+      "findings_count": 1,
+      "findings": [
         {
           "rule_id": "CWE-99-RESOURCE-INJECTION",
           "vulnerabilities": [
             "CWE-99"
           ],
-          "source_file": "C_CWE_juliet_testsuite/CWE114_2.c",
-          "line": "130:32",
+          "source_file": "juliet_c/CWE114_2_bad.c",
+          "line": "129:32",
           "snippet": "data",
           "tainted_variable": "data"
         }
       ]
     },
     {
-      "source_file": "C_CWE_juliet_testsuite/CWE121.c",
-      "xml_source": "C_2_archivio.xml",
+      "source_file": "juliet_c/CWE114_2_good.c",
+      "xml_source": "good_bad_archive.xml",
       "vulnerable": true,
       "rules_summary": [
-        "CWE-129-IMPROPER-ARRAY-INDEX-VALIDATION",
-        "CWE-338-WEAK-PRNG"
+        "CWE-120-BUFFER-OVERFLOW"
       ],
       "vulnerabilities_summary": [
-        "CWE-129",
-        "CWE-338"
+        "CWE-120"
       ],
       "findings_count": 2,
       "findings": [
         {
-          "rule_id": "CWE-338-WEAK-PRNG",
+          "rule_id": "CWE-120-BUFFER-OVERFLOW",
           "vulnerabilities": [
-            "CWE-338"
+            "CWE-120"
           ],
-          "source_file": "C_CWE_juliet_testsuite/CWE121.c",
-          "line": "414:5",
-          "snippet": "srand( (unsigned)time(NULL) )"
+          "source_file": "juliet_c/CWE114_2_good.c",
+          "line": "59:9",
+          "snippet": "strcpy(data, \"C:\\\\Windows\\\\System32\\\\winsrv.dll\")"
         },
+        {
+          "rule_id": "CWE-120-BUFFER-OVERFLOW",
+          "vulnerabilities": [
+            "CWE-120"
+          ],
+          "source_file": "juliet_c/CWE114_2_good.c",
+          "line": "89:9",
+          "snippet": "strcpy(data, \"C:\\\\Windows\\\\System32\\\\winsrv.dll\")"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_c/CWE121_bad.c",
+      "xml_source": "good_bad_archive.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-129-IMPROPER-ARRAY-INDEX-VALIDATION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-129"
+      ],
+      "findings_count": 1,
+      "findings": [
         {
           "rule_id": "CWE-129-IMPROPER-ARRAY-INDEX-VALIDATION",
           "vulnerabilities": [
             "CWE-129"
           ],
-          "source_file": "C_CWE_juliet_testsuite/CWE121.c",
-          "line": "117:24",
+          "source_file": "juliet_c/CWE121_bad.c",
+          "line": "116:24",
           "snippet": "data",
           "tainted_variable": "data"
         }
       ]
     },
     {
-      "source_file": "C_CWE_juliet_testsuite/CWE134_1.c",
-      "xml_source": "C_2_archivio.xml",
+      "source_file": "juliet_c/CWE121_good.c",
+      "xml_source": "good_bad_archive.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "juliet_c/CWE134_1_bad.c",
+      "xml_source": "good_bad_archive.xml",
       "vulnerable": true,
       "rules_summary": [
         "CWE-117-LOG-INJECTION",
-        "CWE-120-BUFFER-OVERFLOW",
         "CWE-134-FORMAT-STRING-INJECTION",
-        "CWE-338-WEAK-PRNG"
+        "CWE-252-UNCHECKED-RETURN-VALUE"
       ],
       "vulnerabilities_summary": [
         "CWE-117",
-        "CWE-120",
         "CWE-134",
-        "CWE-338"
+        "CWE-252"
       ],
-      "findings_count": 5,
+      "findings_count": 3,
       "findings": [
         {
-          "rule_id": "CWE-120-BUFFER-OVERFLOW",
+          "rule_id": "CWE-252-UNCHECKED-RETURN-VALUE",
           "vulnerabilities": [
-            "CWE-120"
+            "CWE-252"
           ],
-          "source_file": "C_CWE_juliet_testsuite/CWE134_1.c",
-          "line": "134:5",
-          "snippet": "strcpy(data, \"fixedstringtest\")"
-        },
-        {
-          "rule_id": "CWE-338-WEAK-PRNG",
-          "vulnerabilities": [
-            "CWE-338"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE134_1.c",
-          "line": "234:5",
-          "snippet": "srand( (unsigned)time(NULL) )"
+          "source_file": "juliet_c/CWE134_1_bad.c",
+          "line": "119:5",
+          "snippet": "fprintf(stdout, data)"
         },
         {
           "rule_id": "CWE-117-LOG-INJECTION",
           "vulnerabilities": [
             "CWE-117"
           ],
-          "source_file": "C_CWE_juliet_testsuite/CWE134_1.c",
-          "line": "120:21",
-          "snippet": "data",
-          "tainted_variable": "data"
-        },
-        {
-          "rule_id": "CWE-117-LOG-INJECTION",
-          "vulnerabilities": [
-            "CWE-117"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE134_1.c",
-          "line": "213:29",
+          "source_file": "juliet_c/CWE134_1_bad.c",
+          "line": "119:21",
           "snippet": "data",
           "tainted_variable": "data"
         },
@@ -231,793 +210,818 @@
           "vulnerabilities": [
             "CWE-134"
           ],
-          "source_file": "C_CWE_juliet_testsuite/CWE134_1.c",
-          "line": "120:21",
+          "source_file": "juliet_c/CWE134_1_bad.c",
+          "line": "119:21",
           "snippet": "data",
           "tainted_variable": "data"
         }
       ]
     },
     {
-      "source_file": "C_CWE_juliet_testsuite/CWE134_2.c",
-      "xml_source": "C_2_archivio.xml",
+      "source_file": "juliet_c/CWE134_1_good.c",
+      "xml_source": "good_bad_archive.xml",
       "vulnerable": true,
       "rules_summary": [
+        "CWE-117-LOG-INJECTION",
         "CWE-120-BUFFER-OVERFLOW",
-        "CWE-338-WEAK-PRNG"
+        "CWE-252-UNCHECKED-RETURN-VALUE"
       ],
       "vulnerabilities_summary": [
+        "CWE-117",
         "CWE-120",
-        "CWE-338"
+        "CWE-252"
       ],
-      "findings_count": 2,
+      "findings_count": 4,
       "findings": [
         {
           "rule_id": "CWE-120-BUFFER-OVERFLOW",
           "vulnerabilities": [
             "CWE-120"
           ],
-          "source_file": "C_CWE_juliet_testsuite/CWE134_2.c",
-          "line": "95:5",
+          "source_file": "juliet_c/CWE134_1_good.c",
+          "line": "54:5",
           "snippet": "strcpy(data, \"fixedstringtest\")"
         },
         {
-          "rule_id": "CWE-338-WEAK-PRNG",
+          "rule_id": "CWE-252-UNCHECKED-RETURN-VALUE",
           "vulnerabilities": [
-            "CWE-338"
+            "CWE-252"
           ],
-          "source_file": "C_CWE_juliet_testsuite/CWE134_2.c",
-          "line": "158:5",
-          "snippet": "srand( (unsigned)time(NULL) )"
-        }
-      ]
-    },
-    {
-      "source_file": "C_CWE_juliet_testsuite/CWE23_2.c",
-      "xml_source": "C_2_archivio.xml",
-      "vulnerable": true,
-      "rules_summary": [
-        "CWE-120-BUFFER-OVERFLOW",
-        "CWE-22-PATH-TRAVERSAL",
-        "CWE-338-WEAK-PRNG"
-      ],
-      "vulnerabilities_summary": [
-        "CWE-120",
-        "CWE-22",
-        "CWE-338"
-      ],
-      "findings_count": 4,
-      "findings": [
-        {
-          "rule_id": "CWE-120-BUFFER-OVERFLOW",
-          "vulnerabilities": [
-            "CWE-120"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE23_2.c",
-          "line": "93:9",
-          "snippet": "strcat(data, \"file.txt\")"
+          "source_file": "juliet_c/CWE134_1_good.c",
+          "line": "56:5",
+          "snippet": "fprintf(stdout, data)"
         },
         {
-          "rule_id": "CWE-120-BUFFER-OVERFLOW",
+          "rule_id": "CWE-252-UNCHECKED-RETURN-VALUE",
           "vulnerabilities": [
-            "CWE-120"
+            "CWE-252"
           ],
-          "source_file": "C_CWE_juliet_testsuite/CWE23_2.c",
-          "line": "112:9",
-          "snippet": "strcat(data, \"file.txt\")"
+          "source_file": "juliet_c/CWE134_1_good.c",
+          "line": "133:5",
+          "snippet": "fprintf(stdout, \"%s\\n\", data)"
         },
         {
-          "rule_id": "CWE-338-WEAK-PRNG",
+          "rule_id": "CWE-117-LOG-INJECTION",
           "vulnerabilities": [
-            "CWE-338"
+            "CWE-117"
           ],
-          "source_file": "C_CWE_juliet_testsuite/CWE23_2.c",
-          "line": "144:5",
-          "snippet": "srand( (unsigned)time(NULL) )"
-        },
-        {
-          "rule_id": "CWE-22-PATH-TRAVERSAL",
-          "vulnerabilities": [
-            "CWE-22"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE23_2.c",
-          "line": "70:25",
-          "snippet": "(char *)data",
-          "tainted_variable": "data"
-        }
-      ]
-    },
-    {
-      "source_file": "C_CWE_juliet_testsuite/CWE23_3.c",
-      "xml_source": "C_2_archivio.xml",
-      "vulnerable": true,
-      "rules_summary": [
-        "CWE-120-BUFFER-OVERFLOW",
-        "CWE-22-PATH-TRAVERSAL",
-        "CWE-338-WEAK-PRNG"
-      ],
-      "vulnerabilities_summary": [
-        "CWE-120",
-        "CWE-22",
-        "CWE-338"
-      ],
-      "findings_count": 3,
-      "findings": [
-        {
-          "rule_id": "CWE-120-BUFFER-OVERFLOW",
-          "vulnerabilities": [
-            "CWE-120"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE23_3.c",
-          "line": "89:5",
-          "snippet": "strcat(data, \"file.txt\")"
-        },
-        {
-          "rule_id": "CWE-338-WEAK-PRNG",
-          "vulnerabilities": [
-            "CWE-338"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE23_3.c",
-          "line": "122:5",
-          "snippet": "srand( (unsigned)time(NULL) )"
-        },
-        {
-          "rule_id": "CWE-22-PATH-TRAVERSAL",
-          "vulnerabilities": [
-            "CWE-22"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE23_3.c",
-          "line": "71:29",
-          "snippet": "(char *)data",
-          "tainted_variable": "data"
-        }
-      ]
-    },
-    {
-      "source_file": "C_CWE_juliet_testsuite/CWE23.c",
-      "xml_source": "C_2_archivio.xml",
-      "vulnerable": true,
-      "rules_summary": [
-        "CWE-120-BUFFER-OVERFLOW",
-        "CWE-22-PATH-TRAVERSAL",
-        "CWE-338-WEAK-PRNG"
-      ],
-      "vulnerabilities_summary": [
-        "CWE-120",
-        "CWE-22",
-        "CWE-338"
-      ],
-      "findings_count": 3,
-      "findings": [
-        {
-          "rule_id": "CWE-120-BUFFER-OVERFLOW",
-          "vulnerabilities": [
-            "CWE-120"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE23.c",
-          "line": "152:5",
-          "snippet": "strcat(data, \"file.txt\")"
-        },
-        {
-          "rule_id": "CWE-338-WEAK-PRNG",
-          "vulnerabilities": [
-            "CWE-338"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE23.c",
-          "line": "185:5",
-          "snippet": "srand( (unsigned)time(NULL) )"
-        },
-        {
-          "rule_id": "CWE-22-PATH-TRAVERSAL",
-          "vulnerabilities": [
-            "CWE-22"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE23.c",
-          "line": "133:23",
+          "source_file": "juliet_c/CWE134_1_good.c",
+          "line": "133:29",
           "snippet": "data",
           "tainted_variable": "data"
         }
       ]
     },
     {
-      "source_file": "C_CWE_juliet_testsuite/CWE252_1.c",
-      "xml_source": "C_2_archivio.xml",
-      "vulnerable": true,
-      "rules_summary": [
-        "CWE-338-WEAK-PRNG"
-      ],
-      "vulnerabilities_summary": [
-        "CWE-338"
-      ],
-      "findings_count": 1,
-      "findings": [
-        {
-          "rule_id": "CWE-338-WEAK-PRNG",
-          "vulnerabilities": [
-            "CWE-338"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE252_1.c",
-          "line": "77:5",
-          "snippet": "srand( (unsigned)time(NULL) )"
-        }
-      ]
+      "source_file": "juliet_c/CWE134_2_bad.c",
+      "xml_source": "good_bad_archive.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
     },
     {
-      "source_file": "C_CWE_juliet_testsuite/CWE252_2.c",
-      "xml_source": "C_2_archivio.xml",
+      "source_file": "juliet_c/CWE134_2_good.c",
+      "xml_source": "good_bad_archive.xml",
       "vulnerable": true,
       "rules_summary": [
-        "CWE-338-WEAK-PRNG"
+        "CWE-120-BUFFER-OVERFLOW"
       ],
       "vulnerabilities_summary": [
-        "CWE-338"
+        "CWE-120"
       ],
       "findings_count": 1,
-      "findings": [
-        {
-          "rule_id": "CWE-338-WEAK-PRNG",
-          "vulnerabilities": [
-            "CWE-338"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE252_2.c",
-          "line": "86:5",
-          "snippet": "srand( (unsigned)time(NULL) )"
-        }
-      ]
-    },
-    {
-      "source_file": "C_CWE_juliet_testsuite/CWE259_1.c",
-      "xml_source": "C_2_archivio.xml",
-      "vulnerable": true,
-      "rules_summary": [
-        "CWE-120-BUFFER-OVERFLOW",
-        "CWE-259-HARDCODED-PASSWORD",
-        "CWE-338-WEAK-PRNG"
-      ],
-      "vulnerabilities_summary": [
-        "CWE-120",
-        "CWE-259",
-        "CWE-338"
-      ],
-      "findings_count": 4,
       "findings": [
         {
           "rule_id": "CWE-120-BUFFER-OVERFLOW",
           "vulnerabilities": [
             "CWE-120"
           ],
-          "source_file": "C_CWE_juliet_testsuite/CWE259_1.c",
-          "line": "34:5",
-          "snippet": "strcpy(password, PASSWORD)"
-        },
-        {
-          "rule_id": "CWE-338-WEAK-PRNG",
-          "vulnerabilities": [
-            "CWE-338"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE259_1.c",
-          "line": "125:5",
-          "snippet": "srand( (unsigned)time(NULL) )"
-        },
-        {
-          "rule_id": "CWE-259-HARDCODED-PASSWORD",
-          "vulnerabilities": [
-            "CWE-259"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE259_1.c",
-          "line": "31:5",
-          "snippet": "char passwordBuffer[100] = \"\";"
-        },
-        {
-          "rule_id": "CWE-259-HARDCODED-PASSWORD",
-          "vulnerabilities": [
-            "CWE-259"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE259_1.c",
-          "line": "66:5",
-          "snippet": "char passwordBuffer[100] = \"\";"
+          "source_file": "juliet_c/CWE134_2_good.c",
+          "line": "51:5",
+          "snippet": "strcpy(data, \"fixedstringtest\")"
         }
       ]
     },
     {
-      "source_file": "C_CWE_juliet_testsuite/CWE259_2.c",
-      "xml_source": "C_2_archivio.xml",
+      "source_file": "juliet_c/CWE23_2_bad.c",
+      "xml_source": "good_bad_archive.xml",
       "vulnerable": true,
       "rules_summary": [
-        "CWE-120-BUFFER-OVERFLOW",
-        "CWE-259-HARDCODED-PASSWORD",
-        "CWE-338-WEAK-PRNG"
+        "CWE-22-PATH-TRAVERSAL"
       ],
       "vulnerabilities_summary": [
-        "CWE-120",
-        "CWE-259",
-        "CWE-338"
+        "CWE-22"
       ],
-      "findings_count": 4,
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "juliet_c/CWE23_2_bad.c",
+          "line": "69:25",
+          "snippet": "(char *)data",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_c/CWE23_2_good.c",
+      "xml_source": "good_bad_archive.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-120-BUFFER-OVERFLOW"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-120"
+      ],
+      "findings_count": 2,
       "findings": [
         {
           "rule_id": "CWE-120-BUFFER-OVERFLOW",
           "vulnerabilities": [
             "CWE-120"
           ],
-          "source_file": "C_CWE_juliet_testsuite/CWE259_2.c",
-          "line": "61:5",
-          "snippet": "strcpy(password, PASSWORD)"
+          "source_file": "juliet_c/CWE23_2_good.c",
+          "line": "62:9",
+          "snippet": "strcat(data, \"file.txt\")"
         },
         {
-          "rule_id": "CWE-338-WEAK-PRNG",
+          "rule_id": "CWE-120-BUFFER-OVERFLOW",
           "vulnerabilities": [
-            "CWE-338"
+            "CWE-120"
           ],
-          "source_file": "C_CWE_juliet_testsuite/CWE259_2.c",
-          "line": "138:5",
-          "snippet": "srand( (unsigned)time(NULL) )"
+          "source_file": "juliet_c/CWE23_2_good.c",
+          "line": "81:9",
+          "snippet": "strcat(data, \"file.txt\")"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_c/CWE23_3_bad.c",
+      "xml_source": "good_bad_archive.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-22-PATH-TRAVERSAL"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-22"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "juliet_c/CWE23_3_bad.c",
+          "line": "70:29",
+          "snippet": "(char *)data",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_c/CWE23_3_good.c",
+      "xml_source": "good_bad_archive.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-120-BUFFER-OVERFLOW"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-120"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-120-BUFFER-OVERFLOW",
+          "vulnerabilities": [
+            "CWE-120"
+          ],
+          "source_file": "juliet_c/CWE23_3_good.c",
+          "line": "56:5",
+          "snippet": "strcat(data, \"file.txt\")"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_c/CWE23_bad.c",
+      "xml_source": "good_bad_archive.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-22-PATH-TRAVERSAL"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-22"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "juliet_c/CWE23_bad.c",
+          "line": "132:23",
+          "snippet": "data",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_c/CWE23_good.c",
+      "xml_source": "good_bad_archive.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-120-BUFFER-OVERFLOW"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-120"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-120-BUFFER-OVERFLOW",
+          "vulnerabilities": [
+            "CWE-120"
+          ],
+          "source_file": "juliet_c/CWE23_good.c",
+          "line": "65:5",
+          "snippet": "strcat(data, \"file.txt\")"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_c/CWE252_1_bad.c",
+      "xml_source": "good_bad_archive.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-252-UNCHECKED-RETURN-VALUE"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-252"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-252-UNCHECKED-RETURN-VALUE",
+          "vulnerabilities": [
+            "CWE-252"
+          ],
+          "source_file": "juliet_c/CWE252_1_bad.c",
+          "line": "32:9",
+          "snippet": "fgets(data, 100, stdin)"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_c/CWE252_1_good.c",
+      "xml_source": "good_bad_archive.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "juliet_c/CWE252_2_bad.c",
+      "xml_source": "good_bad_archive.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-252-UNCHECKED-RETURN-VALUE"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-252"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-252-UNCHECKED-RETURN-VALUE",
+          "vulnerabilities": [
+            "CWE-252"
+          ],
+          "source_file": "juliet_c/CWE252_2_bad.c",
+          "line": "28:9",
+          "snippet": "fprintf(stdout, \"%s\\n\", \"string\")"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_c/CWE252_2_good.c",
+      "xml_source": "good_bad_archive.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "juliet_c/CWE259_1_bad.c",
+      "xml_source": "good_bad_archive.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-120-BUFFER-OVERFLOW",
+        "CWE-259-HARDCODED-PASSWORD"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-120",
+        "CWE-259"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-120-BUFFER-OVERFLOW",
+          "vulnerabilities": [
+            "CWE-120"
+          ],
+          "source_file": "juliet_c/CWE259_1_bad.c",
+          "line": "33:5",
+          "snippet": "strcpy(password, PASSWORD)"
         },
         {
           "rule_id": "CWE-259-HARDCODED-PASSWORD",
           "vulnerabilities": [
             "CWE-259"
           ],
-          "source_file": "C_CWE_juliet_testsuite/CWE259_2.c",
+          "source_file": "juliet_c/CWE259_1_bad.c",
+          "line": "30:5",
+          "snippet": "char passwordBuffer[100] = \"\";"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_c/CWE259_1_good.c",
+      "xml_source": "good_bad_archive.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-259-HARDCODED-PASSWORD"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-259"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-259-HARDCODED-PASSWORD",
+          "vulnerabilities": [
+            "CWE-259"
+          ],
+          "source_file": "juliet_c/CWE259_1_good.c",
+          "line": "32:5",
+          "snippet": "char passwordBuffer[100] = \"\";"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_c/CWE259_2_bad.c",
+      "xml_source": "good_bad_archive.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-120-BUFFER-OVERFLOW",
+        "CWE-259-HARDCODED-PASSWORD"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-120",
+        "CWE-259"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-120-BUFFER-OVERFLOW",
+          "vulnerabilities": [
+            "CWE-120"
+          ],
+          "source_file": "juliet_c/CWE259_2_bad.c",
+          "line": "60:5",
+          "snippet": "strcpy(password, PASSWORD)"
+        },
+        {
+          "rule_id": "CWE-259-HARDCODED-PASSWORD",
+          "vulnerabilities": [
+            "CWE-259"
+          ],
+          "source_file": "juliet_c/CWE259_2_bad.c",
+          "line": "57:5",
+          "snippet": "char passwordBuffer[100] = \"\";"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_c/CWE259_2_good.c",
+      "xml_source": "good_bad_archive.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-259-HARDCODED-PASSWORD"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-259"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-259-HARDCODED-PASSWORD",
+          "vulnerabilities": [
+            "CWE-259"
+          ],
+          "source_file": "juliet_c/CWE259_2_good.c",
           "line": "58:5",
           "snippet": "char passwordBuffer[100] = \"\";"
-        },
-        {
-          "rule_id": "CWE-259-HARDCODED-PASSWORD",
-          "vulnerabilities": [
-            "CWE-259"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE259_2.c",
-          "line": "100:5",
-          "snippet": "char passwordBuffer[100] = \"\";"
         }
       ]
     },
     {
-      "source_file": "C_CWE_juliet_testsuite/CWE319_1.c",
-      "xml_source": "C_2_archivio.xml",
+      "source_file": "juliet_c/CWE319_1_bad.c",
+      "xml_source": "good_bad_archive.xml",
       "vulnerable": true,
       "rules_summary": [
-        "CWE-120-BUFFER-OVERFLOW",
         "CWE-259-HARDCODED-PASSWORD",
-        "CWE-319-CLEARTEXT-SOCKET-TRANSMISSION",
-        "CWE-338-WEAK-PRNG"
+        "CWE-319-CLEARTEXT-SOCKET-TRANSMISSION"
       ],
       "vulnerabilities_summary": [
-        "CWE-120",
         "CWE-259",
-        "CWE-319",
-        "CWE-338"
-      ],
-      "findings_count": 11,
-      "findings": [
-        {
-          "rule_id": "CWE-120-BUFFER-OVERFLOW",
-          "vulnerabilities": [
-            "CWE-120"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE319_1.c",
-          "line": "453:9",
-          "snippet": "strcpy(password, \"Password1234!\")"
-        },
-        {
-          "rule_id": "CWE-120-BUFFER-OVERFLOW",
-          "vulnerabilities": [
-            "CWE-120"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE319_1.c",
-          "line": "492:9",
-          "snippet": "strcpy(password, \"Password1234!\")"
-        },
-        {
-          "rule_id": "CWE-338-WEAK-PRNG",
-          "vulnerabilities": [
-            "CWE-338"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE319_1.c",
-          "line": "541:5",
-          "snippet": "srand( (unsigned)time(NULL) )"
-        },
-        {
-          "rule_id": "CWE-259-HARDCODED-PASSWORD",
-          "vulnerabilities": [
-            "CWE-259"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE319_1.c",
-          "line": "37:5",
-          "snippet": "char passwordBuffer[100] = \"\";"
-        },
-        {
-          "rule_id": "CWE-259-HARDCODED-PASSWORD",
-          "vulnerabilities": [
-            "CWE-259"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE319_1.c",
-          "line": "137:5",
-          "snippet": "char passwordBuffer[100] = \"\";"
-        },
-        {
-          "rule_id": "CWE-259-HARDCODED-PASSWORD",
-          "vulnerabilities": [
-            "CWE-259"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE319_1.c",
-          "line": "292:5",
-          "snippet": "char passwordBuffer[100] = \"\";"
-        },
-        {
-          "rule_id": "CWE-259-HARDCODED-PASSWORD",
-          "vulnerabilities": [
-            "CWE-259"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE319_1.c",
-          "line": "442:5",
-          "snippet": "char passwordBuffer[100] = \"\";"
-        },
-        {
-          "rule_id": "CWE-259-HARDCODED-PASSWORD",
-          "vulnerabilities": [
-            "CWE-259"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE319_1.c",
-          "line": "486:5",
-          "snippet": "char passwordBuffer[100] = \"\";"
-        },
-        {
-          "rule_id": "CWE-319-CLEARTEXT-SOCKET-TRANSMISSION",
-          "vulnerabilities": [
-            "CWE-319"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE319_1.c",
-          "line": "113:25",
-          "snippet": "password",
-          "tainted_variable": "password"
-        },
-        {
-          "rule_id": "CWE-319-CLEARTEXT-SOCKET-TRANSMISSION",
-          "vulnerabilities": [
-            "CWE-319"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE319_1.c",
-          "line": "272:25",
-          "snippet": "password",
-          "tainted_variable": "password"
-        },
-        {
-          "rule_id": "CWE-319-CLEARTEXT-SOCKET-TRANSMISSION",
-          "vulnerabilities": [
-            "CWE-319"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE319_1.c",
-          "line": "422:25",
-          "snippet": "password",
-          "tainted_variable": "password"
-        }
-      ]
-    },
-    {
-      "source_file": "C_CWE_juliet_testsuite/CWE319_2.c",
-      "xml_source": "C_2_archivio.xml",
-      "vulnerable": true,
-      "rules_summary": [
-        "CWE-120-BUFFER-OVERFLOW",
-        "CWE-259-HARDCODED-PASSWORD",
-        "CWE-319-CLEARTEXT-SOCKET-TRANSMISSION",
-        "CWE-338-WEAK-PRNG"
-      ],
-      "vulnerabilities_summary": [
-        "CWE-120",
-        "CWE-259",
-        "CWE-319",
-        "CWE-338"
-      ],
-      "findings_count": 11,
-      "findings": [
-        {
-          "rule_id": "CWE-120-BUFFER-OVERFLOW",
-          "vulnerabilities": [
-            "CWE-120"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE319_2.c",
-          "line": "453:9",
-          "snippet": "strcpy(password, \"Password1234!\")"
-        },
-        {
-          "rule_id": "CWE-120-BUFFER-OVERFLOW",
-          "vulnerabilities": [
-            "CWE-120"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE319_2.c",
-          "line": "492:9",
-          "snippet": "strcpy(password, \"Password1234!\")"
-        },
-        {
-          "rule_id": "CWE-338-WEAK-PRNG",
-          "vulnerabilities": [
-            "CWE-338"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE319_2.c",
-          "line": "541:5",
-          "snippet": "srand( (unsigned)time(NULL) )"
-        },
-        {
-          "rule_id": "CWE-259-HARDCODED-PASSWORD",
-          "vulnerabilities": [
-            "CWE-259"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE319_2.c",
-          "line": "37:5",
-          "snippet": "char passwordBuffer[100] = \"\";"
-        },
-        {
-          "rule_id": "CWE-259-HARDCODED-PASSWORD",
-          "vulnerabilities": [
-            "CWE-259"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE319_2.c",
-          "line": "137:5",
-          "snippet": "char passwordBuffer[100] = \"\";"
-        },
-        {
-          "rule_id": "CWE-259-HARDCODED-PASSWORD",
-          "vulnerabilities": [
-            "CWE-259"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE319_2.c",
-          "line": "292:5",
-          "snippet": "char passwordBuffer[100] = \"\";"
-        },
-        {
-          "rule_id": "CWE-259-HARDCODED-PASSWORD",
-          "vulnerabilities": [
-            "CWE-259"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE319_2.c",
-          "line": "442:5",
-          "snippet": "char passwordBuffer[100] = \"\";"
-        },
-        {
-          "rule_id": "CWE-259-HARDCODED-PASSWORD",
-          "vulnerabilities": [
-            "CWE-259"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE319_2.c",
-          "line": "486:5",
-          "snippet": "char passwordBuffer[100] = \"\";"
-        },
-        {
-          "rule_id": "CWE-319-CLEARTEXT-SOCKET-TRANSMISSION",
-          "vulnerabilities": [
-            "CWE-319"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE319_2.c",
-          "line": "113:25",
-          "snippet": "password",
-          "tainted_variable": "password"
-        },
-        {
-          "rule_id": "CWE-319-CLEARTEXT-SOCKET-TRANSMISSION",
-          "vulnerabilities": [
-            "CWE-319"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE319_2.c",
-          "line": "272:25",
-          "snippet": "password",
-          "tainted_variable": "password"
-        },
-        {
-          "rule_id": "CWE-319-CLEARTEXT-SOCKET-TRANSMISSION",
-          "vulnerabilities": [
-            "CWE-319"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE319_2.c",
-          "line": "422:25",
-          "snippet": "password",
-          "tainted_variable": "password"
-        }
-      ]
-    },
-    {
-      "source_file": "C_CWE_juliet_testsuite/CWE327_1.c",
-      "xml_source": "C_2_archivio.xml",
-      "vulnerable": true,
-      "rules_summary": [
-        "CWE-327-BROKEN-CRYPTO-ALGORITHM",
-        "CWE-338-WEAK-PRNG"
-      ],
-      "vulnerabilities_summary": [
-        "CWE-327",
-        "CWE-338"
+        "CWE-319"
       ],
       "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-259-HARDCODED-PASSWORD",
+          "vulnerabilities": [
+            "CWE-259"
+          ],
+          "source_file": "juliet_c/CWE319_1_bad.c",
+          "line": "36:5",
+          "snippet": "char passwordBuffer[100] = \"\";"
+        },
+        {
+          "rule_id": "CWE-319-CLEARTEXT-SOCKET-TRANSMISSION",
+          "vulnerabilities": [
+            "CWE-319"
+          ],
+          "source_file": "juliet_c/CWE319_1_bad.c",
+          "line": "112:25",
+          "snippet": "password",
+          "tainted_variable": "password"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_c/CWE319_1_good.c",
+      "xml_source": "good_bad_archive.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-120-BUFFER-OVERFLOW",
+        "CWE-259-HARDCODED-PASSWORD",
+        "CWE-319-CLEARTEXT-SOCKET-TRANSMISSION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-120",
+        "CWE-259",
+        "CWE-319"
+      ],
+      "findings_count": 8,
+      "findings": [
+        {
+          "rule_id": "CWE-120-BUFFER-OVERFLOW",
+          "vulnerabilities": [
+            "CWE-120"
+          ],
+          "source_file": "juliet_c/CWE319_1_good.c",
+          "line": "354:9",
+          "snippet": "strcpy(password, \"Password1234!\")"
+        },
+        {
+          "rule_id": "CWE-120-BUFFER-OVERFLOW",
+          "vulnerabilities": [
+            "CWE-120"
+          ],
+          "source_file": "juliet_c/CWE319_1_good.c",
+          "line": "393:9",
+          "snippet": "strcpy(password, \"Password1234!\")"
+        },
+        {
+          "rule_id": "CWE-259-HARDCODED-PASSWORD",
+          "vulnerabilities": [
+            "CWE-259"
+          ],
+          "source_file": "juliet_c/CWE319_1_good.c",
+          "line": "38:5",
+          "snippet": "char passwordBuffer[100] = \"\";"
+        },
+        {
+          "rule_id": "CWE-259-HARDCODED-PASSWORD",
+          "vulnerabilities": [
+            "CWE-259"
+          ],
+          "source_file": "juliet_c/CWE319_1_good.c",
+          "line": "193:5",
+          "snippet": "char passwordBuffer[100] = \"\";"
+        },
+        {
+          "rule_id": "CWE-259-HARDCODED-PASSWORD",
+          "vulnerabilities": [
+            "CWE-259"
+          ],
+          "source_file": "juliet_c/CWE319_1_good.c",
+          "line": "343:5",
+          "snippet": "char passwordBuffer[100] = \"\";"
+        },
+        {
+          "rule_id": "CWE-259-HARDCODED-PASSWORD",
+          "vulnerabilities": [
+            "CWE-259"
+          ],
+          "source_file": "juliet_c/CWE319_1_good.c",
+          "line": "387:5",
+          "snippet": "char passwordBuffer[100] = \"\";"
+        },
+        {
+          "rule_id": "CWE-319-CLEARTEXT-SOCKET-TRANSMISSION",
+          "vulnerabilities": [
+            "CWE-319"
+          ],
+          "source_file": "juliet_c/CWE319_1_good.c",
+          "line": "173:25",
+          "snippet": "password",
+          "tainted_variable": "password"
+        },
+        {
+          "rule_id": "CWE-319-CLEARTEXT-SOCKET-TRANSMISSION",
+          "vulnerabilities": [
+            "CWE-319"
+          ],
+          "source_file": "juliet_c/CWE319_1_good.c",
+          "line": "323:25",
+          "snippet": "password",
+          "tainted_variable": "password"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_c/CWE319_2_bad.c",
+      "xml_source": "good_bad_archive.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-259-HARDCODED-PASSWORD",
+        "CWE-319-CLEARTEXT-SOCKET-TRANSMISSION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-259",
+        "CWE-319"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-259-HARDCODED-PASSWORD",
+          "vulnerabilities": [
+            "CWE-259"
+          ],
+          "source_file": "juliet_c/CWE319_2_bad.c",
+          "line": "36:5",
+          "snippet": "char passwordBuffer[100] = \"\";"
+        },
+        {
+          "rule_id": "CWE-319-CLEARTEXT-SOCKET-TRANSMISSION",
+          "vulnerabilities": [
+            "CWE-319"
+          ],
+          "source_file": "juliet_c/CWE319_2_bad.c",
+          "line": "112:25",
+          "snippet": "password",
+          "tainted_variable": "password"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_c/CWE319_2_good.c",
+      "xml_source": "good_bad_archive.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-120-BUFFER-OVERFLOW",
+        "CWE-259-HARDCODED-PASSWORD",
+        "CWE-319-CLEARTEXT-SOCKET-TRANSMISSION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-120",
+        "CWE-259",
+        "CWE-319"
+      ],
+      "findings_count": 8,
+      "findings": [
+        {
+          "rule_id": "CWE-120-BUFFER-OVERFLOW",
+          "vulnerabilities": [
+            "CWE-120"
+          ],
+          "source_file": "juliet_c/CWE319_2_good.c",
+          "line": "354:9",
+          "snippet": "strcpy(password, \"Password1234!\")"
+        },
+        {
+          "rule_id": "CWE-120-BUFFER-OVERFLOW",
+          "vulnerabilities": [
+            "CWE-120"
+          ],
+          "source_file": "juliet_c/CWE319_2_good.c",
+          "line": "393:9",
+          "snippet": "strcpy(password, \"Password1234!\")"
+        },
+        {
+          "rule_id": "CWE-259-HARDCODED-PASSWORD",
+          "vulnerabilities": [
+            "CWE-259"
+          ],
+          "source_file": "juliet_c/CWE319_2_good.c",
+          "line": "38:5",
+          "snippet": "char passwordBuffer[100] = \"\";"
+        },
+        {
+          "rule_id": "CWE-259-HARDCODED-PASSWORD",
+          "vulnerabilities": [
+            "CWE-259"
+          ],
+          "source_file": "juliet_c/CWE319_2_good.c",
+          "line": "193:5",
+          "snippet": "char passwordBuffer[100] = \"\";"
+        },
+        {
+          "rule_id": "CWE-259-HARDCODED-PASSWORD",
+          "vulnerabilities": [
+            "CWE-259"
+          ],
+          "source_file": "juliet_c/CWE319_2_good.c",
+          "line": "343:5",
+          "snippet": "char passwordBuffer[100] = \"\";"
+        },
+        {
+          "rule_id": "CWE-259-HARDCODED-PASSWORD",
+          "vulnerabilities": [
+            "CWE-259"
+          ],
+          "source_file": "juliet_c/CWE319_2_good.c",
+          "line": "387:5",
+          "snippet": "char passwordBuffer[100] = \"\";"
+        },
+        {
+          "rule_id": "CWE-319-CLEARTEXT-SOCKET-TRANSMISSION",
+          "vulnerabilities": [
+            "CWE-319"
+          ],
+          "source_file": "juliet_c/CWE319_2_good.c",
+          "line": "173:25",
+          "snippet": "password",
+          "tainted_variable": "password"
+        },
+        {
+          "rule_id": "CWE-319-CLEARTEXT-SOCKET-TRANSMISSION",
+          "vulnerabilities": [
+            "CWE-319"
+          ],
+          "source_file": "juliet_c/CWE319_2_good.c",
+          "line": "323:25",
+          "snippet": "password",
+          "tainted_variable": "password"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_c/CWE327_1_bad.c",
+      "xml_source": "good_bad_archive.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-327-BROKEN-CRYPTO-ALGORITHM"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-327"
+      ],
+      "findings_count": 1,
       "findings": [
         {
           "rule_id": "CWE-327-BROKEN-CRYPTO-ALGORITHM",
           "vulnerabilities": [
             "CWE-327"
           ],
-          "source_file": "C_CWE_juliet_testsuite/CWE327_1.c",
-          "line": "88:17",
+          "source_file": "juliet_c/CWE327_1_bad.c",
+          "line": "87:17",
           "snippet": "CryptDeriveKey(hCryptProv, CALG_3DES, hHash, 0, &hKey)"
-        },
-        {
-          "rule_id": "CWE-338-WEAK-PRNG",
-          "vulnerabilities": [
-            "CWE-338"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE327_1.c",
-          "line": "346:5",
-          "snippet": "srand( (unsigned)time(NULL) )"
         }
       ]
     },
     {
-      "source_file": "C_CWE_juliet_testsuite/CWE327_2.c",
-      "xml_source": "C_2_archivio.xml",
+      "source_file": "juliet_c/CWE327_1_good.c",
+      "xml_source": "good_bad_archive.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "juliet_c/CWE327_2_bad.c",
+      "xml_source": "good_bad_archive.xml",
       "vulnerable": true,
       "rules_summary": [
-        "CWE-327-BROKEN-CRYPTO-ALGORITHM",
-        "CWE-338-WEAK-PRNG"
+        "CWE-327-BROKEN-CRYPTO-ALGORITHM"
       ],
       "vulnerabilities_summary": [
-        "CWE-327",
-        "CWE-338"
+        "CWE-327"
       ],
-      "findings_count": 2,
+      "findings_count": 1,
       "findings": [
         {
           "rule_id": "CWE-327-BROKEN-CRYPTO-ALGORITHM",
           "vulnerabilities": [
             "CWE-327"
           ],
-          "source_file": "C_CWE_juliet_testsuite/CWE327_2.c",
-          "line": "101:17",
+          "source_file": "juliet_c/CWE327_2_bad.c",
+          "line": "100:17",
           "snippet": "CryptDeriveKey(hCryptProv, CALG_RC5, hHash, 0, &hKey)"
-        },
-        {
-          "rule_id": "CWE-338-WEAK-PRNG",
-          "vulnerabilities": [
-            "CWE-338"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE327_2.c",
-          "line": "359:5",
-          "snippet": "srand( (unsigned)time(NULL) )"
         }
       ]
     },
     {
-      "source_file": "C_CWE_juliet_testsuite/CWE328.c",
-      "xml_source": "C_2_archivio.xml",
+      "source_file": "juliet_c/CWE327_2_good.c",
+      "xml_source": "good_bad_archive.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "juliet_c/CWE328_bad.c",
+      "xml_source": "good_bad_archive.xml",
       "vulnerable": true,
       "rules_summary": [
         "CWE-327-BROKEN-CRYPTO-ALGORITHM",
-        "CWE-338-WEAK-PRNG",
         "CWE-400-UNCONTROLLED-LOOP-BOUND"
       ],
       "vulnerabilities_summary": [
         "CWE-327",
-        "CWE-338",
         "CWE-400"
       ],
-      "findings_count": 5,
+      "findings_count": 2,
       "findings": [
         {
           "rule_id": "CWE-327-BROKEN-CRYPTO-ALGORITHM",
           "vulnerabilities": [
             "CWE-327"
           ],
-          "source_file": "C_CWE_juliet_testsuite/CWE328.c",
-          "line": "85:18",
+          "source_file": "juliet_c/CWE328_bad.c",
+          "line": "84:18",
           "snippet": "CryptCreateHash(hCryptProv, CALG_MD2, 0, 0, &hHash)"
         },
         {
-          "rule_id": "CWE-338-WEAK-PRNG",
-          "vulnerabilities": [
-            "CWE-338"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE328.c",
-          "line": "346:5",
-          "snippet": "srand( (unsigned)time(NULL) )"
-        },
-        {
           "rule_id": "CWE-400-UNCONTROLLED-LOOP-BOUND",
           "vulnerabilities": [
             "CWE-400"
           ],
-          "source_file": "C_CWE_juliet_testsuite/CWE328.c",
-          "line": "55:21",
-          "snippet": "val > 0xff",
-          "tainted_variable": "val"
-        },
-        {
-          "rule_id": "CWE-400-UNCONTROLLED-LOOP-BOUND",
-          "vulnerabilities": [
-            "CWE-400"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE328.c",
-          "line": "163:21",
-          "snippet": "val > 0xff",
-          "tainted_variable": "val"
-        },
-        {
-          "rule_id": "CWE-400-UNCONTROLLED-LOOP-BOUND",
-          "vulnerabilities": [
-            "CWE-400"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE328.c",
-          "line": "259:21",
+          "source_file": "juliet_c/CWE328_bad.c",
+          "line": "54:21",
           "snippet": "val > 0xff",
           "tainted_variable": "val"
         }
       ]
     },
     {
-      "source_file": "C_CWE_juliet_testsuite/CWE338_1.c",
-      "xml_source": "C_2_archivio.xml",
+      "source_file": "juliet_c/CWE328_good.c",
+      "xml_source": "good_bad_archive.xml",
       "vulnerable": true,
       "rules_summary": [
-        "CWE-338-WEAK-PRNG"
+        "CWE-400-UNCONTROLLED-LOOP-BOUND"
       ],
       "vulnerabilities_summary": [
-        "CWE-338"
+        "CWE-400"
       ],
       "findings_count": 2,
       "findings": [
         {
-          "rule_id": "CWE-338-WEAK-PRNG",
+          "rule_id": "CWE-400-UNCONTROLLED-LOOP-BOUND",
           "vulnerabilities": [
-            "CWE-338"
+            "CWE-400"
           ],
-          "source_file": "C_CWE_juliet_testsuite/CWE338_1.c",
-          "line": "30:24",
-          "snippet": "rand()"
+          "source_file": "juliet_c/CWE328_good.c",
+          "line": "61:21",
+          "snippet": "val > 0xff",
+          "tainted_variable": "val"
         },
         {
-          "rule_id": "CWE-338-WEAK-PRNG",
+          "rule_id": "CWE-400-UNCONTROLLED-LOOP-BOUND",
           "vulnerabilities": [
-            "CWE-338"
+            "CWE-400"
           ],
-          "source_file": "C_CWE_juliet_testsuite/CWE338_1.c",
-          "line": "117:5",
-          "snippet": "srand( (unsigned)time(NULL) )"
+          "source_file": "juliet_c/CWE328_good.c",
+          "line": "157:21",
+          "snippet": "val > 0xff",
+          "tainted_variable": "val"
         }
       ]
     },
     {
-      "source_file": "C_CWE_juliet_testsuite/CWE338_2.c",
-      "xml_source": "C_2_archivio.xml",
-      "vulnerable": true,
-      "rules_summary": [
-        "CWE-338-WEAK-PRNG"
-      ],
-      "vulnerabilities_summary": [
-        "CWE-338"
-      ],
-      "findings_count": 2,
-      "findings": [
-        {
-          "rule_id": "CWE-338-WEAK-PRNG",
-          "vulnerabilities": [
-            "CWE-338"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE338_2.c",
-          "line": "31:20",
-          "snippet": "rand()"
-        },
-        {
-          "rule_id": "CWE-338-WEAK-PRNG",
-          "vulnerabilities": [
-            "CWE-338"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE338_2.c",
-          "line": "130:5",
-          "snippet": "srand( (unsigned)time(NULL) )"
-        }
-      ]
-    },
-    {
-      "source_file": "C_CWE_juliet_testsuite/CWE36_2.c",
-      "xml_source": "C_2_archivio.xml",
+      "source_file": "juliet_c/CWE338_1_bad.c",
+      "xml_source": "good_bad_archive.xml",
       "vulnerable": true,
       "rules_summary": [
         "CWE-338-WEAK-PRNG"
@@ -1032,142 +1036,198 @@
           "vulnerabilities": [
             "CWE-338"
           ],
-          "source_file": "C_CWE_juliet_testsuite/CWE36_2.c",
-          "line": "145:5",
-          "snippet": "srand( (unsigned)time(NULL) )"
+          "source_file": "juliet_c/CWE338_1_bad.c",
+          "line": "29:24",
+          "snippet": "rand()"
         }
       ]
     },
     {
-      "source_file": "C_CWE_juliet_testsuite/CWE36.c",
-      "xml_source": "C_2_archivio.xml",
+      "source_file": "juliet_c/CWE338_1_good.c",
+      "xml_source": "good_bad_archive.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "juliet_c/CWE338_2_bad.c",
+      "xml_source": "good_bad_archive.xml",
       "vulnerable": true,
       "rules_summary": [
-        "CWE-120-BUFFER-OVERFLOW",
-        "CWE-22-PATH-TRAVERSAL",
         "CWE-338-WEAK-PRNG"
       ],
       "vulnerabilities_summary": [
-        "CWE-120",
-        "CWE-22",
         "CWE-338"
       ],
-      "findings_count": 6,
+      "findings_count": 1,
       "findings": [
-        {
-          "rule_id": "CWE-120-BUFFER-OVERFLOW",
-          "vulnerabilities": [
-            "CWE-120"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE36.c",
-          "line": "160:9",
-          "snippet": "strcat(data, \"c:\\\\temp\\\\file.txt\")"
-        },
-        {
-          "rule_id": "CWE-120-BUFFER-OVERFLOW",
-          "vulnerabilities": [
-            "CWE-120"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE36.c",
-          "line": "163:9",
-          "snippet": "strcat(data, \"/tmp/file.txt\")"
-        },
-        {
-          "rule_id": "CWE-120-BUFFER-OVERFLOW",
-          "vulnerabilities": [
-            "CWE-120"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE36.c",
-          "line": "187:9",
-          "snippet": "strcat(data, \"c:\\\\temp\\\\file.txt\")"
-        },
-        {
-          "rule_id": "CWE-120-BUFFER-OVERFLOW",
-          "vulnerabilities": [
-            "CWE-120"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE36.c",
-          "line": "190:9",
-          "snippet": "strcat(data, \"/tmp/file.txt\")"
-        },
         {
           "rule_id": "CWE-338-WEAK-PRNG",
           "vulnerabilities": [
             "CWE-338"
           ],
-          "source_file": "C_CWE_juliet_testsuite/CWE36.c",
-          "line": "226:5",
-          "snippet": "srand( (unsigned)time(NULL) )"
-        },
+          "source_file": "juliet_c/CWE338_2_bad.c",
+          "line": "30:20",
+          "snippet": "rand()"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_c/CWE338_2_good.c",
+      "xml_source": "good_bad_archive.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "juliet_c/CWE36_2_bad.c",
+      "xml_source": "good_bad_archive.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "juliet_c/CWE36_2_good.c",
+      "xml_source": "good_bad_archive.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "juliet_c/CWE36_bad.c",
+      "xml_source": "good_bad_archive.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-22-PATH-TRAVERSAL"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-22"
+      ],
+      "findings_count": 1,
+      "findings": [
         {
           "rule_id": "CWE-22-PATH-TRAVERSAL",
           "vulnerabilities": [
             "CWE-22"
           ],
-          "source_file": "C_CWE_juliet_testsuite/CWE36.c",
-          "line": "133:23",
+          "source_file": "juliet_c/CWE36_bad.c",
+          "line": "132:23",
           "snippet": "data",
           "tainted_variable": "data"
         }
       ]
     },
     {
-      "source_file": "C_CWE_juliet_testsuite/CWE377_1.c",
-      "xml_source": "C_2_archivio.xml",
+      "source_file": "juliet_c/CWE36_good.c",
+      "xml_source": "good_bad_archive.xml",
       "vulnerable": true,
       "rules_summary": [
-        "CWE-338-WEAK-PRNG",
-        "CWE-377-INSECURE-TEMP-FILE"
+        "CWE-120-BUFFER-OVERFLOW"
       ],
       "vulnerabilities_summary": [
-        "CWE-338",
-        "CWE-377"
+        "CWE-120"
       ],
-      "findings_count": 2,
+      "findings_count": 4,
       "findings": [
         {
-          "rule_id": "CWE-377-INSECURE-TEMP-FILE",
+          "rule_id": "CWE-120-BUFFER-OVERFLOW",
           "vulnerabilities": [
-            "CWE-377"
+            "CWE-120"
           ],
-          "source_file": "C_CWE_juliet_testsuite/CWE377_1.c",
-          "line": "56:20",
-          "snippet": "MKTEMP(tmpl)"
+          "source_file": "juliet_c/CWE36_good.c",
+          "line": "70:9",
+          "snippet": "strcat(data, \"c:\\\\temp\\\\file.txt\")"
         },
         {
-          "rule_id": "CWE-338-WEAK-PRNG",
+          "rule_id": "CWE-120-BUFFER-OVERFLOW",
           "vulnerabilities": [
-            "CWE-338"
+            "CWE-120"
           ],
-          "source_file": "C_CWE_juliet_testsuite/CWE377_1.c",
-          "line": "109:5",
-          "snippet": "srand( (unsigned)time(NULL) )"
+          "source_file": "juliet_c/CWE36_good.c",
+          "line": "73:9",
+          "snippet": "strcat(data, \"/tmp/file.txt\")"
+        },
+        {
+          "rule_id": "CWE-120-BUFFER-OVERFLOW",
+          "vulnerabilities": [
+            "CWE-120"
+          ],
+          "source_file": "juliet_c/CWE36_good.c",
+          "line": "97:9",
+          "snippet": "strcat(data, \"c:\\\\temp\\\\file.txt\")"
+        },
+        {
+          "rule_id": "CWE-120-BUFFER-OVERFLOW",
+          "vulnerabilities": [
+            "CWE-120"
+          ],
+          "source_file": "juliet_c/CWE36_good.c",
+          "line": "100:9",
+          "snippet": "strcat(data, \"/tmp/file.txt\")"
         }
       ]
     },
     {
-      "source_file": "C_CWE_juliet_testsuite/CWE377_2.c",
-      "xml_source": "C_2_archivio.xml",
+      "source_file": "juliet_c/CWE377_1_bad.c",
+      "xml_source": "good_bad_archive.xml",
       "vulnerable": true,
       "rules_summary": [
-        "CWE-338-WEAK-PRNG",
-        "CWE-377-INSECURE-TEMP-FILE",
-        "CWE-415-416-MEMORY-MISUSE-AFTER-FREE"
+        "CWE-377-INSECURE-TEMP-FILE"
       ],
       "vulnerabilities_summary": [
-        "CWE-338",
-        "CWE-377",
-        "CWE-416"
+        "CWE-377"
       ],
-      "findings_count": 6,
+      "findings_count": 1,
       "findings": [
         {
           "rule_id": "CWE-377-INSECURE-TEMP-FILE",
           "vulnerabilities": [
             "CWE-377"
           ],
-          "source_file": "C_CWE_juliet_testsuite/CWE377_2.c",
-          "line": "57:24",
+          "source_file": "juliet_c/CWE377_1_bad.c",
+          "line": "55:20",
+          "snippet": "MKTEMP(tmpl)"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_c/CWE377_1_good.c",
+      "xml_source": "good_bad_archive.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "juliet_c/CWE377_2_bad.c",
+      "xml_source": "good_bad_archive.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-377-INSECURE-TEMP-FILE",
+        "CWE-415-416-MEMORY-MISUSE-AFTER-FREE"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-377",
+        "CWE-416"
+      ],
+      "findings_count": 5,
+      "findings": [
+        {
+          "rule_id": "CWE-377-INSECURE-TEMP-FILE",
+          "vulnerabilities": [
+            "CWE-377"
+          ],
+          "source_file": "juliet_c/CWE377_2_bad.c",
+          "line": "56:24",
           "snippet": "TEMPNAM(NULL, NULL)"
         },
         {
@@ -1175,26 +1235,17 @@
           "vulnerabilities": [
             "CWE-377"
           ],
-          "source_file": "C_CWE_juliet_testsuite/CWE377_2.c",
-          "line": "78:24",
+          "source_file": "juliet_c/CWE377_2_bad.c",
+          "line": "77:24",
           "snippet": "TEMPNAM(NULL, NULL)"
-        },
-        {
-          "rule_id": "CWE-338-WEAK-PRNG",
-          "vulnerabilities": [
-            "CWE-338"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE377_2.c",
-          "line": "153:5",
-          "snippet": "srand( (unsigned)time(NULL) )"
         },
         {
           "rule_id": "CWE-415-416-MEMORY-MISUSE-AFTER-FREE",
           "vulnerabilities": [
             "CWE-416"
           ],
-          "source_file": "C_CWE_juliet_testsuite/CWE377_2.c",
-          "line": "76:20",
+          "source_file": "juliet_c/CWE377_2_bad.c",
+          "line": "75:20",
           "snippet": "filename"
         },
         {
@@ -1202,8 +1253,8 @@
           "vulnerabilities": [
             "CWE-416"
           ],
-          "source_file": "C_CWE_juliet_testsuite/CWE377_2.c",
-          "line": "77:17",
+          "source_file": "juliet_c/CWE377_2_bad.c",
+          "line": "76:17",
           "snippet": "fileDesc"
         },
         {
@@ -1211,322 +1262,397 @@
           "vulnerabilities": [
             "CWE-416"
           ],
-          "source_file": "C_CWE_juliet_testsuite/CWE377_2.c",
-          "line": "78:32",
+          "source_file": "juliet_c/CWE377_2_bad.c",
+          "line": "77:32",
           "snippet": "NULL"
         }
       ]
     },
     {
-      "source_file": "C_CWE_juliet_testsuite/CWE390.c",
-      "xml_source": "C_2_archivio.xml",
+      "source_file": "juliet_c/CWE377_2_good.c",
+      "xml_source": "good_bad_archive.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "juliet_c/CWE390_bad.c",
+      "xml_source": "good_bad_archive.xml",
       "vulnerable": true,
       "rules_summary": [
-        "CWE-1071-EMPTY-CODE-BLOCK",
-        "CWE-338-WEAK-PRNG"
+        "CWE-1071-EMPTY-CODE-BLOCK"
       ],
       "vulnerabilities_summary": [
-        "CWE-1071",
-        "CWE-338"
+        "CWE-1071"
       ],
-      "findings_count": 2,
+      "findings_count": 1,
       "findings": [
-        {
-          "rule_id": "CWE-338-WEAK-PRNG",
-          "vulnerabilities": [
-            "CWE-338"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE390.c",
-          "line": "117:5",
-          "snippet": "srand( (unsigned)time(NULL) )"
-        },
         {
           "rule_id": "CWE-1071-EMPTY-CODE-BLOCK",
           "vulnerabilities": [
             "CWE-1071"
           ],
-          "source_file": "C_CWE_juliet_testsuite/CWE390.c",
-          "line": "37:13",
+          "source_file": "juliet_c/CWE390_bad.c",
+          "line": "36:13",
           "snippet": "if (fgets(data, 100, stdin) == NULL) { /* do nothing */ }"
         }
       ]
     },
     {
-      "source_file": "C_CWE_juliet_testsuite/CWE400_2.c",
-      "xml_source": "C_2_archivio.xml",
+      "source_file": "juliet_c/CWE390_good.c",
+      "xml_source": "good_bad_archive.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "juliet_c/CWE400_2_bad.c",
+      "xml_source": "good_bad_archive.xml",
       "vulnerable": true,
       "rules_summary": [
-        "CWE-338-WEAK-PRNG",
         "CWE-400-UNCONTROLLED-RESOURCE-CONSUMPTION"
       ],
       "vulnerabilities_summary": [
-        "CWE-338",
         "CWE-400"
       ],
-      "findings_count": 2,
+      "findings_count": 1,
       "findings": [
-        {
-          "rule_id": "CWE-338-WEAK-PRNG",
-          "vulnerabilities": [
-            "CWE-338"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE400_2.c",
-          "line": "393:5",
-          "snippet": "srand( (unsigned)time(NULL) )"
-        },
         {
           "rule_id": "CWE-400-UNCONTROLLED-RESOURCE-CONSUMPTION",
           "vulnerabilities": [
             "CWE-400"
           ],
-          "source_file": "C_CWE_juliet_testsuite/CWE400_2.c",
-          "line": "130:15",
+          "source_file": "juliet_c/CWE400_2_bad.c",
+          "line": "129:15",
           "snippet": "count",
           "tainted_variable": "count"
         }
       ]
     },
     {
-      "source_file": "C_CWE_juliet_testsuite/CWE400.c",
-      "xml_source": "C_2_archivio.xml",
+      "source_file": "juliet_c/CWE400_2_good.c",
+      "xml_source": "good_bad_archive.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "juliet_c/CWE400_bad.c",
+      "xml_source": "good_bad_archive.xml",
       "vulnerable": true,
       "rules_summary": [
-        "CWE-338-WEAK-PRNG",
         "CWE-400-UNCONTROLLED-LOOP-BOUND"
       ],
       "vulnerabilities_summary": [
-        "CWE-338",
         "CWE-400"
       ],
-      "findings_count": 2,
+      "findings_count": 1,
       "findings": [
-        {
-          "rule_id": "CWE-338-WEAK-PRNG",
-          "vulnerabilities": [
-            "CWE-338"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE400.c",
-          "line": "230:5",
-          "snippet": "srand( (unsigned)time(NULL) )"
-        },
         {
           "rule_id": "CWE-400-UNCONTROLLED-LOOP-BOUND",
           "vulnerabilities": [
             "CWE-400"
           ],
-          "source_file": "C_CWE_juliet_testsuite/CWE400.c",
-          "line": "108:21",
+          "source_file": "juliet_c/CWE400_bad.c",
+          "line": "107:21",
           "snippet": "i < (size_t)count",
           "tainted_variable": "count"
         }
       ]
     },
     {
-      "source_file": "C_CWE_juliet_testsuite/CWE415_1.c",
-      "xml_source": "C_2_archivio.xml",
+      "source_file": "juliet_c/CWE400_good.c",
+      "xml_source": "good_bad_archive.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "juliet_c/CWE415_1_bad.c",
+      "xml_source": "good_bad_archive.xml",
       "vulnerable": true,
       "rules_summary": [
-        "CWE-338-WEAK-PRNG",
         "CWE-415-416-MEMORY-MISUSE-AFTER-FREE"
       ],
       "vulnerabilities_summary": [
-        "CWE-338",
         "CWE-415"
       ],
-      "findings_count": 2,
+      "findings_count": 1,
       "findings": [
-        {
-          "rule_id": "CWE-338-WEAK-PRNG",
-          "vulnerabilities": [
-            "CWE-338"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE415_1.c",
-          "line": "87:5",
-          "snippet": "srand( (unsigned)time(NULL) )"
-        },
         {
           "rule_id": "CWE-415-416-MEMORY-MISUSE-AFTER-FREE",
           "vulnerabilities": [
             "CWE-415"
           ],
-          "source_file": "C_CWE_juliet_testsuite/CWE415_1.c",
-          "line": "34:10",
+          "source_file": "juliet_c/CWE415_1_bad.c",
+          "line": "33:10",
           "snippet": "data"
         }
       ]
     },
     {
-      "source_file": "C_CWE_juliet_testsuite/CWE416_1.c",
-      "xml_source": "C_2_archivio.xml",
+      "source_file": "juliet_c/CWE415_1_good.c",
+      "xml_source": "good_bad_archive.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "juliet_c/CWE416_1_bad.c",
+      "xml_source": "good_bad_archive.xml",
       "vulnerable": true,
       "rules_summary": [
-        "CWE-338-WEAK-PRNG",
         "CWE-415-416-MEMORY-MISUSE-AFTER-FREE"
       ],
       "vulnerabilities_summary": [
-        "CWE-338",
         "CWE-416"
       ],
-      "findings_count": 2,
+      "findings_count": 1,
       "findings": [
-        {
-          "rule_id": "CWE-338-WEAK-PRNG",
-          "vulnerabilities": [
-            "CWE-338"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE416_1.c",
-          "line": "108:5",
-          "snippet": "srand( (unsigned)time(NULL) )"
-        },
         {
           "rule_id": "CWE-415-416-MEMORY-MISUSE-AFTER-FREE",
           "vulnerabilities": [
             "CWE-416"
           ],
-          "source_file": "C_CWE_juliet_testsuite/CWE416_1.c",
-          "line": "40:15",
+          "source_file": "juliet_c/CWE416_1_bad.c",
+          "line": "39:15",
           "snippet": "data"
         }
       ]
     },
     {
-      "source_file": "C_CWE_juliet_testsuite/CWE416_2.c",
-      "xml_source": "C_2_archivio.xml",
+      "source_file": "juliet_c/CWE416_1_good.c",
+      "xml_source": "good_bad_archive.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "juliet_c/CWE416_2_bad.c",
+      "xml_source": "good_bad_archive.xml",
       "vulnerable": true,
       "rules_summary": [
-        "CWE-338-WEAK-PRNG",
         "CWE-415-416-MEMORY-MISUSE-AFTER-FREE"
       ],
       "vulnerabilities_summary": [
-        "CWE-338",
         "CWE-416"
       ],
-      "findings_count": 2,
+      "findings_count": 1,
       "findings": [
-        {
-          "rule_id": "CWE-338-WEAK-PRNG",
-          "vulnerabilities": [
-            "CWE-338"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE416_2.c",
-          "line": "123:5",
-          "snippet": "srand( (unsigned)time(NULL) )"
-        },
         {
           "rule_id": "CWE-415-416-MEMORY-MISUSE-AFTER-FREE",
           "vulnerabilities": [
             "CWE-416"
           ],
-          "source_file": "C_CWE_juliet_testsuite/CWE416_2.c",
-          "line": "45:19",
+          "source_file": "juliet_c/CWE416_2_bad.c",
+          "line": "44:19",
           "snippet": "data"
         }
       ]
     },
     {
-      "source_file": "C_CWE_juliet_testsuite/CWE427_2.c",
-      "xml_source": "C_2_archivio.xml",
+      "source_file": "juliet_c/CWE416_2_good.c",
+      "xml_source": "good_bad_archive.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "juliet_c/CWE427_2_bad.c",
+      "xml_source": "good_bad_archive.xml",
       "vulnerable": true,
       "rules_summary": [
-        "CWE-120-BUFFER-OVERFLOW",
-        "CWE-338-WEAK-PRNG",
         "CWE-427-UNCONTROLLED-SEARCH-PATH"
       ],
       "vulnerabilities_summary": [
-        "CWE-120",
-        "CWE-338",
         "CWE-427"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-427-UNCONTROLLED-SEARCH-PATH",
+          "vulnerabilities": [
+            "CWE-427"
+          ],
+          "source_file": "juliet_c/CWE427_2_bad.c",
+          "line": "127:12",
+          "snippet": "data",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_c/CWE427_2_good.c",
+      "xml_source": "good_bad_archive.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-120-BUFFER-OVERFLOW"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-120"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-120-BUFFER-OVERFLOW",
+          "vulnerabilities": [
+            "CWE-120"
+          ],
+          "source_file": "juliet_c/CWE427_2_good.c",
+          "line": "60:9",
+          "snippet": "strcat(data, NEW_PATH)"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_c/CWE427_bad.c",
+      "xml_source": "good_bad_archive.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-427-UNCONTROLLED-SEARCH-PATH"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-427"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-427-UNCONTROLLED-SEARCH-PATH",
+          "vulnerabilities": [
+            "CWE-427"
+          ],
+          "source_file": "juliet_c/CWE427_bad.c",
+          "line": "132:12",
+          "snippet": "data",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_c/CWE427_good.c",
+      "xml_source": "good_bad_archive.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-120-BUFFER-OVERFLOW"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-120"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-120-BUFFER-OVERFLOW",
+          "vulnerabilities": [
+            "CWE-120"
+          ],
+          "source_file": "juliet_c/CWE427_good.c",
+          "line": "71:9",
+          "snippet": "strcat(data, NEW_PATH)"
+        },
+        {
+          "rule_id": "CWE-120-BUFFER-OVERFLOW",
+          "vulnerabilities": [
+            "CWE-120"
+          ],
+          "source_file": "juliet_c/CWE427_good.c",
+          "line": "86:9",
+          "snippet": "strcat(data, NEW_PATH)"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_c/CWE476_bad.c",
+      "xml_source": "good_bad_archive.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-476-NULL-POINTER-DEREFERENCE"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-476"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-476-NULL-POINTER-DEREFERENCE",
+          "vulnerabilities": [
+            "CWE-476"
+          ],
+          "source_file": "juliet_c/CWE476_bad.c",
+          "line": "33:51",
+          "snippet": "twoIntsStructPointer->intOne",
+          "tainted_variable": "twoIntsStructPointer"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_c/CWE476_good.c",
+      "xml_source": "good_bad_archive.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "juliet_c/CWE481_2_bad.c",
+      "xml_source": "good_bad_archive.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-338-WEAK-PRNG",
+        "CWE-481-ASSIGNMENT-INSTEAD-OF-COMPARISON"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-338",
+        "CWE-481"
       ],
       "findings_count": 3,
       "findings": [
         {
-          "rule_id": "CWE-120-BUFFER-OVERFLOW",
+          "rule_id": "CWE-338-WEAK-PRNG",
           "vulnerabilities": [
-            "CWE-120"
+            "CWE-338"
           ],
-          "source_file": "C_CWE_juliet_testsuite/CWE427_2.c",
-          "line": "144:9",
-          "snippet": "strcat(data, NEW_PATH)"
+          "source_file": "juliet_c/CWE481_2_bad.c",
+          "line": "24:27",
+          "snippet": "rand()"
         },
         {
           "rule_id": "CWE-338-WEAK-PRNG",
           "vulnerabilities": [
             "CWE-338"
           ],
-          "source_file": "C_CWE_juliet_testsuite/CWE427_2.c",
-          "line": "169:5",
-          "snippet": "srand( (unsigned)time(NULL) )"
+          "source_file": "juliet_c/CWE481_2_bad.c",
+          "line": "35:27",
+          "snippet": "rand()"
         },
         {
-          "rule_id": "CWE-427-UNCONTROLLED-SEARCH-PATH",
+          "rule_id": "CWE-481-ASSIGNMENT-INSTEAD-OF-COMPARISON",
           "vulnerabilities": [
-            "CWE-427"
+            "CWE-481"
           ],
-          "source_file": "C_CWE_juliet_testsuite/CWE427_2.c",
-          "line": "128:12",
-          "snippet": "data",
-          "tainted_variable": "data"
+          "source_file": "juliet_c/CWE481_2_bad.c",
+          "line": "26:16",
+          "snippet": "intRand = 5"
         }
       ]
     },
     {
-      "source_file": "C_CWE_juliet_testsuite/CWE427.c",
-      "xml_source": "C_2_archivio.xml",
-      "vulnerable": true,
-      "rules_summary": [
-        "CWE-120-BUFFER-OVERFLOW",
-        "CWE-338-WEAK-PRNG",
-        "CWE-427-UNCONTROLLED-SEARCH-PATH"
-      ],
-      "vulnerabilities_summary": [
-        "CWE-120",
-        "CWE-338",
-        "CWE-427"
-      ],
-      "findings_count": 4,
-      "findings": [
-        {
-          "rule_id": "CWE-120-BUFFER-OVERFLOW",
-          "vulnerabilities": [
-            "CWE-120"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE427.c",
-          "line": "154:9",
-          "snippet": "strcat(data, NEW_PATH)"
-        },
-        {
-          "rule_id": "CWE-120-BUFFER-OVERFLOW",
-          "vulnerabilities": [
-            "CWE-120"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE427.c",
-          "line": "169:9",
-          "snippet": "strcat(data, NEW_PATH)"
-        },
-        {
-          "rule_id": "CWE-338-WEAK-PRNG",
-          "vulnerabilities": [
-            "CWE-338"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE427.c",
-          "line": "194:5",
-          "snippet": "srand( (unsigned)time(NULL) )"
-        },
-        {
-          "rule_id": "CWE-427-UNCONTROLLED-SEARCH-PATH",
-          "vulnerabilities": [
-            "CWE-427"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE427.c",
-          "line": "133:12",
-          "snippet": "data",
-          "tainted_variable": "data"
-        }
-      ]
-    },
-    {
-      "source_file": "C_CWE_juliet_testsuite/CWE476.c",
-      "xml_source": "C_2_archivio.xml",
+      "source_file": "juliet_c/CWE481_2_good.c",
+      "xml_source": "good_bad_archive.xml",
       "vulnerable": true,
       "rules_summary": [
         "CWE-338-WEAK-PRNG"
@@ -1534,22 +1660,31 @@
       "vulnerabilities_summary": [
         "CWE-338"
       ],
-      "findings_count": 1,
+      "findings_count": 2,
       "findings": [
         {
           "rule_id": "CWE-338-WEAK-PRNG",
           "vulnerabilities": [
             "CWE-338"
           ],
-          "source_file": "C_CWE_juliet_testsuite/CWE476.c",
-          "line": "103:5",
-          "snippet": "srand( (unsigned)time(NULL) )"
+          "source_file": "juliet_c/CWE481_2_good.c",
+          "line": "26:27",
+          "snippet": "rand()"
+        },
+        {
+          "rule_id": "CWE-338-WEAK-PRNG",
+          "vulnerabilities": [
+            "CWE-338"
+          ],
+          "source_file": "juliet_c/CWE481_2_good.c",
+          "line": "37:27",
+          "snippet": "rand()"
         }
       ]
     },
     {
-      "source_file": "C_CWE_juliet_testsuite/CWE481_2.c",
-      "xml_source": "C_2_archivio.xml",
+      "source_file": "juliet_c/CWE481_bad.c",
+      "xml_source": "good_bad_archive.xml",
       "vulnerable": true,
       "rules_summary": [
         "CWE-338-WEAK-PRNG",
@@ -1559,85 +1694,47 @@
         "CWE-338",
         "CWE-481"
       ],
-      "findings_count": 6,
+      "findings_count": 2,
       "findings": [
         {
           "rule_id": "CWE-338-WEAK-PRNG",
           "vulnerabilities": [
             "CWE-338"
           ],
-          "source_file": "C_CWE_juliet_testsuite/CWE481_2.c",
-          "line": "25:27",
+          "source_file": "juliet_c/CWE481_bad.c",
+          "line": "24:27",
           "snippet": "rand()"
-        },
-        {
-          "rule_id": "CWE-338-WEAK-PRNG",
-          "vulnerabilities": [
-            "CWE-338"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE481_2.c",
-          "line": "36:27",
-          "snippet": "rand()"
-        },
-        {
-          "rule_id": "CWE-338-WEAK-PRNG",
-          "vulnerabilities": [
-            "CWE-338"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE481_2.c",
-          "line": "56:27",
-          "snippet": "rand()"
-        },
-        {
-          "rule_id": "CWE-338-WEAK-PRNG",
-          "vulnerabilities": [
-            "CWE-338"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE481_2.c",
-          "line": "67:27",
-          "snippet": "rand()"
-        },
-        {
-          "rule_id": "CWE-338-WEAK-PRNG",
-          "vulnerabilities": [
-            "CWE-338"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE481_2.c",
-          "line": "94:5",
-          "snippet": "srand( (unsigned)time(NULL) )"
         },
         {
           "rule_id": "CWE-481-ASSIGNMENT-INSTEAD-OF-COMPARISON",
           "vulnerabilities": [
             "CWE-481"
           ],
-          "source_file": "C_CWE_juliet_testsuite/CWE481_2.c",
-          "line": "27:16",
+          "source_file": "juliet_c/CWE481_bad.c",
+          "line": "26:16",
           "snippet": "intRand = 5"
         }
       ]
     },
     {
-      "source_file": "C_CWE_juliet_testsuite/CWE481.c",
-      "xml_source": "C_2_archivio.xml",
+      "source_file": "juliet_c/CWE481_good.c",
+      "xml_source": "good_bad_archive.xml",
       "vulnerable": true,
       "rules_summary": [
-        "CWE-338-WEAK-PRNG",
-        "CWE-481-ASSIGNMENT-INSTEAD-OF-COMPARISON"
+        "CWE-338-WEAK-PRNG"
       ],
       "vulnerabilities_summary": [
-        "CWE-338",
-        "CWE-481"
+        "CWE-338"
       ],
-      "findings_count": 5,
+      "findings_count": 2,
       "findings": [
         {
           "rule_id": "CWE-338-WEAK-PRNG",
           "vulnerabilities": [
             "CWE-338"
           ],
-          "source_file": "C_CWE_juliet_testsuite/CWE481.c",
-          "line": "25:27",
+          "source_file": "juliet_c/CWE481_good.c",
+          "line": "31:27",
           "snippet": "rand()"
         },
         {
@@ -1645,745 +1742,739 @@
           "vulnerabilities": [
             "CWE-338"
           ],
-          "source_file": "C_CWE_juliet_testsuite/CWE481.c",
-          "line": "50:27",
+          "source_file": "juliet_c/CWE481_good.c",
+          "line": "47:27",
           "snippet": "rand()"
-        },
-        {
-          "rule_id": "CWE-338-WEAK-PRNG",
-          "vulnerabilities": [
-            "CWE-338"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE481.c",
-          "line": "66:27",
-          "snippet": "rand()"
-        },
-        {
-          "rule_id": "CWE-338-WEAK-PRNG",
-          "vulnerabilities": [
-            "CWE-338"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE481.c",
-          "line": "94:5",
-          "snippet": "srand( (unsigned)time(NULL) )"
-        },
-        {
-          "rule_id": "CWE-481-ASSIGNMENT-INSTEAD-OF-COMPARISON",
-          "vulnerabilities": [
-            "CWE-481"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE481.c",
-          "line": "27:16",
-          "snippet": "intRand = 5"
         }
       ]
     },
     {
-      "source_file": "C_CWE_juliet_testsuite/CWE534.c",
-      "xml_source": "C_2_archivio.xml",
+      "source_file": "juliet_c/CWE534_bad.c",
+      "xml_source": "good_bad_archive.xml",
       "vulnerable": true,
       "rules_summary": [
+        "CWE-252-UNCHECKED-RETURN-VALUE",
         "CWE-259-HARDCODED-PASSWORD",
-        "CWE-338-WEAK-PRNG",
         "CWE-532-SENSITIVE-DATA-IN-LOG"
       ],
       "vulnerabilities_summary": [
+        "CWE-252",
         "CWE-259",
-        "CWE-338",
         "CWE-532"
       ],
-      "findings_count": 5,
+      "findings_count": 3,
       "findings": [
+        {
+          "rule_id": "CWE-252-UNCHECKED-RETURN-VALUE",
+          "vulnerabilities": [
+            "CWE-252"
+          ],
+          "source_file": "juliet_c/CWE534_bad.c",
+          "line": "64:13",
+          "snippet": "fprintf(pFile, \"User attempted access with password: %s\\n\", password)"
+        },
         {
           "rule_id": "CWE-532-SENSITIVE-DATA-IN-LOG",
           "vulnerabilities": [
             "CWE-532"
           ],
-          "source_file": "C_CWE_juliet_testsuite/CWE534.c",
-          "line": "65:13",
+          "source_file": "juliet_c/CWE534_bad.c",
+          "line": "64:13",
           "snippet": "fprintf(pFile, \"User attempted access with password: %s\\n\", password)"
         },
         {
-          "rule_id": "CWE-338-WEAK-PRNG",
-          "vulnerabilities": [
-            "CWE-338"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE534.c",
-          "line": "201:5",
-          "snippet": "srand( (unsigned)time(NULL) )"
-        },
-        {
           "rule_id": "CWE-259-HARDCODED-PASSWORD",
           "vulnerabilities": [
             "CWE-259"
           ],
-          "source_file": "C_CWE_juliet_testsuite/CWE534.c",
-          "line": "30:13",
-          "snippet": "char password[100] = \"\";"
-        },
-        {
-          "rule_id": "CWE-259-HARDCODED-PASSWORD",
-          "vulnerabilities": [
-            "CWE-259"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE534.c",
-          "line": "89:13",
-          "snippet": "char password[100] = \"\";"
-        },
-        {
-          "rule_id": "CWE-259-HARDCODED-PASSWORD",
-          "vulnerabilities": [
-            "CWE-259"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE534.c",
-          "line": "139:13",
+          "source_file": "juliet_c/CWE534_bad.c",
+          "line": "29:13",
           "snippet": "char password[100] = \"\";"
         }
       ]
     },
     {
-      "source_file": "C_CWE_juliet_testsuite/CWE606.c",
-      "xml_source": "C_2_archivio.xml",
+      "source_file": "juliet_c/CWE534_good.c",
+      "xml_source": "good_bad_archive.xml",
       "vulnerable": true,
       "rules_summary": [
-        "CWE-120-BUFFER-OVERFLOW",
-        "CWE-338-WEAK-PRNG",
-        "CWE-400-UNCONTROLLED-LOOP-BOUND"
+        "CWE-252-UNCHECKED-RETURN-VALUE",
+        "CWE-259-HARDCODED-PASSWORD"
       ],
       "vulnerabilities_summary": [
-        "CWE-120",
-        "CWE-338",
-        "CWE-400"
+        "CWE-252",
+        "CWE-259"
       ],
       "findings_count": 4,
       "findings": [
         {
-          "rule_id": "CWE-120-BUFFER-OVERFLOW",
+          "rule_id": "CWE-252-UNCHECKED-RETURN-VALUE",
           "vulnerabilities": [
-            "CWE-120"
+            "CWE-252"
           ],
-          "source_file": "C_CWE_juliet_testsuite/CWE606.c",
-          "line": "362:9",
-          "snippet": "strcpy(data, \"15\")"
+          "source_file": "juliet_c/CWE534_good.c",
+          "line": "71:13",
+          "snippet": "fprintf(pFile, \"User attempted access\\n\")"
         },
         {
-          "rule_id": "CWE-120-BUFFER-OVERFLOW",
+          "rule_id": "CWE-252-UNCHECKED-RETURN-VALUE",
           "vulnerabilities": [
-            "CWE-120"
+            "CWE-252"
           ],
-          "source_file": "C_CWE_juliet_testsuite/CWE606.c",
-          "line": "392:9",
-          "snippet": "strcpy(data, \"15\")"
+          "source_file": "juliet_c/CWE534_good.c",
+          "line": "121:13",
+          "snippet": "fprintf(pFile, \"User attempted access\\n\")"
         },
         {
-          "rule_id": "CWE-338-WEAK-PRNG",
+          "rule_id": "CWE-259-HARDCODED-PASSWORD",
           "vulnerabilities": [
-            "CWE-338"
+            "CWE-259"
           ],
-          "source_file": "C_CWE_juliet_testsuite/CWE606.c",
-          "line": "433:5",
-          "snippet": "srand( (unsigned)time(NULL) )"
+          "source_file": "juliet_c/CWE534_good.c",
+          "line": "36:13",
+          "snippet": "char password[100] = \"\";"
         },
+        {
+          "rule_id": "CWE-259-HARDCODED-PASSWORD",
+          "vulnerabilities": [
+            "CWE-259"
+          ],
+          "source_file": "juliet_c/CWE534_good.c",
+          "line": "86:13",
+          "snippet": "char password[100] = \"\";"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_c/CWE606_bad.c",
+      "xml_source": "good_bad_archive.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-400-UNCONTROLLED-LOOP-BOUND"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-400"
+      ],
+      "findings_count": 1,
+      "findings": [
         {
           "rule_id": "CWE-400-UNCONTROLLED-LOOP-BOUND",
           "vulnerabilities": [
             "CWE-400"
           ],
-          "source_file": "C_CWE_juliet_testsuite/CWE606.c",
-          "line": "132:29",
+          "source_file": "juliet_c/CWE606_bad.c",
+          "line": "131:29",
           "snippet": "i < n",
           "tainted_variable": "n"
         }
       ]
     },
     {
-      "source_file": "C_CWE_juliet_testsuite/CWE617_2.c",
-      "xml_source": "C_2_archivio.xml",
+      "source_file": "juliet_c/CWE606_good.c",
+      "xml_source": "good_bad_archive.xml",
       "vulnerable": true,
       "rules_summary": [
-        "CWE-338-WEAK-PRNG",
-        "CWE-617-REACHABLE-ASSERTION"
+        "CWE-120-BUFFER-OVERFLOW"
       ],
       "vulnerabilities_summary": [
-        "CWE-338",
-        "CWE-617"
+        "CWE-120"
       ],
       "findings_count": 2,
       "findings": [
         {
-          "rule_id": "CWE-338-WEAK-PRNG",
+          "rule_id": "CWE-120-BUFFER-OVERFLOW",
           "vulnerabilities": [
-            "CWE-338"
+            "CWE-120"
           ],
-          "source_file": "C_CWE_juliet_testsuite/CWE617_2.c",
-          "line": "161:5",
-          "snippet": "srand( (unsigned)time(NULL) )"
+          "source_file": "juliet_c/CWE606_good.c",
+          "line": "264:9",
+          "snippet": "strcpy(data, \"15\")"
         },
+        {
+          "rule_id": "CWE-120-BUFFER-OVERFLOW",
+          "vulnerabilities": [
+            "CWE-120"
+          ],
+          "source_file": "juliet_c/CWE606_good.c",
+          "line": "294:9",
+          "snippet": "strcpy(data, \"15\")"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_c/CWE617_2_bad.c",
+      "xml_source": "good_bad_archive.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-617-REACHABLE-ASSERTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-617"
+      ],
+      "findings_count": 1,
+      "findings": [
         {
           "rule_id": "CWE-617-REACHABLE-ASSERTION",
           "vulnerabilities": [
             "CWE-617"
           ],
-          "source_file": "C_CWE_juliet_testsuite/CWE617_2.c",
-          "line": "119:16",
+          "source_file": "juliet_c/CWE617_2_bad.c",
+          "line": "118:16",
           "snippet": "data > ASSERT_VALUE",
           "tainted_variable": "data"
         }
       ]
     },
     {
-      "source_file": "C_CWE_juliet_testsuite/CWE617.c",
-      "xml_source": "C_2_archivio.xml",
+      "source_file": "juliet_c/CWE617_2_good.c",
+      "xml_source": "good_bad_archive.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "juliet_c/CWE617_bad.c",
+      "xml_source": "good_bad_archive.xml",
       "vulnerable": true,
       "rules_summary": [
-        "CWE-338-WEAK-PRNG",
         "CWE-617-REACHABLE-ASSERTION"
       ],
       "vulnerabilities_summary": [
-        "CWE-338",
         "CWE-617"
       ],
-      "findings_count": 2,
+      "findings_count": 1,
       "findings": [
-        {
-          "rule_id": "CWE-338-WEAK-PRNG",
-          "vulnerabilities": [
-            "CWE-338"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE617.c",
-          "line": "177:5",
-          "snippet": "srand( (unsigned)time(NULL) )"
-        },
         {
           "rule_id": "CWE-617-REACHABLE-ASSERTION",
           "vulnerabilities": [
             "CWE-617"
           ],
-          "source_file": "C_CWE_juliet_testsuite/CWE617.c",
-          "line": "116:12",
+          "source_file": "juliet_c/CWE617_bad.c",
+          "line": "115:12",
           "snippet": "data > ASSERT_VALUE",
           "tainted_variable": "data"
         }
       ]
     },
     {
-      "source_file": "C_CWE_juliet_testsuite/CWE676_1.c",
-      "xml_source": "C_2_archivio.xml",
-      "vulnerable": true,
-      "rules_summary": [
-        "CWE-338-WEAK-PRNG"
-      ],
-      "vulnerabilities_summary": [
-        "CWE-338"
-      ],
-      "findings_count": 1,
-      "findings": [
-        {
-          "rule_id": "CWE-338-WEAK-PRNG",
-          "vulnerabilities": [
-            "CWE-338"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE676_1.c",
-          "line": "87:5",
-          "snippet": "srand( (unsigned)time(NULL) )"
-        }
-      ]
+      "source_file": "juliet_c/CWE617_good.c",
+      "xml_source": "good_bad_archive.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
     },
     {
-      "source_file": "C_CWE_juliet_testsuite/CWE676_2.c",
-      "xml_source": "C_2_archivio.xml",
-      "vulnerable": true,
-      "rules_summary": [
-        "CWE-338-WEAK-PRNG"
-      ],
-      "vulnerabilities_summary": [
-        "CWE-338"
-      ],
-      "findings_count": 1,
-      "findings": [
-        {
-          "rule_id": "CWE-338-WEAK-PRNG",
-          "vulnerabilities": [
-            "CWE-338"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE676_2.c",
-          "line": "113:5",
-          "snippet": "srand( (unsigned)time(NULL) )"
-        }
-      ]
+      "source_file": "juliet_c/CWE676_1_bad.c",
+      "xml_source": "good_bad_archive.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
     },
     {
-      "source_file": "C_CWE_juliet_testsuite/CWE690_2.c",
-      "xml_source": "C_2_archivio.xml",
+      "source_file": "juliet_c/CWE676_1_good.c",
+      "xml_source": "good_bad_archive.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "juliet_c/CWE676_2_bad.c",
+      "xml_source": "good_bad_archive.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "juliet_c/CWE676_2_good.c",
+      "xml_source": "good_bad_archive.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "juliet_c/CWE690_2_bad.c",
+      "xml_source": "good_bad_archive.xml",
       "vulnerable": true,
       "rules_summary": [
-        "CWE-338-WEAK-PRNG",
         "CWE-476-NULL-POINTER-DEREFERENCE"
       ],
       "vulnerabilities_summary": [
-        "CWE-338",
         "CWE-476"
       ],
-      "findings_count": 2,
+      "findings_count": 1,
       "findings": [
-        {
-          "rule_id": "CWE-338-WEAK-PRNG",
-          "vulnerabilities": [
-            "CWE-338"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE690_2.c",
-          "line": "103:5",
-          "snippet": "srand( (unsigned)time(NULL) )"
-        },
         {
           "rule_id": "CWE-476-NULL-POINTER-DEREFERENCE",
           "vulnerabilities": [
             "CWE-476"
           ],
-          "source_file": "C_CWE_juliet_testsuite/CWE690_2.c",
-          "line": "32:9",
+          "source_file": "juliet_c/CWE690_2_bad.c",
+          "line": "31:9",
           "snippet": "data[0]",
           "tainted_variable": "data"
         }
       ]
     },
     {
-      "source_file": "C_CWE_juliet_testsuite/CWE690.c",
-      "xml_source": "C_2_archivio.xml",
+      "source_file": "juliet_c/CWE690_2_good.c",
+      "xml_source": "good_bad_archive.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "juliet_c/CWE690_bad.c",
+      "xml_source": "good_bad_archive.xml",
       "vulnerable": true,
       "rules_summary": [
         "CWE-120-BUFFER-OVERFLOW",
-        "CWE-338-WEAK-PRNG",
         "CWE-476-NULL-POINTER-DEREFERENCE"
       ],
       "vulnerabilities_summary": [
         "CWE-120",
-        "CWE-338",
         "CWE-476"
       ],
-      "findings_count": 4,
+      "findings_count": 2,
       "findings": [
         {
           "rule_id": "CWE-120-BUFFER-OVERFLOW",
           "vulnerabilities": [
             "CWE-120"
           ],
-          "source_file": "C_CWE_juliet_testsuite/CWE690.c",
-          "line": "30:5",
+          "source_file": "juliet_c/CWE690_bad.c",
+          "line": "29:5",
           "snippet": "strcpy(data, \"Initialize\")"
-        },
-        {
-          "rule_id": "CWE-120-BUFFER-OVERFLOW",
-          "vulnerabilities": [
-            "CWE-120"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE690.c",
-          "line": "49:9",
-          "snippet": "strcpy(data, \"Initialize\")"
-        },
-        {
-          "rule_id": "CWE-338-WEAK-PRNG",
-          "vulnerabilities": [
-            "CWE-338"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE690.c",
-          "line": "72:5",
-          "snippet": "srand( (unsigned)time(NULL) )"
         },
         {
           "rule_id": "CWE-476-NULL-POINTER-DEREFERENCE",
           "vulnerabilities": [
             "CWE-476"
           ],
-          "source_file": "C_CWE_juliet_testsuite/CWE690.c",
-          "line": "30:12",
+          "source_file": "juliet_c/CWE690_bad.c",
+          "line": "29:12",
           "snippet": "data",
           "tainted_variable": "data"
         }
       ]
     },
     {
-      "source_file": "C_CWE_juliet_testsuite/CWE78_1.c",
-      "xml_source": "C_2_archivio.xml",
+      "source_file": "juliet_c/CWE690_good.c",
+      "xml_source": "good_bad_archive.xml",
       "vulnerable": true,
       "rules_summary": [
-        "CWE-120-BUFFER-OVERFLOW",
+        "CWE-120-BUFFER-OVERFLOW"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-120"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-120-BUFFER-OVERFLOW",
+          "vulnerabilities": [
+            "CWE-120"
+          ],
+          "source_file": "juliet_c/CWE690_good.c",
+          "line": "33:9",
+          "snippet": "strcpy(data, \"Initialize\")"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_c/CWE78_1_bad.c",
+      "xml_source": "good_bad_archive.xml",
+      "vulnerable": true,
+      "rules_summary": [
         "CWE-252-UNCHECKED-RETURN-VALUE",
-        "CWE-338-WEAK-PRNG",
         "CWE-78-OS-CMD-INJECTION"
       ],
       "vulnerabilities_summary": [
-        "CWE-120",
         "CWE-252",
-        "CWE-338",
         "CWE-78"
       ],
-      "findings_count": 5,
+      "findings_count": 2,
       "findings": [
         {
           "rule_id": "CWE-252-UNCHECKED-RETURN-VALUE",
           "vulnerabilities": [
             "CWE-252"
           ],
-          "source_file": "C_CWE_juliet_testsuite/CWE78_1.c",
-          "line": "139:5",
+          "source_file": "juliet_c/CWE78_1_bad.c",
+          "line": "138:5",
           "snippet": "EXECL(COMMAND_INT_PATH, COMMAND_INT_PATH, COMMAND_ARG1, COMMAND_ARG3, NULL)"
-        },
-        {
-          "rule_id": "CWE-120-BUFFER-OVERFLOW",
-          "vulnerabilities": [
-            "CWE-120"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE78_1.c",
-          "line": "153:5",
-          "snippet": "strcat(data, \"*.*\")"
-        },
-        {
-          "rule_id": "CWE-252-UNCHECKED-RETURN-VALUE",
-          "vulnerabilities": [
-            "CWE-252"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE78_1.c",
-          "line": "156:5",
-          "snippet": "EXECL(COMMAND_INT_PATH, COMMAND_INT_PATH, COMMAND_ARG1, COMMAND_ARG3, NULL)"
-        },
-        {
-          "rule_id": "CWE-338-WEAK-PRNG",
-          "vulnerabilities": [
-            "CWE-338"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE78_1.c",
-          "line": "177:5",
-          "snippet": "srand( (unsigned)time(NULL) )"
         },
         {
           "rule_id": "CWE-78-OS-CMD-INJECTION",
           "vulnerabilities": [
             "CWE-78"
           ],
-          "source_file": "C_CWE_juliet_testsuite/CWE78_1.c",
-          "line": "139:61",
+          "source_file": "juliet_c/CWE78_1_bad.c",
+          "line": "138:61",
           "snippet": "COMMAND_ARG3",
           "tainted_variable": "data"
         }
       ]
     },
     {
-      "source_file": "C_CWE_juliet_testsuite/CWE78_2.c",
-      "xml_source": "C_2_archivio.xml",
+      "source_file": "juliet_c/CWE78_1_good.c",
+      "xml_source": "good_bad_archive.xml",
       "vulnerable": true,
       "rules_summary": [
         "CWE-120-BUFFER-OVERFLOW",
-        "CWE-252-UNCHECKED-RETURN-VALUE",
-        "CWE-338-WEAK-PRNG",
-        "CWE-78-OS-CMD-INJECTION"
+        "CWE-252-UNCHECKED-RETURN-VALUE"
       ],
       "vulnerabilities_summary": [
         "CWE-120",
+        "CWE-252"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-120-BUFFER-OVERFLOW",
+          "vulnerabilities": [
+            "CWE-120"
+          ],
+          "source_file": "juliet_c/CWE78_1_good.c",
+          "line": "72:5",
+          "snippet": "strcat(data, \"*.*\")"
+        },
+        {
+          "rule_id": "CWE-252-UNCHECKED-RETURN-VALUE",
+          "vulnerabilities": [
+            "CWE-252"
+          ],
+          "source_file": "juliet_c/CWE78_1_good.c",
+          "line": "75:5",
+          "snippet": "EXECL(COMMAND_INT_PATH, COMMAND_INT_PATH, COMMAND_ARG1, COMMAND_ARG3, NULL)"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_c/CWE78_2_bad.c",
+      "xml_source": "good_bad_archive.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-252-UNCHECKED-RETURN-VALUE",
+        "CWE-78-OS-CMD-INJECTION"
+      ],
+      "vulnerabilities_summary": [
         "CWE-252",
-        "CWE-338",
         "CWE-78"
       ],
-      "findings_count": 7,
+      "findings_count": 2,
       "findings": [
         {
           "rule_id": "CWE-252-UNCHECKED-RETURN-VALUE",
           "vulnerabilities": [
             "CWE-252"
           ],
-          "source_file": "C_CWE_juliet_testsuite/CWE78_2.c",
-          "line": "142:5",
+          "source_file": "juliet_c/CWE78_2_bad.c",
+          "line": "141:5",
           "snippet": "EXECL(COMMAND_INT_PATH, COMMAND_INT_PATH, COMMAND_ARG1, COMMAND_ARG3, NULL)"
-        },
-        {
-          "rule_id": "CWE-120-BUFFER-OVERFLOW",
-          "vulnerabilities": [
-            "CWE-120"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE78_2.c",
-          "line": "163:9",
-          "snippet": "strcat(data, \"*.*\")"
-        },
-        {
-          "rule_id": "CWE-252-UNCHECKED-RETURN-VALUE",
-          "vulnerabilities": [
-            "CWE-252"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE78_2.c",
-          "line": "167:5",
-          "snippet": "EXECL(COMMAND_INT_PATH, COMMAND_INT_PATH, COMMAND_ARG1, COMMAND_ARG3, NULL)"
-        },
-        {
-          "rule_id": "CWE-120-BUFFER-OVERFLOW",
-          "vulnerabilities": [
-            "CWE-120"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE78_2.c",
-          "line": "179:9",
-          "snippet": "strcat(data, \"*.*\")"
-        },
-        {
-          "rule_id": "CWE-252-UNCHECKED-RETURN-VALUE",
-          "vulnerabilities": [
-            "CWE-252"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE78_2.c",
-          "line": "183:5",
-          "snippet": "EXECL(COMMAND_INT_PATH, COMMAND_INT_PATH, COMMAND_ARG1, COMMAND_ARG3, NULL)"
-        },
-        {
-          "rule_id": "CWE-338-WEAK-PRNG",
-          "vulnerabilities": [
-            "CWE-338"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE78_2.c",
-          "line": "205:5",
-          "snippet": "srand( (unsigned)time(NULL) )"
         },
         {
           "rule_id": "CWE-78-OS-CMD-INJECTION",
           "vulnerabilities": [
             "CWE-78"
           ],
-          "source_file": "C_CWE_juliet_testsuite/CWE78_2.c",
-          "line": "142:61",
+          "source_file": "juliet_c/CWE78_2_bad.c",
+          "line": "141:61",
           "snippet": "COMMAND_ARG3",
           "tainted_variable": "data"
         }
       ]
     },
     {
-      "source_file": "C_CWE_juliet_testsuite/CWE78_3.c",
-      "xml_source": "C_2_archivio.xml",
+      "source_file": "juliet_c/CWE78_2_good.c",
+      "xml_source": "good_bad_archive.xml",
       "vulnerable": true,
       "rules_summary": [
         "CWE-120-BUFFER-OVERFLOW",
-        "CWE-338-WEAK-PRNG",
-        "CWE-78-OS-CMD-INJECTION"
+        "CWE-252-UNCHECKED-RETURN-VALUE"
       ],
       "vulnerabilities_summary": [
         "CWE-120",
-        "CWE-338",
-        "CWE-78"
+        "CWE-252"
       ],
-      "findings_count": 3,
+      "findings_count": 4,
       "findings": [
         {
           "rule_id": "CWE-120-BUFFER-OVERFLOW",
           "vulnerabilities": [
             "CWE-120"
           ],
-          "source_file": "C_CWE_juliet_testsuite/CWE78_3.c",
-          "line": "176:9",
+          "source_file": "juliet_c/CWE78_2_good.c",
+          "line": "79:9",
           "snippet": "strcat(data, \"*.*\")"
         },
         {
-          "rule_id": "CWE-338-WEAK-PRNG",
+          "rule_id": "CWE-252-UNCHECKED-RETURN-VALUE",
           "vulnerabilities": [
-            "CWE-338"
+            "CWE-252"
           ],
-          "source_file": "C_CWE_juliet_testsuite/CWE78_3.c",
-          "line": "207:5",
-          "snippet": "srand( (unsigned)time(NULL) )"
+          "source_file": "juliet_c/CWE78_2_good.c",
+          "line": "83:5",
+          "snippet": "EXECL(COMMAND_INT_PATH, COMMAND_INT_PATH, COMMAND_ARG1, COMMAND_ARG3, NULL)"
         },
+        {
+          "rule_id": "CWE-120-BUFFER-OVERFLOW",
+          "vulnerabilities": [
+            "CWE-120"
+          ],
+          "source_file": "juliet_c/CWE78_2_good.c",
+          "line": "95:9",
+          "snippet": "strcat(data, \"*.*\")"
+        },
+        {
+          "rule_id": "CWE-252-UNCHECKED-RETURN-VALUE",
+          "vulnerabilities": [
+            "CWE-252"
+          ],
+          "source_file": "juliet_c/CWE78_2_good.c",
+          "line": "99:5",
+          "snippet": "EXECL(COMMAND_INT_PATH, COMMAND_INT_PATH, COMMAND_ARG1, COMMAND_ARG3, NULL)"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_c/CWE78_3_bad.c",
+      "xml_source": "good_bad_archive.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-78-OS-CMD-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-78"
+      ],
+      "findings_count": 1,
+      "findings": [
         {
           "rule_id": "CWE-78-OS-CMD-INJECTION",
           "vulnerabilities": [
             "CWE-78"
           ],
-          "source_file": "C_CWE_juliet_testsuite/CWE78_3.c",
-          "line": "156:48",
+          "source_file": "juliet_c/CWE78_3_bad.c",
+          "line": "155:48",
           "snippet": "args",
           "tainted_variable": "args"
         }
       ]
     },
     {
-      "source_file": "C_CWE_juliet_testsuite/CWE789.c",
-      "xml_source": "C_2_archivio.xml",
+      "source_file": "juliet_c/CWE78_3_good.c",
+      "xml_source": "good_bad_archive.xml",
       "vulnerable": true,
       "rules_summary": [
-        "CWE-120-BUFFER-OVERFLOW",
-        "CWE-338-WEAK-PRNG"
+        "CWE-120-BUFFER-OVERFLOW"
       ],
       "vulnerabilities_summary": [
-        "CWE-120",
-        "CWE-338"
-      ],
-      "findings_count": 4,
-      "findings": [
-        {
-          "rule_id": "CWE-120-BUFFER-OVERFLOW",
-          "vulnerabilities": [
-            "CWE-120"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE789.c",
-          "line": "121:13",
-          "snippet": "strcpy(myString, HELLO_STRING)"
-        },
-        {
-          "rule_id": "CWE-120-BUFFER-OVERFLOW",
-          "vulnerabilities": [
-            "CWE-120"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE789.c",
-          "line": "154:13",
-          "snippet": "strcpy(myString, HELLO_STRING)"
-        },
-        {
-          "rule_id": "CWE-120-BUFFER-OVERFLOW",
-          "vulnerabilities": [
-            "CWE-120"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE789.c",
-          "line": "237:13",
-          "snippet": "strcpy(myString, HELLO_STRING)"
-        },
-        {
-          "rule_id": "CWE-338-WEAK-PRNG",
-          "vulnerabilities": [
-            "CWE-338"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE789.c",
-          "line": "266:5",
-          "snippet": "srand( (unsigned)time(NULL) )"
-        }
-      ]
-    },
-    {
-      "source_file": "C_CWE_juliet_testsuite/CWE835_1.c",
-      "xml_source": "C_2_archivio.xml",
-      "vulnerable": true,
-      "rules_summary": [
-        "CWE-338-WEAK-PRNG"
-      ],
-      "vulnerabilities_summary": [
-        "CWE-338"
+        "CWE-120"
       ],
       "findings_count": 1,
       "findings": [
         {
-          "rule_id": "CWE-338-WEAK-PRNG",
+          "rule_id": "CWE-120-BUFFER-OVERFLOW",
           "vulnerabilities": [
-            "CWE-338"
+            "CWE-120"
           ],
-          "source_file": "C_CWE_juliet_testsuite/CWE835_1.c",
-          "line": "60:5",
-          "snippet": "srand( (unsigned)time(NULL) )"
+          "source_file": "juliet_c/CWE78_3_good.c",
+          "line": "71:9",
+          "snippet": "strcat(data, \"*.*\")"
         }
       ]
     },
     {
-      "source_file": "C_CWE_juliet_testsuite/CWE835_2.c",
-      "xml_source": "C_2_archivio.xml",
+      "source_file": "juliet_c/CWE789_bad.c",
+      "xml_source": "good_bad_archive.xml",
       "vulnerable": true,
       "rules_summary": [
-        "CWE-338-WEAK-PRNG",
-        "CWE-835-LOOP-WITH-UNREACHABLE-EXIT"
+        "CWE-120-BUFFER-OVERFLOW"
       ],
       "vulnerabilities_summary": [
-        "CWE-338",
-        "CWE-835"
+        "CWE-120"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-120-BUFFER-OVERFLOW",
+          "vulnerabilities": [
+            "CWE-120"
+          ],
+          "source_file": "juliet_c/CWE789_bad.c",
+          "line": "120:13",
+          "snippet": "strcpy(myString, HELLO_STRING)"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_c/CWE789_good.c",
+      "xml_source": "good_bad_archive.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-120-BUFFER-OVERFLOW"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-120"
       ],
       "findings_count": 2,
       "findings": [
         {
-          "rule_id": "CWE-338-WEAK-PRNG",
+          "rule_id": "CWE-120-BUFFER-OVERFLOW",
           "vulnerabilities": [
-            "CWE-338"
+            "CWE-120"
           ],
-          "source_file": "C_CWE_juliet_testsuite/CWE835_2.c",
-          "line": "61:5",
-          "snippet": "srand( (unsigned)time(NULL) )"
+          "source_file": "juliet_c/CWE789_good.c",
+          "line": "68:13",
+          "snippet": "strcpy(myString, HELLO_STRING)"
         },
+        {
+          "rule_id": "CWE-120-BUFFER-OVERFLOW",
+          "vulnerabilities": [
+            "CWE-120"
+          ],
+          "source_file": "juliet_c/CWE789_good.c",
+          "line": "151:13",
+          "snippet": "strcpy(myString, HELLO_STRING)"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_c/CWE835_1_bad.c",
+      "xml_source": "good_bad_archive.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "juliet_c/CWE835_1_good.c",
+      "xml_source": "good_bad_archive.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "juliet_c/CWE835_2_bad.c",
+      "xml_source": "good_bad_archive.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-835-LOOP-WITH-UNREACHABLE-EXIT"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-835"
+      ],
+      "findings_count": 1,
+      "findings": [
         {
           "rule_id": "CWE-835-LOOP-WITH-UNREACHABLE-EXIT",
           "vulnerabilities": [
             "CWE-835"
           ],
-          "source_file": "C_CWE_juliet_testsuite/CWE835_2.c",
-          "line": "15:5",
+          "source_file": "juliet_c/CWE835_2_bad.c",
+          "line": "14:5",
           "snippet": "do { printIntLine(i); i++; } while(1);"
         }
       ]
     },
     {
-      "source_file": "C_CWE_juliet_testsuite/CWE90_1.c",
-      "xml_source": "C_2_archivio.xml",
+      "source_file": "juliet_c/CWE835_2_good.c",
+      "xml_source": "good_bad_archive.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "juliet_c/CWE90_1_bad.c",
+      "xml_source": "good_bad_archive.xml",
       "vulnerable": true,
       "rules_summary": [
-        "CWE-120-BUFFER-OVERFLOW",
-        "CWE-338-WEAK-PRNG",
         "CWE-90-LDAP-INJECTION"
       ],
       "vulnerabilities_summary": [
-        "CWE-120",
-        "CWE-338",
         "CWE-90"
       ],
-      "findings_count": 4,
+      "findings_count": 1,
       "findings": [
-        {
-          "rule_id": "CWE-120-BUFFER-OVERFLOW",
-          "vulnerabilities": [
-            "CWE-120"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE90_1.c",
-          "line": "191:9",
-          "snippet": "strcat(data, \"Doe, XXXXX\")"
-        },
-        {
-          "rule_id": "CWE-120-BUFFER-OVERFLOW",
-          "vulnerabilities": [
-            "CWE-120"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE90_1.c",
-          "line": "254:9",
-          "snippet": "strcat(data, \"Doe, XXXXX\")"
-        },
-        {
-          "rule_id": "CWE-338-WEAK-PRNG",
-          "vulnerabilities": [
-            "CWE-338"
-          ],
-          "source_file": "C_CWE_juliet_testsuite/CWE90_1.c",
-          "line": "327:5",
-          "snippet": "srand( (unsigned)time(NULL) )"
-        },
         {
           "rule_id": "CWE-90-LDAP-INJECTION",
           "vulnerabilities": [
             "CWE-90"
           ],
-          "source_file": "C_CWE_juliet_testsuite/CWE90_1.c",
-          "line": "145:29",
+          "source_file": "juliet_c/CWE90_1_bad.c",
+          "line": "144:29",
           "snippet": "filter",
           "tainted_variable": "filter"
         }
       ]
     },
     {
-      "source_file": "C_CWE_juliet_testsuite/CWE90_2.c",
-      "xml_source": "C_2_archivio.xml",
+      "source_file": "juliet_c/CWE90_1_good.c",
+      "xml_source": "good_bad_archive.xml",
       "vulnerable": true,
       "rules_summary": [
-        "CWE-338-WEAK-PRNG"
+        "CWE-120-BUFFER-OVERFLOW"
       ],
       "vulnerabilities_summary": [
-        "CWE-338"
+        "CWE-120"
       ],
-      "findings_count": 1,
+      "findings_count": 2,
       "findings": [
         {
-          "rule_id": "CWE-338-WEAK-PRNG",
+          "rule_id": "CWE-120-BUFFER-OVERFLOW",
           "vulnerabilities": [
-            "CWE-338"
+            "CWE-120"
           ],
-          "source_file": "C_CWE_juliet_testsuite/CWE90_2.c",
-          "line": "241:5",
-          "snippet": "srand( (unsigned)time(NULL) )"
+          "source_file": "juliet_c/CWE90_1_good.c",
+          "line": "60:9",
+          "snippet": "strcat(data, \"Doe, XXXXX\")"
+        },
+        {
+          "rule_id": "CWE-120-BUFFER-OVERFLOW",
+          "vulnerabilities": [
+            "CWE-120"
+          ],
+          "source_file": "juliet_c/CWE90_1_good.c",
+          "line": "123:9",
+          "snippet": "strcat(data, \"Doe, XXXXX\")"
         }
       ]
+    },
+    {
+      "source_file": "juliet_c/CWE90_2_bad.c",
+      "xml_source": "good_bad_archive.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "juliet_c/CWE90_2_good.c",
+      "xml_source": "good_bad_archive.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
     }
   ]
 }

@@ -215,6 +215,14 @@
   ]
 },
 {
+  "rule_id": "CWE-193-OFF-BY-ONE-ERROR",
+  "type": "structural",
+  "vulnerabilities": ["CWE-193"],
+  "xpath_rules": [
+    {"tag": "off_by_one_loop_condition"}
+  ]
+},
+{
   "rule_id": "CWE-209-EXCEPTION-DETAILS-EXPOSURE",
   "type": "taint",
   "vulnerabilities": ["CWE-209"],
@@ -285,7 +293,7 @@
   "type": "structural",
   "vulnerabilities": ["CWE-321"],
   "sensitive_var_patterns": [
-    "encryption_key", "encryptionkey",
+    "encryption_key", "encryptionkey","key",
     "aes_key", "aeskey", "cipher_key", "cipherkey",
     "hmac_key", "hmackey", "signing_key", "signingkey",
     "iv", "salt","initialization_vector", "salt_value"

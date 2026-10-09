@@ -3,10 +3,11 @@
     "units_analyzed": 124,
     "units_failed": 0,
     "files_failed": 0,
-    "vulnerable_files": 61,
-    "total_findings": 79,
+    "vulnerable_files": 63,
+    "total_findings": 83,
     "categories_count": {
       "CWE-22": 3,
+      "CWE-321": 7,
       "CWE-798": 5,
       "CWE-338": 8,
       "CWE-134": 8,
@@ -24,7 +25,6 @@
       "CWE-319": 2,
       "CWE-259": 4,
       "CWE-326": 1,
-      "CWE-321": 3,
       "CWE-676": 4,
       "CWE-79": 1
     }
@@ -69,13 +69,24 @@
       "xml_source": "Gemini_totale.xml",
       "vulnerable": true,
       "rules_summary": [
+        "CWE-321-HARDCODED-CRYPTO-KEY",
         "CWE-798-HARDCODED-CREDENTIALS"
       ],
       "vulnerabilities_summary": [
+        "CWE-321",
         "CWE-798"
       ],
-      "findings_count": 1,
+      "findings_count": 2,
       "findings": [
+        {
+          "rule_id": "CWE-321-HARDCODED-CRYPTO-KEY",
+          "vulnerabilities": [
+            "CWE-321"
+          ],
+          "source_file": "script_totali_Gemini/script_100.py",
+          "line": "13:1",
+          "snippet": "key = 'my_secret_key'"
+        },
         {
           "rule_id": "CWE-798-HARDCODED-CREDENTIALS",
           "vulnerabilities": [
@@ -113,11 +124,25 @@
     {
       "source_file": "script_totali_Gemini/script_102.py",
       "xml_source": "Gemini_totale.xml",
-      "vulnerable": false,
-      "rules_summary": [],
-      "vulnerabilities_summary": [],
-      "findings_count": 0,
-      "findings": []
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-321-HARDCODED-CRYPTO-KEY"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-321"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-321-HARDCODED-CRYPTO-KEY",
+          "vulnerabilities": [
+            "CWE-321"
+          ],
+          "source_file": "script_totali_Gemini/script_102.py",
+          "line": "24:6",
+          "snippet": "key = b'hello'"
+        }
+      ]
     },
     {
       "source_file": "script_totali_Gemini/script_103.py",
@@ -149,11 +174,25 @@
     {
       "source_file": "script_totali_Gemini/script_106.py",
       "xml_source": "Gemini_totale.xml",
-      "vulnerable": false,
-      "rules_summary": [],
-      "vulnerabilities_summary": [],
-      "findings_count": 0,
-      "findings": []
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-321-HARDCODED-CRYPTO-KEY"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-321"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-321-HARDCODED-CRYPTO-KEY",
+          "vulnerabilities": [
+            "CWE-321"
+          ],
+          "source_file": "script_totali_Gemini/script_106.py",
+          "line": "6:1",
+          "snippet": "config['section1']['key1'] = 'new_value'"
+        }
+      ]
     },
     {
       "source_file": "script_totali_Gemini/script_108.py",
@@ -1821,13 +1860,24 @@
       "xml_source": "Gemini_totale.xml",
       "vulnerable": true,
       "rules_summary": [
+        "CWE-321-HARDCODED-CRYPTO-KEY",
         "CWE-798-HARDCODED-CREDENTIALS"
       ],
       "vulnerabilities_summary": [
+        "CWE-321",
         "CWE-798"
       ],
-      "findings_count": 1,
+      "findings_count": 2,
       "findings": [
+        {
+          "rule_id": "CWE-321-HARDCODED-CRYPTO-KEY",
+          "vulnerabilities": [
+            "CWE-321"
+          ],
+          "source_file": "script_totali_Gemini/script_80.py",
+          "line": "13:1",
+          "snippet": "key = 'secret'"
+        },
         {
           "rule_id": "CWE-798-HARDCODED-CREDENTIALS",
           "vulnerabilities": [

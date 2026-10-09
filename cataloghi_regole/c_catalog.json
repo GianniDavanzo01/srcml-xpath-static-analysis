@@ -233,7 +233,7 @@
                                         "malloc", "calloc", "realloc","setgid", "seteuid", "setegid", "setresuid", "setresgid",
                                         "chown", "fchown", "lchown", "chmod", "fchmod","socket", "bind", "listen", "accept", "connect",
                                         "recv", "send", "recvfrom", "sendto","fork", "execve", "execl", "execvp", "wait", "waitpid",
-                                        "getenv", "pthread_mutex_trylock"
+                                        "getenv", "pthread_mutex_trylock","fgets","fprintf"
         ],
         "dynamic_code_execution": [],
         "unsafe_deserializers": []
@@ -246,10 +246,9 @@
         "weak_crypto_modules": ["openssl/md5.h", "openssl/des.h"]
     },
     "xpath_rules":{
-        "off_by_one_loop_condition": [
-            ".//src:while[.//src:condition//src:operator[text()='<='] and .//src:condition//src:call[.//src:name[text()='strlen']]]",
-            ".//src:while[.//src:condition//src:operator[text()='<='] and .//src:condition//src:sizeof]"
-        ]
+    "off_by_one_loop_condition": [
+        ".//src:condition[parent::src:while or parent::src:do or parent::src:control/parent::src:for]//src:operator[text()='<='][following-sibling::*[1][self::src:sizeof or self::src:call[src:name='strlen']]][not(following-sibling::*[2][self::src:operator and text()='-'])]"
+    ]
     },
     "sanitizers":{
         "cast_to_integer":["atoi","atol","atoll","strtol","strtoll","strtoul"],
