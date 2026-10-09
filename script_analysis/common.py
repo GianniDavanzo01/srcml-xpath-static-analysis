@@ -325,9 +325,7 @@ def is_sanitized(node, sanitizers: list, adapter, imports) -> bool:
     return False
 
 
-def source_present(sources: list, rhs_node, source_form: str | None = None,
-                   *, adapter, imports) -> bool:
-    op = adapter.member_access_operator()[0]
+def source_present(sources: list, rhs_node, *, adapter, imports) -> bool:
 
     # 1. Calcolo delle chiavi 
     keys = _rhs_keys_cache.get(rhs_node)
@@ -352,23 +350,8 @@ def source_present(sources: list, rhs_node, source_form: str | None = None,
     else:
         call_keys, name_keys = keys
 
-    # 2. Match source_form è uguale per tutte le source, quindi si decide una volta
-    if source_form == "regex":
-        text = "".join(rhs_node.itertext())
-        return any(re.search(s, text) for s in sources)
-
-    if source_form == "subscript":
-        for outer_name in rhs_node.xpath(".//src:name[src:index] | self::src:name[src:index]", namespaces=NS):
-            parts = outer_name.xpath("./src:name", namespaces=NS)
-            dotted = op.join("".join(p.itertext()).strip() for p in parts) if parts else (outer_name.text or "").strip()
-            dotted = adapter.resolve_name_text(dotted, imports)
-            if any(call_matches(dotted, s, adapter) for s in sources):
-                return True
-        return False
-
     matcher = _get_matcher(sources, adapter)
-    if source_form == "call":
-        return any(matcher(k) for k in call_keys)
+    
     return any(matcher(k) for k in call_keys | name_keys)
 
 

@@ -136,23 +136,6 @@ def _sink_call_with_var_arg(uso, spec, fstring_nodes, adapter, imports):
 
     return False
 
-def _sink_keyword_argument(uso, spec: dict, fstring_nodes: list, adapter, imports) -> bool:
-    """{"type": "keyword_argument", "keyword": "env"}"""
-    keyword = spec.get("keyword")
-    if not keyword:
-        return False
-
-    parent_arg = uso.xpath("ancestor::src:argument[1]", namespaces=NS)
-    if parent_arg:
-        arg_node = parent_arg[0]
-        if adapter.is_kwarg(arg_node, NS):
-            name_nodes = arg_node.xpath("./src:name[1]", namespaces=NS)
-            kw_name = "".join(name_nodes[0].itertext()).strip()
-            if kw_name == keyword:
-                return True
-
-    return False
-
 
 def _sink_matches_xpath(uso, spec: dict, fstring_nodes: list, adapter, imports) -> bool:
     """{"type": "matches_xpath", "xpath": "./src:index and (ancestor::src:argument or ancestor::src:index)"}"""
@@ -178,7 +161,6 @@ def _sink_loop_condition(uso, spec: dict, fstring_nodes: list, adapter, imports)
 SINK_MATCHERS = {
     "method_call": _sink_method_call,
     "call_with_var_arg": _sink_call_with_var_arg,
-    "keyword_argument": _sink_keyword_argument,
     "matches_xpath": _sink_matches_xpath,
     "loop_condition": _sink_loop_condition,
 }
@@ -210,6 +192,4 @@ def match_sink(uso, sink_spec, fstring_nodes: list, adapter, imports) -> bool:
 
 
 def matches_any_sink(uso, sinks, fstring_nodes, adapter, imports):
-    # if not sinks:
-    #     return True
     return any(match_sink(uso, s, fstring_nodes, adapter, imports) for s in sinks)

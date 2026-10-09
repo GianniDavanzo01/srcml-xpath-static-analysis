@@ -79,51 +79,7 @@ _COND_ANCESTORS = (
     "self::src:for or self::src:do or self::src:switch or "
     "self::src:try or self::src:catch or self::src:finally]"
 )
-
-def _sanitized_reassign_reaches(uso, var, scope_node, assign_infos, tainted_names,
-                                sanitizers, adapter, imports) -> bool:
-    """True se l'ultima assegnazione a `var` prima di `uso`:
-       - non propaga taint (ogni nome taintato nell'RHS e' sanificato),
-       - contiene almeno un nome passato da un sanitizer,
-       - domina l'uso (nessun if/else/ciclo/catch che racchiuda lei ma non l'uso)."""
-    key = _pos_key(uso)
-    prior = [i for i in assign_infos
-             if i.var == var and i.scope is scope_node and _pos_key(i.stmt) < key]
-    if not prior:
-        return False
-    last = max(prior, key=lambda i: _pos_key(i.stmt))
-
-    saw_sanitized = False
-    for text, n in last.rhs_names:
-        if is_sanitized(n, sanitizers, adapter, imports):
-            saw_sanitized = True
-        elif text in tainted_names:
-            return False          # un valore taintato arriva ancora non sanificato
-    if not saw_sanitized:
-        return False
-
-    anc = set(uso.iterancestors())
-    return all(c in anc for c in last.stmt.xpath(_COND_ANCESTORS, namespaces=NS))
-
-
-def _nonnull_reassign_dominates(uso, var, scope_node, assign_infos,
-                                return_sources, source_form, adapter, imports) -> bool:
-    key = _pos_key(uso)
-    prior = [i for i in assign_infos
-             if i.var == var and i.scope is scope_node and _pos_key(i.stmt) < key]
-    if not prior:
-        return False
-    last = max(prior, key=lambda i: _pos_key(i.stmt))
-    if last.rhs is None or adapter.is_none_literal("".join(last.rhs.itertext())):
-        return False
-
-    # se il nuovo valore è esso stesso una source nullable, il null è ancora possibile
-    if any(source_present(return_sources, n, source_form, adapter=adapter, imports=imports)
-           for n in last.rhs_all):
-        return False
-
-    anc = set(uso.iterancestors())
-    return all(c in anc for c in last.stmt.xpath(_COND_ANCESTORS, namespaces=NS))
+_X_COND_ANC = _X(_COND_ANCESTORS)
 
 def _is_hardcoded_string(rhs, adapter) -> bool:
     if not _is_pure_literal_expr(rhs):
@@ -133,7 +89,10 @@ def _is_hardcoded_string(rhs, adapter) -> bool:
     return any(not adapter.is_interpolated_string("".join(l.itertext())) for l in lits)
 
 
-def _reassign_dominates(uso, var, scope_node, assign_infos, is_killing) -> bool:
+def _killed_by_reassign(uso, var, scope_node, assign_infos, is_killing) -> bool:
+    """True se l'ultima assegnazione a `var` prima di `uso`:
+       - soddisfa `is_killing` (non propaga più il taint),
+       - domina l'uso (nessun if/else/ciclo/catch che racchiuda lei ma non l'uso)."""
     key = _pos_key(uso)
     prior = [i for i in assign_infos
              if i.var == var and i.scope is scope_node and _pos_key(i.stmt) < key]
@@ -143,7 +102,19 @@ def _reassign_dominates(uso, var, scope_node, assign_infos, is_killing) -> bool:
     if last.rhs is None or not is_killing(last):
         return False
     anc = set(uso.iterancestors())
-    return all(c in anc for c in last.stmt.xpath(_COND_ANCESTORS, namespaces=NS))
+    return all(c in anc for c in _X_COND_ANC(last.stmt))
+
+
+def _rhs_fully_sanitized(info, tainted_names, sanitizers, adapter, imports) -> bool:
+    """Criterio 'sanitizer': l'RHS contiene almeno un nome sanificato
+    e nessun nome taintato ancora non sanificato."""
+    saw_sanitized = False
+    for text, n in info.rhs_names:
+        if is_sanitized(n, sanitizers, adapter, imports):
+            saw_sanitized = True
+        elif text in tainted_names:
+            return False
+    return saw_sanitized
 
 
 def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
@@ -151,7 +122,6 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
 
     findings = []
     sources = rule.get("sources", [])
-    source_form = rule.get("source_form")
     sanitizers = rule.get("sanitizers", [])
     safe_contexts = rule.get("safe_contexts", [])
     sinks = rule.get("sinks", [])
@@ -180,7 +150,7 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
         for var_name, scope_node in adapter.find_exception_bindings(tree, NS):
             tainted_vars_with_scope.append((var_name, scope_node))
 
-    # [MODIFICA 2] Assegnazioni si riusano quelle GIA' calcolate
+    # Assegnazioni si riusano quelle GIA' calcolate
 
     assign_infos = ctx.assign_infos
     assign_by_stmt = ctx.assign_by_stmt
@@ -252,7 +222,7 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
             tainted_vars_with_scope.append((info.var, info.scope))
             continue
         if any(
-            source_present(return_sources, n, source_form, adapter=adapter, imports=imports)
+            source_present(return_sources, n, adapter=adapter, imports=imports)
             for n in info.rhs_all
         ):
             tainted_vars_with_scope.append((info.var, info.scope))
@@ -290,7 +260,7 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
         changed = True
         guard = 0
 
-        skip_source_args = not rule.get("source_call_args_propagate",adapter.source_call_args_propagate_to_return())
+        skip_source_args = not adapter.source_call_args_propagate_to_return()
 
         while changed and guard < 5:  # guard di sicurezza, massimo 5 iterazioni (Euristica)
             changed = False
@@ -351,7 +321,7 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
                                 already_tainted.add(out_var)
                                 changed = True
 
-            # [MODIFICA 4] Propagazione via assegnazione: nessuna query XPath
+            # Propagazione via assegnazione: nessuna query XPath
             # per ricavare lhs/rhs/scope/rhs_all, sono gia' in `info`.
             for info in assign_infos:
                 if info.rhs is None:
@@ -364,7 +334,8 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
 
                 # info.rhs_all = primo fratello dopo l'operatore + tutti i successivi,
                 # per coprire l'intera espressione (es: "SELECT..." + user_id)
-                # [MODIFICA 7] nomi e stringhe interpolate dell'RHS sono pre-calcolati in
+
+                # nomi e stringhe interpolate dell'RHS sono pre-calcolati in
                 # AssignInfo (indipendenti dalla regola): qui nessuna query XPath, solo
                 # confronti con l'insieme delle variabili gia' taintate.
                 propagates = False
@@ -374,8 +345,8 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
                         origin = source_origin_pos.get((eff, id(scope_node)))
                         if origin is not None and _pos_key(info.stmt) < origin:
                             continue
-                        if in_opaque_tag(n, adapter):
-                            continue
+                        # if in_opaque_tag(n, adapter):
+                        #     continue
                         if skip_source_args and source_call_nodes and any(
                             c in source_call_nodes
                             for c in _X_ANC_CALL(n)
@@ -412,14 +383,41 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
     if not tainted_vars_with_scope:
         return findings
 
+    def _null_kill(i):
+        """Kill-by-reassign per null. (x = new Foo() blocca il taint; x = map.get(k) no, perché può restituire null)"""
+        return (not adapter.is_none_literal("".join(i.rhs.itertext()))
+                and not any(source_present(return_sources, n, adapter=adapter, imports=imports)
+                            for n in i.rhs_all))
+
+    def _literal_kill(i):
+        """Kill-by-reassign per letterali hardcoded. (pwd = os.environ["P"] blocca il taint; pwd = "abc" no)."""
+        return not _is_hardcoded_string(i.rhs, adapter)
+
     tainted_names_by_scope = {}
     for _v, _s in tainted_vars_with_scope:
         tainted_names_by_scope.setdefault(id(_s), set()).add(_v)
 
+    def _sanitizer_kill(i):
+        """"Kill-by-reassign per sanificazione. (x = int(x) blocca il taint; x = int(a) + b no)"""
+        return _rhs_fully_sanitized(
+            i, tainted_names_by_scope.get(id(i.scope), set()),
+            sanitizers, adapter, imports)
+
+    # Criteri di "kill by reassign" attivi per QUESTA regola, decisi una volta sola.
+    # Tutti guardano la stessa "ultima assegnazione che domina l'uso": basta un solo
+    killers = []
+    if rule.get("null_reassign_kills_taint", False):
+        killers.append(_null_kill)
+    if rule.get("literal_reassign_kills_taint", False):
+        killers.append(_literal_kill)
+    if rule.get("sanitizer_kills_taint", True):      # default ON, disattivabile nella regola
+        killers.append(_sanitizer_kill)
+    kill_any = (lambda i: any(k(i) for k in killers)) if killers else None
+
     # Cerca gli utilizzi SOLO all'interno dello Scope calcolato
     for var, scope_node in tainted_vars_with_scope:
 
-        # [MODIFICA 6] indice per scope: calcolato una volta e condiviso da tutte le regole
+        #indice per scope: calcolato una volta e condiviso da tutte le regole
         names_idx, interp_idx = get_scope_index(scope_node, adapter, macros)
         usi_potenziali = names_idx.get(var, [])
 
@@ -459,7 +457,7 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
             if origin is not None and _pos_key(uso) < origin:
                 continue
 
-            # [MODIFICA 5] Scarta l'uso se e' proprio il nome a sinistra di
+            # Scarta l'uso se e' proprio il nome a sinistra di
             # un'assegnazione: lookup nel dizionario invece di get_assignment_lhs_rhs.
             enclosing_stmt = _X_ENCL_STMT(uso)
             if enclosing_stmt:
@@ -480,21 +478,9 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
             if is_in_safe_context(uso, safe_contexts, var, adapter, imports):
                 continue
 
-            if rule.get("null_reassign_kills_taint", False):
-                if _nonnull_reassign_dominates(uso, var, scope_node, assign_infos,
-                                               return_sources, source_form, adapter, imports):
-                    continue
-
-            if rule.get("literal_reassign_kills_taint", False):
-                if _reassign_dominates(uso, var, scope_node, assign_infos,
-                                       lambda i: not _is_hardcoded_string(i.rhs, adapter)):
-                    continue
-
-            if rule.get("sanitizer_kills_taint",True):
-                tainted_names = tainted_names_by_scope.get(id(scope_node), set())
-                if _sanitized_reassign_reaches(uso, var, scope_node, assign_infos,
-                                               tainted_names, sanitizers, adapter, imports):
-                    continue
+            if kill_any is not None and _killed_by_reassign(
+                    uso, var, scope_node, assign_infos, kill_any):
+                continue
 
             if is_sanitized(uso, sanitizers, adapter, imports):
                 continue

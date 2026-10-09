@@ -72,7 +72,6 @@ def _run_source_operator_usage(tree, rule, findings, adapter, imports, catalog=N
             rhs = rhs_nodes[0] if rhs_nodes else None
             
             match_found = False
-            matched_source = None
             matched_node = None
             
             # Valuta sia la sinistra che la destra
@@ -85,7 +84,6 @@ def _run_source_operator_usage(tree, rule, findings, adapter, imports, catalog=N
                     c_name = get_call_name(sibling, adapter, imports)
                     if any(call_matches(c_name, s, adapter) for s in source_names):
                         match_found = True
-                        matched_source = c_name
                         matched_node = sibling
                         break
                         
@@ -100,17 +98,14 @@ def _run_source_operator_usage(tree, rule, findings, adapter, imports, catalog=N
                     parts = n.xpath("./src:name", namespaces=NS)
                     if parts:
                         # Utilizziamo name_text() su ciascun sotto-nome per scartare eventuali indici
-                        # n_text = op.join("".join(p.itertext()).strip() for p in parts)
                         n_text = op.join(name_text(p) for p in parts)
                     else:
                         # Utilizziamo name_text() sul nome semplice
-                        # n_text = "".join(n.itertext()).replace(" ", "")
                         n_text = name_text(n)
 
                     n_text = adapter.resolve_name_text(n_text, imports)
                     if any(call_matches(n_text, s, adapter) for s in source_names):
                         match_found = True
-                        matched_source = n_text
                         matched_node = n
                         break
                         
@@ -170,7 +165,6 @@ def _run_forbidden_function_defs(tree, rule, findings, adapter, imports):
         if not target_name:
             continue
 
-        fn = " or ".join(f"self::src:{t}" for t in adapter.function_tags())
         noop = " or ".join(f"self::src:{t}" for t in ["comment"] + adapter.noop_statement_tags())
         for func_node in function_nodes(tree, adapter, name=target_name):
             if is_async and not adapter.is_async_function(func_node, NS):
@@ -388,12 +382,6 @@ def _run_empty_if_blocks(tree, rule, findings, adapter, imports):
     # srcML raggruppa <if>, <elseif> ed <else> dentro <if_stmt>. Li analizziamo tutti.
     for block_container in tree.xpath(".//src:if | .//src:elseif | .//src:else", namespaces=NS):
         
-        # Per limitare i falsi positivi (es. if(true) o if(x == 5)), verifichiamo 
-        # che la condizione contenga effettivamente una chiamata a funzione.
-        if rule.get("require_call_in_condition") and block_container.tag.endswith(("if", "elseif")):
-            calls = block_container.xpath("./src:condition//src:call", namespaces=NS)
-            if not calls:
-                continue
 
         block_content = block_container.xpath("./src:block/src:block_content", namespaces=NS)
         if not block_content:
@@ -529,12 +517,6 @@ def run_structural_rule(tree, rule: dict, adapter, imports, ctx) -> list:
 
     findings = []
 
-    if "required_calls" in rule:
-
-        all_calls = {get_call_name(c, adapter, imports)
-             for c in tree.xpath(".//src:call", namespaces=NS)} - {None}
-        if not all(any(call_matches(c, r, adapter) for c in all_calls) for r in rule["required_calls"]):
-            return findings
 
     bad_assignments = rule.get("bad_assignments", {})
     if bad_assignments:
@@ -642,28 +624,6 @@ def run_structural_rule(tree, rule: dict, adapter, imports, ctx) -> list:
                     
                 findings.append(build_finding(rule, binding.node))
 
-    forbidden_returns = rule.get("forbidden_returns", [])
-    if forbidden_returns:
-        safe_contexts = rule.get("safe_contexts", [])
-        returns = tree.xpath(".//src:return", namespaces=NS)
-        for ret in returns:
-            if is_in_safe_context(ret, safe_contexts, None, adapter, imports):
-                continue
-            
-            for spec in forbidden_returns:
-                if spec.get("type") == "fstring":
-                    fstrings = ret.xpath(".//src:literal[@type='string']", namespaces=NS)
-                    has_fstring_with_interpolation = False
-
-                    for fs in fstrings:
-                        fs_text = "".join(fs.itertext()).strip()
-                        if adapter.is_interpolated_string(fs_text):
-                            has_fstring_with_interpolation = True
-                            break
-                    if has_fstring_with_interpolation:
-                        findings.append(build_finding(rule, ret))
-                        break
-
 
     bad_function_defs = rule.get("bad_function_defs", [])
     if bad_function_defs:
@@ -711,29 +671,6 @@ def run_structural_rule(tree, rule: dict, adapter, imports, ctx) -> list:
                             continue
                         findings.append(build_finding(rule, func))
 
-    
-    bad_param_types = rule.get("bad_param_types", [])
-    if bad_param_types:
-        safe_contexts = rule.get("safe_contexts", [])
-        
-        functions = function_nodes(tree, adapter)
-        for func in functions:
-            params_nodes = func.xpath("./src:parameter_list/src:parameter", namespaces=NS)
-            
-            for param in params_nodes:
-                # Deleghiamo all'adapter l'estrazione strutturale
-                param_name, type_text = adapter.get_parameter_name_and_type(param, NS)
-                
-                if not type_text:
-                    continue
-                
-                for bad_type in bad_param_types:
-                    if bad_type == type_text:
-                        if is_in_safe_context(func, safe_contexts, var_name=param_name, adapter=adapter, imports=imports):
-                            continue
-                            
-                        findings.append(build_finding(rule, param))
-                        break
 
     forbidden_calls_with_kwargs = rule.get("forbidden_calls_with_kwargs", [])
     if forbidden_calls_with_kwargs:

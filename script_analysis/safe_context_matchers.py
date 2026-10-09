@@ -121,21 +121,6 @@ def _safe_context_parametrized_query(node, spec, var_name, adapter, imports) -> 
 
 
 
-
-def _safe_context_rhs_call(node, spec: dict, var_name, adapter, imports) -> bool:
-    """{"type": "rhs_call", "call": ["os.environ.get", "os.getenv"]}
-        Rileva se il lato destro dell'assegnazione/confronto in cui compare 'node'
-        contiene una chiamata a una delle funzioni considerate sicure.
-    """
-    calls = spec.get("call", [])
-    expr = node.xpath("ancestor::src:expr_stmt[1]//src:call | ancestor::src:condition[1]//src:call", namespaces=NS)
-    for c in expr:
-        cn = get_call_name(c, adapter, imports)
-        if cn and any(call_matches(cn, t, adapter) for t in calls):
-            return True
-    return False
-
-
 def _safe_context_function_has_method_call(node, spec, var_name, adapter, imports) -> bool:
     """{"type": "function_has_method_call", "call": ["*.replace"], "args_contain": [";", "&"]}"""
     targets = _spec_call_patterns(spec)
@@ -166,67 +151,6 @@ def _safe_context_function_has_method_call(node, spec, var_name, adapter, import
 
     return all(a in found_literals for a in args_contain)
 
-
-def _safe_context_args_contain_string_literal(node, spec: dict, var_name, adapter, imports) -> bool:
-    """
-    Verifica che una chiamata a funzione utilizzi stringhe letterali statiche.
-    Ritorna `True` solo se vengono rispettate tutte le seguenti condizioni:
-    1. Non sono presenti variabili negli argomenti (ignorando le chiavi dei kwargs).
-    2. Non ci sono chiamate a funzioni annidate (es. `eval("1", func())`).
-    3. È presente almeno una stringa letterale pura, senza alcuna interpolazione o formattazione.
-    """
-    # 1. partiamo sempre dal nodo Call che racchiude l'istruzione
-    call_nodes = node.xpath("ancestor-or-self::src:call[1]", namespaces=NS)
-    if not call_nodes:
-        return False
-        
-    arg_lists = call_nodes[0].xpath("./src:argument_list", namespaces=NS)
-    if not arg_lists:
-        return False
-        
-    # 2. Controllo granulare delle variabili (ignorando le chiavi dei kwargs)
-    arguments = arg_lists[0].xpath("./src:argument", namespaces=NS)
-    for arg in arguments:
-        names = arg.xpath(".//src:name", namespaces=NS)
-        if names:
-            if adapter.is_kwarg(arg, NS):
-                # Se è un kwarg e ha più di un nome, significa che anche il valore è una variabile
-                if len(names) > 1:
-                    return False
-            else:
-                # E' un argomento posizionale che contiene una variabile
-                return False
-                
-        # Blocchiamo anche funzioni annidate: es. eval("1", request.get())
-        if arg.xpath(".//src:call", namespaces=NS):
-            return False
-
-    # 3. Requisito base: ci DEVE essere almeno una stringa letterale
-    string_literals = arg_lists[0].xpath(".//src:literal[@type='string']", namespaces=NS)
-    if not string_literals:
-        return False
-
-    # 4. Deleghiamo il controllo dell'interpolazione all'adapter passando il NODO
-    for literal in string_literals:
-        # L'adapter gestirà l'estrazione testuale o l'analisi dei sottonodi
-        testo = "".join(literal.itertext())
-        if adapter.is_interpolated_string(testo):
-            return False
-            
-    return True
-            
-
-def _safe_context_in_function_name(node, spec: dict, var_name, adapter, imports) -> bool:
-    """{"type": "in_function_name", "name": "is_valid_pkcs1v15_padding"}
-        Rileva se il nodo si trova all'interno di una funzione con il nome specificato.
-    """
-    target = spec.get("name")
-    func = enclosing_scope(node, adapter)
-    if func is not None:
-        name_nodes = func.xpath("./src:name", namespaces=NS)
-        if name_nodes and "".join(name_nodes[0].itertext()).strip() == target:
-            return True
-    return False
 
 def _safe_context_function_has_file_size_check(node, spec: dict, var_name, adapter, imports) -> bool:
     """{"type": "function_has_file_size_check"}
@@ -366,6 +290,21 @@ def _safe_context_var_truthiness_check(node, spec: dict, var_name, adapter, impo
                         return True
 
         # --- B. Controllo Esplicito con Null (es. var == null, var != null) ---
+        def _check_protects_use(cond, check_node, use_node, adapter) -> bool:
+            """Se uso e check sono nella stessa condition, tra i due deve esserci un AND short-circuit."""
+            if use_node not in cond.iterdescendants():
+                return True  # uso fuori dalla condition (corpo dell'if): il check protegge
+            if _pos_key(use_node) < _pos_key(check_node):
+                return False  # uso prima del check
+            and_ops = adapter.logical_and_operator()
+            # operatori tra check e uso, a livello di fratelli dell'antenato comune
+            between = [
+                "".join(o.itertext()).strip()
+                for o in cond.xpath(".//src:operator", namespaces=NS)
+                if _pos_key(check_node) < _pos_key(o) < _pos_key(use_node)
+            ]
+            return bool(between) and all(op in and_ops or op in ("(", ")") for op in between)
+        
         equality_ops = cond.xpath(f".//src:operator[{xpath_op_condition}]", namespaces=NS)
         for eq_op in equality_ops:
             op_text = "".join(eq_op.itertext()).strip()
@@ -375,8 +314,6 @@ def _safe_context_var_truthiness_check(node, spec: dict, var_name, adapter, impo
             if not lhs or not rhs:
                 continue
 
-            # lhs_text = "".join(lhs[0].itertext()).strip()
-            # rhs_text = "".join(rhs[0].itertext()).strip()
             # name_text() per i nomi di variabili, altrimenti teniamo il testo grezzo (es. per 'null')
             lhs_text = name_text(lhs[0]) if lhs[0].tag.endswith("name") else "".join(lhs[0].itertext()).strip()
             rhs_text = name_text(rhs[0]) if rhs[0].tag.endswith("name") else "".join(rhs[0].itertext()).strip()
@@ -385,6 +322,8 @@ def _safe_context_var_truthiness_check(node, spec: dict, var_name, adapter, impo
                             (adapter.is_none_literal(lhs_text) and rhs_text == var_name)
 
             if is_null_check:
+                if not _check_protects_use(cond, eq_op, node, adapter):
+                    continue
                 if required_state == "truthy" and op_text in truthy_ops:
                     return True
                 if required_state == "falsy" and op_text in falsy_ops:
@@ -586,7 +525,6 @@ def _safe_context_membership_check(node, spec: dict, var_name, adapter, imports)
                     
             if left_exact:
                 # Estrae in modo sicuro solo i valori letterali, ignorando commenti o token spuri
-                # lhs_values = [n.text for n in lhs_node.xpath("descendant-or-self::src:name | descendant-or-self::src:literal", namespaces=NS) if n.text]
                 raw_lhs = lhs_node.xpath("descendant-or-self::src:name | descendant-or-self::src:literal", namespaces=NS)
                 lhs_values = [_get_node_val(n) for n in raw_lhs]
                 lhs_values = [v for v in lhs_values if v]  # filtra stringhe vuote
@@ -601,7 +539,6 @@ def _safe_context_membership_check(node, spec: dict, var_name, adapter, imports)
                     right_ok = False
                     
             if right_exact:
-                # rhs_values = [n.text for n in rhs_node.xpath("descendant-or-self::src:name | descendant-or-self::src:literal", namespaces=NS) if n.text]
                 raw_rhs = rhs_node.xpath("descendant-or-self::src:name | descendant-or-self::src:literal", namespaces=NS)
                 rhs_values = [_get_node_val(n) for n in raw_rhs]
                 rhs_values = [v for v in rhs_values if v]  # filtra stringhe vuote
@@ -640,12 +577,11 @@ def _safe_context_call_has_kwargs(node, spec: dict, var_name, adapter, imports) 
 
     arg_list_nodes = call_node[0].xpath("./src:argument_list", namespaces=NS)
     if not arg_list_nodes:
-        return not spec.get("kwargs") and not spec.get("dict_key") and not spec.get("allowed_values")
+        return not spec.get("kwargs")
         
     arguments = arg_list_nodes[0].xpath("./src:argument", namespaces=NS)
     
     found_kwargs = {}
-    found_kwarg_nodes = {}
     for arg in arguments:
         if adapter.is_kwarg(arg, NS):
             name_node = arg.xpath("./src:name[1]", namespaces=NS)
@@ -655,42 +591,8 @@ def _safe_context_call_has_kwargs(node, spec: dict, var_name, adapter, imports) 
 
             val_nodes = arg.xpath("./src:expr[1] | ./src:literal[1]", namespaces=NS)
             if val_nodes:
-                found_kwarg_nodes[key_name] = val_nodes[0]
                 val_text = "".join(val_nodes[0].itertext()).strip()
                 found_kwargs[key_name] = adapter.normalize_string_literal(val_text)
-
-    kwarg_name = spec.get("kwarg")
-
-    # Caso: valore del kwarg e' un dict letterale, richiediamo una coppia chiave/valore specifica
-    if kwarg_name and spec.get("dict_key"):
-        value_node = found_kwarg_nodes.get(kwarg_name)
-        if value_node is None:
-            return False
-        dict_key = spec.get("dict_key")
-        dict_val = spec.get("dict_value")
-        # Navigazione strutturale: literal-stringa che rappresenta la chiave,
-        # poi il suo valore tramite l'operatore ':' che lo segue nell'AST.
-        for kl in value_node.xpath(".//src:literal[@type='string']", namespaces=NS):
-            if adapter.normalize_string_literal("".join(kl.itertext()).strip()) != dict_key:
-                continue
-            val_node = adapter.get_dict_entry_value_node(kl, NS)
-            if val_node is None:
-                continue
-            raw_val = "".join(val_node.itertext()).strip()
-            if adapter.normalize_string_literal(raw_val) == str(dict_val):
-                return True
-        return False
-
-    # Caso: valore del kwarg e' una lista letterale, richiediamo uno degli elementi ammessi
-    if kwarg_name and spec.get("allowed_values"):
-        value_node = found_kwarg_nodes.get(kwarg_name)
-        if value_node is None:
-            return False
-        found_elements = {
-            adapter.normalize_string_literal("".join(e.itertext()).strip())
-            for e in value_node.xpath(".//src:literal[@type='string']", namespaces=NS)
-        }
-        return bool(found_elements & {str(v) for v in spec.get("allowed_values", [])})
 
     kwargs = spec.get("kwargs", {})
     if kwargs:
@@ -706,13 +608,11 @@ def _safe_context_call_has_kwargs(node, spec: dict, var_name, adapter, imports) 
 def _safe_context_receiver_of_method_with_arg(node, spec: dict, var_name, adapter, imports) -> bool:
     target_method = spec.get("method")
     dangerous_values = spec.get("dangerous_values")
-    target_arg = spec.get("arg_value")  # retrocompatibilità
-    if not target_method or not var_name or (dangerous_values is None and not target_arg):
+    if not target_method or not var_name or (dangerous_values is None):
         return False
 
     # Normalizzazione MAIUSCOLA per il catalogo
     dangerous_values_upper = [v.upper() for v in dangerous_values] if dangerous_values else None
-    target_arg_upper = target_arg.upper() if target_arg else None
 
     op = adapter.member_access_operator()
     ops_xpath = " or ".join(f"text()='{o}'" for o in op) if isinstance(op, list) else f"text()='{op}'"
@@ -732,12 +632,10 @@ def _safe_context_receiver_of_method_with_arg(node, spec: dict, var_name, adapte
                 if not next_hop:
                     break
                 method_nodes = next_hop
-                # if "".join(next_hop[0].itertext()).strip() == target_method:
                 if name_text(next_hop[0]).strip() == target_method:
                     break
                 current = next_hop[0]
 
-            # if not method_nodes or "".join(method_nodes[0].itertext()).strip() != target_method:
             if not method_nodes or name_text(method_nodes[0]).strip() != target_method:
                 continue
 
@@ -768,59 +666,9 @@ def _safe_context_receiver_of_method_with_arg(node, spec: dict, var_name, adapte
                     return True
                 if any_dangerous and is_negated:
                     return True
-            else:
-                if target_arg_upper in found_values_upper:
-                    return True
-    return False
-
-
-def _safe_context_function_has_call_with_var_arg(node, spec: dict, var_name, adapter, imports) -> bool:
-    """{"type": "function_has_call_with_var_arg", "call": ["os.path.isfile"]}"""
-    if not var_name:
-        return False
-    target_calls = spec.get("call", [])
-    if not target_calls:
-        return False
-
-    target = _function_or_unit_scope(node, adapter)
-    for call_node in target.xpath(".//src:call", namespaces=NS):
-        call_name = get_call_name(call_node, adapter, imports)
-        if not call_name or not any(call_matches(call_name,c, adapter) for c in target_calls):
-            continue
-
-        arg_list = call_node.xpath("./src:argument_list", namespaces=NS)
-        if not arg_list:
-            continue
-
-        for arg in arg_list[0].xpath("./src:argument", namespaces=NS):
-            arg_text = "".join(arg.itertext()).strip()
-            if arg_text == var_name:
-                return True
 
     return False
 
-
-
-def _safe_context_try_after_source(node, spec: dict, var_name, adapter, imports) -> bool:
-    """{"type": "try_after_source"}
-        sicuro SOLO se il <try> che racchiude l'uso non racchiude anche l'assegnazione della source
-        (cioe' il try si apre dopo la source, non prima/attorno).
-    """
-    if not var_name:
-        return False
-
-    try_ancestors = node.xpath("ancestor::src:try", namespaces=NS)
-    if not try_ancestors:
-        return False
-    try_node = try_ancestors[0]
-
-    scope = _function_or_unit_scope(node, adapter)
-
-    for assign, _, _ in find_assignments(scope, adapter, var_name):
-        assign_try = assign.xpath("ancestor::src:try[1]", namespaces=NS)
-        if assign_try and assign_try[0] == try_node:
-            return False
-    return True
 
 
 def _safe_context_var_falsy_guard_clause(node, spec: dict, var_name, adapter, imports) -> bool:
@@ -878,8 +726,7 @@ def _safe_context_var_falsy_guard_clause(node, spec: dict, var_name, adapter, im
             rhs = eq_op.xpath("./following-sibling::*[not(self::src:comment)][1]", namespaces=NS)
             if not lhs or not rhs:
                 continue
-            # lhs_text = "".join(lhs[0].itertext()).strip()
-            # rhs_text = "".join(rhs[0].itertext()).strip()
+
 
             # name_text() per i nomi di variabili
             lhs_text = name_text(lhs[0]) if lhs[0].tag.endswith("name") else "".join(lhs[0].itertext()).strip()
@@ -887,7 +734,7 @@ def _safe_context_var_falsy_guard_clause(node, spec: dict, var_name, adapter, im
 
             if (lhs_text == var_name and adapter.is_none_literal(rhs_text)) or \
                (adapter.is_none_literal(lhs_text) and rhs_text == var_name):
-                # NUOVO: scarta se "var is None" e' congiunto in AND con altro
+                #  scarta se "var is None" e' congiunto in AND con altro
                 if _adjacent_is_and(lhs[0], "prev",adapter) or _adjacent_is_and(rhs[0], "next",adapter):
                     continue
                 return True
@@ -1015,10 +862,7 @@ SAFE_CONTEXT_MATCHERS = {
     "parametrized_query": _safe_context_parametrized_query,
     "receiver_of_method": _safe_context_member_access_name,
     "var_has_attribute": _safe_context_member_access_name,
-    "rhs_call": _safe_context_rhs_call,
     "function_has_method_call": _safe_context_function_has_method_call,
-    "args_contain_string_literal": _safe_context_args_contain_string_literal,
-    "in_function_name": _safe_context_in_function_name,
     "function_has_file_size_check": _safe_context_function_has_file_size_check,
     "var_truthiness_check": _safe_context_var_truthiness_check,
     "binary_comparison": _safe_context_binary_comparison,
@@ -1028,13 +872,8 @@ SAFE_CONTEXT_MATCHERS = {
     "condition_matches_xpath": _safe_context_condition_matches_xpath,
     "matches_xpath": _safe_context_matches_xpath,
     "node_matches_xpath": _safe_context_node_matches_xpath,
-    "call_has_kwargs": _safe_context_call_has_kwargs,
     "call_with_kwarg": _safe_context_call_has_kwargs,
-    "call_with_dict_kwarg": _safe_context_call_has_kwargs, 
-    "call_with_kwarg_exact_list": _safe_context_call_has_kwargs,
     "receiver_of_method_with_arg": _safe_context_receiver_of_method_with_arg,
-    "function_has_call_with_var_arg": _safe_context_function_has_call_with_var_arg,
-    "try_after_source": _safe_context_try_after_source,
     "var_falsy_guard_clause":_safe_context_var_falsy_guard_clause,
     "all_args_are_literals": _safe_context_all_args_are_literals,
     "check_format_arg_position":_safe_context_check_format_arg_position

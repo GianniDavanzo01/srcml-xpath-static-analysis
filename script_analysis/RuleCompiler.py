@@ -20,9 +20,7 @@ class RuleCompiler:
                     self.errors.append(
                         f"{where}: tag '{tag_name}' non trovato in '{catalog_section}'")
                     continue
-                # if not values:
-                #     self.warnings.append(
-                #         f"{where}: tag '{tag_name}' presente ma vuoto")
+
                 expanded.extend(values)
             else:
                 expanded.append(item)

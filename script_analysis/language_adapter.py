@@ -19,7 +19,7 @@ from __future__ import annotations
 
 import re
 from abc import ABC, abstractmethod
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 from lxml import etree
 
@@ -196,16 +196,10 @@ class LanguageAdapter(ABC):
 
 
     @abstractmethod
-    def requires_pointer_type_for_reference_comparison(self) -> bool:
-        """True se reference_comparison_operators() è ambiguo senza conoscere
-            il tipo degli operandi (C: '==' vale sia per interi sia per puntatori).
-            Python/Java: False, l'operatore da solo è già inequivocabile."""
-
-    @abstractmethod
     def resolve_variable_type(self, name_node, var_name, ns) -> str | None:
         """Cerca la dichiarazione (locale o parametro) di var_name nello scope
-    di name_node e ritorna il tipo dichiarato (es. 'char *'), o None se non
-    trovato. Usato solo dai linguaggi con requires_pointer_type_for_reference_comparison() = True."""
+        di name_node e ritorna il tipo dichiarato (es. 'char *'), o None se non
+        trovato."""
 
 
     @abstractmethod
@@ -675,9 +669,6 @@ class PythonAdapter(LanguageAdapter):
                 bindings.append((var_name, block[0]))
         return bindings
 
-    def requires_pointer_type_for_reference_comparison(self) -> bool:
-        return False
-
     def resolve_variable_type(self, name_node, var_name, ns) -> str | None:
         return None
 
@@ -1128,9 +1119,6 @@ class JavaAdapter(LanguageAdapter):
                 bindings.append((var_name, block[0]))
         return bindings
 
-    def requires_pointer_type_for_reference_comparison(self) -> bool:
-        return False
-
 
 
     def null_comparison_operators(self) -> dict:
@@ -1524,17 +1512,10 @@ class CAdapter(LanguageAdapter):
         return []   # il C non ha un meccanismo di eccezioni: CWE-209 in questa forma
                 # (variabile d'eccezione -> risposta HTTP) non è applicabile
 
-
-    def requires_pointer_type_for_reference_comparison(self) -> bool:
-        return True   # == in C è ambiguo (numerico vs puntatore) senza sapere il tipo
-
     def resolve_variable_type(self, name_node, var_name, ns) -> str | None:
         """Cerca la dichiarazione (locale o parametro) di var_name e ritorna
         il suo tipo dichiarato, es. 'char *'."""
-        # xpath_query_local = (
-        #     f"ancestor::*[self::src:function or self::src:unit][1]"
-        #     f"//src:decl[src:name[text()='{var_name}']]"
-        # )
+
         xpath_query_local = (
                 f"{self.scope_axis(('unit',))}"
                 f"//src:decl[src:name[text()='{var_name}']]"
