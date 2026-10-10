@@ -147,8 +147,8 @@ def _sink_loop_condition(uso, spec: dict, fstring_nodes: list, adapter, imports)
     Copre le condizioni classiche (while, do, for C/Java) e gli iteratori (for Python/Java).
     """
     xpath_query = (
-        "ancestor::src:condition[ancestor::src:while or ancestor::src:do or ancestor::src:for] | "
-        "ancestor::src:control[ancestor::src:for]"
+    "ancestor::src:condition[parent::src:while or parent::src:do or parent::src:control/parent::src:for] | "
+    "ancestor::src:control[parent::src:for]"
     )
     return bool(uso.xpath(xpath_query, namespaces=NS))
 
