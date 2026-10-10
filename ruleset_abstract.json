@@ -180,7 +180,6 @@
 {
   "rule_id": "CWE-129-IMPROPER-ARRAY-INDEX-VALIDATION",
   "type": "taint",
-  "description": "Applicabile a Java e C",
   "vulnerabilities": ["CWE-129"],
   "sources": [
     {"tag": "http_input"}
@@ -192,7 +191,6 @@
 {
   "rule_id": "CWE-129-ARRAY-SIZE-VALIDATION",
   "type": "taint",
-  "description": "Applicabile a Java",
   "vulnerabilities": ["CWE-129"],
   "sources": [{"tag": "http_input"}],
   "sinks": [{"tag": "array_alloc_size"}],

@@ -1,25 +1,25 @@
 /*
- * @description Infinite loop - do{}while()
+ * @description Infinite loop - while(true)
  *
  * */
 
-package juliet.testcases.CWE835_Infinite_Loop;
+package juliet_java;
 
 import juliet.support.*;
 
-public class CWE835_Infinite_Loop__do_01 extends AbstractTestCase 
+public class CWE835_Infinite_Loop__while_true_01 extends AbstractTestCase 
 {
     
     public void bad()
     {
         int i = 0;
     
-        /* FLAW: Infinite Loop - do{} with no break point */
-        do 
+        /* FLAW: Infinite Loop - while(true) with no break point */
+        while(true)
         {
             IO.writeLine(i);
-            i = (i + 1) % 256;
-        } while(i >= 0);
+            i++;
+        }
     }
     
 

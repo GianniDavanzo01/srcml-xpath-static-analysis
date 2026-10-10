@@ -140,13 +140,18 @@
                 "call": ["calloc", "realloc"]
             }
         ],
+        "array_alloc_size": [
+            {
+            "type": "matches_xpath",
+            "xpath": "ancestor::src:index[parent::src:name/parent::src:decl][not(ancestor::src:parameter)]"
+            }
+        ],
         "unbounded_resource_read": [],
         "html_output": [],
         "exception_stringify_calls": [],
         "http_redirect": [],
         "http_header_setters": [],
-        "file_write":[],
-        "array_alloc_size": []
+        "file_write":[]
     },
     "forbidden_functions":{
         "weak_key_generation": [
@@ -353,13 +358,20 @@
                     "type": "node_matches_xpath",
                     "xpath": "ancestor::src:condition or ancestor::src:return or ancestor::src:argument or ancestor::src:init or ancestor::src:expr[src:operator[text()='=' or text()='+=' or text()='-=']] or preceding-sibling::*[1][self::src:operator[text()=')']]/preceding-sibling::*[1][self::src:name[text()='void']]"                }
                 ],
+            "alloc_size_positive_checked": [
+                    {"type": "binary_comparison", "operators": [">"],  "left_exact": ["$VAR"], "right_exact": ["0"]},
+                    {"type": "binary_comparison", "operators": [">="], "left_exact": ["$VAR"], "right_exact": ["1"]},
+                    {"type": "binary_comparison", "operators": ["<"],  "left_exact": ["0"],    "right_exact": ["$VAR"]},
+                    {"type": "binary_comparison", "operators": ["<="], "left_exact": ["1"],    "right_exact": ["$VAR"]},
+                    {"type": "binary_comparison", "operators": ["<", "<="], "left_exact": ["$VAR"]},
+                    {"type": "binary_comparison", "operators": [">", ">="], "right_exact": ["$VAR"]}
+                ],
             "non_security_hash_usage":[],
             "sql_parameterization": [],
             "try_block": [],
             "allowlist_validation": [],
             "file_extension_validation":[],
-            "url_validation": [],
-            "alloc_size_positive_checked":[]
+            "url_validation": []
     },
     "patterns":{
         "insecure_certificate_validation": {
