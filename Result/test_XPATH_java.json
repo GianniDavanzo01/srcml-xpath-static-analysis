@@ -3,8 +3,8 @@
     "units_analyzed": 100,
     "units_failed": 0,
     "files_failed": 0,
-    "vulnerable_files": 51,
-    "total_findings": 74,
+    "vulnerable_files": 53,
+    "total_findings": 76,
     "categories_count": {
       "CWE-614": 10,
       "CWE-113": 1,
@@ -27,8 +27,9 @@
       "CWE-595": 2,
       "CWE-601": 2,
       "CWE-78": 2,
-      "CWE-789": 1,
+      "CWE-789": 2,
       "CWE-79": 4,
+      "CWE-835": 1,
       "CWE-89": 2,
       "CWE-90": 2
     }
@@ -1571,6 +1572,39 @@
       "findings": []
     },
     {
+      "source_file": "juliet_java/CWE789_2_bad.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-789-UNCONTROLLED-MEMORY-ALLOCATION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-789"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-789-UNCONTROLLED-MEMORY-ALLOCATION",
+          "vulnerabilities": [
+            "CWE-789"
+          ],
+          "source_file": "juliet_java/CWE789_2_bad.java",
+          "line": "90:42",
+          "snippet": "data",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_java/CWE789_2_good.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
       "source_file": "juliet_java/CWE789_bad.java",
       "xml_source": "good_bad_archive_java.xml",
       "vulnerable": true,
@@ -1738,32 +1772,28 @@
     {
       "source_file": "juliet_java/CWE835_2_bad.java",
       "xml_source": "good_bad_archive_java.xml",
-      "vulnerable": false,
-      "rules_summary": [],
-      "vulnerabilities_summary": [],
-      "findings_count": 0,
-      "findings": []
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-835-LOOP-WITH-UNREACHABLE-EXIT"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-835"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-835-LOOP-WITH-UNREACHABLE-EXIT",
+          "vulnerabilities": [
+            "CWE-835"
+          ],
+          "source_file": "juliet_java/CWE835_2_bad.java",
+          "line": "18:9",
+          "snippet": "while(true) { IO.writeLine(i); i++; }"
+        }
+      ]
     },
     {
       "source_file": "juliet_java/CWE835_2_good.java",
-      "xml_source": "good_bad_archive_java.xml",
-      "vulnerable": false,
-      "rules_summary": [],
-      "vulnerabilities_summary": [],
-      "findings_count": 0,
-      "findings": []
-    },
-    {
-      "source_file": "juliet_java/CWE835_3_bad.java",
-      "xml_source": "good_bad_archive_java.xml",
-      "vulnerable": false,
-      "rules_summary": [],
-      "vulnerabilities_summary": [],
-      "findings_count": 0,
-      "findings": []
-    },
-    {
-      "source_file": "juliet_java/CWE835_3_good.java",
       "xml_source": "good_bad_archive_java.xml",
       "vulnerable": false,
       "rules_summary": [],
