@@ -1,13 +1,39 @@
 import json
 
 class RuleCompiler:
-    def __init__(self, catalog_path: str):
+    def __init__(self, catalog_path: str, lang: str, known_languages):
         self.catalog_path = catalog_path
         with open(catalog_path, 'r', encoding='utf-8') as f:
             self.catalog = json.load(f)
         self.errors = []      # tag non risolti
         self.warnings = []    # tag presenti ma vuoti
+        self.skipped = []                      # (rule_id, motivo)
+        self.lang = lang.lower()
+        self.known_languages = {l.lower() for l in known_languages}
         self._current_rule = "?"
+
+    def _applies_to_language(self, rule: dict) -> bool:
+        langs = rule.get("languages")
+        if langs is None:                      # assente = tutti i linguaggi
+            return True
+
+        rid = rule.get("rule_id", "UNKNOWN")
+        if (not isinstance(langs, list) or not langs
+                or not all(isinstance(l, str) for l in langs)):
+            self.errors.append(f"{rid}/languages: atteso una lista non vuota di stringhe")
+            return False
+
+        unknown = [l for l in langs if l.lower() not in self.known_languages]
+        if unknown:
+            self.errors.append(
+                f"{rid}/languages: linguaggi sconosciuti {unknown} "
+                f"(validi: {sorted(self.known_languages)})")
+            return False
+
+        if self.lang not in {l.lower() for l in langs}:
+            self.skipped.append((rid, f"non applicabile a '{self.lang}' (languages={langs})"))
+            return False
+        return True
 
     def _expand_tags(self, items_list: list, catalog_section: str) -> list:
         expanded = []
@@ -28,8 +54,12 @@ class RuleCompiler:
 
     def compile(self, abstract_rule):
         if isinstance(abstract_rule, list):
-            return [self.compile(r) for r in abstract_rule]
+            compiled = (self.compile(r) for r in abstract_rule)
+            return [c for c in compiled if c is not None]
 
+        if not self._applies_to_language(abstract_rule):
+            return None  
+        
         concrete_rule = abstract_rule.copy()
         self._current_rule = abstract_rule.get("rule_id", "UNKNOWN")
 

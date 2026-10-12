@@ -19,7 +19,7 @@ from taint_engine import run_taint_rule
 from structural_engine import run_structural_rule, run_forbidden_functions_indexed 
 from unit_context import UnitContext
 
-from language_adapter import get_adapter
+from language_adapter import get_adapter, ADAPTERS
 
 from RuleCompiler import RuleCompiler
 
@@ -66,6 +66,10 @@ def get_units(tree) -> list:
 
 DEFAULT_CATALOG_DIR = Path(__file__).resolve().parent
 
+_SKIPPED_BY_LANG = {}
+def get_skipped_rules() -> dict:
+    return _SKIPPED_BY_LANG
+
 def _get_compiled_ruleset(adapter, raw_rules, catalog_dir):
     lang = adapter.name.lower()
     cached = _COMPILED_RULESETS_CACHE.get(lang)
@@ -73,12 +77,21 @@ def _get_compiled_ruleset(adapter, raw_rules, catalog_dir):
         catalog_path = Path(catalog_dir) / f"{lang}_catalog.json"
         if not catalog_path.exists():
             raise FileNotFoundError(f"Catalogo mancante per '{lang}': {catalog_path}")
-        compiler = RuleCompiler(str(catalog_path))
-        translated = [compiler.compile(r) for r in raw_rules]
+        
+        # compiler = RuleCompiler(str(catalog_path))
+        compiler = RuleCompiler(str(catalog_path), lang, ADAPTERS.keys())
+        # translated = [compiler.compile(r) for r in raw_rules]
+        translated = [c for c in (compiler.compile(r) for r in raw_rules) if c is not None]
+
         compiled = compile_rules(translated, adapter)
         validate_or_exit(compiled.rules, lang, extra_errors=compiler.errors)
         for w in compiler.warnings:
             print(f"[AVVISO] [{lang}] {w}", file=sys.stderr)
+
+        if compiler.skipped:
+            _SKIPPED_BY_LANG[lang] = [{"rule_id": r, "reason": m} for r, m in compiler.skipped]
+            print(f"[INFO] [{lang}] {len(compiler.skipped)} regole non applicabili scartate",
+                  file=sys.stderr)
 
         cached = (compiled, compiler.catalog)
         _COMPILED_RULESETS_CACHE[lang] = cached
@@ -217,6 +230,7 @@ def main():
         for r in failed
     ],
         "details": ok, 
+        "rules_skipped": get_skipped_rules(),
     }
 
     output_text = json.dumps(final_output, indent=2, ensure_ascii=False)
