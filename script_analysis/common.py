@@ -501,7 +501,7 @@ def call_arguments_match_ast(call_node, spec: dict, adapter, imports) -> bool:
     if substr_targets:
         found_texts = [
             adapter.normalize_string_literal("".join(l.itertext()))
-            for l in own_literals(call_node, "string")
+            for l in _resolve_string_literals(call_node, adapter)
         ]
         if spec.get("case_insensitive", False):
             found_texts = [t.lower() for t in found_texts]
@@ -599,6 +599,50 @@ def find_assignments(scope_node, adapter, var_name: str | None = None) -> list:
     return out
 
 
+
+def _last_literal_assignment(call_node, var_name: str, adapter):
+    """
+    RHS dell'ultima assegnazione di `var_name` che precede `call_node` nello stesso
+    scope e che e' composta SOLO da letterali; altrimenti None.
+    Non verifica la dominanza: l'ultima assegnazione testuale vince.
+    """
+    scope_node = enclosing_scope(call_node, adapter)
+    if scope_node is None:
+        unit_scope = call_node.xpath("ancestor::src:unit[1]", namespaces=NS)
+        scope_node = unit_scope[0] if unit_scope else call_node
+    call_key = _pos_key(call_node)
+    prior = [
+        (stmt, rhs) for stmt, _, rhs in find_assignments(scope_node, adapter, var_name)
+        if _pos_key(stmt) < call_key and rhs is not None and _is_pure_literal_expr(rhs)
+    ]
+    return max(prior, key=lambda t: _pos_key(t[0]))[1] if prior else None
+
+
+def _resolve_string_literals(call_node, adapter) -> list:
+    """
+    Letterali stringa che arrivano a `call_node`:
+    1. quelli passati direttamente (func("MD5"));
+    2. quelli di una variabile passata come argomento, se la sua ultima assegnazione
+       precedente e' un letterale puro (alg = "MD5"; func(alg)).
+    Le stringhe interpolate risolte tramite variabile vengono scartate.
+    """
+    lits = list(own_literals(call_node, "string"))
+    arg_list = call_node.xpath("./src:argument_list", namespaces=NS)
+    if not arg_list:
+        return lits
+    for arg in arg_list[0].xpath("./src:argument", namespaces=NS):
+        expr = arg.xpath("./src:expr", namespaces=NS)
+        expr = expr[0] if expr else arg
+        names = expr.xpath("./src:name[not(src:index)]", namespaces=NS)
+        if len(names) != 1 or len(list(expr)) != 1:
+            continue
+        rhs = _last_literal_assignment(call_node, "".join(names[0].itertext()).strip(), adapter)
+        if rhs is None:
+            continue
+        for lit in rhs.xpath("self::src:literal[@type='string'] | .//src:literal[@type='string']", namespaces=NS):
+            if not adapter.is_interpolated_string("".join(lit.itertext())):
+                lits.append(lit)
+    return lits
 
 def _resolve_numeric_args(call_node, adapter, ns) -> list:
     """
