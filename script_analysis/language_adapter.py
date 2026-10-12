@@ -46,7 +46,10 @@ class LanguageAdapter(ABC):
 
     name: str  # "python", "java", ...
 
-
+    @abstractmethod
+    def potential_assignment_xpath(self) -> str:
+        """Potenziale statement di assegnazione"""
+    
     @abstractmethod
     def is_assignment(self, node, ns) -> bool:
         """True se `node` (tipicamente <src:expr_stmt> o <src:expr>) è
@@ -395,20 +398,47 @@ class PythonAdapter(LanguageAdapter):
     HEX_RE = re.compile(r"^0[xX][0-9a-fA-F]+$")
     BIN_RE = re.compile(r"^0[bB][01]+$")
 
+    def potential_assignment_xpath(self) -> str:
+        return ".//src:expr_stmt | .//src:control[parent::src:for]"
+
     def is_assignment(self, node, ns) -> bool:
-        return bool(node.xpath(".//src:operator[text()='='][1]", namespaces=ns)) \
-            if not node.tag.endswith("}operator") else False
+        if node.tag.endswith("expr_stmt"):
+            return bool(node.xpath(".//src:operator[text()='='][1]", namespaces=ns))
+            
+        # Supporto per iterazione Python: cerca il tag <range>
+        if node.tag.endswith("control") and node.getparent() is not None and node.getparent().tag.endswith("for"):
+            return bool(node.xpath(".//src:range", namespaces=ns))
+            
+        return False
 
     def get_assignment_lhs_rhs(self, node, ns):
-        op = node.xpath(".//src:operator[text()='='][1]", namespaces=ns)
-        if not op:
-            return None, None
-        op = op[0]
-        lhs_nodes = op.xpath("./preceding-sibling::*[not(self::src:annotation)]", namespaces=ns)
-        rhs_nodes = op.xpath("./following-sibling::*", namespaces=ns)
-        lhs = lhs_nodes[-1] if lhs_nodes else None
-        rhs = rhs_nodes[0] if rhs_nodes else None
-        return lhs, rhs
+        if node.tag.endswith("expr_stmt"):
+            op = node.xpath(".//src:operator[text()='='][1]", namespaces=ns)
+            if not op:
+                return None, None
+            op = op[0]
+            lhs_nodes = op.xpath("./preceding-sibling::*[not(self::src:annotation)]", namespaces=ns)
+            rhs_nodes = op.xpath("./following-sibling::*", namespaces=ns)
+            lhs = lhs_nodes[-1] if lhs_nodes else None
+            rhs = rhs_nodes[0] if rhs_nodes else None
+            return (lhs, rhs)
+
+        # Estrazione LHS e RHS per i loop: for x in y:
+        if node.tag.endswith("control"):
+            lhs_expr = node.xpath("./src:expr[1]", namespaces=ns)
+            range_expr = node.xpath(".//src:range/src:expr[1]", namespaces=ns)
+            
+            if not lhs_expr or not range_expr:
+                return None, None
+            
+            # Estrae il nome della variabile. Nell'unpacking, per ora prenderà solo la prima.
+            lhs_name = lhs_expr[0].xpath(".//src:name[1]", namespaces=ns)
+            lhs = lhs_name[0] if lhs_name else None
+            rhs = range_expr[0]
+            
+            return (lhs, rhs)
+
+        return None, None
 
     def is_kwarg(self, argument_node, ns) -> bool:
         # Cerca il nome del parametro
@@ -813,13 +843,21 @@ class JavaAdapter(LanguageAdapter):
             return f"{b.canonical_name}.{rest}" if rest else b.canonical_name
         return name
 
+    def potential_assignment_xpath(self) -> str:
+        return ".//src:expr_stmt | .//src:decl_stmt | .//src:control[parent::src:for]"
+
     def is_assignment(self, node, ns) -> bool:
-        # Java usa expr_stmt per riassegnazioni (x = 10;) e decl_stmt per dichiarazioni (int x = 5;)
         if node.tag.endswith("expr_stmt"):
             return bool(node.xpath(".//src:operator[text()='='][1]", namespaces=ns))
         if node.tag.endswith("decl_stmt"):
             return bool(node.xpath(".//src:init", namespaces=ns))
+            
+        # Supporto nativo per i cicli for-each in Java
+        if node.tag.endswith("control") and node.getparent() is not None and node.getparent().tag.endswith("for"):
+            return bool(node.xpath(".//src:range", namespaces=ns))
+            
         return False
+
 
     def get_assignment_lhs_rhs(self, node, ns):
         if node.tag.endswith("expr_stmt"):
@@ -834,13 +872,26 @@ class JavaAdapter(LanguageAdapter):
             decl = node.xpath(".//src:decl[1]", namespaces=ns)
             if not decl:
                 return None, None
-            # In Java: <decl> <type>int</type> <name>x</name> <init>= <expr>5</expr></init> </decl>
             lhs = decl[0].xpath("./src:name", namespaces=ns)
             rhs = decl[0].xpath("./src:init/src:expr | ./src:init/src:decl", namespaces=ns)
             return (lhs[0] if lhs else None, rhs[0] if rhs else None)
             
+        # Estrazione LHS e RHS per i cicli for-each
+        if node.tag.endswith("control"):
+            decl = node.xpath(".//src:init/src:decl[1]", namespaces=ns)
+            range_expr = node.xpath(".//src:range/src:expr[1]", namespaces=ns)
+            
+            if not decl or not range_expr:
+                return None, None
+            
+            lhs = decl[0].xpath("./src:name", namespaces=ns)
+            rhs = range_expr[0]
+            
+            return (lhs[0] if lhs else None, rhs)
+
         return None, None
 
+    
     def is_kwarg(self, argument_node, ns) -> bool:
         # Java NON supporta i keyword arguments nelle chiamate a funzione
         return False
@@ -1236,6 +1287,10 @@ def _skip_leading_casts(nodes):
 class CAdapter(LanguageAdapter):
     name = "c"
 
+
+    def potential_assignment_xpath(self) -> str:
+        return ".//src:expr_stmt | .//src:decl_stmt"
+    
     def is_assignment(self, node, ns) -> bool:
         # Gestisce sia riassegnazioni (expr_stmt) che inizializzazioni (decl_stmt)
         if node.tag.endswith("expr_stmt"):

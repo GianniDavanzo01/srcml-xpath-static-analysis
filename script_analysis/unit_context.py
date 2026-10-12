@@ -7,7 +7,7 @@ AssignInfo = namedtuple("AssignInfo", "stmt lhs rhs var scope rhs_all rhs_names 
 
 def build_assign_infos(assignments, adapter, unit):
     """Calcola UNA volta lhs/rhs/scope e i contenuti dell'RHS di ogni assegnazione con LHS <name>."""
-    pair_map = {stmt: (lhs, rhs) for stmt, lhs, rhs in assignment_pairs(unit, adapter)}
+    pair_map = {stmt: (lhs, rhs) for stmt, lhs, rhs in assignment_pairs(unit, adapter, include_bindings=True)}
 
     infos = []
     for stmt in assignments:
@@ -51,15 +51,16 @@ def build_assign_infos(assignments, adapter, unit):
 class UnitContext:
     __slots__ = (
         "unit", "calls", "assignments", "catalog",
-        "assign_infos", "assign_by_stmt",
+        "assign_infos", "assign_by_stmt","assign_lhs"
     )
 
     def __init__(self, unit, adapter, catalog=None):
         self.unit = unit
         self.calls = unit.xpath(".//src:call", namespaces=NS)
 
-        self.assignments = [stmt for stmt, _, _ in assignment_pairs(unit, adapter)]
+        self.assignments = [stmt for stmt, _, _ in assignment_pairs(unit, adapter, include_bindings=True)]
         self.assign_infos = build_assign_infos(self.assignments, adapter, unit)
         self.assign_by_stmt = {i.stmt: i for i in self.assign_infos}
+        self.assign_lhs = {i.lhs for i in self.assign_infos}
 
         self.catalog = catalog or {}

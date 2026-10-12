@@ -454,11 +454,8 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
 
             # Scarta l'uso se e' proprio il nome a sinistra di
             # un'assegnazione: lookup nel dizionario invece di get_assignment_lhs_rhs.
-            enclosing_stmt = _X_ENCL_STMT(uso)
-            if enclosing_stmt:
-                info = assign_by_stmt.get(enclosing_stmt[0])
-                if info is not None and info.lhs is uso:
-                    continue
+            if uso in ctx.assign_lhs:
+                continue
 
             # Filtri per ignorare dichiarazioni e definizioni (Evita FP sulle firme delle funzioni)
             if _X_ANC_PARAM(uso):

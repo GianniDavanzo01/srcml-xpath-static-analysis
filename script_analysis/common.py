@@ -284,17 +284,33 @@ def get_scope_index(scope_node, adapter, macros=None):
         _scope_index_cache[scope_node] = idx
     return idx
 
-def assignment_pairs(scope_node, adapter) -> list:
-    """(stmt, lhs, rhs) di ogni assegnazione nello scope, calcolate una volta sola."""
-    pairs = _assign_pairs_cache.get(scope_node)
+def assignment_pairs(scope_node, adapter, include_bindings=False) -> list:
+    """
+    (stmt, lhs, rhs) di ogni assegnazione nello scope, calcolate una volta sola.
+
+    Gli statement candidati sono scelti dall'adapter (`potential_assignment_xpath`)
+    e confermati da `is_assignment`; lhs e rhs sono estratti da
+    `get_assignment_lhs_rhs`.
+
+    include_bindings: se True include anche i binding di iterazione
+        (`for x in y`, `for (T x : y)`), in cui `stmt` è il nodo <control>,
+        `lhs` la variabile del ciclo e `rhs` l'espressione iterata. Serve al
+        motore taint (il taint dell'iterabile passa alla variabile); le regole
+        strutturali lasciano il default False per non trattare
+        `for key in ["a", "b"]` come `key = "..."` hardcoded."""
+    
+    key = (scope_node, include_bindings)
+    pairs = _assign_pairs_cache.get(key)
     if pairs is None:
         pairs = []
-        for stmt in scope_node.xpath(".//src:expr_stmt | .//src:decl_stmt", namespaces=NS):
+        for stmt in scope_node.xpath(adapter.potential_assignment_xpath(), namespaces=NS):
+            if not include_bindings and stmt.tag.endswith("}control"):
+                continue
             if not adapter.is_assignment(stmt, NS):
                 continue
             lhs, rhs = adapter.get_assignment_lhs_rhs(stmt, NS)
             pairs.append((stmt, lhs, rhs))
-        _assign_pairs_cache[scope_node] = pairs
+        _assign_pairs_cache[key] = pairs
     return pairs
 
 def get_call_name(call, adapter, imports):
@@ -581,6 +597,7 @@ def find_assignments(scope_node, adapter, var_name: str | None = None) -> list:
             continue
         out.append((stmt, lhs, rhs))
     return out
+
 
 
 def _resolve_numeric_args(call_node, adapter, ns) -> list:
