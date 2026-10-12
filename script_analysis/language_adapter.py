@@ -387,6 +387,21 @@ class LanguageAdapter(ABC):
         Default: False (Python, Java non hanno macro)."""
         return False
 
+
+    def call_receiver_name(self, call_node, ns) -> str | None:
+        """Nome della variabile su cui e' invocato il metodo ('x' in x.add(...)).
+        Solo per la forma semplice 'var.metodo(...)'; altrimenti None."""
+        nm = call_node.xpath("./src:name", namespaces=ns)
+        if not nm:
+            return None
+        parts = nm[0].xpath("./src:name", namespaces=ns)
+        ops = nm[0].xpath("./src:operator", namespaces=ns)
+        if len(parts) != 2 or len(ops) != 1:
+            return None
+        if "".join(ops[0].itertext()).strip() not in self.member_access_operator():
+            return None
+        return name_text(parts[0]) or None
+
 # ---------------------------------------------------------------------- #
 # Implementazione Python
 # ---------------------------------------------------------------------- #
@@ -638,9 +653,9 @@ class PythonAdapter(LanguageAdapter):
         return ["len", "hash", "bool", "isinstance", "id", "type", "int","float"]
 
     def taint_propagating_calls(self) -> dict:
-        # Le stringhe Python sono immutabili: nessuna funzione scrive su un
-        # argomento passato per riferimento come farebbe sprintf in C.
-        return {}
+        recv = {"out_receiver": True}
+        return {"*.append": recv, "*.extend": recv, "*.insert": recv,
+                "*.add": recv, "*.update": recv, "*.setdefault": recv}
 
 
     def extract_membership_relations(self, condition_node, ns) -> list[dict]:
@@ -1100,10 +1115,10 @@ class JavaAdapter(LanguageAdapter):
         return ["*.length", "*.hashCode", "*.isEmpty", "*.equals", "*.compareTo"]
 
     def taint_propagating_calls(self) -> dict:
-        # Le String Java sono immutabili; StringBuilder/StringBuffer si
-        # aggiornano tramite valore di ritorno (append restituisce this),
-        # gia' coperto dalla propagazione via assegnazione/metodo standard.
-        return {}
+        # Metodi che modificano il RICEVENTE: x.add(tainted) rende taintato x.
+        recv = {"out_receiver": True}
+        return {"*.add": recv, "*.addAll": recv, "*.put": recv, "*.putAll": recv,
+                "*.append": recv, "*.push": recv, "*.offer": recv}
 
     def extract_membership_relations(self, condition_node, ns) -> list[dict]:
         relations = []

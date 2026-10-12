@@ -311,6 +311,13 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
                         if not source_found:
                             continue
 
+                        if spec.get("out_receiver"):
+                            recv = adapter.call_receiver_name(call, NS)
+                            if recv and recv not in already_tainted:
+                                tainted_vars_with_scope.append((recv, scope_node))
+                                already_tainted.add(recv)
+                                changed = True
+
                         for out_idx in sorted(out_idxs):
                             if out_idx >= len(args):
                                 continue
