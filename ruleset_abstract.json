@@ -317,9 +317,6 @@
   "rule_id": "CWE-327-BROKEN-CRYPTO-ALGORITHM",
   "type": "structural",
   "vulnerabilities": ["CWE-327"],
-  "forbidden_imports": [
-    {"tag": "weak_crypto_modules"}
-  ],
   "forbidden_functions": [
     {"tag": "weak_ciphers_and_modes"}
   ]

@@ -602,68 +602,65 @@ def _safe_context_call_has_kwargs(node, spec: dict, var_name, adapter, imports) 
     return True
 
 
-def _safe_context_receiver_of_method_with_arg(node, spec: dict, var_name, adapter, imports) -> bool:
+def _safe_context_receiver_of_method_with_arg(node, spec, var_name, adapter, imports) -> bool:
     target_method = spec.get("method")
     dangerous_values = spec.get("dangerous_values")
-    if not target_method or not var_name or (dangerous_values is None):
+    if not target_method or not var_name or dangerous_values is None:
         return False
 
-    # Normalizzazione MAIUSCOLA per il catalogo
-    dangerous_values_upper = [v.upper() for v in dangerous_values] if dangerous_values else None
-
-    op = adapter.member_access_operator()
-    ops_xpath = " or ".join(f"text()='{o}'" for o in op)
+    dangerous_upper = {v.upper() for v in dangerous_values}
+    ops_xpath = " or ".join(f"text()='{o}'" for o in adapter.member_access_operator())
     neg_op = adapter.negation_operator()
-    conditions = node.xpath("ancestor::src:if_stmt//src:condition", namespaces=NS)
 
-    for cond in conditions:
-        var_nodes = cond.xpath(f".//src:name[text()='{var_name}']", namespaces=NS)
-        for v_node in var_nodes:
-            current = v_node
-            method_nodes = []
+    # solo gli if che racchiudono il sink, e solo la loro condizione diretta
+    for if_stmt in node.xpath("ancestor::src:if_stmt", namespaces=NS):
+        cond = if_stmt.xpath("./src:if/src:condition", namespaces=NS)
+        block = if_stmt.xpath("./src:if/src:block", namespaces=NS)
+        else_ = if_stmt.xpath("./src:else", namespaces=NS)
+        if not cond or not block:
+            continue
+
+        in_then = block[0] in node.iterancestors()
+        in_else = bool(else_) and else_[0] in node.iterancestors()
+        if not (in_then or in_else):
+            continue                      # sink nell'elseif o nella condizione stessa
+
+        for v_node in cond[0].xpath(f".//src:name[text()='{var_name}']", namespaces=NS):
+            # v_node deve essere la testa del receiver, non un membro
+            if v_node.xpath(f"preceding-sibling::*[1][self::src:operator and ({ops_xpath})]",
+                            namespaces=NS):
+                continue
+
+            current, method_node = v_node, None
             while True:
-                next_hop = current.xpath(
+                hop = current.xpath(
                     f"following-sibling::src:operator[1][{ops_xpath}]/following-sibling::src:name[1]",
-                    namespaces=NS
-                )
-                if not next_hop:
+                    namespaces=NS)
+                if not hop:
                     break
-                method_nodes = next_hop
-                if name_text(next_hop[0]).strip() == target_method:
+                current = hop[0]
+                if name_text(current).strip() == target_method:
+                    method_node = current
                     break
-                current = next_hop[0]
-
-            if not method_nodes or name_text(method_nodes[0]).strip() != target_method:
+            if method_node is None:
                 continue
 
-            call_node = method_nodes[0].xpath("ancestor::src:call[1]", namespaces=NS)
-            if not call_node:
+            call = method_node.xpath("ancestor::src:call[1]", namespaces=NS)
+            if not call:
+                continue
+            lits = own_literals(call[0], "string")
+            if not lits:
                 continue
 
-            string_literals = own_literals(call_node[0], "string")
-            if not string_literals:
-                continue
+            found = {adapter.normalize_string_literal("".join(l.itertext()).strip()).upper()
+                     for l in lits}
+            dangerous = bool(found & dangerous_upper)
+            negated = bool(call[0].xpath(
+                f"preceding-sibling::src:operator[not(text()='(')][1][text()='{neg_op}']",
+                namespaces=NS))
 
-            # Normalizzazione MAIUSCOLA per i valori trovati nell'AST
-            found_values_upper = [
-                adapter.normalize_string_literal("".join(lit.itertext()).strip()).upper()
-                for lit in string_literals
-            ]
-            if not found_values_upper:
-                continue
-
-            is_negated = bool(
-                call_node[0].xpath(f"preceding-sibling::src:operator[1][text()='{neg_op}']", namespaces=NS)
-            )
-
-            if dangerous_values_upper is not None:
-                # Confronto case-insensitive sicuro
-                any_dangerous = any(v in dangerous_values_upper for v in found_values_upper)
-                if not any_dangerous:
-                    return True
-                if any_dangerous and is_negated:
-                    return True
-
+            if (dangerous == negated) == in_then:
+                return True
     return False
 
 
@@ -801,19 +798,30 @@ def _safe_context_member_access_name(node, spec: dict, var_name, adapter, import
     UNIFICA LE PRECEDENTI: receiver_of_method; var_has_attribute --> sono ancora due entry diverse
     mappare su questa stessa funzione
     """
-    target = spec.get("method") or spec.get("attribute")
-    if not target:
+    is_method = "method" in spec
+    targets = spec.get("method") or spec.get("attribute")
+    if not targets:
         return False
+    if isinstance(targets, str):
+        targets = [targets]
 
-    ops = adapter.member_access_operator()
-    ops_xpath = " or ".join(f"text()='{op}'" for op in ops)
+    ops_xpath = " or ".join(f"text()='{op}'" for op in adapter.member_access_operator())
+
+    # node deve essere la testa del receiver, non un membro
+    if node.xpath(f"preceding-sibling::*[1][self::src:operator and ({ops_xpath})]", namespaces=NS):
+        return False
 
     name_nodes = node.xpath(
         f"following-sibling::src:operator[1][{ops_xpath}]/following-sibling::src:name[1]",
         namespaces=NS,
     )
+    if not name_nodes or name_text(name_nodes[0]).strip() not in targets:
+        return False
 
-    return bool(name_nodes) and "".join(name_nodes[0].itertext()).strip() == target
+    # metodo => chiamato (x.size()), attributo => non chiamato (x.size)
+    is_last = not name_nodes[0].xpath("following-sibling::*", namespaces=NS)
+    called = is_last and bool(node.xpath("parent::src:name/parent::src:call", namespaces=NS))
+    return called == is_method
 
 
 def _safe_context_check_format_arg_position(node, spec, var_name, adapter, imports):

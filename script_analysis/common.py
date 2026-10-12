@@ -17,7 +17,7 @@ from functools import lru_cache
 
 from lxml import etree
 
-NS = {"src": "http://www.srcML.org/srcML/src", "pos": "http://www.srcML.org/srcML/position", "cpp": "http://www.srcML.org/srcML/cpp",}
+NS = {"src": "http://www.srcML.org/srcML/src", "pos": "http://www.srcML.org/srcML/position"}
 
 
 
@@ -38,13 +38,10 @@ def expand_macro_name(name, macros):
         seen.add(name)
         name = macros[name]
     return name
+#----------------------------------------------------------------------
 
 
-# --------------------------------------------------------------------------- #
-# Utility di base
-# --------------------------------------------------------------------------- #
-
-
+#Controllo di codice non raggiungibile----------------------
 def _branch_const(br, adapter):
     """True/False se la condizione del ramo è un letterale costante, altrimenti None."""
     cond = br.xpath("./src:condition | ./src:if/src:condition", namespaces=NS)
@@ -95,6 +92,7 @@ def is_dead_code(node, adapter) -> bool:
         _dead_code_cache[node] = r
     return r
 
+#----------------------------------------------------------------------------------------
 
 
 #RISOLVONO IL MATCH ESATTO E NON PIù PER SUFFISSO---------------------
@@ -122,6 +120,7 @@ def call_lookup_keys(call_name, adapter) -> list:
     return [cn] + ["*." + ".".join(parts[i:]) for i in range(len(parts))]
 
 # ---------------------------------------------------------------
+
 
 def function_nodes(tree, adapter, name=None):
     """Nodi funzione/costruttore dello scope, secondo i tag dell'adapter.
@@ -271,8 +270,7 @@ def get_scope_index(scope_node, adapter, macros=None):
         for n in scope_node.xpath(".//src:name", namespaces=NS):
             if n.text:
                 names[n.text].append(n)
-                if macros and n.text in macros \
-                   and not n.xpath("ancestor::cpp:define", namespaces=NS):
+                if macros and n.text in macros and not adapter.is_in_macro_definition(n):
                     names[expand_macro_name(n.text, macros)].append(n)
 
         interp = defaultdict(list)
@@ -541,8 +539,7 @@ def check_required_imports(rule_spec, imports) -> bool:
     required = rule_spec.get("required_imports")
     if not required:
         return True
-    imports = [b for b in imports if not b.is_macro]
-    imported = {b.canonical_name for b in imports} | {b.canonical_name.split(".")[0] for b in imports}
+    imported = {b.canonical_name for b in imports if not b.is_macro}
     return any(req in imported for req in required)
 
 
@@ -649,8 +646,11 @@ class CompiledRuleset:
                 flattened_rules.append(r)
                 
         self.rules = flattened_rules
-        self.forbidden_functions_index = {}     
-        self.unindexed_forbidden_functions = [] 
+        self.forbidden_functions_index = {} 
+
+        # Spec senza nome di funzione (non indicizzabili): valutate su ogni call. 
+        # (Utile se una regola non viene scritta bene ad esempio un call_matches_ast senza la lista di call, ma basata solo sugli argomenti)    
+        self.unindexed_forbidden_functions = []  
 
         for rule in self.rules:
             for spec in rule.get("forbidden_functions", []):

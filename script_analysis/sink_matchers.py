@@ -6,7 +6,7 @@ Predicati SINK per il motore: sia i pattern semplici basati su stringa
 (oggetto {"type": "..."}), con il relativo registro e dispatcher.
 """
 
-from common import NS, get_call_name, call_matches, own_literals, name_text
+from common import NS, get_call_name, call_matches, own_literals, name_text, call_arguments_match_ast
 
 
 
@@ -35,46 +35,62 @@ def _sink_string_pattern(uso, pattern_name: str, adapter, imports, fstring_nodes
     return False
 
 
-def _sink_method_call(uso, spec: dict, fstring_nodes: list, adapter, imports) -> bool:
-    """{"type": "method_call", "method": "endswith", "arg_contains": [".com/"]}
-        Cerca l'uso della variabile taintata uso come receiver (chiamante) di uno specifico metodo.
-    """
-    method = spec.get("method")
-    if not method:
-        return False
+def _sink_method_call(uso, spec, fstring_nodes, adapter, imports) -> bool:
+    """{"type": "method_call", "method": "read" | ["read", "*.Tipo.read"],
+        "arg_contains": [".com/"]}
 
-    ops = adapter.member_access_operator()
-    ops_xpath = " or ".join(f"text()='{op}'" for op in ops)
+    True se la variabile taintata `uso` è il receiver (testa della catena) di
+    una chiamata di metodo tra quelle indicate.
+      "read"        -> uguaglianza sul solo nome del metodo, ignora il tipo
+      "*.Tipo.read" -> match sul nome canonico risolto della call (call_matches);
+                       richiede che l'adapter risolva il tipo del receiver
+    `arg_contains` (opzionale, per l'intera spec): almeno un letterale stringa
+    della call contiene uno dei valori (case-insensitive).
+    """
+    methods = spec.get("method")
+    if not methods:
+        return False
+    if isinstance(methods, str):
+        methods = [methods]
+
+    ops_xpath = " or ".join(f"text()='{o}'" for o in adapter.member_access_operator())
+
+    # uso deve essere la testa del receiver, non un membro (obj.data.read)
+    if uso.xpath(f"preceding-sibling::*[1][self::src:operator and ({ops_xpath})]", namespaces=NS):
+        return False
 
     method_nodes = uso.xpath(
         f"following-sibling::src:operator[1][{ops_xpath}]/following-sibling::src:name[1]",
         namespaces=NS,
     )
+    if not method_nodes:
+        return False
+    found = name_text(method_nodes[0]).strip()
 
-    # 1. Utilizzo name_text() per evitare inclusioni di sottonodi
-    if not method_nodes or name_text(method_nodes[0]).strip() != method:
+    # call valida solo se il <name> composto (x.read) è il nome chiamato
+    anc = uso.xpath("parent::src:name/parent::src:call", namespaces=NS)
+    call_node = anc[0] if anc else None
+    cn = get_call_name(call_node, adapter, imports) if call_node is not None else None
+
+    def _hit(m):
+        m = adapter.normalize_member_access(m)
+        if "." in m or m.startswith("*"):
+            return bool(cn) and call_matches(cn, m, adapter)
+        return found == m
+
+    if not any(_hit(m) for m in methods):
         return False
 
     arg_contains = spec.get("arg_contains", [])
     if not arg_contains:
         return True
-
-    call_node = uso.xpath("ancestor::src:call[1]", namespaces=NS)
-    if not call_node:
+    if call_node is None:
         return False
-
-    # 2. Confiniamo la ricerca dei letterali ESCLUSIVAMENTE a questa chiamata
-    string_literals = own_literals(call_node[0], "string")
-    
-    for literal_node in string_literals:
-        raw_text = "".join(literal_node.itertext())
-        # 3. Normalizzazione e check case-insensitive coerente col resto del motore
-        clean_text = adapter.normalize_string_literal(raw_text).upper()
-        
-        if any(val.upper() in clean_text for val in arg_contains):
-            return True
-            
-    return False
+    return any(
+        any(v.upper() in adapter.normalize_string_literal("".join(l.itertext())).upper()
+            for v in arg_contains)
+        for l in own_literals(call_node, "string")
+    )
 
 
 def _sink_call_with_var_arg(uso, spec, fstring_nodes, adapter, imports):

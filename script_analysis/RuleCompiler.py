@@ -38,7 +38,6 @@ class RuleCompiler:
             "sinks": "sinks",
             "forbidden_functions": "forbidden_functions",
             "excluded_functions": "excluded_functions",
-            "forbidden_imports": "forbidden_imports",
             "xpath_rules":"xpath_rules",
             "sanitizers": "sanitizers",
             "safe_contexts": "safe_contexts",

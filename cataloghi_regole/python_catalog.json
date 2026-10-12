@@ -248,23 +248,7 @@
     "unbounded_resource_read": [
       {
         "type": "method_call",
-        "method": "read"
-      },
-      {
-        "type": "method_call",
-        "method": "readlines"
-      },
-      {
-        "type": "method_call",
-        "method": "readline"
-      },
-      {
-        "type": "method_call",
-        "method": "extractall"
-      },
-      {
-        "type": "method_call",
-        "method": "save"
+        "method": ["read","readlines","readline","extractall","save"]
       }
     ],
     "format_string_functions": [
@@ -532,9 +516,6 @@
   "excluded_functions": {
     "safe_prng_exceptions": ["secrets.choice", "secrets.randbelow", "secrets.randbits"],
     "eval_false_positive_exceptions": ["context.eval", "ctx.eval"]
-  },
-  "forbidden_imports": {
-    "weak_crypto_modules": ["md5", "Crypto.Cipher.DES"]
   },
   "xpath_rules": {
     "off_by_one_loop_condition": [

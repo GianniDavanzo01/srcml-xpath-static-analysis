@@ -169,7 +169,7 @@
         "weak_ciphers_and_modes": [
             "DES_encrypt1", "DES_encrypt2", "DES_encrypt3", "DES_ecb_encrypt",
             "EVP_des_ecb", "EVP_des_cbc","EVP_rc4", "EVP_rc2_ecb",
-            "RC4","EVP_bf_ecb",
+            "RC4","EVP_bf_ecb","DES_set_key", "DES_set_key_checked", "DES_set_key_unchecked",
             {
                 "type": "call_matches_ast",
                 "call": "CryptDeriveKey",
@@ -267,9 +267,6 @@
     "excluded_functions":{
         "safe_prng_exceptions": [],
         "eval_false_positive_exceptions": []
-    },
-    "forbidden_imports": {
-        "weak_crypto_modules": ["openssl/md5.h", "openssl/des.h"]
     },
     "xpath_rules":{
     "off_by_one_loop_condition": [

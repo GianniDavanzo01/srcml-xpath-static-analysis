@@ -376,7 +376,13 @@ class LanguageAdapter(ABC):
         if self.is_none_literal(t):
             return "null"
         return self.normalize_string_literal(t)
-    
+
+
+
+    def is_in_macro_definition(self, node) -> bool:
+        """True se `node` sta dentro la definizione di una macro del preprocessore.
+        Default: False (Python, Java non hanno macro)."""
+        return False
 
 # ---------------------------------------------------------------------- #
 # Implementazione Python
@@ -1600,6 +1606,11 @@ class CAdapter(LanguageAdapter):
 
     def is_false_constant(self, text: str) -> bool:
         return text.strip() == "0" or super().is_false_constant(text)
+
+
+    _CPP_NS = {"cpp": "http://www.srcML.org/srcML/cpp"}
+    def is_in_macro_definition(self, node) -> bool:
+        return bool(node.xpath("ancestor::cpp:define", namespaces=self._CPP_NS))
 
 
     

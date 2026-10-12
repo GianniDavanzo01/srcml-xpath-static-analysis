@@ -604,29 +604,6 @@ def run_structural_rule(tree, rule: dict, adapter, imports, ctx) -> list:
                         findings.append(build_finding(rule, cond))
                         break
 
-    forbidden_imports = rule.get("forbidden_imports", [])
-    if forbidden_imports:
-        safe_contexts = rule.get("safe_contexts", [])
-        
-        # 'imports' è la lista di ImportBinding già calcolata dall'adapter!
-        for binding in imports:
-            
-            if binding.is_macro:      
-                continue
-
-            # Controlla se il nome canonico importato è tra quelli vietati
-            is_forbidden = any(
-                binding.canonical_name == bad or binding.canonical_name.startswith(f"{bad}.")
-                for bad in forbidden_imports
-            )
-            
-            if is_forbidden:
-                # Controllo safe_context
-                if is_in_safe_context(binding.node, safe_contexts, None, adapter, imports):
-                    continue
-                    
-                findings.append(build_finding(rule, binding.node))
-
 
     bad_function_defs = rule.get("bad_function_defs", [])
     if bad_function_defs:

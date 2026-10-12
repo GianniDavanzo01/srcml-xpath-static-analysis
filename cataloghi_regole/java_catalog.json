@@ -220,23 +220,9 @@
         ]
       }
     ],
-    "unbounded_resource_read": [
-      {
-        "type": "method_call",
-        "method": "read"
-      },
-      {
-        "type": "method_call",
-        "method": "readAllBytes"
-      },
-      {
-        "type": "method_call",
-        "method": "getBytes"
-      },
-      {
-        "type": "method_call",
-        "method": "transferTo"
-      }
+  "unbounded_resource_read": [
+      {"type": "method_call", 
+      "method": ["read", "readAllBytes", "*.MultipartFile.transferTo", "*.MultipartFile.getBytes"]}
     ],
     "format_string_functions": [
       {
@@ -361,17 +347,13 @@
       "*.DatagramSocket.receive"
     ],
     "weak_hash_functions": [
+      "*.DigestUtils.md5Hex", "*.DigestUtils.md5",
+      "*.DigestUtils.sha1Hex", "*.DigestUtils.sha1",
       {
         "type": "call_matches_ast",
         "call": "*.MessageDigest.getInstance",
         "case_insensitive": true,
-        "contains_string_containing": [
-          "MD5",
-          "MD4",
-          "MD2",
-          "SHA-1",
-          "SHA1"
-        ]
+        "contains_string_containing": ["MD5","MD4","MD2","SHA-1","SHA1"]
       }
     ],
     "weak_ciphers_and_modes": [
@@ -524,11 +506,6 @@
       "*.SecureRandom"
     ],
     "eval_false_positive_exceptions": []
-  },
-  "forbidden_imports": {
-    "weak_crypto_modules": [
-      "org.apache.commons.codec.digest.DigestUtils"
-    ]
   },
   "xpath_rules": {
     "off_by_one_loop_condition": [
