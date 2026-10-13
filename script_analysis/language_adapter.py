@@ -554,7 +554,12 @@ class PythonAdapter(LanguageAdapter):
  
         return bindings
 
-    _MAX_RESOLVE_DEPTH = 5
+
+    _MAX_RESOLVE_DEPTH = 5 #Guardia per evitare ricorsione infinita di catene eccessivamente lunghe all'interno di resolve_call_name
+    
+    # Funzioni factory built-in (non richiedono import) i cui oggetti restituiti
+    # hanno metodi tracciati nel catalogo (es. f = open(...); f.read() -> 'open.read').
+    _BUILTIN_FACTORIES = {"open"}
 
     def resolve_call_name(self, call_node, ns, imports: list, _depth: int = 0) -> str:
         if _depth > self._MAX_RESOLVE_DEPTH:
@@ -597,7 +602,18 @@ class PythonAdapter(LanguageAdapter):
                     resolved = self.resolve_call_name(first_call[0], ns, imports, _depth + 1) or chain[0]
                     if len(chain) > 1:
                         resolved += "." + ".".join(chain[1:])
-                    return f"{resolved}.{rest}"
+                    # Sostituisce il receiver solo se l'RHS risolve a un nome qualificato,
+                    # a un modulo importato o a una factory built-in, evitando che helper
+                    # locali (es. conn = get_db()) sovrascrivano 'conn.execute' in 'get_db.execute'.
+                    if (
+                        "." in resolved
+                        or resolved in self._BUILTIN_FACTORIES
+                        or any(
+                            resolved == b.canonical_name or resolved.startswith(f"{b.canonical_name}.")
+                            for b in imports
+                        )
+                    ):
+                        return f"{resolved}.{rest}"
 
         return raw
                 
@@ -993,7 +1009,12 @@ class JavaAdapter(LanguageAdapter):
                 
         return bindings
 
-    def resolve_call_name(self, call_node, ns, imports) -> str:
+
+    _MAX_RESOLVE_DEPTH = 5
+
+    def resolve_call_name(self, call_node, ns, imports, _depth: int = 0) -> str:
+        if _depth > self._MAX_RESOLVE_DEPTH:
+            return None
         name_nodes = call_node.xpath("./src:name", namespaces=ns)
         if not name_nodes:
             return None
@@ -1064,6 +1085,15 @@ class JavaAdapter(LanguageAdapter):
                         decl_node = prev_decl[0] if prev_decl else None
                     else:
                         decl_node = None
+
+                # Gestione 'var' (Java 10+): il tipo non è esplicito, si risale alla call nell'<init>
+                # (es. 'var writer = response.getWriter()' -> 'HttpServletResponse.getWriter').
+                if var_type == "var":
+                    init_call = decls[-1].xpath("./src:init//src:call[1]", namespaces=ns)
+                    if init_call:
+                        var_type = self.resolve_call_name(init_call[0], ns, imports, _depth + 1)
+                    else:
+                        var_type = None
 
                 if var_type:
                     return self._canonicalize(f"{var_type}.{method_name}", imports)
@@ -1683,6 +1713,493 @@ class CAdapter(LanguageAdapter):
         return bool(node.xpath("ancestor::cpp:define", namespaces=self._CPP_NS))
 
 
+
+
+# ---------------------------------------------------------------------- #
+# Implementazione C++
+# ---------------------------------------------------------------------- #
+# C++ e' un'estensione di C: si eredita CAdapter e si sovrascrive solo cio' che
+# cambia in srcML 1.1.0 (verificato su XML reali):
+#   - nomi qualificati  <name><name>std</name><operator>::</operator><name>x</name></name>
+#   - template          <argument_list type="generic"> dentro/accanto al <name>
+#   - costruttori       <decl> con <argument_list> diretta (niente <init>): T x(a), T x{a}
+#   - decl nelle condizioni  if (int r = f()), while (auto q = g())
+#   - range-for         <init><decl>..<range>: <expr/></range></decl></init>  (oppure forma piatta)
+#   - using / namespace alias / typedef, <cast type="static|...">, <lambda>, <constructor>,
+#     <destructor>, <struct>, campi dentro <public>/<private>/<protected>
+
+_SRC_NS = {"src": "http://www.srcML.org/srcML/src"}
+
+# Tipi che compaiono nei cast e non esistono in C
+_CPP_EXTRA_TYPE_WORDS = {"bool", "auto", "char16_t", "char32_t", "char8_t", "nullptr_t"}
+
+_TEMPLATE_ARGS_RE = re.compile(r"<[^<>]*>")
+_RAW_STRING_RE = re.compile(r'^(?:u8|u|U|L)?R"([^()\\\s]{0,16})\((.*)\)\1"$', re.DOTALL)
+_STR_PREFIX_RE = re.compile(r'^(?:u8|u|U|L)(?=["\'])')
+
+
+class CppAdapter(CAdapter):
+    name = "cpp"
+
+    # ------------------------------------------------------------------ #
+    # Nomi: canonicalizzazione
+    # ------------------------------------------------------------------ #
+
+    def normalize_member_access(self, name: str) -> str:
+        """Forma canonica usata da TUTTI i confronti del motore (call_matches, CallTable,
+        CallMatcher): '->' e '::' diventano '.', sparisce il '::' iniziale (global scope),
+        gli argomenti template e il prefisso 'std.'.
+          std::system -> system     ::system -> system     p->open -> p.open
+          std::cin.getline -> cin.getline     std::vector<int>::iterator -> vector.iterator"""
+        if not name:
+            return name
+        name = name.replace("->", ".").replace("::", ".")
+        while True:
+            reduced = _TEMPLATE_ARGS_RE.sub("", name)
+            if reduced == name:
+                break
+            name = reduced
+        if name.startswith("."):
+            name = name[1:]
+        if name.startswith("std."):
+            name = name[4:]
+        elif name.startswith("*.std."):
+            name = "*." + name[6:]
+        return name
+
+    def _name_parts(self, name_node) -> list:
+        """Segmenti di un <name> (semplice o composto), SENZA argomenti template, indici
+        e operatori. 'std::cin.getline' -> ['std','cin','getline']."""
+        own = (name_node.text or "").strip()
+        kids = [c for c in name_node if isinstance(c.tag, str)]
+        child_names = [c for c in kids if _lname(c) == "name"]
+        if not child_names:
+            return [own] if own else []
+        if own == "operator":                       # operator<name>==</name>
+            return ["operator" + "".join(_ntxt(c) for c in child_names)]
+        parts = []
+        for c in kids:
+            if _lname(c) == "name":
+                parts.extend(self._name_parts(c))
+        return parts
+
+    def _canonicalize(self, name: str, imports) -> str:
+        """Applica gli alias using/namespace al primo segmento (Str.x -> std.string.x)."""
+        head, _, rest = name.partition(".")
+        for b in imports or []:
+            if b.is_macro or b.local_name != head:
+                continue
+            if b.node is None or _lname(b.node) not in ("using", "namespace"):
+                continue
+            return f"{b.canonical_name}.{rest}" if rest else b.canonical_name
+        return name
+
+    def resolve_name_text(self, text, imports):
+        if not text:
+            return text
+        return self._canonicalize(self.normalize_member_access(text), imports)
+
+    # ------------------------------------------------------------------ #
+    # Dichiarazioni e tipi
+    # ------------------------------------------------------------------ #
+
+    def _decl_candidates(self, node, var_name, ns) -> list:
+        """Dichiarazioni di var_name visibili da `node`, in ordine di priorita':
+        scope funzione (locali + parametri), campi della classe, file/namespace scope."""
+        v = var_name
+        queries = [
+            f"{self.scope_axis()}//src:decl[src:name[text()=$v]]",
+            ("ancestor::*[" + " or ".join(f"self::src:{t}" for t in self.class_tags()) + "][1]"
+             "/src:block/*/src:decl_stmt/src:decl[src:name[text()=$v]]"),
+            ("ancestor::src:unit[1]//src:decl_stmt[not(ancestor::src:function or "
+             "ancestor::src:constructor or ancestor::src:destructor or ancestor::src:lambda)]"
+             "/src:decl[src:name[text()=$v]]"),
+        ]
+        for q in queries:
+            found = node.xpath(q, namespaces=ns, v=v)
+            if found:
+                return found
+        return []
+
+    def _pick_decl(self, node, decls):
+        key = _pos_key(node)
+        before = [d for d in decls if _pos_key(d) <= key]
+        return (before or decls)[-1]
+
+    def _decl_type_node(self, decl, ns):
+        """(type_node_con_nome, modificatori_propri) risalendo i <type ref="prev"/>."""
+        t = decl.xpath("./src:type", namespaces=ns)
+        if not t:
+            return None, ""
+        own_mods = " ".join(_ntxt(m) for m in t[0].xpath("./src:modifier", namespaces=ns))
+        seen, cur = set(), decl
+        while cur is not None and id(cur) not in seen:
+            seen.add(id(cur))
+            tt = cur.xpath("./src:type", namespaces=ns)
+            if tt and tt[0].get("ref") != "prev":
+                return tt[0], own_mods
+            prev = cur.xpath("preceding-sibling::src:decl[1]", namespaces=ns)
+            cur = prev[0] if prev else None
+        return None, own_mods
+
+    def _decl_type_text(self, decl, ns):
+        """'const char *' ; per 'char *a, *b' il tipo di b e' 'char *' (modificatori propri)."""
+        tnode, own_mods = self._decl_type_node(decl, ns)
+        if tnode is None:
+            return None
+        if decl.xpath("./src:type", namespaces=ns)[0].get("ref") != "prev":
+            return re.sub(r"\s+", " ", _ntxt(tnode))
+        base = " ".join(_ntxt(c) for c in tnode if isinstance(c.tag, str) and _lname(c) != "modifier")
+        return re.sub(r"\s+", " ", f"{base} {own_mods}").strip()
+
+    def _decl_type_name(self, decl, ns):
+        """Nome canonico del tipo ('ifstream', 'vector'); None per 'auto'/non risolvibile."""
+        tnode, _ = self._decl_type_node(decl, ns)
+        if tnode is None:
+            return None
+        tn = tnode.xpath("./src:name[1]", namespaces=ns)
+        if not tn:
+            return None
+        parts = self._name_parts(tn[0])
+        if not parts or parts == ["auto"]:
+            return None
+        return self.normalize_member_access(".".join(parts))
+
+    def resolve_variable_type(self, name_node, var_name, ns) -> str | None:
+        decls = self._decl_candidates(name_node, var_name, ns)
+        if not decls:
+            return None
+        return self._decl_type_text(self._pick_decl(name_node, decls), ns)
+
+    # ------------------------------------------------------------------ #
+    # Import / alias / macro
+    # ------------------------------------------------------------------ #
+
+    def resolve_imports(self, unit_node, ns) -> list:
+        # include + macro: identici a C
+        bindings = super().resolve_imports(unit_node, ns)
+
+        def dotted(n):
+            return self.normalize_member_access(".".join(self._name_parts(n)))
+
+        for u in unit_node.xpath(".//src:using", namespaces=ns):
+            ns_decl = u.xpath("./src:namespace/src:name", namespaces=ns)
+            if ns_decl:                                       # using namespace X;
+                bindings.append(ImportBinding("*", dotted(ns_decl[0]), node=u))
+                continue
+            alias_type = u.xpath("./src:init/src:type/src:name", namespaces=ns)
+            first = u.xpath("./src:name", namespaces=ns)
+            if alias_type and first:                          # using Str = std::string;
+                bindings.append(ImportBinding(dotted(first[0]), dotted(alias_type[0]), node=u))
+            elif first:                                       # using std::string;
+                canonical = dotted(first[0])
+                bindings.append(ImportBinding(canonical.split(".")[-1], canonical, node=u))
+
+        for n in unit_node.xpath(".//src:namespace[not(src:block)]", namespaces=ns):
+            parts = n.xpath("./src:name", namespaces=ns)       # namespace fs = std::filesystem;
+            if len(parts) == 2:
+                bindings.append(ImportBinding(dotted(parts[0]), dotted(parts[1]), node=n))
+        return bindings
+
+    # ------------------------------------------------------------------ #
+    # Nome delle chiamate
+    # ------------------------------------------------------------------ #
+
+    def resolve_call_name(self, call_node, ns, imports, _depth: int = 0) -> str:
+        if _depth > 16:
+            return None
+        name_nodes = call_node.xpath("./src:name", namespaces=ns)
+        if not name_nodes:
+            return None
+        parts = self._name_parts(name_nodes[0])
+        if not parts:
+            return None
+
+        # call concatenate: a.b().c(x) -> <call/><operator>.</operator><call/>
+        recv = self._chain_receiver(call_node, ns)
+        if recv is not None:
+            recv_name = self.resolve_call_name(recv, ns, imports, _depth + 1)
+            if recv_name:
+                return self.normalize_member_access(f"{recv_name}.{'.'.join(parts)}")
+
+        if len(parts) == 1:
+            return self._canonicalize(
+                self.normalize_member_access(expand_macro_name(parts[0], macro_map(imports))), imports)
+
+        if parts[0] == "std":
+            parts = parts[1:]
+        head = parts[0]
+        # var.metodo / ptr->metodo: se head e' una variabile dichiarata, usa il TIPO
+        if len(parts) >= 2:
+            decls = self._decl_candidates(call_node, head, ns)
+            if decls:
+                tname = self._decl_type_name(self._pick_decl(call_node, decls), ns)
+                if tname:
+                    return self._canonicalize(
+                        self.normalize_member_access(f"{tname}.{'.'.join(parts[1:])}"), imports)
+        return self._canonicalize(self.normalize_member_access(".".join(parts)), imports)
+
+    # ------------------------------------------------------------------ #
+    # Assegnazioni
+    # ------------------------------------------------------------------ #
+
+    def potential_assignment_xpath(self) -> str:
+        return (".//src:expr_stmt | .//src:decl_stmt | .//src:control[parent::src:for]"
+                " | .//src:condition/src:decl"
+                " | .//src:init[parent::src:control]/src:decl[not(src:range)]")
+
+    def _expr_stmt_lhs_rhs(self, node, ns):
+        op = node.xpath("./src:expr/src:operator[text()='='][1]", namespaces=ns)
+        if not op:
+            return None, None
+        op = op[0]
+        lhs_all = op.xpath("./preceding-sibling::*[not(self::src:comment)]", namespaces=ns)
+        rhs_all = _skip_leading_casts(op.xpath("./following-sibling::*", namespaces=ns))
+        if not lhs_all or not rhs_all:
+            return None, None
+        lhs = lhs_all[-1]
+        # 'auto [k, v] = pair;' (structured binding): non e' un'assegnazione a 'auto'
+        if len(lhs_all) >= 2 and _lname(lhs) == "index" and _ntxt(lhs_all[-2]) == "auto":
+            return None, None
+        # '*p = x' scrive il pointee, non la variabile p. ('auto* o = ...' invece e' una
+        # dichiarazione: il '*' e' preceduto da un nome-tipo)
+        before = lhs.getprevious()
+        if before is not None and _lname(before) == "operator" and _ntxt(before) == "*":
+            bb = before.getprevious()
+            if bb is None or _lname(bb) == "operator":
+                return None, None
+        return lhs, rhs_all[0]
+
+    def _decl_lhs_rhs(self, decl, ns):
+        """LHS/RHS di un <decl>: 'T x = e' | 'T x(a)' | 'T x{a, b}'."""
+        lhs = decl.xpath("./src:name[1]", namespaces=ns)
+        if not lhs:
+            return None, None
+        rhs = decl.xpath("./src:init/src:expr | ./src:init/src:decl", namespaces=ns)
+        if rhs:
+            return lhs[0], rhs[0]
+        args = decl.xpath("./src:argument_list", namespaces=ns)
+        if args:
+            single = args[0].xpath("./src:argument[count(../src:argument)=1]/src:expr", namespaces=ns)
+            return lhs[0], (single[0] if single else args[0])
+        return None, None
+
+    def _range_for_lhs_rhs(self, control, ns):
+        decl = control.xpath("./src:init/src:decl[src:range]", namespaces=ns)
+        if decl:                                            # for (T x : v)
+            lhs = decl[0].xpath("./src:name[1]", namespaces=ns)
+            rhs = decl[0].xpath("./src:range/src:expr[1]", namespaces=ns)
+            return (lhs[0], rhs[0]) if lhs and rhs else (None, None)
+        # forma piatta: <init><expr>auto & x : v</expr></init>
+        colon = control.xpath("./src:init/src:expr/src:operator[text()=':'][1]", namespaces=ns)
+        if not colon:
+            return None, None
+        before = colon[0].xpath("./preceding-sibling::*[not(self::src:comment)]", namespaces=ns)
+        after = colon[0].xpath("./following-sibling::*[not(self::src:comment)]", namespaces=ns)
+        if not before or not after or _lname(before[-1]) != "name":
+            return None, None                               # structured binding: ignorato
+        return before[-1], after[0]
+
+    def is_assignment(self, node, ns) -> bool:
+        lhs, rhs = self.get_assignment_lhs_rhs(node, ns)
+        return lhs is not None and rhs is not None
+
+    def get_assignment_lhs_rhs(self, node, ns):
+        tag = _lname(node)
+        if tag == "expr_stmt":
+            return self._expr_stmt_lhs_rhs(node, ns)
+        if tag == "decl_stmt":
+            # primo dichiaratore con inizializzatore/argomenti: 'int a, b = f();' -> b
+            for d in node.xpath("./src:decl", namespaces=ns):
+                lhs, rhs = self._decl_lhs_rhs(d, ns)
+                if lhs is not None:
+                    return lhs, rhs
+            return None, None
+        if tag == "decl":
+            return self._decl_lhs_rhs(node, ns)
+        if tag == "control":
+            return self._range_for_lhs_rhs(node, ns)
+        return None, None
+
+    # ------------------------------------------------------------------ #
+    # Letterali
+    # ------------------------------------------------------------------ #
+
+    def string_concat_operators(self) -> list:
+        return ["+"]                    # std::string + ...
+
+    def string_formatting_operator_roles(self) -> dict:
+        return {"concat": "+"}
+
+    def is_none_literal(self, text: str) -> bool:
+        return text.strip() in ("NULL", "nullptr")
+
+    def parse_numeric_literal(self, text: str):
+        return super().parse_numeric_literal(text.replace("'", ""))   # separatori 1'000
+
+    def normalize_string_literal(self, text: str) -> str:
+        t = text.strip()
+        m = _RAW_STRING_RE.match(t)
+        if m:
+            return m.group(2)
+        t = _STR_PREFIX_RE.sub("", t)   # solo se seguito da apice: non tocca 'Lib', 'uid'...
+        if len(t) >= 2 and t[0] in "\"'" and t[-1] == t[0]:
+            t = t[1:-1]
+        return t
+
+    # ------------------------------------------------------------------ #
+    # Operatori
+    # ------------------------------------------------------------------ #
+
+    def logical_and_operator(self) -> list:
+        return ["&&", "and"]
+
+    def logical_or_operator(self) -> list:
+        return ["||", "or"]
+
+    def get_parameter_name_and_type(self, param_node, namespaces):
+        decl = param_node.xpath("./src:decl[1]", namespaces=namespaces)
+        if not decl:
+            return None, None
+        type_text = self._decl_type_text(decl[0], namespaces) or ""
+        n = decl[0].xpath("./src:name[1]", namespaces=namespaces)
+        return (name_text(n[0]) if n else ""), type_text
+
+    # ------------------------------------------------------------------ #
+    # Taint
+    # ------------------------------------------------------------------ #
+
+    def taint_block_functions(self) -> list:
+        return ["strlen", "atoi", "atol", "atoll", "atof", "strcmp", "strncmp",
+                "stoi", "stol", "stoll", "stoul", "stoull", "stof", "stod",
+                "*.size", "*.length", "*.empty", "*.compare", "*.count"]
+
+    def taint_propagating_calls(self) -> dict:
+        def out(*idx): return {"out": list(idx)}
+        recv = {"out_receiver": True}                 # x.append(t) rende taintato x
+        table = {
+            "sprintf": out(0), "snprintf": out(0), "_snprintf": out(0), "vsnprintf": out(0),
+            "strcpy": out(0), "strncpy": out(0), "strcat": out(0), "strncat": out(0),
+            "memcpy": out(0), "memmove": out(0),
+            "wcscpy": out(0), "wcsncpy": out(0), "wcscat": out(0), "wcsncat": out(0),
+            "wmemcpy": out(0), "swprintf": out(0), "_snwprintf": out(0),
+            "sscanf": {"in": [0], "out_variadic_from": 2},
+            "swscanf": {"in": [0], "out_variadic_from": 2},
+        }
+        for m in ("append", "assign", "push_back", "push_front", "insert",
+                  "emplace", "emplace_back", "replace"):
+            table[f"*.{m}"] = recv
+        return table
+
+    def taint_source_output_args(self) -> dict:
+        table = dict(super().taint_source_output_args())
+        table.update({
+            # std::getline(stream, out) -> out e' l'indice 1; getline POSIX -> indice 0
+            "getline": {"indices": [0, 1]},
+            # istream::getline(buf, n) / istream::read(buf, n): il buffer e' l'indice 0.
+            # Le chiavi 'cin.*' servono perche' _rule_pre accoppia sorgente (catalogo) e chiave
+            # della tabella con call_matches(chiave, sorgente): 'cin.getline' deve esistere
+            # come chiave per attivare la sorgente 'cin.getline' del catalogo.
+            "cin.getline": {"indices": [0]},
+            "cin.read": {"indices": [0]},
+            "*.getline": {"indices": [0]},
+            "*.read": {"indices": [0]},
+            "*.readsome": {"indices": [0]},
+            "fgetws": {"indices": [0], "return_tainted": True},
+            "wscanf": {"variadic_from": 1},
+            "fwscanf": {"variadic_from": 2},
+            "swscanf": {"variadic_from": 2},
+        })
+        return table
+
+    def taint_opaque_tags(self) -> list:
+        return ["sizeof", "alignof", "decltype", "typeid", "noexcept"]
+
+    def extract_output_buffer_name(self, arg_node, ns) -> str | None:
+        """Come la base, ma salta i qualificatori di namespace ('std' in std::cin) e i nomi
+        negli argomenti template, altrimenti 'std' risulterebbe una variabile taintata."""
+        skip = ["ancestor::src:index", "ancestor::src:type",
+                "ancestor::src:argument_list[@type='generic']"]
+        skip += [f"ancestor::src:{t}" for t in self.taint_opaque_tags()]
+        skip_xpath = " | ".join(skip)
+        for n in arg_node.xpath(".//src:name[not(src:name)]", namespaces=ns):
+            if n.xpath(skip_xpath, namespaces=ns):
+                continue
+            nxt = n.getnext()
+            if nxt is not None and _lname(nxt) == "operator" and _ntxt(nxt) == "::":
+                continue
+            if self.is_cast_type_name(n):
+                continue
+            txt = name_text(n)
+            if txt:
+                return txt
+        return None
+
+    def is_cast_type_name(self, name_node) -> bool:
+        """static_cast<char*>(x): 'char' sta in <argument_list type="generic"> -> tipo."""
+        if name_node.xpath("ancestor::src:argument_list[@type='generic']", namespaces=_SRC_NS):
+            return True
+        if _ntxt(name_node) in _CPP_EXTRA_TYPE_WORDS:
+            return True
+        return super().is_cast_type_name(name_node)
+
+    # ------------------------------------------------------------------ #
+    # Condizioni / membership / eccezioni
+    # ------------------------------------------------------------------ #
+
+    def extract_membership_relations(self, condition_node, ns) -> list[dict]:
+        """set.contains(x) / set.count(x) (anche negati: !s.count(x), s.count(x) == 0)."""
+        relations = []
+        calls = condition_node.xpath(
+            ".//src:call[src:name/src:name[last()][text()='contains' or text()='count']]",
+            namespaces=ns)
+        for call in calls:
+            recv = call.xpath("./src:name/src:name[last()-1]", namespaces=ns)
+            arg = call.xpath("./src:argument_list/src:argument/src:expr/*[1]", namespaces=ns)
+            if not recv or not arg:
+                continue
+            prev = call.xpath("preceding-sibling::*[not(self::src:comment)][1]", namespaces=ns)
+            negated = bool(prev) and _lname(prev[0]) == "operator" and _ntxt(prev[0]) == "!"
+            nxt = call.xpath("following-sibling::*[not(self::src:comment)][position()<=2]", namespaces=ns)
+            if len(nxt) == 2 and _lname(nxt[0]) == "operator" and _ntxt(nxt[1]) == "0":
+                op = _ntxt(nxt[0])
+                if op == "==":
+                    negated = True                     # count(x) == 0
+                elif op in ("!=", ">"):
+                    negated = False
+            relations.append({"lhs": arg[0], "rhs": recv[0], "is_negated": negated})
+        return relations
+
+    def is_collection_assignment(self, assignment_node, ns) -> bool:
+        if super().is_collection_assignment(assignment_node, ns):      # T v = {1,2}
+            return True
+        for al in assignment_node.xpath(".//src:decl/src:argument_list", namespaces=ns):
+            if _ntxt(al).startswith("{"):                              # T v{1,2}
+                return True
+        return False
+
+    def find_exception_bindings(self, tree, ns) -> list:
+        bindings = []
+        for catch in tree.xpath(".//src:catch", namespaces=ns):
+            names = catch.xpath("./src:parameter_list/src:parameter/src:decl/src:name[1]", namespaces=ns)
+            if not names:                       # catch (...) / catch (const T&) senza nome
+                continue
+            block = catch.xpath("./src:block[1]", namespaces=ns)
+            if block:
+                bindings.append((name_text(names[0]), block[0]))
+        return bindings
+
+    # ------------------------------------------------------------------ #
+    # Tag srcML
+    # ------------------------------------------------------------------ #
+
+    def function_tags(self):   return ["function", "constructor", "destructor"]
+    def lambda_tags(self):     return ["lambda"]
+    def flow_exit_tags(self):  return ["return", "throw", "goto", "continue", "break"]
+    def flow_exit_calls(self): return ["exit", "abort", "_exit", "_Exit", "quick_exit", "terminate"]
+    def class_tags(self):      return ["class", "struct", "union"]
+
+
     
 # ---------------------------------------------------------------------- #
 # Registro / dispatch
@@ -1692,6 +2209,7 @@ ADAPTERS = {
     "python": PythonAdapter(),
     "java": JavaAdapter(),
     "c": CAdapter(),
+    "c++": CppAdapter(), #DA VALIDARE
 }
 
 def get_adapter(unit_node) -> LanguageAdapter:
