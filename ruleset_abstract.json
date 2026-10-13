@@ -86,7 +86,8 @@
   "type": "taint",
   "vulnerabilities": ["CWE-89"],
   "sources": [
-    {"tag": "http_input"}
+    {"tag": "http_input"},
+    {"tag": "cli_input"}
   ],
   "sinks": [
     {"tag": "sql_execution"}
@@ -101,7 +102,8 @@
   "type": "taint",
   "vulnerabilities": ["CWE-90"],
   "sources": [
-    {"tag": "http_input"}
+    {"tag": "http_input"},
+    {"tag": "cli_input"}
   ],
   "sinks": [
     {"tag": "ldap_execution"}
@@ -171,7 +173,7 @@
 {
   "rule_id": "CWE-120-BUFFER-OVERFLOW",
   "type": "structural",
-  "description": "Applicata solo a C",
+  "languages": ["c"],
   "vulnerabilities": ["CWE-120"],
   "forbidden_functions": [
     {"tag": "buffer_overflow_function"}
@@ -249,7 +251,6 @@
 {
   "rule_id": "CWE-276-INCORRECT-DEFAULT-PERMISSIONS",
   "type": "structural",
-  "description": "Rileva l'impostazione di maschere di creazione file (umask) o configurazioni di default eccessivamente permissive (es. umask(0)).",
   "vulnerabilities": ["CWE-276"],
   "forbidden_functions": [{"tag": "insecure_default_permissions"}]
 },
@@ -302,8 +303,7 @@
   "type": "taint",
   "vulnerabilities": ["CWE-321"],
   "sources": ["string_literal"],
-  "sinks": [{"tag": "crypto_key_sinks"}],
-  "literal_reassign_kills_taint": true
+  "sinks": [{"tag": "crypto_key_sinks"}]
 },
 {
   "rule_id": "CWE-326-INADEQUATE-ENCRYPTION",
@@ -390,8 +390,8 @@
 {
   "rule_id": "CWE-415-416-MEMORY-MISUSE-AFTER-FREE",
   "type": "structural",
+  "languages":["c"],
   "vulnerabilities": ["CWE-415", "CWE-416"],
-  "description": "Applicabile solo a C.",
   "patterns": [{"tag": "use_after_free_check"}]
 },
 {
@@ -419,7 +419,6 @@
   "type": "taint",
   "vulnerabilities": ["CWE-476"],
   "propagate_taint": false,
-  "null_reassign_kills_taint": true,
   "sources": [
     {"tag": "nullable_returning_calls"}, "null_literal"
   ],
