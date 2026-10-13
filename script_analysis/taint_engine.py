@@ -89,7 +89,15 @@ def _is_hardcoded_string(rhs, adapter) -> bool:
     return any(not adapter.is_interpolated_string("".join(l.itertext())) for l in lits)
 
 
-def _killed_by_reassign(uso, var, scope_node, assign_infos, is_killing, side_effects=()) -> bool:
+
+_INDEX_TAG = f"{{{NS['src']}}}index"
+
+def _is_weak_update(info) -> bool:
+    """name[0] = x, a[i].b = x: scrive una parte dell'oggetto, non lo sovrascrive."""
+    lhs = info.lhs
+    return lhs is not None and next(lhs.iter(_INDEX_TAG), None) is not None
+
+def _killed_by_reassign(uso, var, scope_node, assign_infos, is_killing, side_effects=(),weak_kills=False) -> bool:
     """True se l'ultima assegnazione a `var` prima di `uso`:
        - soddisfa `is_killing` (non propaga più il taint),
        - domina l'uso (nessun if/else/ciclo/catch che racchiuda lei ma non l'uso),
@@ -100,7 +108,7 @@ def _killed_by_reassign(uso, var, scope_node, assign_infos, is_killing, side_eff
     if not prior:
         return False
     last = max(prior, key=lambda i: _pos_key(i.stmt))
-    if last.rhs is None or not is_killing(last):
+    if last.rhs is None or (not weak_kills and _is_weak_update(last)) or not is_killing(last):
         return False
 
     last_key = _pos_key(last.stmt)
@@ -503,7 +511,7 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
 
             if kill_any is not None and _killed_by_reassign(
                     uso, var, scope_node, assign_infos, kill_any,
-                    side_effects=side_effect_pos.get((var, id(scope_node)), ())):
+                    side_effects=side_effect_pos.get((var, id(scope_node)), ()),weak_kills=not rule_propagates):
                 continue
 
             if is_sanitized(uso, sanitizers, adapter, imports):
