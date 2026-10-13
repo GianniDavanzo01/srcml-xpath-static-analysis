@@ -89,10 +89,11 @@ def _is_hardcoded_string(rhs, adapter) -> bool:
     return any(not adapter.is_interpolated_string("".join(l.itertext())) for l in lits)
 
 
-def _killed_by_reassign(uso, var, scope_node, assign_infos, is_killing) -> bool:
+def _killed_by_reassign(uso, var, scope_node, assign_infos, is_killing, side_effects=()) -> bool:
     """True se l'ultima assegnazione a `var` prima di `uso`:
        - soddisfa `is_killing` (non propaga più il taint),
-       - domina l'uso (nessun if/else/ciclo/catch che racchiuda lei ma non l'uso)."""
+       - domina l'uso (nessun if/else/ciclo/catch che racchiuda lei ma non l'uso),
+       - non è seguita, prima dell'uso, da una call che ritainta `var` per side-effect."""
     key = _pos_key(uso)
     prior = [i for i in assign_infos
              if i.var == var and i.scope is scope_node and _pos_key(i.stmt) < key]
@@ -101,6 +102,11 @@ def _killed_by_reassign(uso, var, scope_node, assign_infos, is_killing) -> bool:
     last = max(prior, key=lambda i: _pos_key(i.stmt))
     if last.rhs is None or not is_killing(last):
         return False
+
+    last_key = _pos_key(last.stmt)
+    if any(last_key < p < key for p in side_effects):
+        return False
+
     anc = set(uso.iterancestors())
     return all(c in anc for c in _X_COND_ANC(last.stmt))
 
@@ -163,8 +169,8 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
     return_sources, active_output_sources, out_spec_table = _rule_pre(rule, sources, adapter)
 
     source_origin_pos = {}     # (var, id(scope)) -> posizione della prima call che riempie var
-    source_call_nodes = set()  # call-sorgente: gli usi al loro interno non sono usi reali
-
+    side_effect_pos = {}       # (var, id(scope)) -> {posizioni delle call che la taintano per side-effect}
+    source_call_nodes = set()
 
 
     if active_output_sources:
@@ -201,6 +207,7 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
 
                 key = (out_var, id(call_scope))
                 pos = _pos_key(call)
+                side_effect_pos.setdefault(key, set()).add(pos)
                 if key not in source_origin_pos:
                     # prima volta che vediamo questa variabile: la registriamo una sola volta
                     tainted_vars_with_scope.append((out_var, call_scope))
@@ -212,20 +219,24 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
     null_seed = "null_literal" in sources
     literal_seed = "string_literal" in sources
 
-    for info in assign_infos:
+    def _is_seed(info) -> bool:
+        """L'assegnazione introduce taint per QUESTA regola?
+        Unica definizione di 'cosa e' taint', usata sia dal seeding sia dal kill."""
         if info.rhs is None:
-            continue
+            return False
         if null_seed and adapter.is_none_literal("".join(info.rhs.itertext())):
-            tainted_vars_with_scope.append((info.var, info.scope))
-            continue
+            return True
         if literal_seed and _is_hardcoded_string(info.rhs, adapter):
-            tainted_vars_with_scope.append((info.var, info.scope))
-            continue
-        if any(
+            return True
+        return any(
             source_present(return_sources, n, adapter=adapter, imports=imports)
             for n in info.rhs_all
-        ):
+        )
+
+    for info in assign_infos:
+        if _is_seed(info):
             tainted_vars_with_scope.append((info.var, info.scope))
+
 
     if not tainted_vars_with_scope:
         return findings
@@ -313,6 +324,8 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
 
                         if spec.get("out_receiver"):
                             recv = adapter.call_receiver_name(call, NS)
+                            if recv:
+                                side_effect_pos.setdefault((recv, scope_id), set()).add(_pos_key(call))
                             if recv and recv not in already_tainted:
                                 tainted_vars_with_scope.append((recv, scope_node))
                                 already_tainted.add(recv)
@@ -323,6 +336,10 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
                                 continue
                             out_var = expand_macro_name(
                                 adapter.extract_output_buffer_name(args[out_idx], NS) or "", macros) or None
+                            if not out_var:
+                                continue
+                            side_effect_pos.setdefault((out_var, scope_id), set()).add(_pos_key(call)) 
+
                             if out_var and out_var not in already_tainted:
                                 tainted_vars_with_scope.append((out_var, scope_node))
                                 already_tainted.add(out_var)
@@ -385,34 +402,41 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
             _unique.append((_var, _scope))
     tainted_vars_with_scope = _unique
 
-    def _null_kill(i):
-        """Kill-by-reassign per null. (x = new Foo() blocca il taint; x = map.get(k) no, perché può restituire null)"""
-        return (not adapter.is_none_literal("".join(i.rhs.itertext()))
-                and not any(source_present(return_sources, n, adapter=adapter, imports=imports)
-                            for n in i.rhs_all))
-
-    def _literal_kill(i):
-        """Kill-by-reassign per letterali hardcoded. (pwd = os.environ["P"] blocca il taint; pwd = "abc" no)."""
-        return not _is_hardcoded_string(i.rhs, adapter)
-
     tainted_names_by_scope = {}
     for _v, _s in tainted_vars_with_scope:
         tainted_names_by_scope.setdefault(id(_s), set()).add(_v)
 
+    def _root(t):
+        """Oggetto base di un accesso a membro: 'myUnion.unionFirst' / 'p->x' / 'a[i].b' -> 'myUnion' / 'p' / 'a'."""
+        return adapter.normalize_member_access(t).split("[")[0].split(".")[0]
+
+    tainted_roots_by_scope = {
+        sid: {_root(v) for v in names} for sid, names in tainted_names_by_scope.items()
+    }
+
+    rule_propagates  = rule.get("propagate_taint", True)
+    def _clean_rhs_kill(i):
+        """Strong update: RHS non e' un seed e non legge oggetti taintati
+        (field-insensitive: un campo taintato rende sospetto l'intero oggetto)."""
+        if _is_seed(i):
+            return False
+        if not rule_propagates :
+            return True
+        roots = tainted_roots_by_scope.get(id(i.scope), set())
+        return not any(_root(expand_macro_name(t, macros)) in roots
+                       for t, _ in i.rhs_names)
+
     def _sanitizer_kill(i):
-        """"Kill-by-reassign per sanificazione. (x = int(x) blocca il taint; x = int(a) + b no)"""
         return _rhs_fully_sanitized(
             i, tainted_names_by_scope.get(id(i.scope), set()),
             sanitizers, adapter, imports)
-
+    
     # Criteri di "kill by reassign" attivi per QUESTA regola, decisi una volta sola.
     # Tutti guardano la stessa "ultima assegnazione che domina l'uso": basta un solo
     killers = []
-    if rule.get("null_reassign_kills_taint", False):
-        killers.append(_null_kill)
-    if rule.get("literal_reassign_kills_taint", False):
-        killers.append(_literal_kill)
-    if rule.get("sanitizer_kills_taint", True):      # default ON, disattivabile nella regola
+    if rule.get("clean_reassign_kills_taint", True):
+        killers.append(_clean_rhs_kill)
+    if rule.get("sanitizer_kills_taint", True):
         killers.append(_sanitizer_kill)
     kill_any = (lambda i: any(k(i) for k in killers)) if killers else None
 
@@ -478,7 +502,8 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
                 continue
 
             if kill_any is not None and _killed_by_reassign(
-                    uso, var, scope_node, assign_infos, kill_any):
+                    uso, var, scope_node, assign_infos, kill_any,
+                    side_effects=side_effect_pos.get((var, id(scope_node)), ())):
                 continue
 
             if is_sanitized(uso, sanitizers, adapter, imports):
