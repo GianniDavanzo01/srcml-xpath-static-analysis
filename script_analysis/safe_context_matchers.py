@@ -754,6 +754,8 @@ def _safe_context_all_args_are_literals(node, spec: dict, var_name, adapter, imp
 
     # 2. Iterazione strutturale sui singoli argomenti (nodi <src:argument>)
     arguments = arg_lists[0].xpath("./src:argument", namespaces=NS)
+    if not arguments:
+        return False
 
     for arg in arguments:
         # A. Controllo chiamate annidate: se esiste un nodo <src:call> e' subito dinamico

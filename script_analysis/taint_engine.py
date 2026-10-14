@@ -48,7 +48,7 @@ def _rule_pre(rule, sources, adapter):
         table = adapter.taint_source_output_args()
         return_sources = [
             s for s in sources
-            if s not in PSEUDO_SOURCES
+            if s not in PSEUDO_SOURCES and not s.startswith("@")
             and not any(
                 call_matches(k, s, adapter) and not table[k].get("return_tainted", False)
                 for k in table
@@ -56,7 +56,7 @@ def _rule_pre(rule, sources, adapter):
         ]
         active = {
             s for s in sources
-            if s not in PSEUDO_SOURCES
+            if s not in PSEUDO_SOURCES and not s.startswith("@")
             and any(call_matches(k, s, adapter) for k in table)
         }
         spec_by_source = CallTable(
@@ -145,11 +145,18 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
 
     tainted_vars_with_scope = []
 
+
+    annot_sources = {s[1:] for s in sources if isinstance(s, str) and s.startswith("@")}
+
     # Parametri di funzione
-    if "function_parameters" in sources:
+    if "function_parameters" in sources or annot_sources:
         fn = " or ".join(f"self::src:{t}" for t in adapter.function_tags())
         xp = f".//*[{fn}]/src:parameter_list/src:parameter"
         for param in tree.xpath(xp, namespaces=NS):
+            if "function_parameters" not in sources:
+                names = adapter.parameter_annotation_names(param, NS)
+                if not annot_sources.intersection(names):
+                    continue
             name_node = adapter.get_parameter_name_node(param, NS)
             if name_node is None:
                 continue
@@ -159,6 +166,7 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
                 tainted_vars_with_scope.append(
                     (param_name, scope if scope is not None else tree)
                 )
+
     # Variabili per descrivere le eccezioni
     if "exception_variable" in sources:
         for var_name, scope_node in adapter.find_exception_bindings(tree, NS):

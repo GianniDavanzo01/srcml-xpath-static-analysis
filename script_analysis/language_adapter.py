@@ -402,6 +402,11 @@ class LanguageAdapter(ABC):
             return None
         return name_text(parts[0]) or None
 
+
+    def parameter_annotation_names(self, param_node, ns) -> list:
+        """Nomi (semplici) delle annotazioni/decoratori di un parametro. Default: nessuno."""
+        return []
+
 # ---------------------------------------------------------------------- #
 # Implementazione Python
 # ---------------------------------------------------------------------- #
@@ -1015,6 +1020,7 @@ class JavaAdapter(LanguageAdapter):
     def resolve_call_name(self, call_node, ns, imports, _depth: int = 0) -> str:
         if _depth > self._MAX_RESOLVE_DEPTH:
             return None
+
         name_nodes = call_node.xpath("./src:name", namespaces=ns)
         if not name_nodes:
             return None
@@ -1024,7 +1030,7 @@ class JavaAdapter(LanguageAdapter):
         if not name_nodes[0].xpath("./src:name", namespaces=ns):   # nome semplice
             recv = self._chain_receiver(call_node, ns)
             if recv is not None:
-                recv_name = self.resolve_call_name(recv, ns, imports)
+                recv_name = self.resolve_call_name(recv, ns, imports, _depth + 1)
                 if recv_name:
                     return f"{recv_name}.{raw_name}"
 
@@ -1036,22 +1042,19 @@ class JavaAdapter(LanguageAdapter):
             method_name = "".join(parts[-1].itertext()).strip()
             
             xpath_query_local = (
-                    f"{self.scope_axis(('class', 'unit'))}"
-                    f"//src:decl[src:name[text()='{var_name}']]"
+                f"{self.scope_axis(('class', 'unit'))}"
+                f"//src:decl[src:name[text()='{var_name}']]"
             )
             
             decls = call_node.xpath(xpath_query_local, namespaces=ns)
-            
 
             # --- 2. Fallback sui Parametri (Se la variabile non è nel blocco) ---
             if not decls:
-
                 xpath_query_param = (
                     f"{self.scope_axis()}//src:parameter_list"
                     f"//src:decl[src:name[text()='{var_name}']]"
                 )
                 decls = call_node.xpath(xpath_query_param, namespaces=ns)
-                
 
             # 3. Fallback: campi della classe che racchiude (se la call e' dentro un metodo)
             if not decls:
@@ -1072,7 +1075,9 @@ class JavaAdapter(LanguageAdapter):
                 while decl_node is not None and id(decl_node) not in seen:
                     seen.add(id(decl_node))
 
-                    type_nodes = decl_node.xpath("./src:type//src:name", namespaces=ns)
+                    type_nodes = decl_node.xpath(
+                        "./src:type//src:name[not(ancestor::src:annotation)]", namespaces=ns
+                    )
                     if type_nodes:
                         var_type = "".join(type_nodes[0].itertext()).strip()
                         # Tronca la stringa alla prima parentesi angolare evita di considerare: Map<String<String>
@@ -1098,7 +1103,6 @@ class JavaAdapter(LanguageAdapter):
                 if var_type:
                     return self._canonicalize(f"{var_type}.{method_name}", imports)
                 
-        # return raw_name
         return self._canonicalize(raw_name, imports)
 
     def string_formatting_operator_roles(self) -> dict:
@@ -1276,7 +1280,9 @@ class JavaAdapter(LanguageAdapter):
             seen.add(id(decl))
             t = decl.xpath("./src:type", namespaces=ns)
             if t and t[0].get("ref") != "prev":
-                return "".join(t[0].itertext()).strip()
+                # Esclude eventuali annotazioni (es. @RequestParam("id") int -> int)
+                texts = t[0].xpath(".//text()[not(ancestor::src:annotation)]", namespaces=ns)
+                return "".join(texts).strip()
             prev = decl.xpath("preceding-sibling::src:decl[1]", namespaces=ns)
             decl = prev[0] if prev else None
         return None
@@ -1287,6 +1293,15 @@ class JavaAdapter(LanguageAdapter):
 
 
     #FINE SEZIONE CWE 595-----------------------------------------------------------------------------
+
+
+    def parameter_annotation_names(self, param_node, ns) -> list:
+        out = []
+        for n in param_node.xpath("./src:decl/src:type/src:annotation/src:name[1]", namespaces=ns):
+            full = name_text(n)
+            if full:
+                out.append(full.split(".")[-1])    # org.x.RequestParam -> RequestParam
+        return out
 
 
 
