@@ -238,6 +238,37 @@ _assign_pairs_cache = {}
 _scope_index_cache = {}
 _dead_code_cache = {}
 _branch_dead_cache = {}
+_decl_index_cache = {}
+_field_decl_index_cache = {}
+
+_ALL_DECLS_XP = etree.XPath(".//src:decl", namespaces=NS)
+_CLASS_FIELDS_XP = etree.XPath("./src:block/src:decl_stmt/src:decl", namespaces=NS)
+_DECL_DIRECT_NAME_XP = etree.XPath("./src:name", namespaces=NS)
+
+def get_decl_index(container_node) -> dict:
+    """Mappa {testo_nome: [nodi <decl>]} per tutti i <decl> dentro container_node.
+    Identico a container_node.xpath('.//src:decl[src:name[text()=$v]]'), ma O(1)."""
+    idx = _decl_index_cache.get(container_node)
+    if idx is None:
+        idx = defaultdict(list)
+        for d in _ALL_DECLS_XP(container_node):
+            for n in _DECL_DIRECT_NAME_XP(d):
+                if n.text:
+                    idx[n.text].append(d)
+        _decl_index_cache[container_node] = idx
+    return idx
+
+def get_class_field_index(class_node) -> dict:
+    """Mappa {testo_nome: [nodi <decl>]} per i campi diretti di una <class>."""
+    idx = _field_decl_index_cache.get(class_node)
+    if idx is None:
+        idx = defaultdict(list)
+        for d in _CLASS_FIELDS_XP(class_node):
+            for n in _DECL_DIRECT_NAME_XP(d):
+                if n.text:
+                    idx[n.text].append(d)
+        _field_decl_index_cache[class_node] = idx
+    return idx
 
 _matcher_cache = {} #Non deve essere svuotata, dipende solo da regola ed adapter, NON dalla Unit
 def _get_matcher(patterns, adapter):
@@ -255,6 +286,8 @@ def reset_caches():
     _dead_code_cache.clear() 
     _branch_dead_cache.clear()
     _macro_map_cache.clear()
+    _decl_index_cache.clear()
+    _field_decl_index_cache.clear()
 
 
 

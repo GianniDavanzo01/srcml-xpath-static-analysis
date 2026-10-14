@@ -36,6 +36,34 @@ def _decl_name_xp(adapter):
     return x
 
 
+_PARAM_XP = {}
+_UNIT_PARAMS_CACHE = {}   # id(tree) -> (tree, [(param_name, scope, frozenset(annots)), ...])
+
+def _get_unit_params(tree, adapter):
+    ent = _UNIT_PARAMS_CACHE.get(id(tree))
+    if ent is not None and ent[0] is tree:
+        return ent[1]
+
+    xp = _PARAM_XP.get(adapter.name)
+    if xp is None:
+        fn = " or ".join(f"self::src:{t}" for t in adapter.function_tags())
+        xp = _PARAM_XP[adapter.name] = _X(f".//*[{fn}]/src:parameter_list/src:parameter")
+
+    items = []
+    for param in xp(tree):
+        name_node = adapter.get_parameter_name_node(param, NS)
+        if name_node is None:
+            continue
+        param_name = name_text(name_node)
+        if not param_name:
+            continue
+        scope = enclosing_scope(param, adapter)
+        annots = frozenset(adapter.parameter_annotation_names(param, NS))
+        items.append((param_name, scope if scope is not None else tree, annots))
+
+    _UNIT_PARAMS_CACHE[id(tree)] = (tree, items)
+    return items
+
 
 PSEUDO_SOURCES = {"function_parameters", "exception_variable","null_literal", "string_literal"}
 
@@ -148,24 +176,12 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
 
     annot_sources = {s[1:] for s in sources if isinstance(s, str) and s.startswith("@")}
 
-    # Parametri di funzione
+    # Parametri di funzione (pre-indicizzati e cachati una sola volta per unit)
     if "function_parameters" in sources or annot_sources:
-        fn = " or ".join(f"self::src:{t}" for t in adapter.function_tags())
-        xp = f".//*[{fn}]/src:parameter_list/src:parameter"
-        for param in tree.xpath(xp, namespaces=NS):
-            if "function_parameters" not in sources:
-                names = adapter.parameter_annotation_names(param, NS)
-                if not annot_sources.intersection(names):
-                    continue
-            name_node = adapter.get_parameter_name_node(param, NS)
-            if name_node is None:
-                continue
-            param_name = name_text(name_node)
-            if param_name:
-                scope = enclosing_scope(param, adapter)
-                tainted_vars_with_scope.append(
-                    (param_name, scope if scope is not None else tree)
-                )
+        all_params = "function_parameters" in sources
+        for param_name, scope, annots in _get_unit_params(tree, adapter):
+            if all_params or (annots and not annot_sources.isdisjoint(annots)):
+                tainted_vars_with_scope.append((param_name, scope))
 
     # Variabili per descrivere le eccezioni
     if "exception_variable" in sources:

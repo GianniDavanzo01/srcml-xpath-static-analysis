@@ -23,7 +23,7 @@ from dataclasses import dataclass
 
 from lxml import etree
 
-from common import macro_map, expand_macro_name, _pos_key, find_assignments, enclosing_scope, name_text    
+from common import macro_map, expand_macro_name, _pos_key, find_assignments, enclosing_scope, name_text, get_decl_index, get_class_field_index
 
 
 _MACRO_ALIAS_RE = re.compile(r"^\s*\(?\s*([A-Za-z_]\w*)\s*\)?\s*$")  # #define FOPEN fopen
@@ -871,6 +871,31 @@ class JavaAdapter(LanguageAdapter):
     name = "java"
 
 
+    _SCOPE_CLASS_UNIT_XP = etree.XPath(
+        "ancestor::*[self::src:function or self::src:constructor or self::src:class or self::src:unit][1]",
+        namespaces={"src": "http://www.srcML.org/srcML/src"},
+    )
+    _ANC_CLASS_XP = etree.XPath(
+        "ancestor::src:class[1]",
+        namespaces={"src": "http://www.srcML.org/srcML/src"},
+    )
+
+    def _find_decls(self, node, var_name: str, include_fields: bool = False) -> list:
+        # 1. Scope locale + parametri (function/constructor/class/unit)
+        containers = self._SCOPE_CLASS_UNIT_XP(node)
+        if containers:
+            decls = get_decl_index(containers[0]).get(var_name)
+            if decls:
+                return decls
+        # 2. Fallback sui campi della classe che racchiude il metodo
+        if include_fields:
+            classes = self._ANC_CLASS_XP(node)
+            if classes:
+                decls = get_class_field_index(classes[0]).get(var_name)
+                if decls:
+                    return decls
+        return []
+
     def _canonicalize(self, name, imports):
         head, _, rest = name.partition(".")
         for b in imports or []:
@@ -1041,28 +1066,30 @@ class JavaAdapter(LanguageAdapter):
             var_name = "".join(parts[0].itertext()).strip()
             method_name = "".join(parts[-1].itertext()).strip()
             
-            xpath_query_local = (
-                f"{self.scope_axis(('class', 'unit'))}"
-                f"//src:decl[src:name[text()='{var_name}']]"
-            )
+            # xpath_query_local = (
+            #     f"{self.scope_axis(('class', 'unit'))}"
+            #     f"//src:decl[src:name[text()='{var_name}']]"
+            # )
             
-            decls = call_node.xpath(xpath_query_local, namespaces=ns)
+            # decls = call_node.xpath(xpath_query_local, namespaces=ns)
 
-            # --- 2. Fallback sui Parametri (Se la variabile non è nel blocco) ---
-            if not decls:
-                xpath_query_param = (
-                    f"{self.scope_axis()}//src:parameter_list"
-                    f"//src:decl[src:name[text()='{var_name}']]"
-                )
-                decls = call_node.xpath(xpath_query_param, namespaces=ns)
+            # # --- 2. Fallback sui Parametri (Se la variabile non è nel blocco) ---
+            # if not decls:
+            #     xpath_query_param = (
+            #         f"{self.scope_axis()}//src:parameter_list"
+            #         f"//src:decl[src:name[text()='{var_name}']]"
+            #     )
+            #     decls = call_node.xpath(xpath_query_param, namespaces=ns)
 
-            # 3. Fallback: campi della classe che racchiude (se la call e' dentro un metodo)
-            if not decls:
-                xpath_query_field = (
-                    f"ancestor::src:class[1]/src:block/src:decl_stmt"
-                    f"/src:decl[src:name[text()='{var_name}']]"
-                )
-                decls = call_node.xpath(xpath_query_field, namespaces=ns)
+            # # 3. Fallback: campi della classe che racchiude (se la call e' dentro un metodo)
+            # if not decls:
+            #     xpath_query_field = (
+            #         f"ancestor::src:class[1]/src:block/src:decl_stmt"
+            #         f"/src:decl[src:name[text()='{var_name}']]"
+            #     )
+            #     decls = call_node.xpath(xpath_query_field, namespaces=ns)
+
+            decls = self._find_decls(call_node, var_name, include_fields=True)
     
             if decls:
                 decl_node = decls[-1]
@@ -1265,10 +1292,11 @@ class JavaAdapter(LanguageAdapter):
         return super().resolve_operand_type(node, ns)
 
     def resolve_variable_type(self, name_node, var_name, ns):
-        decls = name_node.xpath(
-            f"{self.scope_axis(('class', 'unit'))}//src:decl[src:name[text()=$v]]",
-            namespaces=ns, v=var_name,
-        )
+        # decls = name_node.xpath(
+        #     f"{self.scope_axis(('class', 'unit'))}//src:decl[src:name[text()=$v]]",
+        #     namespaces=ns, v=var_name,
+        # )
+        decls = self._find_decls(name_node, var_name, include_fields=False)
         if not decls:
             return None
         key = _pos_key(name_node)
@@ -1346,6 +1374,19 @@ def _skip_leading_casts(nodes):
 
 class CAdapter(LanguageAdapter):
     name = "c"
+
+    _SCOPE_UNIT_XP = etree.XPath(
+        "ancestor::*[self::src:function or self::src:unit][1]",
+        namespaces={"src": "http://www.srcML.org/srcML/src"},
+    )
+
+    def _find_decls(self, node, var_name: str) -> list:
+        containers = self._SCOPE_UNIT_XP(node)
+        if containers:
+            decls = get_decl_index(containers[0]).get(var_name)
+            if decls:
+                return decls
+        return []
 
 
     def potential_assignment_xpath(self) -> str:
@@ -1491,19 +1532,20 @@ class CAdapter(LanguageAdapter):
             var_name = "".join(parts[0].itertext()).strip()
             method_name = "".join(parts[-1].itertext()).strip()
 
-            xpath_query_local = (
-                f"{self.scope_axis(('unit',))}"
-                f"//src:decl[src:name[text()='{var_name}']]"
-            )
+            # xpath_query_local = (
+            #     f"{self.scope_axis(('unit',))}"
+            #     f"//src:decl[src:name[text()='{var_name}']]"
+            # )
 
-            decls = call_node.xpath(xpath_query_local, namespaces=ns)
+            # decls = call_node.xpath(xpath_query_local, namespaces=ns)
 
-            if not decls:
-                xpath_query_param = (
-                    f"{self.scope_axis()}//src:parameter_list"
-                    f"//src:decl[src:name[text()='{var_name}']]"
-                )
-                decls = call_node.xpath(xpath_query_param, namespaces=ns)
+            # if not decls:
+            #     xpath_query_param = (
+            #         f"{self.scope_axis()}//src:parameter_list"
+            #         f"//src:decl[src:name[text()='{var_name}']]"
+            #     )
+            #     decls = call_node.xpath(xpath_query_param, namespaces=ns)
+            decls = self._find_decls(call_node, var_name)
 
             if decls:
                 decl_node = decls[-1]
@@ -1615,18 +1657,21 @@ class CAdapter(LanguageAdapter):
         """Cerca la dichiarazione (locale o parametro) di var_name e ritorna
         il suo tipo dichiarato, es. 'char *'."""
 
-        xpath_query_local = (
-                f"{self.scope_axis(('unit',))}"
-                f"//src:decl[src:name[text()='{var_name}']]"
-            )
+        # xpath_query_local = (
+        #         f"{self.scope_axis(('unit',))}"
+        #         f"//src:decl[src:name[text()='{var_name}']]"
+        #     )
 
-        decls = name_node.xpath(xpath_query_local, namespaces=ns)
-        if not decls:
-            xpath_query_param = (
-                f"{self.scope_axis()}//src:parameter_list"
-                f"//src:decl[src:name[text()='{var_name}']]"
-            )
-            decls = name_node.xpath(xpath_query_param, namespaces=ns)
+        # decls = name_node.xpath(xpath_query_local, namespaces=ns)
+        # if not decls:
+        #     xpath_query_param = (
+        #         f"{self.scope_axis()}//src:parameter_list"
+        #         f"//src:decl[src:name[text()='{var_name}']]"
+        #     )
+        #     decls = name_node.xpath(xpath_query_param, namespaces=ns)
+
+        decls = self._find_decls(name_node, var_name)
+
         if not decls:
             return None
 
@@ -1921,7 +1966,7 @@ class CppAdapter(CAdapter):
     # ------------------------------------------------------------------ #
 
     def resolve_call_name(self, call_node, ns, imports, _depth: int = 0) -> str:
-        if _depth > 16:
+        if _depth > 10:
             return None
         name_nodes = call_node.xpath("./src:name", namespaces=ns)
         if not name_nodes:
