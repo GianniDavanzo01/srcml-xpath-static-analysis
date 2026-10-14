@@ -9,7 +9,7 @@ safe-context o un sanitizer.
 """
 
 from common import NS, build_finding, is_sanitized, source_present, get_call_name, _pos_key, name_text, get_scope_index,  \
-    enclosing_scope, in_opaque_tag, macro_map, expand_macro_name, call_matches, is_dead_code, CallTable, _is_pure_literal_expr
+    enclosing_scope, in_opaque_tag, macro_map, expand_macro_name, call_matches, is_dead_code, CallTable, _is_pure_literal_expr, _get_matcher
 from sink_matchers import matches_any_sink
 from safe_context_matchers import is_in_safe_context
 
@@ -61,6 +61,7 @@ def _get_unit_params(tree, adapter):
         annots = frozenset(adapter.parameter_annotation_names(param, NS))
         items.append((param_name, scope if scope is not None else tree, annots))
 
+    _UNIT_PARAMS_CACHE.clear()
     _UNIT_PARAMS_CACHE[id(tree)] = (tree, items)
     return items
 
@@ -159,6 +160,117 @@ def _rhs_fully_sanitized(info, tainted_names, sanitizers, adapter, imports) -> b
     return saw_sanitized
 
 
+_X_NAME_PARTS = _X("./src:name")
+
+# <name> "di valore" nelle argument_list: composti (request.args['x'], request.form)
+# o semplici, esclusi i nomi di call (sono <call>/<name>), parametri, tipi e annotazioni.
+_X_VALUE_NAMES = _X(
+    ".//src:argument_list//src:name"
+    "[not(parent::src:name) and not(parent::src:call)]"
+    "[not(ancestor::src:parameter or ancestor::src:type or ancestor::src:annotation)]"
+)
+
+_UNIT_NAMES_CACHE = {}   # id(tree) -> (tree, [(nome_canonico, nodo), ...])
+
+def _get_unit_value_names(tree, adapter, imports):
+    """Nomi puntati canonici (già risolti con gli import) dei valori usati come argomento,
+    calcolati UNA volta per unit e condivisi da tutte le regole taint."""
+    ent = _UNIT_NAMES_CACHE.get(id(tree))
+    if ent is not None and ent[0] is tree:
+        return ent[1]
+
+    items = []
+    for n in _X_VALUE_NAMES(tree):
+        parts = _X_NAME_PARTS(n)
+        raw = ".".join(name_text(p) for p in parts) if parts else name_text(n)
+        dotted = adapter.resolve_name_text(raw, imports)
+        # solo nomi qualificati: un nome semplice come 'input' è quasi sempre
+        # una variabile locale, non la source
+        if dotted and "." in dotted:
+            items.append((dotted, n))
+
+    _UNIT_NAMES_CACHE.clear()            # una sola unit in cache: niente riferimenti a alberi vecchi
+    _UNIT_NAMES_CACHE[id(tree)] = (tree, items)
+    return items
+
+
+_INLINE_SINK_TYPES = {"call_with_var_arg"}
+
+
+def _inline_source_findings(rule, tree, ctx, adapter, imports, return_sources, sinks,
+                            sanitizers, safe_contexts, source_call_nodes) -> list:
+    """Source 'inline': la source compare direttamente nell'argument_list di una call-sink
+    (anche annidata), senza variabile intermedia. Due forme, un solo insieme di filtri:
+        call-source:  redirect(request.args.get('next') or url_for('login'))
+        name-source:  os.system(request.form['cmd'])
+    `uso` è il nodo <call> (call-source) o il <name> composto (name-source): in entrambi i
+    casi sta dentro l'argument_list del sink, quindi _sink_call_with_var_arg funziona
+    senza modifiche."""
+    call_sinks = [s for s in sinks
+                  if isinstance(s, dict) and s.get("type") in _INLINE_SINK_TYPES]
+    if not return_sources or not call_sinks:
+        return []
+
+    matcher = _get_matcher(return_sources, adapter)
+    only_through = rule.get("propagate_only_through_calls") or []
+    sink_calls = [p for s in call_sinks for p in s.get("call", [])]
+
+    # stesse call che bloccano il taint nel passo di propagazione
+    block = list(sanitizers)
+    if not rule.get("ignore_taint_block_functions", False):
+        block += [f for f in adapter.taint_block_functions() if f not in only_through]
+
+    def _allowlist_ok(anc_calls) -> bool:
+        """Con allowlist: risalendo dalla source, la prima call NON ammessa deve essere il sink."""
+        if not only_through:
+            return True
+        for c in reversed(anc_calls):                 # dalla più interna alla più esterna
+            cn = get_call_name(c, adapter, imports)
+            if cn and any(call_matches(cn, a, adapter) for a in only_through):
+                continue
+            return bool(cn) and any(call_matches(cn, p, adapter) for p in sink_calls)
+        return False
+
+    # --- candidati: (uso, nome canonico, tipo) ---------------------------------
+    candidates = []
+    for call in ctx.calls:
+        cname = get_call_name(call, adapter, imports)
+        if cname and matcher(cname):
+            candidates.append((call, cname, "call"))
+    for dotted, n in _get_unit_value_names(tree, adapter, imports):
+        if matcher(dotted) and n not in ctx.assign_lhs:
+            candidates.append((n, dotted, "name"))
+
+    # --- filtri comuni ---------------------------------------------------------
+    out, seen = [], set()
+    for uso, label, kind in candidates:
+        anc_calls = _X_ANC_CALL(uso)          # antenati call, dal più esterno al più interno
+        if not anc_calls:
+            continue                          # nessuna call lo racchiude: non può essere argomento di un sink
+        if is_dead_code(uso, adapter) or in_opaque_tag(uso, adapter):
+            continue
+        # annidata dentro una call-source per side-effect: non è un uso reale
+        if source_call_nodes and any(c in source_call_nodes for c in anc_calls):
+            continue
+        if not _allowlist_ok(anc_calls):
+            continue
+        if not matches_any_sink(uso, call_sinks, [], adapter, imports):
+            continue
+        if is_in_safe_context(uso, safe_contexts, None, adapter, imports):
+            continue
+        if is_sanitized(uso, block, adapter, imports):
+            continue
+
+        stmt = _X_POS_ANC(uso)
+        f = build_finding(rule, stmt[0] if stmt else uso,
+                          extra={"tainted_variable": label, "source_kind": f"inline-{kind}"})
+        key = (f["line"], f["snippet"])
+        if key not in seen:
+            seen.add(key)
+            out.append(f)
+    return out
+
+
 def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
     macros = macro_map(imports)
 
@@ -247,6 +359,11 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
                 elif pos < source_origin_pos[key]:
                     source_origin_pos[key] = pos
 
+    # Source inline (call-source e name-source direttamente dentro il sink)
+    inline_findings = _inline_source_findings(
+        rule, tree, ctx, adapter, imports, return_sources, sinks,
+        sanitizers, safe_contexts, source_call_nodes)
+
     # Seed: assegnazioni da source. lhs/scope sono gia' pronti.
     null_seed = "null_literal" in sources
     literal_seed = "string_literal" in sources
@@ -271,7 +388,7 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
 
 
     if not tainted_vars_with_scope:
-        return findings
+        return inline_findings
     
     # Passo 2: propagazione a catena
     if rule.get("propagate_taint", True):
@@ -546,4 +663,8 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
 
             findings.append(build_finding(rule, nodo_snippet, extra={"tainted_variable": var}))
 
+    #De-duplicazione findings in-line
+    seen = {(f["line"], f["snippet"]) for f in findings}
+    findings.extend(f for f in inline_findings if (f["line"], f["snippet"]) not in seen)
+    
     return findings
