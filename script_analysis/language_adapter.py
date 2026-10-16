@@ -407,6 +407,10 @@ class LanguageAdapter(ABC):
         """Nomi (semplici) delle annotazioni/decoratori di un parametro. Default: nessuno."""
         return []
 
+    def is_implicit_receiver_param(self, param_node, ns) -> bool:
+        """True se il parametro è il ricevente implicito (self/cls): non è input esterno."""
+        return False
+
 # ---------------------------------------------------------------------- #
 # Implementazione Python
 # ---------------------------------------------------------------------- #
@@ -860,6 +864,21 @@ class PythonAdapter(LanguageAdapter):
 
     def is_identifier(self, text: str) -> bool:
         return text.isidentifier()
+
+
+    def is_implicit_receiver_param(self, param_node, ns) -> bool:
+        if param_node.get("type") in ("args", "kwargs"):
+            return False                      # *args / **kwargs sono input veri
+        plist = param_node.getparent()
+        first = plist.xpath("./src:parameter[1]", namespaces=ns)
+        if not first or first[0] is not param_node:
+            return False                      # solo il primo parametro
+        func = plist.getparent()
+        owner = func.xpath("ancestor::*[self::src:class or self::src:function][1]", namespaces=ns)
+        if not owner or not owner[0].tag.endswith("}class"):
+            return False                      # non è un metodo
+        # @staticmethod: il primo parametro è un argomento vero
+        return not func.xpath("./src:attribute//src:name[text()='staticmethod']", namespaces=ns)
 
 
 # ---------------------------------------------------------------------- #

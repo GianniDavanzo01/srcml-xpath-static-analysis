@@ -9,7 +9,8 @@ safe-context o un sanitizer.
 """
 
 from common import NS, build_finding, is_sanitized, source_present, get_call_name, _pos_key, name_text, get_scope_index,  \
-    enclosing_scope, in_opaque_tag, macro_map, expand_macro_name, call_matches, is_dead_code, CallTable, _is_pure_literal_expr, _get_matcher
+    enclosing_scope, in_opaque_tag, macro_map, expand_macro_name, call_matches, is_dead_code, CallTable, _get_matcher, \
+    _is_hardcoded_string
 from sink_matchers import matches_any_sink
 from safe_context_matchers import is_in_safe_context
 
@@ -51,6 +52,8 @@ def _get_unit_params(tree, adapter):
 
     items = []
     for param in xp(tree):
+        if adapter.is_implicit_receiver_param(param, NS):
+            continue 
         name_node = adapter.get_parameter_name_node(param, NS)
         if name_node is None:
             continue
@@ -109,14 +112,6 @@ _COND_ANCESTORS = (
     "self::src:try or self::src:catch or self::src:finally]"
 )
 _X_COND_ANC = _X(_COND_ANCESTORS)
-
-def _is_hardcoded_string(rhs, adapter) -> bool:
-    if not _is_pure_literal_expr(rhs):
-        return False
-    lits = rhs.xpath("self::src:literal[@type='string'] | .//src:literal[@type='string']",
-                     namespaces=NS)
-    return any(not adapter.is_interpolated_string("".join(l.itertext())) for l in lits)
-
 
 
 _INDEX_TAG = f"{{{NS['src']}}}index"

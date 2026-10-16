@@ -621,6 +621,15 @@ def _is_pure_literal_expr(node) -> bool:
     return bool(node.xpath("self::src:literal | .//src:literal", namespaces=NS))
 
 
+
+def _is_hardcoded_string(rhs, adapter) -> bool:
+    if not _is_pure_literal_expr(rhs):
+        return False
+    lits = rhs.xpath("self::src:literal[@type='string'] | .//src:literal[@type='string']",
+                     namespaces=NS)
+    return any(not adapter.is_interpolated_string("".join(l.itertext())) for l in lits)
+
+
 def find_assignments(scope_node, adapter, var_name: str | None = None) -> list:
     out = []
     for stmt, lhs, rhs in assignment_pairs(scope_node, adapter):

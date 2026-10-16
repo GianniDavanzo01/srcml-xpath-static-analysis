@@ -7,7 +7,7 @@ Motore Strutturale
 import re
 
 from common import NS, get_call_name, build_finding, call_arguments_match_ast, check_required_imports,_pos_key, find_assignments,_is_pure_literal_expr,  \
-assignment_pairs, enclosing_scope, node_snippet, call_matches, call_lookup_keys, function_nodes, scope_xp, name_text
+assignment_pairs, enclosing_scope, node_snippet, call_matches, call_lookup_keys, function_nodes, scope_xp, name_text, _is_hardcoded_string
 from safe_context_matchers import is_in_safe_context
 
 
@@ -579,6 +579,17 @@ def run_structural_rule(tree, rule: dict, adapter, imports, ctx) -> list:
             var_name = "".join(lhs.itertext()).strip()
             if name_regex.search(var_name) and not is_in_safe_context(lhs, safe_contexts, None, adapter, imports):
                 findings.append(build_finding(rule, assign))
+
+        # keyword argument: func(password='literal')
+        for arg in tree.xpath(".//src:call/src:argument_list/src:argument", namespaces=NS):
+            if not adapter.is_kwarg(arg, NS):
+                continue
+            key = arg.xpath("./src:name[1]", namespaces=NS)
+            val = arg.xpath("./src:expr[1]", namespaces=NS)
+            if key and val and name_regex.search(name_text(key[0])) \
+               and _is_hardcoded_string(val[0], adapter) \
+               and not is_in_safe_context(arg, safe_contexts, None, adapter, imports):
+                findings.append(build_finding(rule, arg))
  
         conditions = tree.xpath(".//src:if_stmt//src:condition", namespaces=NS)
         eq_op = adapter.equality_operator()
