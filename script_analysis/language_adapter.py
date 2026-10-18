@@ -411,6 +411,14 @@ class LanguageAdapter(ABC):
         """True se il parametro è il ricevente implicito (self/cls): non è input esterno."""
         return False
 
+
+    def is_numeric_type(self, type_text) -> bool:
+        """True se il tipo dichiarato non può trasportare una stringa arbitraria
+        (interi, float, booleani). Default: False (nel dubbio, resta taintato)."""
+        return False
+
+    def get_parameter_type(self, param_node, ns) -> str:
+        return self.get_parameter_name_and_type(param_node, ns)[1] or ""
 # ---------------------------------------------------------------------- #
 # Implementazione Python
 # ---------------------------------------------------------------------- #
@@ -845,7 +853,7 @@ class PythonAdapter(LanguageAdapter):
 
 
     def is_async_function(self, func_node, ns) -> bool:
-        return bool(func_node.xpath("./src:type/src:modifier[text()='async']", namespaces=ns))
+        return bool(func_node.xpath("./src:specifier[text()='async']", namespaces=ns))
 
 
     def is_true_constant(self, text: str) -> bool:
@@ -879,6 +887,9 @@ class PythonAdapter(LanguageAdapter):
             return False                      # non è un metodo
         # @staticmethod: il primo parametro è un argomento vero
         return not func.xpath("./src:attribute//src:name[text()='staticmethod']", namespaces=ns)
+
+    def is_numeric_type(self, type_text) -> bool:
+        return (type_text or "").strip() in ("int", "float", "bool", "complex")
 
 
 # ---------------------------------------------------------------------- #
@@ -1350,6 +1361,25 @@ class JavaAdapter(LanguageAdapter):
                 out.append(full.split(".")[-1])    # org.x.RequestParam -> RequestParam
         return out
 
+    
+    _NUMERIC_TYPES = {
+    "byte","short","int","long","float","double","boolean",
+    "Byte","Short","Integer","Long","Float","Double","Boolean",
+    "BigInteger","BigDecimal",
+    }
+
+    def get_parameter_type(self, param_node, ns) -> str:
+        t = param_node.xpath("./src:decl/src:type[1]", namespaces=ns)
+        if not t:
+            return ""
+        texts = t[0].xpath(".//text()[not(ancestor::src:annotation)]", namespaces=ns)
+        return "".join(texts).strip()
+
+    def is_numeric_type(self, type_text) -> bool:
+        if not type_text:
+            return False
+        t = re.sub(r"\b(final|static)\b", "", type_text).strip()
+        return t in self._NUMERIC_TYPES      # "Long[]" e "List<Long>" restano non numerici
 
 
 # ---------------------------------------------------------------------- #
@@ -1551,19 +1581,6 @@ class CAdapter(LanguageAdapter):
             var_name = "".join(parts[0].itertext()).strip()
             method_name = "".join(parts[-1].itertext()).strip()
 
-            # xpath_query_local = (
-            #     f"{self.scope_axis(('unit',))}"
-            #     f"//src:decl[src:name[text()='{var_name}']]"
-            # )
-
-            # decls = call_node.xpath(xpath_query_local, namespaces=ns)
-
-            # if not decls:
-            #     xpath_query_param = (
-            #         f"{self.scope_axis()}//src:parameter_list"
-            #         f"//src:decl[src:name[text()='{var_name}']]"
-            #     )
-            #     decls = call_node.xpath(xpath_query_param, namespaces=ns)
             decls = self._find_decls(call_node, var_name)
 
             if decls:
@@ -1676,19 +1693,6 @@ class CAdapter(LanguageAdapter):
         """Cerca la dichiarazione (locale o parametro) di var_name e ritorna
         il suo tipo dichiarato, es. 'char *'."""
 
-        # xpath_query_local = (
-        #         f"{self.scope_axis(('unit',))}"
-        #         f"//src:decl[src:name[text()='{var_name}']]"
-        #     )
-
-        # decls = name_node.xpath(xpath_query_local, namespaces=ns)
-        # if not decls:
-        #     xpath_query_param = (
-        #         f"{self.scope_axis()}//src:parameter_list"
-        #         f"//src:decl[src:name[text()='{var_name}']]"
-        #     )
-        #     decls = name_node.xpath(xpath_query_param, namespaces=ns)
-
         decls = self._find_decls(name_node, var_name)
 
         if not decls:
@@ -1785,6 +1789,18 @@ class CAdapter(LanguageAdapter):
 
     def is_false_constant(self, text: str) -> bool:
         return text.strip() == "0" or super().is_false_constant(text)
+
+
+    _C_NUMERIC_WORDS = {"char","int","long","short","unsigned","signed","float","double",
+                        "size_t","ssize_t","uint8_t","uint16_t","uint32_t","uint64_t",
+                        "int8_t","int16_t","int32_t","int64_t","const","bool"}
+
+    def is_numeric_type(self, type_text) -> bool:
+        if not type_text or "*" in type_text or "[" in type_text:
+            return False
+        words = type_text.split()
+        # 'char' da solo è un tipo scalare, ma 'char *' o 'char[]' no (già esclusi sopra)
+        return bool(words) and all(w in self._C_NUMERIC_WORDS for w in words)
 
 
     _CPP_NS = {"cpp": "http://www.srcML.org/srcML/cpp"}

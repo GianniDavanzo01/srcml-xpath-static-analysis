@@ -42,6 +42,7 @@ _UNIT_PARAMS_CACHE = {}   # id(tree) -> (tree, [(param_name, scope, frozenset(an
 
 def _get_unit_params(tree, adapter):
     ent = _UNIT_PARAMS_CACHE.get(id(tree))
+
     if ent is not None and ent[0] is tree:
         return ent[1]
 
@@ -61,8 +62,12 @@ def _get_unit_params(tree, adapter):
         if not param_name:
             continue
         scope = enclosing_scope(param, adapter)
+        # annots = frozenset(adapter.parameter_annotation_names(param, NS))
+        # items.append((param_name, scope if scope is not None else tree, annots))
         annots = frozenset(adapter.parameter_annotation_names(param, NS))
-        items.append((param_name, scope if scope is not None else tree, annots))
+        numeric = adapter.is_numeric_type(adapter.get_parameter_type(param, NS))
+        items.append((param_name, scope if scope is not None else tree, annots, numeric))
+        
 
     _UNIT_PARAMS_CACHE.clear()
     _UNIT_PARAMS_CACHE[id(tree)] = (tree, items)
@@ -283,10 +288,14 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
 
     annot_sources = {s[1:] for s in sources if isinstance(s, str) and s.startswith("@")}
 
+    numeric_safe = rule.get("numeric_types_sanitize", False)
+
     # Parametri di funzione (pre-indicizzati e cachati una sola volta per unit)
     if "function_parameters" in sources or annot_sources:
         all_params = "function_parameters" in sources
-        for param_name, scope, annots in _get_unit_params(tree, adapter):
+        for param_name, scope, annots, numeric in _get_unit_params(tree, adapter):
+            if numeric and numeric_safe:
+                continue
             if all_params or (annots and not annot_sources.isdisjoint(annots)):
                 tainted_vars_with_scope.append((param_name, scope))
 
@@ -564,11 +573,13 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
         (field-insensitive: un campo taintato rende sospetto l'intero oggetto)."""
         if _is_seed(i):
             return False
-        if not rule_propagates :
+        if not rule_propagates:
             return True
         roots = tainted_roots_by_scope.get(id(i.scope), set())
-        return not any(_root(expand_macro_name(t, macros)) in roots
-                       for t, _ in i.rhs_names)
+        if any(_root(expand_macro_name(t, macros)) in roots for t, _ in i.rhs_names):
+            return False
+        # variabili dentro stringhe interpolate: non sono nodi <name>, stanno in rhs_interp
+        return not any(_root(v) in roots for _, vs in i.rhs_interp for v in vs)
 
     def _sanitizer_kill(i):
         return _rhs_fully_sanitized(

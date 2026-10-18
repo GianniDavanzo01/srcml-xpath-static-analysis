@@ -471,11 +471,14 @@ def _safe_context_membership_check(node, spec: dict, var_name, adapter, imports)
         Verifica controllo di appartenenza (Allowlist).
     """
 
+    if (spec.get("require_var_left") or spec.get("require_var_right")) and not var_name:
+        return False
+
     search_scope = spec.get("scope", "function")
     target_for_assignments = _function_or_unit_scope(node, adapter)
     
     if search_scope == "enclosing":
-        conditions = node.xpath("ancestor::src:if_stmt[1]//src:condition", namespaces=NS)
+        conditions = node.xpath("ancestor::src:block/parent::src:if/src:condition", namespaces=NS)
     else:
         conditions = target_for_assignments.xpath(".//src:if_stmt//src:condition", namespaces=NS)
         
@@ -495,8 +498,11 @@ def _safe_context_membership_check(node, spec: dict, var_name, adapter, imports)
                 for stmt, _, _ in assignment_pairs(target_for_assignments, adapter)):
             return False
 
+    or_ops = adapter.logical_or_operator()
     # 2. Analisi Strutturale delle Condizioni
     for cond in conditions:
+        if any("".join(o.itertext()).strip() in or_ops for o in cond.xpath(".//src:operator", namespaces=NS)):
+            continue
         # L'adapter identifica il costrutto ('in' per Python, '.contains()' per Java)
         # Ritorna una lista di dizionari: {"lhs": nodo, "rhs": nodo, "is_negated": bool}
         membership_relations = adapter.extract_membership_relations(cond, NS)
