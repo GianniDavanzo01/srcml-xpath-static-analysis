@@ -910,6 +910,11 @@ class JavaAdapter(LanguageAdapter):
         namespaces={"src": "http://www.srcML.org/srcML/src"},
     )
 
+    _GENERIC_FREE_TEXT_XP = etree.XPath(
+        ".//text()[not(ancestor::src:argument_list[@type='generic'])]",
+        namespaces={"src": "http://www.srcML.org/srcML/src"},
+    )
+
     def _find_decls(self, node, var_name: str, include_fields: bool = False) -> list:
         # 1. Scope locale + parametri (function/constructor/class/unit)
         containers = self._SCOPE_CLASS_UNIT_XP(node)
@@ -1080,7 +1085,8 @@ class JavaAdapter(LanguageAdapter):
         if not name_nodes:
             return None
 
-        raw_name = "".join(name_nodes[0].itertext()).strip()
+        # raw_name = "".join(name_nodes[0].itertext()).strip()
+        raw_name = "".join(self._GENERIC_FREE_TEXT_XP(name_nodes[0])).strip()
 
         if not name_nodes[0].xpath("./src:name", namespaces=ns):   # nome semplice
             recv = self._chain_receiver(call_node, ns)
