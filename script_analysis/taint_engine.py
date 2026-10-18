@@ -387,6 +387,8 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
         )
 
     for info in assign_infos:
+        if numeric_safe and info.numeric_lhs:
+            continue
         if _is_seed(info):
             tainted_vars_with_scope.append((info.var, info.scope))
 
@@ -502,6 +504,8 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
             # per ricavare lhs/rhs/scope/rhs_all, sono gia' in `info`.
             for info in assign_infos:
                 if info.rhs is None:
+                    continue
+                if numeric_safe and info.numeric_lhs:
                     continue
                 var_name = info.var
                 scope_node = info.scope

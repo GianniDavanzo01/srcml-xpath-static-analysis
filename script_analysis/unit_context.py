@@ -2,7 +2,8 @@ from collections import namedtuple
 
 from common import NS, name_text, assignment_pairs, enclosing_scope, in_opaque_tag, is_dead_code
 
-AssignInfo = namedtuple("AssignInfo", "stmt lhs rhs var scope rhs_all rhs_names rhs_interp")
+AssignInfo = namedtuple("AssignInfo", "stmt lhs rhs var scope rhs_all rhs_names rhs_interp numeric_lhs")
+
 
 
 def build_assign_infos(assignments, adapter, unit):
@@ -45,7 +46,14 @@ def build_assign_infos(assignments, adapter, unit):
                 if adapter.is_interpolated_string(testo):
                     rhs_interp.append((lit, adapter.get_interpolated_variables(testo)))
 
-        infos.append(AssignInfo(stmt, lhs, rhs, name_text(lhs), scope, rhs_all, rhs_names, rhs_interp))
+        var = name_text(lhs)
+        # numerico solo se il nome non ha indici: 'char buf[256]' ha tipo 'char' ma è un buffer
+        numeric_lhs = (
+            not lhs.xpath("./src:index", namespaces=NS)
+            and adapter.is_numeric_type(adapter.resolve_variable_type(lhs, var, NS))
+        )
+
+        infos.append(AssignInfo(stmt, lhs, rhs, name_text(lhs), scope, rhs_all, rhs_names, rhs_interp, numeric_lhs))
     return infos
 
 class UnitContext:
