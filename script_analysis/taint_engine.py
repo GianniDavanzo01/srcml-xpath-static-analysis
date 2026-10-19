@@ -317,6 +317,31 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
     return_sources, active_output_sources, out_spec_table = _rule_pre(rule, sources, adapter)
 
     source_origin_pos = {}     # (var, id(scope)) -> posizione della prima call che riempie var
+
+    _X_LOOP_ANC = _X("ancestor::*[self::src:while or self::src:for or self::src:do]")
+
+    assign_origin = {}   # (var, id(scope)) -> (posizione, stmt) della prima assegnazione che tainta var
+
+    def _note_origin(var, scope, stmt):
+        k = (var, id(scope))
+        p = _pos_key(stmt)
+        if k not in assign_origin or p < assign_origin[k][0]:
+            assign_origin[k] = (p, stmt)
+
+    def _before_origin(var, scope, node) -> bool:
+        """True se `node` precede testualmente la prima assegnazione che tainta `var`
+        e non condivide un ciclo con essa (altrimenti il flusso può essere loop-carried)."""
+        if (var, id(scope)) in pre_tainted:   
+            return False
+        ent = assign_origin.get((var, id(scope)))
+        if ent is None:
+            return False
+        pos, stmt = ent
+        if _pos_key(node) >= pos:
+            return False
+        loops = set(_X_LOOP_ANC(stmt))
+        return not any(l in loops for l in _X_LOOP_ANC(node))
+
     side_effect_pos = {}       # (var, id(scope)) -> {posizioni delle call che la taintano per side-effect}
     source_call_nodes = set()
 
@@ -386,11 +411,13 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
             for n in info.rhs_all
         )
 
+    pre_tainted = {(v, id(s)) for v, s in tainted_vars_with_scope}
     for info in assign_infos:
         if numeric_safe and info.numeric_lhs:
             continue
         if _is_seed(info):
             tainted_vars_with_scope.append((info.var, info.scope))
+            _note_origin(info.var, info.scope, info.stmt)
 
 
     if not tainted_vars_with_scope:
@@ -526,6 +553,8 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
                         origin = source_origin_pos.get((eff, id(scope_node)))
                         if origin is not None and _pos_key(info.stmt) < origin:
                             continue
+                        if _before_origin(eff, scope_node, info.stmt): 
+                            continue
                         if skip_source_args and source_call_nodes and any(
                             c in source_call_nodes
                             for c in _X_ANC_CALL(n)
@@ -546,6 +575,7 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
 
                 if propagates:
                     tainted_vars_with_scope.append((var_name, scope_node))
+                    _note_origin(var_name, scope_node, info.stmt)
                     tainted_by_scope.setdefault(id(scope_node), set()).add(var_name)
                     changed = True
 
@@ -640,6 +670,8 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
             # uso testualmente PRIMA della call che riempie la variabile
             origin = source_origin_pos.get((var, id(scope_node)))
             if origin is not None and _pos_key(uso) < origin:
+                continue
+            if _before_origin(var, scope_node, uso):                  
                 continue
 
             # Scarta l'uso se e' proprio il nome a sinistra di
