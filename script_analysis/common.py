@@ -341,8 +341,8 @@ def assignment_pairs(scope_node, adapter, include_bindings=False) -> list:
                 continue
             if not adapter.is_assignment(stmt, NS):
                 continue
-            lhs, rhs = adapter.get_assignment_lhs_rhs(stmt, NS)
-            pairs.append((stmt, lhs, rhs))
+            for lhs, rhs in adapter.get_assignment_chain(stmt, NS):
+                pairs.append((stmt, lhs, rhs))
         _assign_pairs_cache[key] = pairs
     return pairs
 

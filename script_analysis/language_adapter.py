@@ -419,6 +419,45 @@ class LanguageAdapter(ABC):
 
     def get_parameter_type(self, param_node, ns) -> str:
         return self.get_parameter_name_and_type(param_node, ns)[1] or ""
+
+
+
+    def chain_ops_xpath(self, rhs, ns) -> str:
+        """XPath (relativo a `rhs`) degli operatori '=' di una catena 'a = b = c'.
+        Forma 'init': l'RHS è l'<expr> intera e gli '=' sono suoi figli diretti.
+        Forma piatta: gli '=' sono i fratelli che seguono l'RHS."""
+        tok = self.assignment_operator_token()
+        if rhs.tag.endswith("}expr"):
+            return f"./src:operator[text()='{tok}']"
+        return f"./following-sibling::src:operator[text()='{tok}']"
+
+    def _chain_rhs(self, op, ns):
+        """RHS di un anello della catena: primo fratello non-commento dopo l''='."""
+        r = op.xpath("./following-sibling::*[not(self::src:comment)][1]", namespaces=ns)
+        return r[0] if r else None
+
+    def get_assignment_chain(self, node, ns) -> list:
+        """[(lhs, rhs), ...] per 'a = b = c'. Ogni anello della catena condivide
+        l'RHS finale: 'a = b = src' -> (a, src), (b, src). Così l'RHS di 'a' non
+        contiene 'b' (che viene sovrascritta), evitando falsi positivi nella
+        sanificazione e nel kill-by-reassign."""
+        lhs, rhs = self.get_assignment_lhs_rhs(node, ns)
+        if lhs is None or rhs is None:
+            return []
+        chain = [(lhs, rhs)]
+
+        if node.tag.endswith("}control"):      # binding di iterazione: nessuna catena
+            return chain
+
+        for op in rhs.xpath(self.chain_ops_xpath(rhs, ns), namespaces=ns):
+            l = op.xpath("./preceding-sibling::*[not(self::src:comment)][1]", namespaces=ns)
+            r = self._chain_rhs(op, ns)
+            if l and l[0].tag.endswith("}name") and r is not None:
+                chain.append((l[0], r))
+        if len(chain) > 1:
+            final_rhs = chain[-1][1]
+            chain = [(l, final_rhs) for l, _ in chain]
+        return chain
 # ---------------------------------------------------------------------- #
 # Implementazione Python
 # ---------------------------------------------------------------------- #
@@ -1807,6 +1846,10 @@ class CAdapter(LanguageAdapter):
         words = type_text.split()
         # 'char' da solo è un tipo scalare, ma 'char *' o 'char[]' no (già esclusi sopra)
         return bool(words) and all(w in self._C_NUMERIC_WORDS for w in words)
+
+    def _chain_rhs(self, op, ns):
+        nodes = _skip_leading_casts(op.xpath("./following-sibling::*", namespaces=ns))
+        return nodes[0] if nodes else None
 
 
     _CPP_NS = {"cpp": "http://www.srcML.org/srcML/cpp"}

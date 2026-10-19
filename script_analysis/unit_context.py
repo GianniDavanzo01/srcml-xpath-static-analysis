@@ -8,25 +8,18 @@ AssignInfo = namedtuple("AssignInfo", "stmt lhs rhs var scope rhs_all rhs_names 
 
 def build_assign_infos(assignments, adapter, unit):
     """Calcola UNA volta lhs/rhs/scope e i contenuti dell'RHS di ogni assegnazione con LHS <name>."""
-    pair_map = {stmt: (lhs, rhs) for stmt, lhs, rhs in assignment_pairs(unit, adapter, include_bindings=True)}
 
     infos = []
-    for stmt in assignments:
+    for stmt, lhs, rhs in assignment_pairs(unit, adapter, include_bindings=True):
         if is_dead_code(stmt, adapter):
             continue
-        if stmt in pair_map:
-            lhs, rhs = pair_map[stmt]
-        else:  # sicurezza: statement non presente nella cache
-            lhs, rhs = adapter.get_assignment_lhs_rhs(stmt, NS)
         if lhs is None or not lhs.tag.endswith("name"):
             continue
-
         scope = enclosing_scope(stmt, adapter)
         if scope is None:
             scope = unit
-
         rhs_all = rhs.xpath("self::* | following-sibling::*", namespaces=NS) if rhs is not None else []
-
+        
         #  Contenuti dell'RHS, indipendenti dalla regola: calcolati una volta
         # e riusati dal ciclo di propagazione (che gira per ogni regola e iterazione).
         #   rhs_names:  [(testo, nodo <name>)]
