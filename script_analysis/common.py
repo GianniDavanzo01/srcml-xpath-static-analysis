@@ -290,6 +290,9 @@ def reset_caches():
     _field_decl_index_cache.clear()
 
 
+_X_CHILD_NAME  = etree.XPath("./src:name", namespaces=NS)
+_X_CHILD_OP    = etree.XPath("./src:operator", namespaces=NS)
+_X_PARENT_CALL = etree.XPath("parent::src:call", namespaces=NS)
 
 def get_scope_index(scope_node, adapter, macros=None):
     """
@@ -305,6 +308,11 @@ def get_scope_index(scope_node, adapter, macros=None):
                 names[n.text].append(n)
                 if macros and n.text in macros and not adapter.is_in_macro_definition(n):
                     names[expand_macro_name(n.text, macros)].append(n)
+            elif _X_CHILD_OP(n) and _X_CHILD_NAME(n) and not _X_PARENT_CALL(n):
+                # nome composto (w.value, s->fn, a[i].b): chiave = percorso completo
+                key = name_text(n)
+                if key:
+                    names[key].append(n)
 
         interp = defaultdict(list)
         for lit in scope_node.xpath(".//src:literal[@type='string']", namespaces=NS):

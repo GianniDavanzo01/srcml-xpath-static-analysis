@@ -21,7 +21,8 @@ _X = lambda s: etree.XPath(s, namespaces=NS)
 _X_PARENT_ARG = _X("parent::src:argument")
 _X_FIRST_NAME = _X("./src:name[1]")
 _X_ANC_CALL   = _X("ancestor::src:call")
-_X_ENCL_STMT  = _X("ancestor::src:expr_stmt[1] | ancestor::src:decl_stmt[1]")
+_X_ENCL_STMT = _X("ancestor::*[self::src:expr_stmt or self::src:decl_stmt "
+                    "or self::src:return or self::src:condition or self::src:control][1]")
 _X_ANC_PARAM  = _X("ancestor::src:parameter")
 _X_POS_ANC    = _X("ancestor::*[@pos:start][1]")
 _X_ARGS       = _X("./src:argument_list/src:argument")
@@ -307,7 +308,6 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
     # Assegnazioni si riusano quelle GIA' calcolate
 
     assign_infos = ctx.assign_infos
-    assign_by_stmt = ctx.assign_by_stmt
 
 
     # ------------------------------------------------------------------ #
@@ -653,7 +653,6 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
         usi_fstring = interp_idx.get(var, [])
 
         tutti_gli_usi = usi_diretti + usi_fstring
-
         for uso in tutti_gli_usi:
             if in_opaque_tag(uso, adapter):
                 continue
@@ -700,10 +699,12 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
             if is_sanitized(uso, sanitizers, adapter, imports):
                 continue
 
-            stmt = _X_POS_ANC(uso)
+            stmt = _X_ENCL_STMT(uso)
+            if not stmt:
+                stmt = _X_POS_ANC(uso)       # fallback
             nodo_snippet = stmt[0] if stmt else uso
-
             findings.append(build_finding(rule, nodo_snippet, extra={"tainted_variable": var}))
+
 
     #De-duplicazione findings in-line
     seen = {(f["line"], f["snippet"]) for f in findings}
