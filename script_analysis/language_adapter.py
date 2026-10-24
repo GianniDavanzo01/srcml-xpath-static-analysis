@@ -458,6 +458,17 @@ class LanguageAdapter(ABC):
             final_rhs = chain[-1][1]
             chain = [(l, final_rhs) for l, _ in chain]
         return chain
+
+
+
+    def receiver_is_local_instance(self, call_node, recv_name, ns) -> bool:
+        """True se `recv_name` è un oggetto creato nello scope della call
+        (contenitore di dati) e non un collaboratore ricevuto dall'esterno
+        (parametro, campo, ritorno di factory). Default: False, cioè la
+        propagazione strutturale sul ricevente resta inattiva."""
+        return False
+
+    
 # ---------------------------------------------------------------------- #
 # Implementazione Python
 # ---------------------------------------------------------------------- #
@@ -931,6 +942,28 @@ class PythonAdapter(LanguageAdapter):
         return (type_text or "").strip() in ("int", "float", "bool", "complex")
 
 
+    def receiver_is_local_instance(self, call_node, recv_name, ns) -> bool:
+        scope = enclosing_scope(call_node, self)
+        if scope is None:
+            scope = call_node.xpath("ancestor::src:unit[1]", namespaces=ns)[0]
+        key = _pos_key(call_node)
+        prior = [(s, r) for s, _, r in find_assignments(scope, self, recv_name)
+                if r is not None and _pos_key(s) < key]
+        if not prior:
+            return False                      # parametro, globale, non risolto
+        stmt, rhs = max(prior, key=lambda t: _pos_key(t[0]))
+        if self.is_collection_assignment(stmt, ns):
+            return True
+        call = rhs.xpath("self::src:call | descendant-or-self::src:call[1]", namespaces=ns)
+        if not call:
+            return False
+        nm = call[0].xpath("./src:name", namespaces=ns)
+        cname = name_text(nm[0]) if nm else ""
+        unit = call_node.xpath("ancestor::src:unit[1]", namespaces=ns)[0]
+        classes = {name_text(n) for n in unit.xpath(".//src:class/src:name", namespaces=ns)}
+        return cname in classes
+
+
 # ---------------------------------------------------------------------- #
 # Implementazione Java
 # ---------------------------------------------------------------------- #
@@ -1367,10 +1400,7 @@ class JavaAdapter(LanguageAdapter):
         return super().resolve_operand_type(node, ns)
 
     def resolve_variable_type(self, name_node, var_name, ns):
-        # decls = name_node.xpath(
-        #     f"{self.scope_axis(('class', 'unit'))}//src:decl[src:name[text()=$v]]",
-        #     namespaces=ns, v=var_name,
-        # )
+
         decls = self._find_decls(name_node, var_name, include_fields=False)
         if not decls:
             return None
@@ -1391,8 +1421,10 @@ class JavaAdapter(LanguageAdapter):
         return None
 
     def is_reference_comparison(self, lhs_type, rhs_type) -> bool:
-        # segnala, a meno che almeno un operando sia provabilmente primitivo
-        return not any(t and self._is_primitive(t) for t in (lhs_type, rhs_type))
+        known = [t for t in (lhs_type, rhs_type) if t and t != "var"]
+        if not known:
+            return False                      # nessuna evidenza -> non segnalo
+        return not any(self._is_primitive(t) for t in known)
 
 
     #FINE SEZIONE CWE 595-----------------------------------------------------------------------------
@@ -1427,6 +1459,17 @@ class JavaAdapter(LanguageAdapter):
         return t in self._NUMERIC_TYPES      # "Long[]" e "List<Long>" restano non numerici
 
 
+    def receiver_is_local_instance(self, call_node, recv_name, ns) -> bool:
+        decls = self._find_decls(call_node, recv_name, include_fields=False)
+        if not decls:
+            return False                      # campo, statico o non risolto: collaboratore
+        key = _pos_key(call_node)
+        before = [d for d in decls if _pos_key(d) <= key]
+        decl = (before or decls)[-1]          # dichiarazione più vicina che precede la call
+        return bool(decl.xpath(
+            "./src:init/src:expr/src:operator[text()='new']", namespaces=ns))
+
+
 # ---------------------------------------------------------------------- #
 # Helper per l'adapter C (cast)
 # ---------------------------------------------------------------------- #
@@ -1459,6 +1502,7 @@ def _skip_leading_casts(nodes):
             break
         i = j + 1
     return nodes[i:]
+
 
 
     
@@ -2342,6 +2386,24 @@ class CppAdapter(CAdapter):
     def flow_exit_tags(self):  return ["return", "throw", "goto", "continue", "break"]
     def flow_exit_calls(self): return ["exit", "abort", "_exit", "_Exit", "quick_exit", "terminate"]
     def class_tags(self):      return ["class", "struct", "union"]
+
+
+
+    def receiver_is_local_instance(self, call_node, recv_name, ns) -> bool:
+        decls = self._decl_candidates(call_node, recv_name, ns)
+        if not decls:
+            return False
+        decl = self._pick_decl(call_node, decls)
+        if decl.xpath("ancestor::src:parameter", namespaces=ns):
+            return False
+        t = self._decl_type_text(decl, ns) or ""
+        if "*" in t or "&" in t:
+            return False                      # alias o puntatore, non istanza
+        if decl.xpath("./src:init/src:expr/src:operator[text()='new']", namespaces=ns):
+            return True
+        # T x; / T x(a); / T x{a};  oppure T x = T(...)
+        return bool(decl.xpath("./src:argument_list | ./src:init | self::src:decl[not(src:init)]",
+                            namespaces=ns)) and t not in ("", "auto")
 
 
     

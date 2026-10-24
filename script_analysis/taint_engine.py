@@ -28,6 +28,7 @@ _X_POS_ANC    = _X("ancestor::*[@pos:start][1]")
 _X_ARGS       = _X("./src:argument_list/src:argument")
 _X_NAMES      = _X(".//src:name")
 _X_CALLS      = _X(".//src:call")
+_X_STMT_CALL = _X("parent::src:expr[count(*)=1]/parent::src:expr_stmt")
 
 _DECL_NAME_XP = {}
 def _decl_name_xp(adapter):
@@ -477,9 +478,11 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
                         if not cname:
                             continue
                         spec = _prop_table(adapter).get(cname)
+                        if spec is None and _X_STMT_CALL(call) and not any(call_matches(cname, b, adapter) for b in block):
+                            spec = {"out_receiver": True, "structural": True}
                         if spec is None:
                             continue
-                        if isinstance(spec, int):                     # retrocompatibile
+                        if isinstance(spec, int):                    
                             spec = {"out": [spec]}
 
                         args = _X_ARGS(call)
@@ -506,6 +509,8 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
 
                         if spec.get("out_receiver"):
                             recv = adapter.call_receiver_name(call, NS)
+                            if spec.get("structural") and not (recv and adapter.receiver_is_local_instance(call, recv, NS)):
+                                continue
                             if recv:
                                 side_effect_pos.setdefault((recv, scope_id), set()).add(_pos_key(call))
                             if recv and recv not in already_tainted:
@@ -706,6 +711,14 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
             findings.append(build_finding(rule, nodo_snippet, extra={"tainted_variable": var}))
 
 
+    # de-duplicazione dei findings del ciclo principale
+    uniq, seen = [], set()
+    for f in findings:
+        k = (f["rule_id"], f["line"], f["snippet"], f.get("tainted_variable"))
+        if k not in seen:
+            seen.add(k)
+            uniq.append(f)
+    findings = uniq
     #De-duplicazione findings in-line
     seen = {(f["line"], f["snippet"]) for f in findings}
     findings.extend(f for f in inline_findings if (f["line"], f["snippet"]) not in seen)
