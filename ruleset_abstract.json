@@ -257,8 +257,11 @@
   "vulnerabilities": ["CWE-259"],
   "sensitive_var_patterns": [
     "password", "passwd", "pwd",
-    "passphrase", "pass_phrase","pw"
-  ]
+    "passphrase", "pass_phrase","pw","userpassword",
+    "dbpassword"
+  ],
+  "sensitive_var_exclusions": ["public", "size", "len", "length", "count", "index", "max", "min"],
+  "sensitive_value_placeholders": ["changeme", "xxx", "todo", "<password>", "your_password_here"]
 },
 {
   "rule_id": "CWE-276-INCORRECT-DEFAULT-PERMISSIONS",
@@ -308,8 +311,11 @@
     "encryption_key", "encryptionkey","key",
     "aes_key", "aeskey", "cipher_key", "cipherkey",
     "hmac_key", "hmackey", "signing_key", "signingkey",
-    "iv", "salt","initialization_vector", "salt_value"
-  ]
+    "iv", "salt","initialization_vector", "salt_value",
+    "secretkey", "mykey", "privatekey"
+  ],
+  "sensitive_var_exclusions": ["public", "size", "len", "length", "count", "index", "max", "min"],
+  "sensitive_value_placeholders": ["","changeme","xxx","password","<password>","todo"]
 },
 {
   "rule_id": "CWE-321-HARDCODED-KEY-TAINT",
@@ -621,11 +627,13 @@
   "type": "structural",
   "vulnerabilities": ["CWE-798"],
   "sensitive_var_patterns": [
-    "secret",
+    "secret","apikey",
     "api_key", "apikey", "access_key", "accesskey",
     "token", "auth_token", "private_key", "privatekey",
     "credential", "credentials"
-  ]
+  ],
+  "sensitive_var_exclusions": ["public", "size", "len", "length", "count", "index", "max", "min"],
+  "sensitive_value_placeholders": ["","changeme","xxx","password","<password>","todo"]
 },
 {
   "rule_id": "CWE-835-LOOP-WITH-UNREACHABLE-EXIT",

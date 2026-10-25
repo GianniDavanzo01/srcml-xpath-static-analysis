@@ -186,6 +186,33 @@ def name_text(name_node) -> str:
 
 
 
+#Matching dei nomi sensibili per token ----------------
+_TOK = re.compile(r'[A-Z]+(?![a-z])|[A-Z]?[a-z]+|\d+')
+
+def name_tokens(n: str) -> list:
+    return [t.lower() for t in _TOK.findall(n.replace("_", " "))]
+
+def name_matches(var: str, patterns, excluded=frozenset()) -> bool:
+    toks = name_tokens(var)
+    if excluded & set(toks):
+        return False
+    for p in patterns:
+        pt = name_tokens(p)
+        if pt and any(toks[i:i+len(pt)] == pt for i in range(len(toks) - len(pt) + 1)):
+            return True
+    return False
+
+def literal_value_ok(node, adapter, min_len=1, placeholders=()):
+    """True se `node` contiene un letterale stringa 'plausibile' come segreto."""
+    for lit in node.xpath("self::src:literal[@type='string'] | .//src:literal[@type='string']", namespaces=NS):
+        v = adapter.normalize_string_literal("".join(lit.itertext()))
+        if len(v) < min_len or v.lower() in placeholders:
+            continue
+        return True
+    return False
+#-----------------------------------------------------
+
+
 def load_rules(rules_path: Path) -> list:
     """
     Carica le regole da:

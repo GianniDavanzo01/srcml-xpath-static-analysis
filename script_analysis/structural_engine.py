@@ -7,7 +7,7 @@ Motore Strutturale
 import re
 
 from common import NS, get_call_name, build_finding, call_arguments_match_ast, check_required_imports,_pos_key, find_assignments,_is_pure_literal_expr,  \
-assignment_pairs, enclosing_scope, node_snippet, call_matches, call_lookup_keys, function_nodes, scope_xp, name_text, _is_hardcoded_string
+assignment_pairs, enclosing_scope, node_snippet, call_matches, call_lookup_keys, function_nodes, scope_xp, name_text, _is_hardcoded_string, name_matches, literal_value_ok
 from safe_context_matchers import is_in_safe_context
 
 
@@ -553,7 +553,12 @@ def run_structural_rule(tree, rule: dict, adapter, imports, ctx) -> list:
     sensitive_patterns = rule.get("sensitive_var_patterns", [])
     if sensitive_patterns:
         safe_contexts = rule.get("safe_contexts", [])
-        name_regex = re.compile("|".join(re.escape(p) for p in sensitive_patterns), re.IGNORECASE)
+        excluded = {t.lower() for t in rule.get("sensitive_var_exclusions", [])}
+        is_sensitive = lambda v: name_matches(v, sensitive_patterns, excluded)
+
+        for define, name_node in adapter.constant_string_definitions(tree, NS):
+            if is_sensitive(name_text(name_node)) and not is_in_safe_context(define, safe_contexts, None, adapter, imports):
+                findings.append(build_finding(rule, define))
  
         for assign, lhs, rhs in find_assignments(tree, adapter):
             if rhs is None:
@@ -575,9 +580,15 @@ def run_structural_rule(tree, rule: dict, adapter, imports, ctx) -> list:
  
             if not has_string_literal or has_dynamic_content:
                 continue
- 
-            var_name = "".join(lhs.itertext()).strip()
-            if name_regex.search(var_name) and not is_in_safe_context(lhs, safe_contexts, None, adapter, imports):
+
+            if not any(literal_value_ok(n, adapter,
+                            rule.get("sensitive_value_min_len", 1),
+                            set(rule.get("sensitive_value_placeholders", [])))
+            for n in rhs_nodes):
+                continue
+
+            var_name = name_text(lhs)
+            if is_sensitive(var_name) and not is_in_safe_context(lhs, safe_contexts, None, adapter, imports):
                 findings.append(build_finding(rule, assign))
 
         # keyword argument: func(password='literal')
@@ -586,7 +597,7 @@ def run_structural_rule(tree, rule: dict, adapter, imports, ctx) -> list:
                 continue
             key = arg.xpath("./src:name[1]", namespaces=NS)
             val = arg.xpath("./src:expr[1]", namespaces=NS)
-            if key and val and name_regex.search(name_text(key[0])) \
+            if key and val and is_sensitive(name_text(key[0])) \
                and _is_hardcoded_string(val[0], adapter) \
                and not is_in_safe_context(arg, safe_contexts, None, adapter, imports):
                 findings.append(build_finding(rule, arg))
@@ -611,7 +622,7 @@ def run_structural_rule(tree, rule: dict, adapter, imports, ctx) -> list:
                     if not name_nodes or not literal_nodes:
                         continue
                     var_name = "".join(name_nodes[0].itertext()).strip()
-                    if name_regex.search(var_name) and not is_in_safe_context(name_nodes[0], safe_contexts, None, adapter, imports):
+                    if is_sensitive(var_name) and not is_in_safe_context(name_nodes[0], safe_contexts, None, adapter, imports):
                         findings.append(build_finding(rule, cond))
                         break
 

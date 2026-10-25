@@ -28,6 +28,7 @@ from common import macro_map, expand_macro_name, _pos_key, find_assignments, enc
 
 _MACRO_ALIAS_RE = re.compile(r"^\s*\(?\s*([A-Za-z_]\w*)\s*\)?\s*$")  # #define FOPEN fopen
 _MACRO_FWD_RE   = re.compile(r"^\s*([A-Za-z_]\w*)\s*\(")             # #define F(p) fopen(p,"r")
+_C_STRING_VALUE_RE = re.compile(r'^\(?\s*(?:(?:L|u8|u|U)?"(?:[^"\\\n]|\\.)*"\s*)+\)?$')  #Verificare che la define sia costante: #define PASSWORD "ABCD1234!"
 
 
 @dataclass
@@ -467,6 +468,11 @@ class LanguageAdapter(ABC):
         (parametro, campo, ritorno di factory). Default: False, cioè la
         propagazione strutturale sul ricevente resta inattiva."""
         return False
+
+    def constant_string_definitions(self, unit, ns) -> list:
+        """[(nodo_definizione, nodo_name)] di costanti stringa dichiarate a
+        livello di preprocessore/modulo. Default: nessuna."""
+        return []
 
     
 # ---------------------------------------------------------------------- #
@@ -1899,6 +1905,18 @@ class CAdapter(LanguageAdapter):
     _CPP_NS = {"cpp": "http://www.srcML.org/srcML/cpp"}
     def is_in_macro_definition(self, node) -> bool:
         return bool(node.xpath("ancestor::cpp:define", namespaces=self._CPP_NS))
+
+
+    def constant_string_definitions(self, unit, ns) -> list:
+        full = {**ns, **self._CPP_NS}
+        out = []
+        # solo macro-oggetto (senza parametri): #define NAME "..."
+        for d in unit.xpath(".//cpp:define[not(cpp:macro/src:parameter_list)]", namespaces=full):
+            n = d.xpath("./cpp:macro/src:name[1]", namespaces=full)
+            v = d.xpath("./cpp:value[1]", namespaces=full)
+            if n and v and _C_STRING_VALUE_RE.match("".join(v[0].itertext()).strip()):
+                out.append((d, n[0]))
+        return out
 
 
 
