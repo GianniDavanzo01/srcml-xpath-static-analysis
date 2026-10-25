@@ -52,14 +52,15 @@
       "*.request.cookies.get",
       "*.fetchone"
     ],
-    "file_upload_input": [
-      "*.request.files",
-      "*.request.files.get",
-      "*.request.files.getlist",
-      "*.request.FILES",
-      "*.request.FILES.get",
-      "cgi.FieldStorage"
-    ],
+  "file_upload_input": [
+    "*.request.files",
+    "*.request.files.get",
+    "*.request.files.getlist",
+    "*.request.FILES",
+    "*.request.FILES.get",
+    "*.request.FILES.getlist",
+    "cgi.FieldStorage"
+  ],
     "socket_input": [
       "*.socket.recv",
       "*.socket.recvfrom",
@@ -145,8 +146,7 @@
         "type": "call_with_var_arg",
         "call": ["os.path.join", "pathlib.Path",
                  "os.path.exists", "os.path.isfile",
-                 "shutil.copyfile", "shutil.move"],
-        "literal_contains": ["/", "\\\\", ".."]
+                 "shutil.copyfile", "shutil.move"]
       }
     ],
     "html_output": [
@@ -169,6 +169,7 @@
       {
         "type": "call_with_var_arg",
         "call": [
+          "flask.redirect",
           "*.HttpResponseRedirect",
           "*.HttpResponsePermanentRedirect",
           "*.RedirectResponse"
@@ -226,11 +227,40 @@
         "call": ["*.writerow", "*.writerows", "*.to_csv"]
       }
     ],
-    "exception_stringify_calls": [
+    "client_error_output": [
       {
         "type": "call_with_var_arg",
-        "call": ["str", "repr", "*.format"]
-      }
+        "call": [
+          "flask.jsonify",
+          "flask.make_response",
+          "flask.abort",
+          "flask.flash",
+          "flask.render_template",
+          "flask.render_template_string",
+          "django.http.HttpResponse",
+          "django.http.JsonResponse",
+          "django.http.HttpResponseBadRequest",
+          "django.contrib.messages.error",
+          "django.contrib.messages.add_message",
+          "django.shortcuts.render",
+          "fastapi.HTTPException",
+          "fastapi.responses.JSONResponse",
+          "fastapi.responses.PlainTextResponse",
+          "fastapi.responses.HTMLResponse",
+          "starlette.responses.JSONResponse",
+          "starlette.responses.Response",
+          "*.HTTPException",
+          "*.send_error",
+          "*.wfile.write"
+        ]
+      },
+      {
+      "type": "matches_xpath",
+      "xpath": "ancestor::src:return[1][ancestor::src:function[1][src:attribute//src:name[text()='route' or text()='get' or text()='post' or text()='put' or text()='delete' or text()='patch' or text()='api_view' or text()='errorhandler' or text()='exception_handler']]]"
+    }
+    ],
+    "exception_console_output": [
+      {"type": "call_with_var_arg", "call": ["print", "sys.stdout.write", "sys.stderr.write"]}
     ],
     "logging_functions": [
       {
@@ -253,15 +283,19 @@
     ],
     "format_string_functions": [
       {
+        "type": "method_call",
+        "method": [
+          "format",
+          "format_map"
+        ]
+      },
+      {
         "type": "call_with_var_arg",
         "call": [
-          "logging.info", "logging.warning", "logging.error", "logging.debug",
-          "*.logger.info", "*.logger.warning", "*.logger.error",
-          "logging.getLogger.info",         
-          "logging.getLogger.warning",        
-          "logging.getLogger.error",       
-          "logging.getLogger.debug",   
-          "print"
+          "*.Formatter.format",
+          "*.Formatter.vformat",
+          "*.Template.substitute",
+          "*.Template.safe_substitute"
         ]
       }
     ],
@@ -269,6 +303,14 @@
       {
         "type": "method_call",
         "method": "save"
+      },
+      {
+        "type": "call_with_var_arg",
+        "call": [
+          "shutil.copyfileobj", "shutil.copy", "shutil.copy2", "shutil.move",
+          "*.default_storage.save", "*.storage.save",
+          "*.write", "*.write_bytes"
+        ]
       }
     ],
     "resource_injection_sinks": [
@@ -337,30 +379,11 @@
           "type": "call_with_var_arg", "arg_index": 0,
           "call": ["bytearray", "bytes", "*.numpy.zeros", "*.numpy.empty"]
         }
-      ],
-    "array_index_use": [],
-    "array_alloc_size": []
+      ]
   },
   "forbidden_functions": {
-    "socket_primitives": [
-      "socket.socket",
-      "*.socket.connect",
-      "*.socket.bind",
-      "*.socket.listen",
-      "*.socket.accept",
-      "*.socket.send",
-      "*.socket.recv",
-      "*.socket.sendto",
-      "*.socket.recvfrom",
-      "*.socket.sendmsg",
-      "*.socket.recvmsg",
-      "*.socket.setsockopt",
-      "*.socket.getsockopt",
-      "*.socket.getsockname",
-      "*.socket.getpeername",
-      "*.socket.shutdown",
-      "socket.create_connection",
-      "socket.create_server"
+    "dangerous_functions": [
+      "os._exit", "ctypes.memmove", "ctypes.memset", "ctypes.string_at", "ctypes.wstring_at"
     ],
     "weak_ciphers_and_modes": [
       "*.DES.new",
@@ -435,6 +458,7 @@
       "marshal.load",
       "marshal.loads",
       "shelve.open",
+      "yaml.load",
       "yaml.unsafe_load",
       "pandas.read_pickle",
       "pickle.Unpickler.load"
@@ -510,8 +534,7 @@
       "re.fullmatch",
       "hmac.compare_digest",
       "secrets.compare_digest"
-    ],
-    "buffer_overflow_function": []
+    ]
   },
   "excluded_functions": {
     "safe_prng_exceptions": ["secrets.choice", "secrets.randbelow", "secrets.randbits"],
@@ -731,6 +754,37 @@
         }
       }
     ],
+    "deserialization_safe_contexts": [
+      {
+        "type": "call_with_kwarg",
+        "call": ["yaml.load"],
+        "kwargs": {
+          "Loader": "yaml.SafeLoader"
+        }
+      },
+      {
+        "type": "call_with_kwarg",
+        "call": ["yaml.load"],
+        "kwargs": {
+          "Loader": "SafeLoader"
+        }
+      },
+      {
+        "type": "call_with_kwarg",
+        "call": ["yaml.load"],
+        "kwargs": {
+          "Loader": "yaml.CSafeLoader"
+        }
+      },
+      {
+        "type": "call_with_kwarg",
+        "call": ["yaml.load"],
+        "kwargs": {
+          "Loader": "CSafeLoader"
+        }
+      }
+    ],
+    "crypto_safe_contexts": [],
     "curl_non_url_option": [],
     "bounds_checked_array_access": [],
     "alloc_size_positive_checked": []
@@ -751,8 +805,11 @@
     },
     "insecure_permission_assignment": {
       "forbidden_functions": [
-        "os.makedirs",
-        "tempfile.mkdtemp",
+        {
+          "type": "call_matches_ast",
+          "call": ["os.makedirs", "os.mkdir"],
+          "contains_numbers": ["0o777", "0o775", "0o757", "0o666"]
+        },
         {
           "type": "call_matches_ast",
           "call": ["os.chmod"],
@@ -832,7 +889,6 @@
         "*.lstrip",
         "*.rstrip"
       ]
-    },
-    "use_after_free_check": {}
+    }
   }
 }

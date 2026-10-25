@@ -6,7 +6,14 @@
       "*.HttpServletRequest.getHeader",
       "*.HttpServletRequest.getCookies",
       "*.Properties.getProperty",
-      "System.getenv"
+      "*.HttpServletRequest.getParameterMap",
+      "*.HttpServletRequest.getParameterNames",
+      "*.HttpServletRequest.getQueryString",
+      "*.HttpServletRequest.getRequestURI",
+      "*.HttpServletRequest.getInputStream",
+      "*.HttpServletRequest.getReader",
+      "@RequestParam", "@PathVariable", "@RequestHeader",
+      "@RequestBody", "@CookieValue", "@ModelAttribute"
     ],
     "cli_input": [
       "System.getenv",
@@ -30,10 +37,14 @@
       "*.MultipartHttpServletRequest.getFile",
       "*.MultipartHttpServletRequest.getFiles",
       "*.MultipartHttpServletRequest.getFileMap",
+      "*.MultipartHttpServletRequest.getMultiFileMap",
       "*.MultipartRequest.getFile",
       "*.MultipartRequest.getFiles",
       "*.MultipartRequest.getFileMap",
-      "*.ServletFileUpload.parseRequest"
+      "*.ServletFileUpload.parseRequest",
+      "*.ServletFileUpload.getItemIterator",
+      "*.FileUpload.parseRequest",
+      "*.MultipartFile"
     ],
     "socket_input": [
       "*.Socket.getInputStream",
@@ -64,7 +75,9 @@
           "*.prepareStatement",
           "*.createQuery",
           "*.createNativeQuery",
-          "*.JdbcTemplate.query"
+          "*.JdbcTemplate.query",
+          "*.JDBCtemplate.queryForObject"
+
         ]
       }
     ],
@@ -89,6 +102,23 @@
     "file_system_access": [
       {
         "type": "call_with_var_arg",
+        "arg_index": 0,
+        "call": [
+          "*.Files.write",
+          "*.Files.newInputStream",
+          "*.Files.readAllBytes",
+          "*.Files.delete",
+          "*.AsynchronousFileChannel.open",
+          "*.FileChannel.open"
+        ]
+      },
+      {
+        "type": "call_with_var_arg",
+        "arg_index": 1,
+        "call": ["*.Files.copy"]
+      },
+      {
+        "type": "call_with_var_arg",
         "call": [
           "*.FileInputStream",
           "*.FileOutputStream",
@@ -96,14 +126,14 @@
           "*.FileWriter",
           "*.RandomAccessFile",
           "*.File",
-          "*.Files.newInputStream",
-          "*.Files.readAllBytes",
-          "*.Files.write",
-          "*.Files.delete",
-          "*.Files.copy",
           "*.Files.move",
           "*.File.delete",
-          "*.File.createNewFile"
+          "*.File.createNewFile",
+          "*.FileSystems.getFileSystem",
+          "*.FileSystems.newFileSystem",
+          "*.ZipFile",
+          "*.ZipFile.extractAll",
+          "*.ZipFile.extractFile"
         ]
       }
     ],
@@ -114,6 +144,9 @@
           "*.getWriter.println",
           "*.getWriter.print",
           "*.getWriter.write",
+          "*.getWriter.printf",
+          "*.getWriter.format",
+          "*.getWriter.append",
           "*.HttpServletResponse.sendError",
           "*.ResponseEntity.ok",
           "*.ResponseEntity.ok.body",
@@ -121,7 +154,9 @@
           "*.ResponseEntity.badRequest.body",
           "*.RestResponse.ok",
           "*.ModelAndView.setViewName", 
-          "*.ModelAndView.addObject"
+          "*.ModelAndView.addObject",
+          "*.PrintWriter.write", "*.PrintWriter.print", "*.PrintWriter.println", "*.JspWriter.print",
+          "*.MessageFormat.format"
         ]
       }
     ],
@@ -129,7 +164,8 @@
       {
         "type": "call_with_var_arg",
         "call": [
-          "*.HttpServletResponse.sendRedirect"
+          "*.HttpServletResponse.sendRedirect",
+          "*.RedirectView.setUrl"
         ]
       }
     ],
@@ -186,24 +222,41 @@
         ]
       }
     ],
-    "exception_stringify_calls": [
-      {
-        "type": "method_call",
-        "method": "getMessage"
-      },
-      {
-        "type": "method_call",
-        "method": "toString"
-      },
-      {
-        "type": "method_call",
-        "method": "getLocalizedMessage"
-      },
-      {
-        "type": "method_call",
-        "method": "printStackTrace"
-      }
-    ],
+    "client_error_output": [
+  {
+    "type": "call_with_var_arg",
+    "call": [
+      "*.getWriter.println", "*.getWriter.print", "*.getWriter.write",
+      "*.getWriter.printf", "*.getWriter.format", "*.getWriter.append",
+      "*.getOutputStream.write", "*.getOutputStream.print", "*.getOutputStream.println",
+      "*.JspWriter.print", "*.JspWriter.println",
+      "*.HttpServletResponse.sendError",
+      "*.ResponseEntity", "*.ResponseEntity.ok", "*.ResponseEntity.ok.body",
+      "*.ResponseEntity.status.body", "*.ResponseEntity.badRequest.body",
+      "*.ResponseEntity.internalServerError.body",
+      "*.ResponseStatusException",
+      "*.ModelAndView.addObject", "*.Model.addAttribute",
+      "*.RedirectAttributes.addFlashAttribute"
+    ]
+  },
+  {
+    "type": "matches_xpath",
+    "xpath": "ancestor::src:return[1][ancestor::src:function[1][src:annotation/src:name[text()='GetMapping' or text()='PostMapping' or text()='PutMapping' or text()='DeleteMapping' or text()='PatchMapping' or text()='RequestMapping' or text()='ExceptionHandler' or text()='ResponseBody'] or ancestor::src:class[1]/src:annotation/src:name[text()='RestController']]]"
+  },
+  { "type": "method_call", "method": "printStackTrace",
+    "arg_call_matches": ["*.HttpServletResponse.getWriter", "*.HttpServletResponse.getOutputStream"] 
+  }
+],
+    "exception_console_output": [
+    {
+      "type": "call_with_var_arg",
+      "call": [
+        "System.out.println", "System.out.print", "System.out.printf", "System.out.format",
+        "System.err.println", "System.err.print", "System.err.printf", "System.err.format"
+      ]
+    },
+    { "type": "method_call", "method": "printStackTrace", "arg_count_max": 0 }
+  ],
     "logging_functions": [
       {
         "type": "call_with_var_arg",
@@ -239,9 +292,15 @@
       }
     ],
     "file_write": [
+      {"type": "method_call", "method": ["transferTo", "write"]},
       {
-        "type": "method_call",
-        "method": "transferTo"
+        "type": "call_with_var_arg",
+        "call": [
+          "*.Files.copy", "*.Files.write", "*.Files.move",
+          "*.FileOutputStream.write", "*.OutputStream.write", "*.BufferedOutputStream.write",
+          "*.IOUtils.copy", "*.FileUtils.copyInputStreamToFile",
+          "*.FileCopyUtils.copy", "*.StreamUtils.copy"
+        ]
       }
     ],
     "resource_injection_sinks": [
@@ -332,19 +391,10 @@
       ]
   },
   "forbidden_functions": {
-    "socket_primitives": [
-      "*.Socket",
-      "*.ServerSocket",
-      "*.DatagramSocket",
-      "*.SocketChannel",
-      "*.ServerSocketChannel",
-      "*.Socket.connect",
-      "*.ServerSocket.bind",
-      "*.ServerSocket.accept",
-      "*.Socket.getInputStream",
-      "*.Socket.getOutputStream",
-      "*.DatagramSocket.send",
-      "*.DatagramSocket.receive"
+    "dangerous_functions": [
+      "*.Runtime.halt", "*.Runtime.runFinalizersOnExit", "System.runFinalizersOnExit",
+      "*.Unsafe.allocateMemory", "*.Unsafe.freeMemory", "*.Unsafe.copyMemory",
+      "*.Unsafe.setMemory", "*.Unsafe.putAddress"
     ],
     "weak_hash_functions": [
       "*.DigestUtils.md5Hex", "*.DigestUtils.md5",
@@ -357,6 +407,7 @@
       }
     ],
     "weak_ciphers_and_modes": [
+      "*.Jwts.builder",
       {
         "type": "call_matches_ast",
         "call": "*.Cipher.getInstance",
@@ -390,7 +441,10 @@
       "*.GroovyShell.evaluate",
       "*.ExpressionParser.parseExpression",
       "*.Ognl.getValue",
-      "*.MVEL.eval"
+      "*.MVEL.eval",
+      "*.JShell.eval",
+      "*.SourceCodeAnalysis.wrappers",
+      "*.runsource"
     ],
     "unsafe_xml_parsers": [
       "*.DocumentBuilderFactory.newDocumentBuilder",
@@ -498,8 +552,7 @@
       "*.Matcher.matches",
       "*.Matcher.find"
     ],
-    "buffer_overflow_function": [],
-    "insecure_default_permissions": []
+    "jackson_deserializers": ["*.ObjectMapper.readValue"]
   },
   "excluded_functions": {
     "safe_prng_exceptions": [
@@ -527,7 +580,7 @@
     "XSS_sanitizers": [
       "*.HtmlUtils.htmlEscape",
       "*.StringEscapeUtils.escapeHtml4",
-      "*.encodeForHTML"
+      "*.Encode.forHtml"
     ],
     "url_encode_sanitizers": [
       "*.URLEncoder.encode"
@@ -575,6 +628,7 @@
       }
     ],
     "resource_safe_contexts": [
+      {"type": "function_has_file_size_check", "size_properties": ["getSize"]},
       {
         "type": "binary_comparison",
         "operators": [
@@ -784,6 +838,33 @@
         ]
       }
     ],
+    "deserialization_safe_contexts": [
+      {
+        "type": "matches_xpath",
+        "xpath": ".//src:call[.//src:name[last()][text()='SafeConstructor']]"
+      },
+      {
+        "type": "function_has_call_matching_ast",
+        "call": [
+          "*.setObjectInputFilter",
+          "*.setupDefaultSecurity",
+          "*.allowTypes",
+          "*.allowTypesByWildcard"
+        ]
+      }
+    ],
+    "crypto_safe_contexts": [
+      {
+        "type": "function_has_call_matching_ast",
+        "call": ["*.signWith"]
+      }
+    ],
+    "no_default_typing_in_scope": [
+      {
+        "type": "matches_xpath",
+        "xpath": "not(.//src:call[src:name/src:name[last()][text()='enableDefaultTyping' or text()='activateDefaultTyping']])"
+      }
+    ],
     "non_security_hash_usage":[],
     "curl_non_url_option": [],
     "sql_parameterization": []
@@ -855,8 +936,6 @@
         ".//src:condition/src:expr[src:operator[text()='='] and not(src:operator[text()='==' or text()='!=' or text()='<' or text()='>' or text()='<=' or text()='>=' or text()='&&' or text()='||'])]"
       ]
     },
-    "unsafe_deserialization_kwargs": {},
-    "unsafe_dict_access": {},
-    "use_after_free_check": {}
+    "unsafe_deserialization_kwargs": {}
   }
 }

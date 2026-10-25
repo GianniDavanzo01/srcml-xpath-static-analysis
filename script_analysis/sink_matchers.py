@@ -81,6 +81,26 @@ def _sink_method_call(uso, spec, fstring_nodes, adapter, imports) -> bool:
     if not any(_hit(m) for m in methods):
         return False
 
+    n_args = (len(call_node.xpath("./src:argument_list/src:argument", namespaces=NS)) if call_node is not None else None)
+    
+    if "arg_count_max" in spec and (n_args is None or n_args > spec["arg_count_max"]):
+        return False
+    if "arg_count_min" in spec and (n_args is None or n_args < spec["arg_count_min"]):
+        return False
+
+    arg_calls = spec.get("arg_call_matches")
+    if arg_calls:
+        if call_node is None:
+            return False
+        ok = False
+        for c in call_node.xpath("./src:argument_list//src:call", namespaces=NS):
+            cn2 = get_call_name(c, adapter, imports)
+            if cn2 and any(call_matches(cn2, p, adapter) for p in arg_calls):
+                ok = True
+                break
+        if not ok:
+            return False
+
     arg_contains = spec.get("arg_contains", [])
     if not arg_contains:
         return True

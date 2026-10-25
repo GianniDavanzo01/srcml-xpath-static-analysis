@@ -273,6 +273,7 @@ def _inline_source_findings(rule, tree, ctx, adapter, imports, return_sources, s
     return out
 
 
+
 def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
     macros = macro_map(imports)
 
@@ -309,7 +310,6 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
     # Assegnazioni si riusano quelle GIA' calcolate
 
     assign_infos = ctx.assign_infos
-
 
     # ------------------------------------------------------------------ #
     # Source "per side-effect": funzioni che RIEMPIONO un argomento
@@ -423,6 +423,23 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
 
     if not tainted_vars_with_scope:
         return inline_findings
+
+    scope_nodes = {id(s): s for _, s in tainted_vars_with_scope}
+
+    def _visible(info, by_scope):
+        own = by_scope.get(id(info.scope), set())
+        anc, extra = None, set()
+        for sid, names in by_scope.items():
+            if sid == id(info.scope):
+                continue
+            node = scope_nodes.get(sid)
+            if node is None:
+                continue
+            if anc is None:
+                anc = set(info.stmt.iterancestors())
+            if node in anc:
+                extra |= names
+        return own | extra if extra else own
     
     # Passo 2: propagazione a catena
     if rule.get("propagate_taint", True):
@@ -463,6 +480,8 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
             tainted_by_scope = {}
             for name, scope in tainted_vars_with_scope:
                 tainted_by_scope.setdefault(id(scope), set()).add(name)
+
+            
 
             # Propagazione via call che scrivono su un argomento "di
             # output" invece che tramite il valore di ritorno (es. C:
@@ -541,9 +560,9 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
                     continue
                 var_name = info.var
                 scope_node = info.scope
-                already_tainted = tainted_by_scope.get(id(scope_node), set())
-                if var_name in already_tainted:
+                if var_name in tainted_by_scope.get(id(scope_node), ()):
                     continue
+                already_tainted = _visible(info, tainted_by_scope)
 
                 # info.rhs_all = primo fratello dopo l'operatore + tutti i successivi,
                 # per coprire l'intera espressione (es: "SELECT..." + user_id)
@@ -580,6 +599,7 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
 
                 if propagates:
                     tainted_vars_with_scope.append((var_name, scope_node))
+                    scope_nodes[id(scope_node)] = scope_node 
                     _note_origin(var_name, scope_node, info.stmt)
                     tainted_by_scope.setdefault(id(scope_node), set()).add(var_name)
                     changed = True
@@ -602,9 +622,7 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
         """Oggetto base di un accesso a membro: 'myUnion.unionFirst' / 'p->x' / 'a[i].b' -> 'myUnion' / 'p' / 'a'."""
         return adapter.normalize_member_access(t).split("[")[0].split(".")[0]
 
-    tainted_roots_by_scope = {
-        sid: {_root(v) for v in names} for sid, names in tainted_names_by_scope.items()
-    }
+    scope_nodes.update({id(s): s for _, s in tainted_vars_with_scope})
 
     rule_propagates  = rule.get("propagate_taint", True)
     def _clean_rhs_kill(i):
@@ -614,16 +632,14 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
             return False
         if not rule_propagates:
             return True
-        roots = tainted_roots_by_scope.get(id(i.scope), set())
+        roots = {_root(v) for v in _visible(i, tainted_names_by_scope)}
         if any(_root(expand_macro_name(t, macros)) in roots for t, _ in i.rhs_names):
             return False
-        # variabili dentro stringhe interpolate: non sono nodi <name>, stanno in rhs_interp
         return not any(_root(v) in roots for _, vs in i.rhs_interp for v in vs)
 
     def _sanitizer_kill(i):
-        return _rhs_fully_sanitized(
-            i, tainted_names_by_scope.get(id(i.scope), set()),
-            sanitizers, adapter, imports)
+        return _rhs_fully_sanitized(i, _visible(i, tainted_names_by_scope),
+                                sanitizers, adapter, imports)
     
     # Criteri di "kill by reassign" attivi per QUESTA regola, decisi una volta sola.
     # Tutti guardano la stessa "ultima assegnazione che domina l'uso": basta un solo

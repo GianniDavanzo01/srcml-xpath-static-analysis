@@ -16,6 +16,7 @@
 },
 {
   "rule_id": "CWE-20-UNSAFE-DICT-ACCESS",
+  "languages":["python"],
   "description":"Applicabile solo a Python",
   "type": "structural",
   "vulnerabilities": ["CWE-20"],
@@ -28,7 +29,7 @@
   "vulnerabilities": ["CWE-22"],
   "sources": [
     {"tag": "http_input"},
-    {"tag": "cli_input"}
+    {"tag": "cli_input"}, "function_parameters"
   ],
   "sinks": [
     {"tag": "file_system_access"},
@@ -50,7 +51,7 @@
   "vulnerabilities": ["CWE-78"],
   "sources": [
     {"tag": "http_input"},
-    {"tag": "cli_input"}
+    {"tag": "cli_input"}, "function_parameters"
   ],
   "sinks": [
     {"tag": "os_command_execution"}
@@ -67,10 +68,11 @@
 {
   "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
   "type": "taint",
+  "languages":["java","python"],
   "vulnerabilities": ["CWE-79"],
   "sources": [
     {"tag": "http_input"},
-    {"tag": "file_input"}
+    {"tag": "file_input"},"function_parameters"
   ],
   "sinks": [
     {"tag": "html_output"}
@@ -87,7 +89,7 @@
   "vulnerabilities": ["CWE-89"],
   "sources": [
     {"tag": "http_input"},
-    {"tag": "cli_input"}
+    {"tag": "cli_input"}, "function_parameters"
   ],
   "sinks": [
     {"tag": "sql_execution"}
@@ -103,7 +105,7 @@
   "vulnerabilities": ["CWE-90"],
   "sources": [
     {"tag": "http_input"},
-    {"tag": "cli_input"}
+    {"tag": "cli_input"},"function_parameters"
   ],
   "sinks": [
     {"tag": "ldap_execution"}
@@ -117,6 +119,7 @@
 {
   "rule_id": "CWE-95-EVAL-INJECTION",
   "type": "structural",
+  "languages":["java","python"],
   "vulnerabilities": ["CWE-95"],
   "forbidden_functions": [{"tag": "dynamic_code_execution"}],
   "excluded_functions": [{"tag": "eval_false_positive_exceptions"}],
@@ -143,6 +146,7 @@
 {
   "rule_id": "CWE-113-HTTP-RESPONSE-SPLITTING",
   "type": "taint",
+  "languages":["java","python"],
   "vulnerabilities": ["CWE-113"],
   "sources": [
     {"tag": "http_input"}
@@ -182,6 +186,7 @@
 {
   "rule_id": "CWE-129-IMPROPER-ARRAY-INDEX-VALIDATION",
   "type": "taint",
+  "languages":["c","java"],
   "vulnerabilities": ["CWE-129"],
   "sources": [
     {"tag": "http_input"}
@@ -193,6 +198,7 @@
 {
   "rule_id": "CWE-129-ARRAY-SIZE-VALIDATION",
   "type": "taint",
+  "languages":["c","java"],
   "vulnerabilities": ["CWE-129"],
   "sources": [{"tag": "http_input"}],
   "sinks": [{"tag": "array_alloc_size"}],
@@ -223,14 +229,20 @@
   ]
 },
 {
-  "rule_id": "CWE-209-EXCEPTION-DETAILS-EXPOSURE",
+  "rule_id": "CWE-209-ERROR-DETAILS-TO-CLIENT",
   "type": "taint",
+  "languages": ["java", "python"],
   "vulnerabilities": ["CWE-209"],
   "sources": ["exception_variable"],
-  "sinks": [
-    "return",
-    {"tag": "exception_stringify_calls"}
-  ]
+  "sinks": [{"tag": "client_error_output"}]
+},
+{
+  "rule_id": "CWE-209-ERROR-DETAILS-TO-CONSOLE",
+  "type": "taint",
+  "languages": ["java", "python"],
+  "vulnerabilities": ["CWE-209"],
+  "sources": ["exception_variable"],
+  "sinks": [{"tag": "exception_console_output"}]
 },
 {
   "rule_id": "CWE-252-UNCHECKED-RETURN-VALUE",
@@ -245,12 +257,13 @@
   "vulnerabilities": ["CWE-259"],
   "sensitive_var_patterns": [
     "password", "passwd", "pwd",
-    "passphrase", "pass_phrase"
+    "passphrase", "pass_phrase","pw"
   ]
 },
 {
   "rule_id": "CWE-276-INCORRECT-DEFAULT-PERMISSIONS",
   "type": "structural",
+  "languages":["c","python"],
   "vulnerabilities": ["CWE-276"],
   "forbidden_functions": [{"tag": "insecure_default_permissions"}]
 },
@@ -319,6 +332,9 @@
   "vulnerabilities": ["CWE-327"],
   "forbidden_functions": [
     {"tag": "weak_ciphers_and_modes"}
+  ],
+  "safe_contexts": [
+    {"tag": "crypto_safe_contexts"}
   ]
 },
 {
@@ -352,9 +368,22 @@
 {
   "rule_id": "CWE-400-UNCONTROLLED-RESOURCE-CONSUMPTION",
   "type": "taint",
+  "languages": ["python", "java"],
   "vulnerabilities": ["CWE-400"],
-  "sources": [{"tag": "file_upload_input"},{"tag": "socket_input"}],
-  "sinks": [{"tag": "unbounded_resource_read"},{"tag": "sleep_functions"}],
+  "sources": [{"tag": "file_upload_input"}, {"tag": "socket_input"}],
+  "sinks": [{"tag": "unbounded_resource_read"}, {"tag": "sleep_functions"}],
+  "patterns": [
+    {"tag": "string_to_int_propagation"}
+  ],
+  "safe_contexts": [{"tag": "resource_safe_contexts"}]
+},
+{
+  "rule_id": "CWE-400-UNCONTROLLED-SLEEP-C",
+  "languages": ["c"],
+  "type": "taint",
+  "vulnerabilities": ["CWE-400"],
+  "sources": [{"tag": "socket_input"}],
+  "sinks": [{"tag": "sleep_functions"}],
   "patterns": [
     {"tag": "string_to_int_propagation"}
   ],
@@ -405,7 +434,7 @@
 {
   "rule_id": "CWE-434-UNRESTRICTED-FILE-UPLOAD",
   "type": "taint",
-  "description": "Applicabile a Python e Java. Rileva il salvataggio di un file caricato dall'utente senza previa validazione dell'estensione/tipo.",
+  "languages":["java","python"],
   "vulnerabilities": ["CWE-434"],
   "sources": [{"tag": "file_upload_input"}],
   "sinks": [{"tag": "file_write"}],
@@ -419,6 +448,7 @@
   "type": "taint",
   "vulnerabilities": ["CWE-476"],
   "propagate_taint": false,
+  "ignore_taint_block_functions": true,
   "sources": [
     {"tag": "nullable_returning_calls"}, "null_literal"
   ],
@@ -454,11 +484,24 @@
 {
   "rule_id": "CWE-502-DESERIALIZATION",
   "type": "structural",
+  "languages":["python", "java"],
   "vulnerabilities": ["CWE-502"],
   "forbidden_functions": [
     {"tag": "unsafe_deserializers"}
   ],
-  "patterns":[{"tag":"unsafe_deserialization_kwargs"}]
+  "patterns":[{"tag":"unsafe_deserialization_kwargs"}],
+  "safe_contexts": [
+    {"type": "all_args_are_literals"},
+    {"tag": "deserialization_safe_contexts"}
+  ]
+},
+{
+  "rule_id": "CWE-502-JACKSON-UNSAFE-DESERIALIZATION",
+  "type": "structural",
+  "languages": ["java"],
+  "vulnerabilities": ["CWE-502"],
+  "forbidden_functions": [{"tag": "jackson_deserializers"}],
+  "safe_contexts": [{"tag": "no_default_typing_in_scope"}]
 },
 {
   "rule_id": "CWE-532-SENSITIVE-DATA-IN-LOG",
@@ -477,10 +520,11 @@
 {
   "rule_id": "CWE-601-OPEN-REDIRECT",
   "type": "taint",
+  "languages":["java","python"],
   "vulnerabilities": ["CWE-601"],
   "sources": [
     {"tag": "http_input"},
-    {"tag": "file_input"}
+    {"tag": "file_input"},"function_parameters"
   ],
   "sinks": [
     {"tag": "http_redirect"}
@@ -522,13 +566,12 @@
   ]
 },
 {
-    "rule_id": "CWE-676-Potentially_Dangerous_Function-SOCKET",
+    "rule_id": "CWE-676-Potentially_Dangerous_Function",
     "type": "structural",
     "vulnerabilities": ["CWE-676"],
     "forbidden_functions": [
-      {"tag": "socket_primitives"}
-    ],
-    "safe_contexts": [{"type": "all_args_are_literals"}]
+      {"tag": "dangerous_functions"}
+    ]
 },
 {
   "rule_id": "CWE-703-IMPROPER-EXCEPTION-HANDLING",
@@ -550,6 +593,7 @@
 {
   "rule_id": "CWE-770-UNCONTROLLED-RESOURCE-ALLOCATION",
   "type": "taint",
+  "languages":["java","python"],
   "vulnerabilities": ["CWE-770"],
   "sources": [
     {"tag": "http_input"},

@@ -4,8 +4,7 @@
         "nullable_returning_calls": ["malloc", "calloc", "realloc", "fopen", "getenv","tmpfile", "opendir","getcwd"],
         "cli_input": ["getenv","argv","optarg","fgets", "scanf","fscanf"],
         "socket_input": ["recv", "recvfrom", "recvmsg", "read", "WSARecv", "WSARecvFrom"],
-        "file_input": ["fgets", "fread", "getline", "getdelim","fgetc", "getc","fscanf", "read", "pread"],
-        "file_upload_input":[]
+        "file_input": ["fgets", "fread", "getline", "getdelim","fgetc", "getc","fscanf", "read", "pread"]
     },
     "sinks":{
         "file_system_access": [
@@ -145,13 +144,7 @@
             "type": "matches_xpath",
             "xpath": "ancestor::src:index[parent::src:name/parent::src:decl][not(ancestor::src:parameter)]"
             }
-        ],
-        "unbounded_resource_read": [],
-        "html_output": [],
-        "exception_stringify_calls": [],
-        "http_redirect": [],
-        "http_header_setters": [],
-        "file_write":[]
+        ]
     },
     "forbidden_functions":{
         "weak_key_generation": [
@@ -206,7 +199,7 @@
                 "case_insensitive": true
             }
         ],
-        "socket_primitives": [
+        "dangerous_functions": [
             "gethostbyname", "inet_ntoa"
         ],
         "insecure_network_protocols": [
@@ -260,9 +253,7 @@
                                         "chown", "fchown", "lchown", "chmod", "fchmod","socket", "bind", "listen", "accept", "connect",
                                         "recv", "send", "recvfrom", "sendto","fork", "execve", "execl", "execvp", "wait", "waitpid",
                                         "getenv", "pthread_mutex_trylock","fgets","fprintf"
-        ],
-        "dynamic_code_execution": [],
-        "unsafe_deserializers": []
+        ]
     },
     "excluded_functions":{
         "safe_prng_exceptions": [],
@@ -317,7 +308,6 @@
                 {"type": "binary_comparison", "operators": ["<", "<="], "left_exact": ["$VAR"], "right_not_exact": ["0"]},
                 {"type": "binary_comparison", "operators": [">", ">="], "right_exact": ["$VAR"], "left_not_exact": ["0"]}
                 ],
-            "manual_string_sanitization":[],
             "null_checked": [
                     {"type": "var_truthiness_check", "scope": "enclosing", "require_state": "truthy"},
                     {"type": "var_falsy_guard_clause"}
@@ -363,6 +353,8 @@
                     {"type": "binary_comparison", "operators": ["<", "<="], "left_exact": ["$VAR"]},
                     {"type": "binary_comparison", "operators": [">", ">="], "right_exact": ["$VAR"]}
                 ],
+            "crypto_safe_contexts": [],
+            "manual_string_sanitization":[],
             "non_security_hash_usage":[],
             "sql_parameterization": [],
             "try_block": [],
@@ -435,8 +427,6 @@
                 "xpath_rules": [
                     ".//src:condition/src:expr[src:operator[text()='='] and not(src:operator[text()='==' or text()='!=' or text()='<' or text()='>' or text()='<=' or text()='>=' or text()='&&' or text()='||'])]"
                     ]
-                },
-            "unsafe_deserialization_kwargs":{},
-            "unsafe_dict_access":{}
+                }
     }
 }
