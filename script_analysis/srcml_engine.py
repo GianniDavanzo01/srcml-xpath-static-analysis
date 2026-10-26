@@ -93,7 +93,7 @@ def _get_compiled_ruleset(adapter, raw_rules, catalog_dir):
             print(f"[INFO] [{lang}] {len(compiler.skipped)} regole non applicabili scartate",
                   file=sys.stderr)
 
-        cached = (compiled, compiler.catalog)
+        cached = compiled
         _COMPILED_RULESETS_CACHE[lang] = cached
     return cached
 
@@ -102,9 +102,9 @@ def analyze_unit(unit_node, raw_rules: list, xml_source: str, source_file: str |
     reset_caches()
     adapter = get_adapter(unit_node)
     imports = adapter.resolve_imports(unit_node, NS)
-    compiled, catalog_obj = _get_compiled_ruleset(adapter, raw_rules, catalog_dir)
+    compiled = _get_compiled_ruleset(adapter, raw_rules, catalog_dir)
 
-    ctx = UnitContext(unit_node, adapter, catalog=catalog_obj)
+    ctx = UnitContext(unit_node, adapter)
     findings = []
 
     run_forbidden_functions_indexed(ctx, compiled, findings, adapter, imports)

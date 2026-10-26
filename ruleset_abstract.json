@@ -1,19 +1,4 @@
 [
-  {
-  "rule_id": "STRUCTURAL-INJECTION",
-  "type": "structural",
-  "vulnerabilities": ["Injection"],
-  "source_concats": [
-    {"source": {"tag": "http_input"}}
-  ],
-  "source_percent_formats": [
-    {"source": {"tag": "http_input"}}
-  ],
-  "source_comparisons": [
-    {"source": {"tag": "http_input"}}
-  ],
-  "sanitizers": ["cast_to_integer"]
-},
 {
   "rule_id": "CWE-20-UNSAFE-DICT-ACCESS",
   "languages":["python"],
@@ -627,7 +612,7 @@
   "type": "structural",
   "vulnerabilities": ["CWE-798"],
   "sensitive_var_patterns": [
-    "secret","apikey",
+    "secret",
     "api_key", "apikey", "access_key", "accesskey",
     "token", "auth_token", "private_key", "privatekey",
     "credential", "credentials"

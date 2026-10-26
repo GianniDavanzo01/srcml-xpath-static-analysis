@@ -51,7 +51,7 @@ def build_assign_infos(assignments, adapter, unit):
 
 class UnitContext:
     __slots__ = (
-        "unit", "calls", "assignments", "catalog",
+        "unit", "calls", "assignments",
         "assign_infos", "assign_by_stmt","assign_lhs"
     )
 
@@ -63,5 +63,3 @@ class UnitContext:
         self.assign_infos = build_assign_infos(self.assignments, adapter, unit)
         self.assign_by_stmt = {i.stmt: i for i in self.assign_infos}
         self.assign_lhs = {i.lhs for i in self.assign_infos}
-
-        self.catalog = catalog or {}

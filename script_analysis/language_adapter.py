@@ -109,15 +109,6 @@ class LanguageAdapter(ABC):
         """Estrae l'elenco dei nomi di variabili usate dentro una stringa interpolata."""
 
     @abstractmethod
-    def string_formatting_operator_roles(self) -> dict:
-        """Mappa RUOLO SEMANTICO -> operatore, per i costrutti che il motore
-        deve distinguere esplicitamente (concatenazione vs formattazione
-        printf-style). Un linguaggio che non ha un certo ruolo (es. Java non ha
-        l'equivalente di '%' per le stringhe) semplicemente non lo include nel
-        dict, e la regola corrispondente resta inattiva senza bisogno di
-        toccare il motore."""
-
-    @abstractmethod
     def negation_operator(self) -> str:
         """Operatore di negazione booleana. Python: 'not' (parola chiave,
         separata da spazio dall'operando). C/Java/C#: '!' (prefisso, attaccato)."""
@@ -696,9 +687,6 @@ class PythonAdapter(LanguageAdapter):
         matches = re.findall(r"\{([a-zA-Z0-9_]+)[^}]*\}", literal_text)
         return matches
 
-    def string_formatting_operator_roles(self) -> dict:
-        return {"concat": "+", "percent_format": "%"}
-
     def negation_operator(self) -> str:
         return "not"
 
@@ -1246,8 +1234,6 @@ class JavaAdapter(LanguageAdapter):
                 
         return self._canonicalize(raw_name, imports)
 
-    def string_formatting_operator_roles(self) -> dict:
-        return {"concat": "+"}
 
     def negation_operator(self) -> str:
         return "!"
@@ -1703,9 +1689,6 @@ class CAdapter(LanguageAdapter):
 
         return raw_name
 
-    def string_formatting_operator_roles(self) -> dict:
-        # Non ci sono operatori di formato nativi inline (si usano funzioni di libreria)
-        return {}
 
     def negation_operator(self) -> str:
         return "!"
@@ -2234,8 +2217,6 @@ class CppAdapter(CAdapter):
     def string_concat_operators(self) -> list:
         return ["+"]                    # std::string + ...
 
-    def string_formatting_operator_roles(self) -> dict:
-        return {"concat": "+"}
 
     def is_none_literal(self, text: str) -> bool:
         return text.strip() in ("NULL", "nullptr")

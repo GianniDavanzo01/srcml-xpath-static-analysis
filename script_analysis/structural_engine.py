@@ -4,140 +4,10 @@ structural_engine.py
 Motore Strutturale
 """
 
-import re
 
 from common import NS, get_call_name, build_finding, call_arguments_match_ast, check_required_imports,_pos_key, find_assignments,_is_pure_literal_expr,  \
 assignment_pairs, enclosing_scope, node_snippet, call_matches, call_lookup_keys, function_nodes, scope_xp, name_text, _is_hardcoded_string, name_matches, literal_value_ok
 from safe_context_matchers import is_in_safe_context
-
-
-
-def _run_source_operator_usage(tree, rule, findings, adapter, imports, catalog=None):
-    catalog = catalog or {}
-    op_roles = adapter.string_formatting_operator_roles()
-    eq_op = adapter.equality_operator()
-
-    mappings = {"source_comparisons": {"operator": eq_op}}
-    if "concat" in op_roles:
-        mappings["source_concats"] = {"operator": op_roles["concat"]}
-    if "percent_format" in op_roles:
-        mappings["source_percent_formats"] = {"operator": op_roles["percent_format"]}
-    
-    active_specs = []
-    for json_key, behavior in mappings.items():
-        for spec in rule.get(json_key, []):
-            enriched_spec = spec.copy()
-            enriched_spec["operator"] = behavior["operator"]
-            active_specs.append(enriched_spec)
-            
-    if not active_specs:
-        return
-
-    # 1. Risoluzione dinamica dei Sanitizers dal catalogo 
-    # (es. converte "cast_to_integer" in ["int", "float"])
-    raw_sanitizers = rule.get("sanitizers", [])
-    resolved_sanitizers = []
-    for san in raw_sanitizers:
-        san_key = san.get("tag") if isinstance(san, dict) else san
-        if san_key in catalog.get("sanitizers", {}):
-            resolved_sanitizers.extend(catalog["sanitizers"][san_key])
-        else:
-            resolved_sanitizers.append(san_key)
-
-    safe_contexts = rule.get("safe_contexts", [])
-
-    for spec in active_specs:
-        target_op = spec.get("operator")
-        source_def = spec.get("source")
-        
-        # 2. Risoluzione dinamica delle Sorgenti dal catalogo
-        # (es. converte {"tag": "http_input"} in ["request.data", "input", ...])
-        source_names = []
-        if isinstance(source_def, str):
-            source_names = [source_def]
-        elif isinstance(source_def, dict) and "tag" in source_def:
-            tag = source_def["tag"]
-            source_names = catalog.get("sources", {}).get(tag, [])
-            
-        if not source_names:
-            continue
-
-        for op_node in tree.xpath(f".//src:operator[text()='{target_op}']", namespaces=NS):
-            
-            # Trova esattamente il nodo a sinistra e a destra dell'operatore (+ o %)
-            lhs_nodes = op_node.xpath("./preceding-sibling::*[not(self::src:comment)]", namespaces=NS)
-            rhs_nodes = op_node.xpath("./following-sibling::*[not(self::src:comment)]", namespaces=NS)
-            
-            lhs = lhs_nodes[-1] if lhs_nodes else None
-            rhs = rhs_nodes[0] if rhs_nodes else None
-            
-            match_found = False
-            matched_node = None
-            
-            # Valuta sia la sinistra che la destra
-            for sibling in (lhs, rhs):
-                if sibling is None:
-                    continue
-                    
-                # CASO 1: La sorgente è una funzione 
-                if sibling.tag.endswith("call"):
-                    c_name = get_call_name(sibling, adapter, imports)
-                    if any(call_matches(c_name, s, adapter) for s in source_names):
-                        match_found = True
-                        matched_node = sibling
-                        break
-                        
-                # CASO 2: La sorgente è una variabile o proprietà (es. request.data)
-                # Estraiamo in modo sicuro il testo dai nodi name ignorando i tag intermedi.
-                # Per ciascun candidato ricostruiamo il nome puntato solo dai <name> figli
-                # diretti (escludendo eventuali <index>), cosi' un subscript come
-                # request.args['id'] non contamina il confronto col contenuto tra [ ].
-                names = sibling.xpath("descendant-or-self::src:name", namespaces=NS)
-                for n in names:
-                    op = adapter.member_access_operator()[0]
-                    parts = n.xpath("./src:name", namespaces=NS)
-                    if parts:
-                        # Utilizziamo name_text() su ciascun sotto-nome per scartare eventuali indici
-                        n_text = op.join(name_text(p) for p in parts)
-                    else:
-                        # Utilizziamo name_text() sul nome semplice
-                        n_text = name_text(n)
-
-                    n_text = adapter.resolve_name_text(n_text, imports)
-                    if any(call_matches(n_text, s, adapter) for s in source_names):
-                        match_found = True
-                        matched_node = n
-                        break
-                        
-                if match_found:
-                    break
-                    
-            if not match_found:
-                continue
-                
-            expr_node = op_node.xpath("ancestor::src:expr[1]", namespaces=NS)
-            if not expr_node:
-                continue
-            expr_node = expr_node[0]
-
-            if is_in_safe_context(expr_node, safe_contexts, None, adapter, imports):
-                continue
-
-            # 3. Verifica Sanitizers applicati 
-            is_escaped = False
-            if resolved_sanitizers:
-                for c_node in expr_node.xpath(".//src:call", namespaces=NS):
-                    c_name = get_call_name(c_node, adapter, imports)
-                    if c_name and any(call_matches(c_name, s, adapter) for s in resolved_sanitizers):
-                        # il nodo sorgente deve stare davvero dentro la call sanitizer
-                        if matched_node is c_node or matched_node in c_node.iterdescendants():
-                            is_escaped = True
-                            break
-                            
-            if is_escaped:
-                continue
-
-            findings.append(build_finding(rule, expr_node))
 
 
 
@@ -811,11 +681,7 @@ def run_structural_rule(tree, rule: dict, adapter, imports, ctx) -> list:
                     continue
                 findings.append(build_finding(rule, node))
 
-    # Estrae il catalogo dal contesto (se disponibile)
-    catalog_obj = ctx.catalog
     
-    _run_source_operator_usage(tree, rule, findings, adapter, imports, catalog=catalog_obj)
-
     return findings
 
 
