@@ -14,7 +14,7 @@ from lxml import etree
 from collections import Counter
 
 
-from common import NS, load_rules, check_required_imports, compile_rules, reset_caches
+from common import NS, load_rules, compile_rules, reset_caches
 from taint_engine import run_taint_rule
 from structural_engine import run_structural_rule, run_forbidden_functions_indexed 
 from unit_context import UnitContext
@@ -110,8 +110,6 @@ def analyze_unit(unit_node, raw_rules: list, xml_source: str, source_file: str |
     run_forbidden_functions_indexed(ctx, compiled, findings, adapter, imports)
 
     for rule in compiled.rules:
-        if not check_required_imports(rule, imports):
-            continue
         rule_type = rule.get("type")
         if rule_type == "taint":
             findings.extend(run_taint_rule(unit_node, rule, adapter, imports, ctx=ctx))

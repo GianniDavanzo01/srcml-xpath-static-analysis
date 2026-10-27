@@ -5,7 +5,7 @@ Motore Strutturale
 """
 
 
-from common import NS, get_call_name, build_finding, call_arguments_match_ast, check_required_imports,_pos_key, find_assignments,_is_pure_literal_expr,  \
+from common import NS, get_call_name, build_finding, call_arguments_match_ast,_pos_key, find_assignments,_is_pure_literal_expr,  \
 assignment_pairs, enclosing_scope, node_snippet, call_matches, call_lookup_keys, function_nodes, scope_xp, name_text, _is_hardcoded_string, name_matches, literal_value_ok
 from safe_context_matchers import is_in_safe_context
 
@@ -87,8 +87,7 @@ def _loop_has_exit(loop_node, block, adapter) -> bool:
 
 
 def _run_missing_while_increments(tree, rule, findings, adapter, imports):
-    specs = rule.get("missing_while_increments", [])
-    if not specs:
+    if not rule.get("missing_while_increments"):
         return
 
     safe_contexts = rule.get("safe_contexts", [])
@@ -385,318 +384,281 @@ def _check_use_after_free(tree, rule, findings, adapter, imports):
                 findings.append(build_finding(rule, uso, extra=extra))
                 aliased_pointers.discard(p)
 
-
-def run_structural_rule(tree, rule: dict, adapter, imports, ctx) -> list:
-
-    findings = []
-
-
+def _run_bad_assignments(tree, rule, findings, adapter, imports):
     bad_assignments = rule.get("bad_assignments", {})
-    if bad_assignments:
-        safe_contexts = rule.get("safe_contexts", []) 
+    safe_contexts = rule.get("safe_contexts", []) 
+    
+    for assign, lhs_node, rhs_node in assignment_pairs(tree, adapter):
+        if lhs_node is None or rhs_node is None:
+            continue
         
-        for assign, lhs_node, rhs_node in assignment_pairs(tree, adapter):
-            if lhs_node is None or rhs_node is None:
-                continue
-            
-            # Estraiamo il testo della parte sinistra preservando la struttura dei nomi (es. app.debug)
-            # USIAMO name_text PER EVITARE L'INCLUSIONE DEGLI INDICI
-            lhs_text = name_text(lhs_node)
-            lhs_text = adapter.resolve_name_text(lhs_text, imports)
-            
-            # Normalizziamo la parte destra usando l'adapter (gestisce apici, booleani, ecc.)
-            rhs_text = "".join(rhs_node.itertext()).strip()
-            
-            rhs_text = adapter.normalize_string_literal(rhs_text)
-            if rhs_node.tag.endswith("}name"):          # solo identificatori, mai stringhe
-                rhs_text = adapter.resolve_name_text(rhs_text, imports)
-            
-            for attr, val in bad_assignments.items():
-                # Confronto strutturale sicuro
-                if call_matches(lhs_text, attr, adapter) and rhs_text == val:
-                    if is_in_safe_context(assign, safe_contexts, None, adapter, imports): 
-                        continue
-                    findings.append(build_finding(rule, assign))
-
-
-
-    sensitive_patterns = rule.get("sensitive_var_patterns", [])
-    if sensitive_patterns:
-        safe_contexts = rule.get("safe_contexts", [])
-        excluded = {t.lower() for t in rule.get("sensitive_var_exclusions", [])}
-        is_sensitive = lambda v: name_matches(v, sensitive_patterns, excluded)
-
-        for define, name_node in adapter.constant_string_definitions(tree, NS):
-            if is_sensitive(name_text(name_node)) and not is_in_safe_context(define, safe_contexts, None, adapter, imports):
-                findings.append(build_finding(rule, define))
- 
-        for assign, lhs, rhs in find_assignments(tree, adapter):
-            if rhs is None:
-                continue
- 
-            rhs_nodes = rhs.xpath("self::* | following-sibling::*", namespaces=NS)
- 
-            has_string_literal = any(
-                n.xpath(".//src:literal[@type='string']", namespaces=NS) or 
-                (n.tag == f"{{{NS['src']}}}literal" and n.get("type") == "string") 
-                for n in rhs_nodes
-            )
-            
-            has_dynamic_content = any(
-                n.xpath(".//src:call | .//src:name", namespaces=NS) or 
-                (n.tag in [f"{{{NS['src']}}}call", f"{{{NS['src']}}}name"]) 
-                for n in rhs_nodes
-            )
- 
-            if not has_string_literal or has_dynamic_content:
-                continue
-
-            if not any(literal_value_ok(n, adapter,
-                            rule.get("sensitive_value_min_len", 1),
-                            set(rule.get("sensitive_value_placeholders", [])))
-            for n in rhs_nodes):
-                continue
-
-            var_name = name_text(lhs)
-            if is_sensitive(var_name) and not is_in_safe_context(lhs, safe_contexts, None, adapter, imports):
+        lhs_text = name_text(lhs_node)
+        lhs_text = adapter.resolve_name_text(lhs_text, imports)
+        
+        rhs_text = "".join(rhs_node.itertext()).strip()
+        rhs_text = adapter.normalize_string_literal(rhs_text)
+        if rhs_node.tag.endswith("}name"):
+            rhs_text = adapter.resolve_name_text(rhs_text, imports)
+        
+        for attr, val in bad_assignments.items():
+            if call_matches(lhs_text, attr, adapter) and rhs_text == val:
+                if is_in_safe_context(assign, safe_contexts, None, adapter, imports): 
+                    continue
                 findings.append(build_finding(rule, assign))
 
-        # keyword argument: func(password='literal')
-        for arg in tree.xpath(".//src:call/src:argument_list/src:argument", namespaces=NS):
-            if not adapter.is_kwarg(arg, NS):
-                continue
-            key = arg.xpath("./src:name[1]", namespaces=NS)
-            val = arg.xpath("./src:expr[1]", namespaces=NS)
-            if key and val and is_sensitive(name_text(key[0])) \
-               and _is_hardcoded_string(val[0], adapter) \
-               and not is_in_safe_context(arg, safe_contexts, None, adapter, imports):
-                findings.append(build_finding(rule, arg))
- 
-        conditions = tree.xpath(".//src:if_stmt//src:condition", namespaces=NS)
-        eq_op = adapter.equality_operator()
-        for cond in conditions:
-            if cond.xpath(".//src:call", namespaces=NS):
+
+def _run_sensitive_var_patterns(tree, rule, findings, adapter, imports):
+    sensitive_patterns = rule.get("sensitive_var_patterns", [])
+    safe_contexts = rule.get("safe_contexts", [])
+    excluded = {t.lower() for t in rule.get("sensitive_var_exclusions", [])}
+    is_sensitive = lambda v: name_matches(v, sensitive_patterns, excluded)
+
+    for define, name_node in adapter.constant_string_definitions(tree, NS):
+        if is_sensitive(name_text(name_node)) and not is_in_safe_context(define, safe_contexts, None, adapter, imports):
+            findings.append(build_finding(rule, define))
+
+    for assign, lhs, rhs in find_assignments(tree, adapter):
+        if rhs is None:
+            continue
+
+        rhs_nodes = rhs.xpath("self::* | following-sibling::*", namespaces=NS)
+
+        has_string_literal = any(
+            n.xpath(".//src:literal[@type='string']", namespaces=NS) or 
+            (n.tag == f"{{{NS['src']}}}literal" and n.get("type") == "string") 
+            for n in rhs_nodes
+        )
+        
+        has_dynamic_content = any(
+            n.xpath(".//src:call | .//src:name", namespaces=NS) or 
+            (n.tag in [f"{{{NS['src']}}}call", f"{{{NS['src']}}}name"]) 
+            for n in rhs_nodes
+        )
+
+        if not has_string_literal or has_dynamic_content:
+            continue
+
+        if not any(literal_value_ok(n, adapter,
+                        rule.get("sensitive_value_min_len", 1),
+                        set(rule.get("sensitive_value_placeholders", [])))
+        for n in rhs_nodes):
+            continue
+
+        var_name = name_text(lhs)
+        if is_sensitive(var_name) and not is_in_safe_context(lhs, safe_contexts, None, adapter, imports):
+            findings.append(build_finding(rule, assign))
+
+    for arg in tree.xpath(".//src:call/src:argument_list/src:argument", namespaces=NS):
+        if not adapter.is_kwarg(arg, NS):
+            continue
+        key = arg.xpath("./src:name[1]", namespaces=NS)
+        val = arg.xpath("./src:expr[1]", namespaces=NS)
+        if key and val and is_sensitive(name_text(key[0])) \
+           and _is_hardcoded_string(val[0], adapter) \
+           and not is_in_safe_context(arg, safe_contexts, None, adapter, imports):
+            findings.append(build_finding(rule, arg))
+
+    conditions = tree.xpath(".//src:if_stmt//src:condition", namespaces=NS)
+    eq_op = adapter.equality_operator()
+    for cond in conditions:
+        if cond.xpath(".//src:call", namespaces=NS):
+            continue
+
+        for op_node in cond.xpath(f".//src:operator[text()='{eq_op}']", namespaces=NS):
+            lhs_nodes = op_node.xpath("preceding-sibling::*[not(self::src:comment)]", namespaces=NS)
+            rhs_nodes = op_node.xpath("following-sibling::*[not(self::src:comment)]", namespaces=NS)
+            if not lhs_nodes or not rhs_nodes:
                 continue
 
-            for op_node in cond.xpath(f".//src:operator[text()='{eq_op}']", namespaces=NS):
-                lhs_nodes = op_node.xpath("preceding-sibling::*[not(self::src:comment)]", namespaces=NS)
-                rhs_nodes = op_node.xpath("following-sibling::*[not(self::src:comment)]", namespaces=NS)
-                if not lhs_nodes or not rhs_nodes:
+            for name_side, literal_side in ((lhs_nodes[-1], rhs_nodes[0]), (rhs_nodes[0], lhs_nodes[-1])):
+                name_nodes = name_side.xpath("self::src:name | .//src:name", namespaces=NS)
+                literal_nodes = literal_side.xpath(
+                    "self::src:literal[@type='string'] | .//src:literal[@type='string']", namespaces=NS
+                )
+                if not name_nodes or not literal_nodes:
                     continue
-
-                for name_side, literal_side in ((lhs_nodes[-1], rhs_nodes[0]), (rhs_nodes[0], lhs_nodes[-1])):
-                    name_nodes = name_side.xpath("self::src:name | .//src:name", namespaces=NS)
-                    literal_nodes = literal_side.xpath(
-                        "self::src:literal[@type='string'] | .//src:literal[@type='string']", namespaces=NS
-                    )
-                    if not name_nodes or not literal_nodes:
-                        continue
-                    var_name = "".join(name_nodes[0].itertext()).strip()
-                    if is_sensitive(var_name) and not is_in_safe_context(name_nodes[0], safe_contexts, None, adapter, imports):
-                        findings.append(build_finding(rule, cond))
-                        break
-
-
-    bad_function_defs = rule.get("bad_function_defs", [])
-    if bad_function_defs:
-        safe_contexts = rule.get("safe_contexts", [])
-        
-        functions = function_nodes(tree, adapter)
-        for func in functions:
-            name_nodes = func.xpath("./src:name", namespaces=NS)
-            if not name_nodes:
-                continue
-            func_name = "".join(name_nodes[0].itertext()).strip()
-            
-            # 1. Estrazione semantica dei parametri delegata all'adapter
-            param_names = set()
-            params_nodes = func.xpath(".//src:parameter_list//src:parameter", namespaces=NS)
-            for param in params_nodes:
-                p_name, _ = adapter.get_parameter_name_and_type(param, NS)
-                if p_name:
-                    param_names.add(p_name)
-            
-            for bfd in bad_function_defs:
-                target_name = bfd.get("name")
-                target_param = bfd.get("param")
-                
-                
-                raw_expected = bfd.get("return_expr", bfd.get("return_value", ""))
-                target_return = adapter.canonical_literal(raw_expected)
-                
-                if func_name == target_name and target_param in param_names:
-                    returns = func.xpath(".//src:block/src:block_content/src:return", namespaces=NS)
-                    match_return = False
-                    
-                    # 2. Validazione strutturale dell'espressione di ritorno
-                    for ret in returns:
-                        expr = ret.xpath("./src:expr", namespaces=NS)
-                        if expr:
-                            # Estraiamo solo l'espressione (es. "true" o "True") e normalizziamo
-                            expr_text = adapter.canonical_literal("".join(expr[0].itertext()))
-                            if expr_text == target_return:
-                                match_return = True
-                                break
-                                
-                    if match_return:
-                        if is_in_safe_context(func, safe_contexts, None, adapter, imports):
-                            continue
-                        findings.append(build_finding(rule, func))
-
-
-    forbidden_calls_with_kwargs = rule.get("forbidden_calls_with_kwargs", [])
-    if forbidden_calls_with_kwargs:
-        safe_contexts = rule.get("safe_contexts", [])
-        
-        calls = tree.xpath(".//src:call", namespaces=NS)
-        for call in calls:
-            call_name = get_call_name(call, adapter, imports)
-            if not call_name:
-                continue
-            
-            for fcwk in forbidden_calls_with_kwargs:
-                targets = fcwk.get("call", [])
-                if isinstance(targets, str):
-                    targets = [targets]
-                kwargs = fcwk.get("kwargs", {})
-
-                is_target = any(call_matches(call_name,t, adapter) for t in targets)
-                if is_target:
-                    all_kwargs_match = True
-                    
-                    found_kwargs = {}
-                    for arg in call.xpath("./src:argument_list/src:argument", namespaces=NS):
-                        if adapter.is_kwarg(arg, NS):
-                            name_node = arg.xpath("./src:name[1]", namespaces=NS)
-                            kw_name = "".join(name_node[0].itertext()).strip() if name_node else ""
-                            expr_node = arg.xpath("./src:expr[1] | ./src:literal[1]", namespaces=NS)
-                            val_text = adapter.normalize_string_literal(
-                                "".join(expr_node[0].itertext()).strip()
-                            ) if expr_node else ""
-                            found_kwargs[kw_name] = val_text
-                            
-                    for k, v in kwargs.items():
-                        if k not in found_kwargs or found_kwargs[k] != adapter.normalize_string_literal(v):
-                            all_kwargs_match = False
-                            break
-                    
-                    if all_kwargs_match:
-                        if is_in_safe_context(call, safe_contexts, None, adapter, imports):
-                            continue
-                        findings.append(build_finding(rule, call))
-
-
-    forbidden_subscripts = rule.get("forbidden_subscripts", [])
-    if forbidden_subscripts:
-        safe_contexts = rule.get("safe_contexts", [])
-        
-        # Cerca tutti i nodi che hanno un accesso tramite indice (es. dict[chiave] o array[i])
-        for node in tree.xpath(".//src:name[src:index]", namespaces=NS):
-            if node.xpath("ancestor::src:parameter", namespaces=NS):
-                continue
-
-            # dichiarazione di array (char buf[1024]; struct { int a[4]; }): non è un accesso
-            if node.xpath("parent::src:decl", namespaces=NS):
-                continue
-            # Estraiamo il nome dell'oggetto a cui si sta accedendo usando l'AST puro
-            parts = node.xpath("./src:name", namespaces=NS)
-            if parts:
-                # NORMALIZZAZIONE:
-                # Ignoriamo l'operatore reale (., ->, ::) e uniamo i pezzi sempre col punto.
-                # 'request->form' (C) e 'request.form' (Python) diventano internamente 'request.form'.
-                base_name = ".".join("".join(p.itertext()).strip() for p in parts)
-            else:
-                # Gestisce nomi singoli come 'environ'
-                base_name = (node.text or "").strip()
-
-            base_name = adapter.resolve_name_text(base_name, imports)
-
-            index_var = None
-            index_expr = node.xpath("./src:index/src:expr", namespaces=NS)
-            
-            
-            if index_expr:
-                
-                is_literal_index = _is_pure_literal_expr(index_expr[0])
-                
-                idx_names = index_expr[0].xpath("./src:name", namespaces=NS)
-                if len(idx_names) == 1 and len(list(index_expr[0])) == 1:
-                    index_var = "".join(idx_names[0].itertext()).strip()
-                    
-                    # Se non è un letterale diretto, facciamo un backward scan
-                    # per vedere se l'ultima assegnazione era un letterale sicuro.
-                    if not is_literal_index and rule.get("skip_literal_subscript_index"):
-                        node_key = _pos_key(node)
-                        scope_node = enclosing_scope(node, adapter)
-                        if scope_node is None:
-                            scope_node = tree
-                        
-                        prior_assigns = [
-                            (stmt, rhs) for stmt, _, rhs in find_assignments(scope_node, adapter, index_var)
-                            if _pos_key(stmt) < node_key and rhs is not None and _is_pure_literal_expr(rhs)
-                        ]
-                        
-                        if prior_assigns:
-                            # Trovata un'assegnazione hardcodata precedente! Scartiamo il finding.
-                            is_literal_index = True
-                
-                # Se la regola lo consente e abbiamo appurato che è un letterale (diretto o assegnato), saltiamo.
-                if rule.get("skip_literal_subscript_index") and is_literal_index:
-                    continue
-                
-            # Verifica se l'oggetto a cui si accede è nella blacklist
-            for subscript in forbidden_subscripts:
-
-                if call_matches(base_name, subscript, adapter):
-                    if is_in_safe_context(node, safe_contexts, var_name=index_var, adapter=adapter, imports=imports):
-                        break
-                    findings.append(build_finding(rule, node))
+                var_name = "".join(name_nodes[0].itertext()).strip()
+                if is_sensitive(var_name) and not is_in_safe_context(name_nodes[0], safe_contexts, None, adapter, imports):
+                    findings.append(build_finding(rule, cond))
                     break
 
+
+def _run_bad_function_defs(tree, rule, findings, adapter, imports):
+    bad_function_defs = rule.get("bad_function_defs", [])
+    safe_contexts = rule.get("safe_contexts", [])
     
-    if rule.get("forbidden_function_defs"):
-        _run_forbidden_function_defs(tree, rule, findings, adapter, imports)
+    functions = function_nodes(tree, adapter)
+    for func in functions:
+        name_nodes = func.xpath("./src:name", namespaces=NS)
+        if not name_nodes:
+            continue
+        func_name = "".join(name_nodes[0].itertext()).strip()
+        
+        param_names = set()
+        params_nodes = func.xpath(".//src:parameter_list//src:parameter", namespaces=NS)
+        for param in params_nodes:
+            p_name, _ = adapter.get_parameter_name_and_type(param, NS)
+            if p_name:
+                param_names.add(p_name)
+        
+        for bfd in bad_function_defs:
+            target_name = bfd.get("name")
+            target_param = bfd.get("param")
+            
+            raw_expected = bfd.get("return_expr", bfd.get("return_value", ""))
+            target_return = adapter.canonical_literal(raw_expected)
+            
+            if func_name == target_name and target_param in param_names:
+                returns = func.xpath(".//src:block/src:block_content/src:return", namespaces=NS)
+                match_return = False
+                
+                for ret in returns:
+                    expr = ret.xpath("./src:expr", namespaces=NS)
+                    if expr:
+                        expr_text = adapter.canonical_literal("".join(expr[0].itertext()))
+                        if expr_text == target_return:
+                            match_return = True
+                            break
+                            
+                if match_return:
+                    if is_in_safe_context(func, safe_contexts, None, adapter, imports):
+                        continue
+                    findings.append(build_finding(rule, func))
 
-    if rule.get("missing_while_increments"):
-        _run_missing_while_increments(tree, rule, findings, adapter, imports)
 
-    if rule.get("empty_catch_blocks"):
-        _run_empty_catch_blocks(tree, rule, findings, adapter, imports)
+def _run_forbidden_calls_with_kwargs(tree, rule, findings, adapter, imports):
+    forbidden_calls_with_kwargs = rule.get("forbidden_calls_with_kwargs", [])
+    safe_contexts = rule.get("safe_contexts", [])
+    
+    calls = tree.xpath(".//src:call", namespaces=NS)
+    for call in calls:
+        call_name = get_call_name(call, adapter, imports)
+        if not call_name:
+            continue
+        
+        for fcwk in forbidden_calls_with_kwargs:
+            targets = fcwk.get("call", [])
+            if isinstance(targets, str):
+                targets = [targets]
+            kwargs = fcwk.get("kwargs", {})
 
-    if rule.get("reference_comparisons"):
-        _run_reference_comparisons(tree, rule, findings, adapter, imports)
+            is_target = any(call_matches(call_name, t, adapter) for t in targets)
+            if is_target:
+                all_kwargs_match = True
+                
+                found_kwargs = {}
+                for arg in call.xpath("./src:argument_list/src:argument", namespaces=NS):
+                    if adapter.is_kwarg(arg, NS):
+                        name_node = arg.xpath("./src:name[1]", namespaces=NS)
+                        kw_name = "".join(name_node[0].itertext()).strip() if name_node else ""
+                        expr_node = arg.xpath("./src:expr[1] | ./src:literal[1]", namespaces=NS)
+                        val_text = adapter.normalize_string_literal(
+                            "".join(expr_node[0].itertext()).strip()
+                        ) if expr_node else ""
+                        found_kwargs[kw_name] = val_text
+                        
+                for k, v in kwargs.items():
+                    if k not in found_kwargs or found_kwargs[k] != adapter.normalize_string_literal(v):
+                        all_kwargs_match = False
+                        break
+                
+                if all_kwargs_match:
+                    if is_in_safe_context(call, safe_contexts, None, adapter, imports):
+                        continue
+                    findings.append(build_finding(rule, call))
 
-    if rule.get("use_after_free"):
-        _check_use_after_free(tree, rule, findings, adapter, imports)
 
-    if rule.get("empty_if_blocks"):
-        _run_empty_if_blocks(tree, rule, findings, adapter, imports)
+def _run_forbidden_subscripts(tree, rule, findings, adapter, imports):
+    forbidden_subscripts = rule.get("forbidden_subscripts", [])
+    safe_contexts = rule.get("safe_contexts", [])
+    
+    for node in tree.xpath(".//src:name[src:index]", namespaces=NS):
+        if node.xpath("ancestor::src:parameter", namespaces=NS):
+            continue
+        if node.xpath("parent::src:decl", namespaces=NS):
+            continue
 
-    xpath_queries = rule.get("xpath_rules", [])
-    if xpath_queries:
-        safe_contexts = rule.get("safe_contexts", [])
-        for xp in xpath_queries:
-            for node in tree.xpath(xp, namespaces=NS):
-                if is_in_safe_context(node, safe_contexts, None, adapter, imports):
-                    continue
+        parts = node.xpath("./src:name", namespaces=NS)
+        if parts:
+            base_name = ".".join("".join(p.itertext()).strip() for p in parts)
+        else:
+            base_name = (node.text or "").strip()
+
+        base_name = adapter.resolve_name_text(base_name, imports)
+
+        index_var = None
+        index_expr = node.xpath("./src:index/src:expr", namespaces=NS)
+        
+        if index_expr:
+            is_literal_index = _is_pure_literal_expr(index_expr[0])
+            
+            idx_names = index_expr[0].xpath("./src:name", namespaces=NS)
+            if len(idx_names) == 1 and len(list(index_expr[0])) == 1:
+                index_var = "".join(idx_names[0].itertext()).strip()
+                
+                if not is_literal_index and rule.get("skip_literal_subscript_index"):
+                    node_key = _pos_key(node)
+                    scope_node = enclosing_scope(node, adapter)
+                    if scope_node is None:
+                        scope_node = tree
+                    
+                    prior_assigns = [
+                        (stmt, rhs) for stmt, _, rhs in find_assignments(scope_node, adapter, index_var)
+                        if _pos_key(stmt) < node_key and rhs is not None and _is_pure_literal_expr(rhs)
+                    ]
+                    
+                    if prior_assigns:
+                        is_literal_index = True
+            
+            if rule.get("skip_literal_subscript_index") and is_literal_index:
+                continue
+            
+        for subscript in forbidden_subscripts:
+            if call_matches(base_name, subscript, adapter):
+                if is_in_safe_context(node, safe_contexts, var_name=index_var, adapter=adapter, imports=imports):
+                    break
                 findings.append(build_finding(rule, node))
+                break
 
-    
+
+def _run_xpath_rules(tree, rule, findings, adapter, imports):
+    xpath_queries = rule.get("xpath_rules", [])
+    safe_contexts = rule.get("safe_contexts", [])
+    for xp in xpath_queries:
+        for node in tree.xpath(xp, namespaces=NS):
+            if is_in_safe_context(node, safe_contexts, None, adapter, imports):
+                continue
+            findings.append(build_finding(rule, node))
+
+
+STRUCTURAL_HANDLERS = {
+    "bad_assignments": _run_bad_assignments,
+    "sensitive_var_patterns": _run_sensitive_var_patterns,
+    "bad_function_defs": _run_bad_function_defs,
+    "forbidden_calls_with_kwargs": _run_forbidden_calls_with_kwargs,
+    "forbidden_subscripts": _run_forbidden_subscripts,
+    "forbidden_function_defs": _run_forbidden_function_defs,
+    "missing_while_increments": _run_missing_while_increments,
+    "empty_catch_blocks": _run_empty_catch_blocks,
+    "reference_comparisons": _run_reference_comparisons,
+    "use_after_free": _check_use_after_free,
+    "empty_if_blocks": _run_empty_if_blocks,
+    "xpath_rules": _run_xpath_rules,
+}
+
+
+def run_structural_rule(tree, rule: dict, adapter, imports, ctx) -> list:
+    findings = []
+    for key, val in rule.items():
+        if val and (handler := STRUCTURAL_HANDLERS.get(key)) is not None:
+            handler(tree, rule, findings, adapter, imports)
     return findings
+
 
 
 def run_forbidden_functions_indexed(ctx, compiled, findings, adapter, imports):
     # Applicabilità della regola in base agli import: dipende solo da (rule, imports),
     # quindi è costante per tutta la unit. Calcolata una volta per regola, al bisogno.
-    applicable = {}
-
-    def rule_applies(rule) -> bool:
-        rid = id(rule)
-        res = applicable.get(rid)
-        if res is None:
-            res = check_required_imports(rule, imports)
-            applicable[rid] = res
-        return res
 
     for call in ctx.calls:
         call_name = get_call_name(call, adapter, imports)
@@ -720,8 +682,6 @@ def run_forbidden_functions_indexed(ctx, compiled, findings, adapter, imports):
         reported_rules = set()
         for rule, spec in candidates:
             if id(rule) in reported_rules:
-                continue
-            if not rule_applies(rule):
                 continue
             if any(call_matches(call_name, e, adapter) for e in rule.get("excluded_functions", [])):
                 continue

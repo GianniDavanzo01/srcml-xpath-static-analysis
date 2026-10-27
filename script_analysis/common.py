@@ -619,14 +619,6 @@ def call_arguments_match_ast(call_node, spec: dict, adapter, imports) -> bool:
     return True
 
 
-def check_required_imports(rule_spec, imports) -> bool:
-    required = rule_spec.get("required_imports")
-    if not required:
-        return True
-    imported = {b.canonical_name for b in imports if not b.is_macro}
-    return any(req in imported for req in required)
-
-
 def _pos_key(node) -> tuple:
     """
     Converte la posizione 'line:col' (stringa) in una tupla numerica (line, col) 
