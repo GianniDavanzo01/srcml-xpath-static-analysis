@@ -61,9 +61,10 @@ class RuleCompiler:
             return None  
         
         concrete_rule = abstract_rule.copy()
-        concrete_rule["numeric_types_sanitize"] = any(
-        (s.get("tag") if isinstance(s, dict) else s) == "cast_to_integer"
-        for s in abstract_rule.get("sanitizers", []))
+        if abstract_rule.get("type") == "taint":
+            concrete_rule["numeric_types_sanitize"] = any(
+                (s.get("tag") if isinstance(s, dict) else s) == "cast_to_integer"
+                for s in abstract_rule.get("sanitizers", []))
         
         self._current_rule = abstract_rule.get("rule_id", "UNKNOWN")
 
