@@ -2,7 +2,8 @@ from collections import namedtuple
 
 from common import NS, name_text, assignment_pairs, enclosing_scope, in_opaque_tag, is_dead_code
 
-AssignInfo = namedtuple("AssignInfo", "stmt lhs rhs var scope rhs_all rhs_names rhs_interp numeric_lhs")
+# AssignInfo = namedtuple("AssignInfo", "stmt lhs rhs var scope rhs_all rhs_names rhs_interp numeric_lhs")
+AssignInfo = namedtuple("AssignInfo", "stmt lhs rhs var scope rhs_all rhs_names rhs_interp numeric_lhs compound")
 
 
 
@@ -46,7 +47,10 @@ def build_assign_infos(assignments, adapter, unit):
             and adapter.is_numeric_type(adapter.resolve_variable_type(lhs, var, NS))
         )
 
-        infos.append(AssignInfo(stmt, lhs, rhs, name_text(lhs), scope, rhs_all, rhs_names, rhs_interp, numeric_lhs))
+        # infos.append(AssignInfo(stmt, lhs, rhs, name_text(lhs), scope, rhs_all, rhs_names, rhs_interp, numeric_lhs))
+        compound = adapter.is_compound_assignment(stmt, NS)
+        infos.append(AssignInfo(stmt, lhs, rhs, name_text(lhs), scope, rhs_all, rhs_names,
+                                rhs_interp, numeric_lhs, compound))
     return infos
 
 class UnitContext:

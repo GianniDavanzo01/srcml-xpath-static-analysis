@@ -135,6 +135,7 @@ class LanguageAdapter(ABC):
     def equality_operator(self) -> str:
         """Operatore testuale usato per il confronto di uguaglianza (es. '==')."""
 
+
     @abstractmethod
     def logical_and_operator(self) -> list:
         """Operatori logici AND. Python: ['and']. C/Java: ['&&']."""
@@ -303,7 +304,7 @@ class LanguageAdapter(ABC):
         return True
 
 
-    def resolve_name_text(self, text: str, imports: list) -> str:
+    def resolve_name_text(self, text: str, imports: list, node=None) -> str:
         """Nome puntato (non call) -> nome canonico. Default: invariato."""
         return text
 
@@ -464,6 +465,64 @@ class LanguageAdapter(ABC):
         """[(nodo_definizione, nodo_name)] di costanti stringa dichiarate a
         livello di preprocessore/modulo. Default: nessuna."""
         return []
+
+
+    def parameters_xpath(self) -> str:
+        return "./src:parameter_list/src:parameter"
+
+    def get_parameter_name_nodes(self, param_node, ns) -> list:
+        n = self.get_parameter_name_node(param_node, ns)
+        return [n] if n is not None else []
+
+    def equality_operators(self) -> list:
+        return [self.equality_operator()]   
+
+    def source_name_prefixes(self) -> bool:
+        return False
+
+    def structural_only_assignment_tags(self) -> tuple:
+        return ()
+
+    def compound_assignment_operators(self) -> list:
+        """Operatori 'x op= y' che propagano il taint di y su x ma NON lo cancellano.
+        Default: nessuno (comportamento invariato)."""
+        return []
+
+    def _compound_op(self, node, ns):
+        ops = self.compound_assignment_operators()
+        if not ops or not node.tag.endswith("}expr_stmt"):
+            return None
+        cond = " or ".join(f"text()='{o}'" for o in ops)
+        op = node.xpath(f"./src:expr/src:operator[{cond}][1]", namespaces=ns)
+        return op[0] if op else None
+
+    def is_compound_assignment(self, node, ns) -> bool:
+        return self._compound_op(node, ns) is not None
+
+    def get_compound_assignment_lhs_rhs(self, node, ns):
+        op = self._compound_op(node, ns)
+        if op is None:
+            return None, None
+        lhs = op.xpath("./preceding-sibling::*[not(self::src:comment)][1]", namespaces=ns)
+        rhs = op.xpath("./following-sibling::*[not(self::src:comment)][1]", namespaces=ns)
+        return (lhs[0] if lhs else None, rhs[0] if rhs else None)
+
+    def call_keyword_args(self, call_node, ns) -> dict:
+        """{nome: valore normalizzato} degli argomenti nominati di una call."""
+        out = {}
+        for arg in call_node.xpath("./src:argument_list/src:argument", namespaces=ns):
+            if self.is_kwarg(arg, ns):
+                k = arg.xpath("./src:name[1]", namespaces=ns)
+                v = arg.xpath("./src:expr[1] | ./src:literal[1]", namespaces=ns)
+                if k and v:
+                    out[name_text(k[0])] = self.normalize_string_literal("".join(v[0].itertext()).strip())
+        return out
+
+
+    def callback_param_flow(self) -> dict:
+        """pattern call -> indice del parametro della callback che riceve i dati del receiver."""
+        return {}
+
 
     
 # ---------------------------------------------------------------------- #
@@ -815,7 +874,7 @@ class PythonAdapter(LanguageAdapter):
     def class_tags(self): return ["class"]
 
 
-    def resolve_name_text(self, text, imports):
+    def resolve_name_text(self, text, imports, node=None):
         if not text or not imports:
             return text
         # già canonico: 'os.environ' con 'import os' (evita il doppio prefisso)
@@ -1168,28 +1227,6 @@ class JavaAdapter(LanguageAdapter):
             var_name = "".join(parts[0].itertext()).strip()
             method_name = "".join(parts[-1].itertext()).strip()
             
-            # xpath_query_local = (
-            #     f"{self.scope_axis(('class', 'unit'))}"
-            #     f"//src:decl[src:name[text()='{var_name}']]"
-            # )
-            
-            # decls = call_node.xpath(xpath_query_local, namespaces=ns)
-
-            # # --- 2. Fallback sui Parametri (Se la variabile non è nel blocco) ---
-            # if not decls:
-            #     xpath_query_param = (
-            #         f"{self.scope_axis()}//src:parameter_list"
-            #         f"//src:decl[src:name[text()='{var_name}']]"
-            #     )
-            #     decls = call_node.xpath(xpath_query_param, namespaces=ns)
-
-            # # 3. Fallback: campi della classe che racchiude (se la call e' dentro un metodo)
-            # if not decls:
-            #     xpath_query_field = (
-            #         f"ancestor::src:class[1]/src:block/src:decl_stmt"
-            #         f"/src:decl[src:name[text()='{var_name}']]"
-            #     )
-            #     decls = call_node.xpath(xpath_query_field, namespaces=ns)
 
             decls = self._find_decls(call_node, var_name, include_fields=True)
     
@@ -1362,7 +1399,7 @@ class JavaAdapter(LanguageAdapter):
     def class_tags(self): return ["class"]
 
 
-    def resolve_name_text(self, text, imports):
+    def resolve_name_text(self, text, imports, node=None):
         return self._canonicalize(text, imports) if text else text
 
     # CWE-595: distinguere confronto di riferimenti da confronto di valori
@@ -1903,509 +1940,1031 @@ class CAdapter(LanguageAdapter):
 
 
 
-
-# ---------------------------------------------------------------------- #
-# Implementazione C++
-# ---------------------------------------------------------------------- #
-# C++ e' un'estensione di C: si eredita CAdapter e si sovrascrive solo cio' che
-# cambia in srcML 1.1.0 (verificato su XML reali):
-#   - nomi qualificati  <name><name>std</name><operator>::</operator><name>x</name></name>
-#   - template          <argument_list type="generic"> dentro/accanto al <name>
-#   - costruttori       <decl> con <argument_list> diretta (niente <init>): T x(a), T x{a}
-#   - decl nelle condizioni  if (int r = f()), while (auto q = g())
-#   - range-for         <init><decl>..<range>: <expr/></range></decl></init>  (oppure forma piatta)
-#   - using / namespace alias / typedef, <cast type="static|...">, <lambda>, <constructor>,
-#     <destructor>, <struct>, campi dentro <public>/<private>/<protected>
-
-_SRC_NS = {"src": "http://www.srcML.org/srcML/src"}
-
-# Tipi che compaiono nei cast e non esistono in C
-_CPP_EXTRA_TYPE_WORDS = {"bool", "auto", "char16_t", "char32_t", "char8_t", "nullptr_t"}
-
-_TEMPLATE_ARGS_RE = re.compile(r"<[^<>]*>")
-_RAW_STRING_RE = re.compile(r'^(?:u8|u|U|L)?R"([^()\\\s]{0,16})\((.*)\)\1"$', re.DOTALL)
-_STR_PREFIX_RE = re.compile(r'^(?:u8|u|U|L)(?=["\'])')
-
-
-class CppAdapter(CAdapter):
-    name = "cpp"
-
+#---------------------------------------------------
+#Implementazione Adapter Javascritpt
+#---------------------------------------------------
+_JS_KEYWORDS = {
+    "true", "false", "null", "undefined", "typeof", "new", "await", "yield",
+    "void", "delete", "in", "of", "instanceof", "function", "return", "if",
+    "else", "async",
+}
+ 
+# nome puntato (anche con '?.'), non preceduto da '.', da parola o da '$'
+_JS_CHAIN_RE = re.compile(
+    r"(?<![\w$.])[A-Za-z_$][\w$]*(?:\s*\??\.\s*[A-Za-z_$][\w$]*)*"
+)
+_JS_PREFIX_OPS = ("await", "new", "yield")
+ 
+ 
+class JavaScriptAdapter(LanguageAdapter):
+    name = "javascript"
+ 
+    HEX_RE = re.compile(r"^0[xX][0-9a-fA-F]+$")
+    OCT_RE = re.compile(r"^0[oO][0-7]+$")
+    BIN_RE = re.compile(r"^0[bB][01]+$")
+    LEGACY_OCT_RE = re.compile(r"^0[0-7]+$")
+ 
     # ------------------------------------------------------------------ #
-    # Nomi: canonicalizzazione
+    # Helper interni: prefissi (await / new / yield)
     # ------------------------------------------------------------------ #
+    # srcML e' incoerente su 'new': <operator>new</operator> dentro un <init>,
+    # <name>new</name> a inizio statement. 'await' e' sempre <operator>.
+ 
+    def _is_prefix(self, n) -> bool:
+        t, txt = _lname(n), _ntxt(n)
+        if t == "operator" and txt in _JS_PREFIX_OPS:
+            return True
+        return t == "name" and txt == "new"
+ 
+    def _skip_prefix(self, nodes):
+        i = 0
+        while i < len(nodes) and self._is_prefix(nodes[i]):
+            i += 1
+        return nodes[i:]
+ 
+    # ------------------------------------------------------------------ #
+    # Assegnazioni
+    # ------------------------------------------------------------------ #
+ 
+    def potential_assignment_xpath(self) -> str:
+        # for (i = 0; ...): <init><expr>i = 0</expr></init> (verificato su XML)
+        return (
+            ".//src:expr_stmt | .//src:decl_stmt | .//src:control[parent::src:for]"
+            " | .//src:init[parent::src:control]/src:decl[not(src:range)]"
+            " | .//src:init[parent::src:control]/src:expr"
+            " | .//src:object/src:property")
+ 
+    def is_assignment(self, node, ns) -> bool:
+        tag = _lname(node)
+        if tag == "property":
+            return bool(node.xpath("./src:decl/src:init", namespaces=ns))
+        if tag == "expr":                      # for (i = 0; ...)
+            return bool(node.xpath("./src:operator[text()='='][1]", namespaces=ns))
+        if tag == "expr_stmt":
+            # solo l''=' figlio diretto dell'expr: './/' catturerebbe quelli
+            # delle callback annidate (app.get(..., (req,res) => { x = 1 }))
+            return bool(node.xpath("./src:expr/src:operator[text()='='][1]", namespaces=ns))
+        if tag == "decl_stmt":
+            return bool(node.xpath("./src:decl/src:init", namespaces=ns))
+        if tag == "decl":
+            return bool(node.xpath("./src:init", namespaces=ns))
+        if tag == "control":
+            return bool(node.xpath("./src:init/src:decl/src:range", namespaces=ns))
+        return False
+ 
+    def _lhs_head(self, op, ns):
+        """LHS dell''=': se il nome e' spezzato da un index non terminale
+        (a[0].b = x -> name(a[0]) . name(b)) risale fino alla testa della catena,
+        cosi' la variabile taintata e' la radice ('a') e non 'b'."""
+        prev = op.xpath("./preceding-sibling::*[not(self::src:comment)]", namespaces=ns)
+        if not prev:
+            return None
+        i = len(prev) - 1
+        node = prev[i]
+        if not node.tag.endswith("}name"):
+            return node
+        member_ops = self.member_access_operator()
+        while (i >= 2 and _lname(prev[i - 1]) == "operator"
+               and _ntxt(prev[i - 1]) in member_ops
+               and _lname(prev[i - 2]) == "name"):
+            node = prev[i - 2]
+            i -= 2
+        return node
+ 
+    def _decl_bound_names(self, decl, ns) -> list:
+        """<name> delle variabili legate da un <decl>: nome diretto, oppure
+        (destructuring) i nomi dei <decl> annidati.
+        Verificato su XML: rest ({a, ...rest}) e pattern annidati ({a: {b}})."""
+        direct = decl.xpath("./src:name[1]", namespaces=ns)
+        if direct:
+            return [direct[0]]
+        out = []
+        for d in decl.xpath("./src:decl", namespaces=ns):
+            out.extend(self._decl_bound_names(d, ns))
+        return out
+ 
+    def _decl_pairs(self, decl, ns) -> list:
+        """[(lhs_name, rhs_expr)] per un <decl>. Nel destructuring tutte le
+        variabili condividono l'init del decl ESTERNO (i default 'b = 5'
+        annidati sono ignorati; la chiave del rename 'a: renamed' e' un <expr>,
+        non una variabile)."""
+        init = decl.xpath("./src:init/src:expr[1]", namespaces=ns)
+        if not init:
+            return []
+        return [(n, init[0]) for n in self._decl_bound_names(decl, ns)]
+ 
+    def _control_pairs(self, control, ns) -> list:
+        decl = control.xpath("./src:init/src:decl[src:range][1]", namespaces=ns)
+        if not decl:
+            return []
+        rhs = decl[0].xpath("./src:range/src:expr[1]", namespaces=ns)
+        if not rhs:
+            return []
+        # for (x of y), (const {id} of r), (const [a,b] of x): <decl> con <range> (verificato su XML).
+        return [(n, rhs[0]) for n in self._decl_bound_names(decl[0], ns)]
+ 
+    def get_assignment_lhs_rhs(self, node, ns):
+        tag = _lname(node)
+        if tag == "property":
+            decl = node.xpath("./src:decl[1]", namespaces=ns)
+            if decl:
+                lhs = decl[0].xpath("./src:name[1]", namespaces=ns)
+                rhs = decl[0].xpath("./src:init/src:expr[1]", namespaces=ns)
+                return (lhs[0] if lhs else None, rhs[0] if rhs else None)
+        if tag in ("expr_stmt", "expr"):
+            op = node.xpath(("./src:expr" if tag == "expr_stmt" else ".")
+                            + "/src:operator[text()='='][1]", namespaces=ns)
+            if not op:
+                return None, None
+            lhs = self._lhs_head(op[0], ns)
+            rhs_nodes = self._skip_prefix(
+                op[0].xpath("./following-sibling::*[not(self::src:comment)]", namespaces=ns))
+            if lhs is None or not rhs_nodes:
+                return None, None
+            return lhs, rhs_nodes[0]
+        pairs = self.get_assignment_chain(node, ns)
+        return pairs[0] if pairs else (None, None)
+ 
+    def get_assignment_chain(self, node, ns) -> list:
+        tag = _lname(node)
+        if tag == "decl_stmt":
+            out = []
+            for d in node.xpath("./src:decl", namespaces=ns):   # const z = a, w = b
+                out.extend(self._decl_pairs(d, ns))
+            return out
+        if tag == "decl":
+            return self._decl_pairs(node, ns)
+        if tag == "control":
+            return self._control_pairs(node, ns)
+        return super().get_assignment_chain(node, ns)
+ 
+    def _chain_rhs(self, op, ns):
+        nodes = self._skip_prefix(
+            op.xpath("./following-sibling::*[not(self::src:comment)]", namespaces=ns))
+        return nodes[0] if nodes else None
+ 
+    def is_kwarg(self, argument_node, ns) -> bool:
+        # JS non ha keyword argument. L'equivalente e' l'object literal
+        # passato come ultimo argomento ({ secure: true }).
+        # le opzioni in object literal sono lette da call_keyword_args().
+        return False
+ 
+    # ------------------------------------------------------------------ #
+    # Stringhe, letterali, numeri
+    # ------------------------------------------------------------------ #
+ 
+    def call_keyword_args(self, call_node, ns) -> dict:
+        """JS non ha keyword argument: l'equivalente e' l'object literal passato come
+        ultimo argomento. res.cookie("a", v, { secure: true }) -> {"secure": "true"}.
+        Non risolve oggetti costruiti altrove ({...base}, const opts = {...})."""
+        out = {}
+        args = call_node.xpath("./src:argument_list/src:argument", namespaces=ns)
+        if not args:
+            return out
+        for obj in args[-1].xpath("./src:expr/src:object | ./src:object", namespaces=ns):
+            for prop in obj.xpath("./src:property", namespaces=ns):
+                k = prop.xpath("./src:decl/src:name[1]", namespaces=ns)
+                v = prop.xpath("./src:decl/src:init/src:expr[1]", namespaces=ns)
+                if k and v:
+                    out[name_text(k[0])] = self.normalize_string_literal("".join(v[0].itertext()).strip())
+        return out
 
-    def normalize_member_access(self, name: str) -> str:
-        """Forma canonica usata da TUTTI i confronti del motore (call_matches, CallTable,
-        CallMatcher): '->' e '::' diventano '.', sparisce il '::' iniziale (global scope),
-        gli argomenti template e il prefisso 'std.'.
-          std::system -> system     ::system -> system     p->open -> p.open
-          std::cin.getline -> cin.getline     std::vector<int>::iterator -> vector.iterator"""
-        if not name:
-            return name
-        name = name.replace("->", ".").replace("::", ".")
-        while True:
-            reduced = _TEMPLATE_ARGS_RE.sub("", name)
-            if reduced == name:
-                break
-            name = reduced
-        if name.startswith("."):
-            name = name[1:]
-        if name.startswith("std."):
-            name = name[4:]
-        elif name.startswith("*.std."):
-            name = "*." + name[6:]
-        return name
+    def string_concat_operators(self) -> list:
+        return ["+"]
+ 
+    def is_interpolated_string(self, literal_text: str) -> bool:
+        t = literal_text.strip()
+        return t.startswith("`") and "${" in t
+ 
+    def get_interpolated_variables(self, literal_text: str) -> list:
+        """Nomi usati dentro i ${...} di un template literal, con graffe e
+        template annidati. Per un nome puntato restituisce anche i prefissi:
+        ${req.query.id} -> req.query.id, req.query, req."""
+        return list(dict.fromkeys(self._template_names(literal_text.strip())))
+ 
+    def _skip_quoted(self, s, j):
+        q = s[j]
+        j += 1
+        while j < len(s):
+            if s[j] == "\\":
+                j += 2
+                continue
+            if s[j] == q:
+                return j + 1
+            j += 1
+        return j
+ 
+    def _skip_template(self, s, j):
+        j += 1
+        while j < len(s):
+            c = s[j]
+            if c == "\\":
+                j += 2
+                continue
+            if c == "`":
+                return j + 1
+            if c == "$" and s[j + 1:j + 2] == "{":
+                j, _ = self._read_template_expr(s, j + 2)
+                continue
+            j += 1
+        return j
+ 
+    def _read_template_expr(self, s, i):
+        """s[i] e' il primo carattere dopo '${'. Ritorna (indice dopo '}', espressione)."""
+        depth, j, n = 1, i, len(s)
+        while j < n:
+            c = s[j]
+            if c == "\\":
+                j += 2
+                continue
+            if c in "'\"":
+                j = self._skip_quoted(s, j)
+                continue
+            if c == "`":
+                j = self._skip_template(s, j)
+                continue
+            if c == "{":
+                depth += 1
+            elif c == "}":
+                depth -= 1
+                if depth == 0:
+                    return j + 1, s[i:j]
+            j += 1
+        return n, s[i:]
+ 
+    def _template_names(self, s) -> list:
+        out, i, n = [], 0, len(s)
+        while i < n:
+            c = s[i]
+            if c == "\\":
+                i += 2
+                continue
+            if c == "$" and s[i + 1:i + 2] == "{":
+                i, expr = self._read_template_expr(s, i + 2)
+                out.extend(self._expr_names(expr))
+                continue
+            i += 1
+        return out
+ 
+    def _expr_names(self, expr) -> list:
+        out, buf, j = [], [], 0
+        while j < len(expr):
+            c = expr[j]
+            if c == "`":                      # template annidato: ricorsione
+                k = self._skip_template(expr, j)
+                out.extend(self._template_names(expr[j:k]))
+                buf.append(" ")
+                j = k
+                continue
+            if c in "'\"":                    # contenuto di stringa: non e' codice
+                buf.append(" ")
+                j = self._skip_quoted(expr, j)
+                continue
+            buf.append(c)
+            j += 1
+        for m in _JS_CHAIN_RE.finditer("".join(buf)):
+            parts = re.sub(r"\s*\??\.\s*", ".", m.group(0)).split(".")
+            if parts[0] in _JS_KEYWORDS:
+                continue
+            for k in range(len(parts), 0, -1):
+                out.append(".".join(parts[:k]))
+        return out
+ 
+    def is_none_literal(self, text: str) -> bool:
+        return text.strip() in ("null", "undefined")
+ 
+    def is_boolean_literal(self, text: str) -> bool:
+        return text.strip() in ("true", "false")
+ 
+    def parse_numeric_literal(self, text: str):
+        t = text.strip().replace("_", "")
+        if t[-1:] in ("n", "N"):             # BigInt: 10n
+            t = t[:-1]
+        try:
+            if self.HEX_RE.match(t):
+                return int(t, 16)
+            if self.OCT_RE.match(t):
+                return int(t[2:], 8)
+            if self.BIN_RE.match(t):
+                return int(t[2:], 2)
+            if self.LEGACY_OCT_RE.match(t):  # 0755 (ottale legacy)
+                return int(t, 8)
+            return int(t)
+        except ValueError:
+            try:
+                return int(float(t))
+            except ValueError:
+                return None
+ 
+    def normalize_string_literal(self, text: str) -> str:
+        t = text.strip()
+        if len(t) >= 2 and t[0] in "'\"`" and t[-1] == t[0]:
+            t = t[1:-1]
+        return t
+ 
+    def is_true_constant(self, text: str) -> bool:
+        return text.strip() == "1" or super().is_true_constant(text)
+ 
+    def is_false_constant(self, text: str) -> bool:
+        return text.strip() == "0" or super().is_false_constant(text)
+ 
+    # ------------------------------------------------------------------ #
+    # Import / require
+    # ------------------------------------------------------------------ #
+ 
+    def _module_name(self, module: str) -> str:
+        return module[5:] if module.startswith("node:") else module
+ 
+    def _require_target(self, nodes, ns):
+        """Nome canonico del modulo se i fratelli `nodes` (dentro un <expr>) sono
+        [await] require("m") | import("m"), seguiti da . nome  ( require("m").y ->
+        'm.y'). None se l'argomento non e' un letterale o la forma e' altra."""
+        nodes = [n for n in nodes if isinstance(n.tag, str)]
+        while nodes and _lname(nodes[0]) == "operator" and _ntxt(nodes[0]) == "await":
+            nodes = nodes[1:]
+        if not nodes or _lname(nodes[0]) != "call":
+            return None
+        call = nodes[0]
+        nm = call.xpath("./src:name", namespaces=ns)
+        if not nm or name_text(nm[0]) not in ("require", "import"):
+            return None
+        lit = call.xpath("./src:argument_list/src:argument[1]/src:expr/src:literal[@type='string']",
+                         namespaces=ns)
+        if not lit:
+            return None
+        module = self._module_name(self.normalize_string_literal("".join(lit[0].itertext())))
+        rest, parts, i = nodes[1:], [], 0
+        ops = self.member_access_operator()
+        while (i + 1 < len(rest) and _lname(rest[i]) == "operator" and _ntxt(rest[i]) in ops
+               and _lname(rest[i + 1]) == "name"):
+            parts.append(name_text(rest[i + 1]))
+            i += 2
+        if i != len(rest):
+            return None
+        return ".".join([module] + parts)
+ 
+    def resolve_imports(self, unit_node, ns) -> list:
+        bindings = []
+ 
+        # --- import ES ---------------------------------------------------
+        for imp in unit_node.xpath(".//src:import", namespaces=ns):
+            lit = imp.xpath("./src:from/src:literal[@type='string'][1]", namespaces=ns)
+            if not lit:
+                continue                       # import "side-effect"
+            module = self._module_name(self.normalize_string_literal("".join(lit[0].itertext())))
+            for n in imp.xpath("./src:name", namespaces=ns):   # default / namespace
+                sym = name_text(n)
+                if sym == "*":
+                    al = n.xpath("following-sibling::src:alias[1]//src:name", namespaces=ns)
+                    if al:
+                        bindings.append(ImportBinding(name_text(al[0]), module, imp))
+                elif sym:
+                    bindings.append(ImportBinding(sym, module, imp))
+            for n in imp.xpath("./src:name_list/src:name", namespaces=ns):   # { a, b as c }
+                sym = name_text(n)
+                al = n.xpath("following-sibling::src:alias[1]//src:name", namespaces=ns)
+                local = name_text(al[0]) if al else sym
+                if sym:
+                    bindings.append(ImportBinding(local, f"{module}.{sym}", imp))
+ 
+        # --- const x = require("m") / const { a, b: c } = require("m") / await import("m")
+        for d in unit_node.xpath(".//src:decl[src:init/src:expr][not(parent::src:decl)]",
+                                 namespaces=ns):
+            expr = d.xpath("./src:init/src:expr[1]", namespaces=ns)[0]
+            target = self._require_target(list(expr), ns)
+            if not target:
+                continue
+            direct = d.xpath("./src:name[1]", namespaces=ns)
+            if direct:
+                bindings.append(ImportBinding(name_text(direct[0]), target, d))
+                continue
+            for nd in d.xpath("./src:decl", namespaces=ns):
+                nm = nd.xpath("./src:name[1]", namespaces=ns)
+                if not nm:
+                    continue
+                local = name_text(nm[0])
+                prev = nd.xpath("preceding-sibling::*[1][self::src:expr]", namespaces=ns)
+                key_nm = prev[0].xpath(".//src:name[1]", namespaces=ns) if prev else []
+                key = name_text(key_nm[0]) if key_nm else local   # { exec: run } -> exec
+                bindings.append(ImportBinding(local, f"{target}.{key}", d))
+ 
+        # --- x = require("m")  (assegnazione semplice)
+        for expr in unit_node.xpath(".//src:expr_stmt/src:expr[src:operator[text()='=']]",
+                                    namespaces=ns):
+            op = expr.xpath("./src:operator[text()='='][1]", namespaces=ns)[0]
+            lhs = op.xpath("./preceding-sibling::*[1][self::src:name][not(src:operator)]",
+                           namespaces=ns)
+            if not lhs:
+                continue
+            target = self._require_target(
+                op.xpath("./following-sibling::*", namespaces=ns), ns)
+            if target:
+                bindings.append(ImportBinding(name_text(lhs[0]), target, expr))
 
-    def _name_parts(self, name_node) -> list:
-        """Segmenti di un <name> (semplice o composto), SENZA argomenti template, indici
-        e operatori. 'std::cin.getline' -> ['std','cin','getline']."""
-        own = (name_node.text or "").strip()
-        kids = [c for c in name_node if isinstance(c.tag, str)]
-        child_names = [c for c in kids if _lname(c) == "name"]
-        if not child_names:
-            return [own] if own else []
-        if own == "operator":                       # operator<name>==</name>
-            return ["operator" + "".join(_ntxt(c) for c in child_names)]
-        parts = []
-        for c in kids:
-            if _lname(c) == "name":
-                parts.extend(self._name_parts(c))
-        return parts
-
-    def _canonicalize(self, name: str, imports) -> str:
-        """Applica gli alias using/namespace al primo segmento (Str.x -> std.string.x)."""
+        return bindings
+ 
+    def _canonicalize(self, name, imports):
         head, _, rest = name.partition(".")
         for b in imports or []:
             if b.is_macro or b.local_name != head:
                 continue
-            if b.node is None or _lname(b.node) not in ("using", "namespace"):
-                continue
             return f"{b.canonical_name}.{rest}" if rest else b.canonical_name
         return name
-
-    def resolve_name_text(self, text, imports):
+ 
+    def resolve_name_text(self, text, imports, node=None):
         if not text:
             return text
-        return self._canonicalize(self.normalize_member_access(text), imports)
-
+        text = text.replace("?.", ".")
+        if node is not None:
+            head, _, rest = text.partition(".")
+            role = self.role_of_name(head, node)
+            if role:
+                return f"{role}.{rest}" if rest else role
+        return self._canonicalize(text, imports)
+ 
     # ------------------------------------------------------------------ #
-    # Dichiarazioni e tipi
+    # Nomi e chiamate
     # ------------------------------------------------------------------ #
-
-    def _decl_candidates(self, node, var_name, ns) -> list:
-        """Dichiarazioni di var_name visibili da `node`, in ordine di priorita':
-        scope funzione (locali + parametri), campi della classe, file/namespace scope."""
-        v = var_name
-        queries = [
-            f"{self.scope_axis()}//src:decl[src:name[text()=$v]]",
-            ("ancestor::*[" + " or ".join(f"self::src:{t}" for t in self.class_tags()) + "][1]"
-             "/src:block/*/src:decl_stmt/src:decl[src:name[text()=$v]]"),
-            ("ancestor::src:unit[1]//src:decl_stmt[not(ancestor::src:function or "
-             "ancestor::src:constructor or ancestor::src:destructor or ancestor::src:lambda)]"
-             "/src:decl[src:name[text()=$v]]"),
-        ]
-        for q in queries:
-            found = node.xpath(q, namespaces=ns, v=v)
-            if found:
-                return found
-        return []
-
-    def _pick_decl(self, node, decls):
-        key = _pos_key(node)
-        before = [d for d in decls if _pos_key(d) <= key]
-        return (before or decls)[-1]
-
-    def _decl_type_node(self, decl, ns):
-        """(type_node_con_nome, modificatori_propri) risalendo i <type ref="prev"/>."""
-        t = decl.xpath("./src:type", namespaces=ns)
-        if not t:
-            return None, ""
-        own_mods = " ".join(_ntxt(m) for m in t[0].xpath("./src:modifier", namespaces=ns))
-        seen, cur = set(), decl
-        while cur is not None and id(cur) not in seen:
-            seen.add(id(cur))
-            tt = cur.xpath("./src:type", namespaces=ns)
-            if tt and tt[0].get("ref") != "prev":
-                return tt[0], own_mods
-            prev = cur.xpath("preceding-sibling::src:decl[1]", namespaces=ns)
-            cur = prev[0] if prev else None
-        return None, own_mods
-
-    def _decl_type_text(self, decl, ns):
-        """'const char *' ; per 'char *a, *b' il tipo di b e' 'char *' (modificatori propri)."""
-        tnode, own_mods = self._decl_type_node(decl, ns)
-        if tnode is None:
+ 
+    def _const_key(self, node):
+        """Chiave letterale stringa di un subscript/computed: obj["m"] -> 'm'."""
+        lit = node.xpath("./src:expr[count(*)=1]/src:literal[@type='string']",
+                         namespaces={"src": "http://www.srcML.org/srcML/src"})
+        if not lit:
             return None
-        if decl.xpath("./src:type", namespaces=ns)[0].get("ref") != "prev":
-            return re.sub(r"\s+", " ", _ntxt(tnode))
-        base = " ".join(_ntxt(c) for c in tnode if isinstance(c.tag, str) and _lname(c) != "modifier")
-        return re.sub(r"\s+", " ", f"{base} {own_mods}").strip()
-
-    def _decl_type_name(self, decl, ns):
-        """Nome canonico del tipo ('ifstream', 'vector'); None per 'auto'/non risolvibile."""
-        tnode, _ = self._decl_type_node(decl, ns)
-        if tnode is None:
-            return None
-        tn = tnode.xpath("./src:name[1]", namespaces=ns)
-        if not tn:
-            return None
-        parts = self._name_parts(tn[0])
-        if not parts or parts == ["auto"]:
-            return None
-        return self.normalize_member_access(".".join(parts))
-
-    def resolve_variable_type(self, name_node, var_name, ns) -> str | None:
-        decls = self._decl_candidates(name_node, var_name, ns)
-        if not decls:
-            return None
-        return self._decl_type_text(self._pick_decl(name_node, decls), ns)
-
-    # ------------------------------------------------------------------ #
-    # Import / alias / macro
-    # ------------------------------------------------------------------ #
-
-    def resolve_imports(self, unit_node, ns) -> list:
-        # include + macro: identici a C
-        bindings = super().resolve_imports(unit_node, ns)
-
-        def dotted(n):
-            return self.normalize_member_access(".".join(self._name_parts(n)))
-
-        for u in unit_node.xpath(".//src:using", namespaces=ns):
-            ns_decl = u.xpath("./src:namespace/src:name", namespaces=ns)
-            if ns_decl:                                       # using namespace X;
-                bindings.append(ImportBinding("*", dotted(ns_decl[0]), node=u))
+        key = self.normalize_string_literal("".join(lit[0].itertext()))
+        return key if self.is_identifier(key) else None
+ 
+    def _dotted(self, name_node) -> str:
+        """Nome puntato di un <name> (semplice o composto) senza gli index, ma
+        con i subscript a chiave letterale trattati come membri: obj["m"] -> obj.m"""
+        parts = []
+        own = (name_node.text or "").strip()
+        if own:
+            parts.append(own)
+        for c in name_node:
+            if not isinstance(c.tag, str):
                 continue
-            alias_type = u.xpath("./src:init/src:type/src:name", namespaces=ns)
-            first = u.xpath("./src:name", namespaces=ns)
-            if alias_type and first:                          # using Str = std::string;
-                bindings.append(ImportBinding(dotted(first[0]), dotted(alias_type[0]), node=u))
-            elif first:                                       # using std::string;
-                canonical = dotted(first[0])
-                bindings.append(ImportBinding(canonical.split(".")[-1], canonical, node=u))
+            t = _lname(c)
+            if t == "name":
+                if c.get("type") == "computed":
+                    k = self._const_key(c)
+                    if k:
+                        parts.append(k)
+                else:
+                    sub = self._dotted(c)
+                    if sub:
+                        parts.append(sub)
+            elif t == "index":
+                k = self._const_key(c)
+                if k:
+                    parts.append(k)
+        return ".".join(parts)
+ 
+    _MAX_RESOLVE_DEPTH = 5
+    # TODO: allineare al catalogo javascript_catalog.json
+    _BUILTIN_FACTORIES = {"Set", "Map", "WeakSet", "WeakMap", "URL", "URLSearchParams",
+                          "XMLHttpRequest", "WebSocket", "Buffer", "RegExp", "Date"}
 
-        for n in unit_node.xpath(".//src:namespace[not(src:block)]", namespaces=ns):
-            parts = n.xpath("./src:name", namespaces=ns)       # namespace fs = std::filesystem;
-            if len(parts) == 2:
-                bindings.append(ImportBinding(dotted(parts[0]), dotted(parts[1]), node=n))
+
+    def get_express_route_bindings(self, fn_node, ns) -> dict[str, str]:
+        """
+        Riconosce se fn_node è una callback di un router Express (_ROUTER_METHODS)
+        e mappa i nomi effettivi dei parametri ai tipi logici:
+        - Express.Request
+        - Express.Response
+        """
+        if self._route_call_of(fn_node, ns) is None:
+            return {}
+        params = fn_node.xpath(self.parameters_xpath(), namespaces=ns)
+        if len(params) < 2:                 # (ctx) di Koa e simili: nessun ruolo
+            return {}
+        req_idx, res_idx = (1, 2) if len(params) == 4 else (0, 1)
+
+        params = fn_node.xpath(self.parameters_xpath(), namespaces=ns)
+        if not params:
+            return {}
+
+        # Standard route: (req, res, next) -> req=0, res=1
+        # Error middleware: (err, req, res, next) -> req=1, res=2
+        if len(params) == 4:
+            req_idx, res_idx = 1, 2
+        else:
+            req_idx, res_idx = 0, 1
+
+        bindings = {}
+        for idx, role in [(req_idx, "Express.Request"), (res_idx, "Express.Response")]:
+            if idx < len(params):
+                name_nodes = params[idx].xpath(".//src:decl/src:name | .//src:name", namespaces=ns)
+                if name_nodes:
+                    local_name = "".join(name_nodes[0].itertext()).strip()
+                    if local_name:
+                        bindings[local_name] = role
+
         return bindings
 
-    # ------------------------------------------------------------------ #
-    # Nome delle chiamate
-    # ------------------------------------------------------------------ #
+    _FLUENT = frozenset({
+        "status", "set", "header", "type", "contentType", "cookie",
+        "append", "vary", "location", "code", "links"
+    })
 
+    def _call_require_module(self, call_node, ns) -> str | None:
+        """Estrae il modulo se call_node è require("mod") o import("mod")."""
+        nm = call_node.xpath("./src:name", namespaces=ns)
+        if not nm or name_text(nm[0]) not in ("require", "import"):
+            return None
+        lit = call_node.xpath(
+            "./src:argument_list/src:argument[1]//src:literal[@type='string']",
+            namespaces=ns,
+        )
+        if not lit:
+            return None
+        return self._module_name(self.normalize_string_literal("".join(lit[0].itertext())))
+ 
     def resolve_call_name(self, call_node, ns, imports, _depth: int = 0) -> str:
-        if _depth > 10:
+        if _depth > self._MAX_RESOLVE_DEPTH:
             return None
         name_nodes = call_node.xpath("./src:name", namespaces=ns)
         if not name_nodes:
             return None
-        parts = self._name_parts(name_nodes[0])
-        if not parts:
+        raw = self._dotted(name_nodes[0])
+        if not raw:
             return None
 
-        # call concatenate: a.b().c(x) -> <call/><operator>.</operator><call/>
+        # 0. Chiamata concatenata (risoluzione require inline, promises e strip catene fluenti)
         recv = self._chain_receiver(call_node, ns)
         if recv is not None:
-            recv_name = self.resolve_call_name(recv, ns, imports, _depth + 1)
+            recv_name = (self._call_require_module(recv, ns)
+                         or self.resolve_call_name(recv, ns, imports, _depth + 1))
             if recv_name:
-                return self.normalize_member_access(f"{recv_name}.{'.'.join(parts)}")
+                parts = recv_name.split(".")
+                while len(parts) > 1 and parts[-1] in self._FLUENT:
+                    parts.pop()
+                # return f"{'.'.join(parts)}.{raw}"
+                raw = f"{'.'.join(parts)}.{raw}"
 
-        if len(parts) == 1:
-            return self._canonicalize(
-                self.normalize_member_access(expand_macro_name(parts[0], macro_map(imports))), imports)
+        # Normalizzazione semantica parametri Express
+        head, _, rest = raw.partition(".")
+        role = self.role_of_name(head, call_node)
+        if role:
+            return f"{role}.{rest}" if rest else role
+        
+        # Cerca la funzione o lambda che racchiude questa chiamata
+        fn_nodes = call_node.xpath("ancestor::*[self::src:lambda or self::src:function][1]", namespaces=ns)
+        if fn_nodes:
+            # Recupera i binding posizionali (es. {'outgoing': 'Express.Response', 'incoming': 'Express.Request'})
+            route_bindings = self.get_express_route_bindings(fn_nodes[0], ns)
+            if head in route_bindings:
+                # Trasforma "outgoing.send" in "Express.Response.send"
+                canonical_role = route_bindings[head]
+                return f"{canonical_role}.{rest}" if rest else canonical_role
 
-        if parts[0] == "std":
-            parts = parts[1:]
-        head = parts[0]
-        # var.metodo / ptr->metodo: se head e' una variabile dichiarata, usa il TIPO
-        if len(parts) >= 2:
-            decls = self._decl_candidates(call_node, head, ns)
-            if decls:
-                tname = self._decl_type_name(self._pick_decl(call_node, decls), ns)
-                if tname:
-                    return self._canonicalize(
-                        self.normalize_member_access(f"{tname}.{'.'.join(parts[1:])}"), imports)
-        return self._canonicalize(self.normalize_member_access(".".join(parts)), imports)
+        # 1. Già canonico (evita doppio prefisso)
+        for b in imports:
+            if raw == b.canonical_name or raw.startswith(f"{b.canonical_name}."):
+                return raw
 
+        head, _, rest = raw.partition(".")
+
+        # 2. Modulo o simbolo importato
+        for b in imports:
+            if b.local_name == head:
+                return f"{b.canonical_name}.{rest}" if rest else b.canonical_name
+
+        # 3. Instance tracking
+        if rest:
+            rhs = self._reaching_rhs(call_node, head, ns)
+            if rhs is not None and not rhs.xpath(
+                    "self::src:expr/*[1][self::src:lambda or self::src:function]", namespaces=ns):
+                
+                # Riconoscimento letterali Regex
+                # Se l'RHS è o contiene un letterale regex (/.../)
+                if rhs.xpath("self::src:literal[@type='regex'] | .//src:literal[@type='regex']", namespaces=ns):
+                    return f"RegExp.{rest}"
+                
+                first_call = rhs.xpath("descendant-or-self::src:call[1]", namespaces=ns)
+                chain = self._call_chain_names(rhs, ns)
+                if first_call and chain:
+                    resolved = self.resolve_call_name(first_call[0], ns, imports, _depth + 1) or chain[0]
+                    if len(chain) > 1:
+                        resolved += "." + ".".join(chain[1:])
+                    if (
+                        "." in resolved
+                        or resolved in self._BUILTIN_FACTORIES
+                        or any(resolved == b.canonical_name or resolved.startswith(f"{b.canonical_name}.")
+                               for b in imports)
+                    ):
+                        return f"{resolved}.{rest}"
+        return raw
+ 
+    def _call_chain_names(self, rhs, ns):
+        """Nomi delle call concatenate a destra di '=': a.b().c().d() -> ['a.b', 'c', 'd']."""
+        start = rhs.xpath("descendant-or-self::src:call[1]", namespaces=ns)
+        if not start:
+            return None
+        node = start[0]
+        first = node.xpath("./src:name", namespaces=ns)
+        if not first:
+            return None
+        names = [self._dotted(first[0])]
+        ops = " or ".join(f"text()='{o}'" for o in self.member_access_operator())
+        while True:
+            op = node.xpath(f"following-sibling::*[1][self::src:operator and ({ops})]", namespaces=ns)
+            if not op:
+                break
+            nxt = op[0].xpath("following-sibling::*[1][self::src:call]", namespaces=ns)
+            if not nxt:
+                break
+            nm = nxt[0].xpath("./src:name", namespaces=ns)
+            if not nm:
+                break
+            names.append(self._dotted(nm[0]))
+            node = nxt[0]
+        return names
+ 
+    def _reaching_rhs(self, call_node, head, ns):
+        """RHS dell'assegnazione di `head` che raggiunge `call_node` (dallo scope piu'
+        interno verso l'esterno). None se non c'e' o se `head` e' un parametro."""
+        call_key = _pos_key(call_node)
+        call_ancestors = set(call_node.iterancestors())
+        fn_cond = " or ".join(f"self::src:{t}" for t in self.function_tags())
+        funcs = call_node.xpath(f"ancestor::*[{fn_cond}]", namespaces=ns)
+        unit = call_node.xpath("ancestor::src:unit[1]", namespaces=ns)
+        for scope_node in list(reversed(funcs)) + unit:
+            is_unit = scope_node.tag.endswith("}unit")
+            if not is_unit:
+                for p in scope_node.xpath(self.parameters_xpath(), namespaces=ns):
+                    if any(name_text(n) == head for n in self.get_parameter_name_nodes(p, ns)):
+                        return None
+            prior = []
+            for stmt, lhs, rhs in find_assignments(scope_node, self, head):
+                if rhs is None or _pos_key(stmt) >= call_key or stmt in call_ancestors:
+                    continue
+                owner = enclosing_scope(stmt, self)
+                if (owner is None) if is_unit else (owner is scope_node):
+                    prior.append((stmt, rhs))
+            if prior:
+                return max(prior, key=lambda t: _pos_key(t[0]))[1]
+        return None
+ 
+    def member_access_operator(self) -> list:
+        # il primo elemento e' usato dal motore per ricomporre i nomi: deve restare '.'
+        return [".", "?."]
+
+    _IMPORTS_CACHE = {}   # id(unit) -> (unit, bindings); una sola unit in cache
+
+    def _unit_imports(self, unit, ns):
+        """resolve_imports() una volta per unit (stesso schema di _UNIT_PARAMS_CACHE)."""
+        ent = self._IMPORTS_CACHE.get(id(unit))
+        if ent is not None and ent[0] is unit:
+            return ent[1]
+        bindings = self.resolve_imports(unit, ns)
+        self._IMPORTS_CACHE.clear()
+        self._IMPORTS_CACHE[id(unit)] = (unit, bindings)
+        return bindings
+ 
+    def receiver_is_local_instance(self, call_node, recv_name, ns) -> bool:
+        # Se il ricevente è un modulo importato/require (es. fs, child_process, path), NON è un'istanza mutabile!
+        unit = call_node.xpath("ancestor::src:unit[1]", namespaces=ns)
+        if unit:
+            # Esclude immediatamente i moduli da require/import
+            imports = self._unit_imports(unit[0], ns)
+            if any(b.local_name == recv_name for b in imports):
+                return False
+
+        scope = enclosing_scope(call_node, self)
+        if scope is None:
+            scope = unit[0] if unit else call_node
+        key = _pos_key(call_node)
+        prior = [(s, r) for s, _, r in find_assignments(scope, self, recv_name)
+                 if r is not None and _pos_key(s) < key]
+        if not prior:
+            return False
+        _, rhs = max(prior, key=lambda t: _pos_key(t[0]))
+        return self._is_instance_expr(rhs, ns)
+ 
+    def _is_instance_expr(self, rhs, ns) -> bool:
+        if rhs.xpath("self::src:array | self::src:object"
+                     " | self::src:expr[count(*)=1]/src:array"
+                     " | self::src:expr[count(*)=1]/src:object", namespaces=ns):
+            return True
+        if rhs.xpath("./src:operator[text()='new'] | ./src:name[text()='new']", namespaces=ns):
+            return True                       # forma <init>/<expr>
+        prev = rhs.xpath("preceding-sibling::*[not(self::src:comment)][1]", namespaces=ns)
+        return bool(prev) and self._is_prefix(prev[0]) and _ntxt(prev[0]) == "new"
+ 
     # ------------------------------------------------------------------ #
-    # Assegnazioni
+    # Operatori e condizioni
     # ------------------------------------------------------------------ #
-
-    def potential_assignment_xpath(self) -> str:
-        return (".//src:expr_stmt | .//src:decl_stmt | .//src:control[parent::src:for]"
-                " | .//src:condition/src:decl"
-                " | .//src:init[parent::src:control]/src:decl[not(src:range)]")
-
-    def _expr_stmt_lhs_rhs(self, node, ns):
-        op = node.xpath("./src:expr/src:operator[text()='='][1]", namespaces=ns)
-        if not op:
-            return None, None
-        op = op[0]
-        lhs_all = op.xpath("./preceding-sibling::*[not(self::src:comment)]", namespaces=ns)
-        rhs_all = _skip_leading_casts(op.xpath("./following-sibling::*", namespaces=ns))
-        if not lhs_all or not rhs_all:
-            return None, None
-        lhs = lhs_all[-1]
-        # 'auto [k, v] = pair;' (structured binding): non e' un'assegnazione a 'auto'
-        if len(lhs_all) >= 2 and _lname(lhs) == "index" and _ntxt(lhs_all[-2]) == "auto":
-            return None, None
-        # '*p = x' scrive il pointee, non la variabile p. ('auto* o = ...' invece e' una
-        # dichiarazione: il '*' e' preceduto da un nome-tipo)
-        before = lhs.getprevious()
-        if before is not None and _lname(before) == "operator" and _ntxt(before) == "*":
-            bb = before.getprevious()
-            if bb is None or _lname(bb) == "operator":
-                return None, None
-        return lhs, rhs_all[0]
-
-    def _decl_lhs_rhs(self, decl, ns):
-        """LHS/RHS di un <decl>: 'T x = e' | 'T x(a)' | 'T x{a, b}'."""
-        lhs = decl.xpath("./src:name[1]", namespaces=ns)
-        if not lhs:
-            return None, None
-        rhs = decl.xpath("./src:init/src:expr | ./src:init/src:decl", namespaces=ns)
-        if rhs:
-            return lhs[0], rhs[0]
-        args = decl.xpath("./src:argument_list", namespaces=ns)
-        if args:
-            single = args[0].xpath("./src:argument[count(../src:argument)=1]/src:expr", namespaces=ns)
-            return lhs[0], (single[0] if single else args[0])
-        return None, None
-
-    def _range_for_lhs_rhs(self, control, ns):
-        decl = control.xpath("./src:init/src:decl[src:range]", namespaces=ns)
-        if decl:                                            # for (T x : v)
-            lhs = decl[0].xpath("./src:name[1]", namespaces=ns)
-            rhs = decl[0].xpath("./src:range/src:expr[1]", namespaces=ns)
-            return (lhs[0], rhs[0]) if lhs and rhs else (None, None)
-        # forma piatta: <init><expr>auto & x : v</expr></init>
-        colon = control.xpath("./src:init/src:expr/src:operator[text()=':'][1]", namespaces=ns)
-        if not colon:
-            return None, None
-        before = colon[0].xpath("./preceding-sibling::*[not(self::src:comment)]", namespaces=ns)
-        after = colon[0].xpath("./following-sibling::*[not(self::src:comment)]", namespaces=ns)
-        if not before or not after or _lname(before[-1]) != "name":
-            return None, None                               # structured binding: ignorato
-        return before[-1], after[0]
-
-    def is_assignment(self, node, ns) -> bool:
-        lhs, rhs = self.get_assignment_lhs_rhs(node, ns)
-        return lhs is not None and rhs is not None
-
-    def get_assignment_lhs_rhs(self, node, ns):
-        tag = _lname(node)
-        if tag == "expr_stmt":
-            return self._expr_stmt_lhs_rhs(node, ns)
-        if tag == "decl_stmt":
-            # primo dichiaratore con inizializzatore/argomenti: 'int a, b = f();' -> b
-            for d in node.xpath("./src:decl", namespaces=ns):
-                lhs, rhs = self._decl_lhs_rhs(d, ns)
-                if lhs is not None:
-                    return lhs, rhs
-            return None, None
-        if tag == "decl":
-            return self._decl_lhs_rhs(node, ns)
-        if tag == "control":
-            return self._range_for_lhs_rhs(node, ns)
-        return None, None
-
-    # ------------------------------------------------------------------ #
-    # Letterali
-    # ------------------------------------------------------------------ #
-
-    def string_concat_operators(self) -> list:
-        return ["+"]                    # std::string + ...
-
-
-    def is_none_literal(self, text: str) -> bool:
-        return text.strip() in ("NULL", "nullptr")
-
-    def parse_numeric_literal(self, text: str):
-        return super().parse_numeric_literal(text.replace("'", ""))   # separatori 1'000
-
-    def normalize_string_literal(self, text: str) -> str:
-        t = text.strip()
-        m = _RAW_STRING_RE.match(t)
-        if m:
-            return m.group(2)
-        t = _STR_PREFIX_RE.sub("", t)   # solo se seguito da apice: non tocca 'Lib', 'uid'...
-        if len(t) >= 2 and t[0] in "\"'" and t[-1] == t[0]:
-            t = t[1:-1]
-        return t
-
-    # ------------------------------------------------------------------ #
-    # Operatori
-    # ------------------------------------------------------------------ #
-
+ 
+    def negation_operator(self) -> str:
+        return "!"
+ 
+    def assignment_operator_token(self) -> str:
+        return "="
+ 
+    def equality_operator(self) -> str:
+        return "==="
+ 
+    def equality_operators(self) -> list:
+        # vedi E2: il motore oggi legge solo equality_operator()
+        return ["===", "=="]
+ 
     def logical_and_operator(self) -> list:
-        return ["&&", "and"]
-
+        return ["&&"]
+ 
     def logical_or_operator(self) -> list:
-        return ["||", "or"]
+        return ["||", "??"]
+ 
+    def comparison_operators(self) -> list:
+        return ["<", "<=", ">", ">=", "!=", "==", "!==", "==="]
+ 
+    def reference_comparison_operators(self) -> list:
+        # Nessun tipo dichiarato in JS: CWE-595 non e' applicabile (regola spenta).
+        return []
+ 
+    def null_comparison_operators(self) -> dict:
+        return {"falsy": ["==", "==="], "truthy": ["!=", "!=="]}
+ 
+    def loop_update_operators(self) -> dict:
+        # verificato su XML: '**=', '>>>=', '&&=', '||=' sono un solo <operator>.
+        return {
+            "compound": ["+=", "-=", "*=", "/=", "%=", "**=", "<<=", ">>=", ">>>=",
+                         "&=", "|=", "^=", "&&=", "||=", "??="],
+            "unary": ["++", "--"],
+        }
+ 
+    # ------------------------------------------------------------------ #
+    # Parametri, funzioni, scope
+    # ------------------------------------------------------------------ #
+ 
+    def parameters_xpath(self) -> str:
+        # `a => ...`: <parameter> figlio diretto della <lambda>, senza parameter_list
+        return "./src:parameter_list/src:parameter | ./src:parameter"
+ 
+    def get_parameter_name_node(self, param_node, ns):
+        n = param_node.xpath("./src:decl/src:name[1]", namespaces=ns)
+        return n[0] if n else None
+ 
+    def get_parameter_name_nodes(self, param_node, ns) -> list:
+        direct = self.get_parameter_name_node(param_node, ns)   # semplice, default, rest
+        if direct is not None:
+            return [direct]
 
+        def in_default(n):
+            """True se `n` sta in un <init> (valore di default) interno al parametro.
+            Un <init> esterno ('const g = ({a}) => ...') non conta."""
+            return any(param_node in i.iterancestors()
+                       for i in n.xpath("ancestor::src:init", namespaces=ns))
+
+        out = []
+        # {a} | {a = 1} | {a: b}: srcML modella tutto come property/decl/(name, init).
+        # Con ':' la variabile legata e' la destinazione 'b' (nell'init), non la chiave 'a'.
+        for prop in param_node.xpath("./src:decl/src:object//src:property", namespaces=ns):
+            d = prop.xpath("./src:decl[1]", namespaces=ns)
+            if not d:
+                continue
+            init = d[0].xpath("./src:init[1]", namespaces=ns)
+            if init and "".join(init[0].itertext()).lstrip().startswith(":"):
+                out += init[0].xpath("./src:expr[1]//src:name[not(src:name)]", namespaces=ns)
+            else:
+                n = d[0].xpath("./src:name[1]", namespaces=ns)
+                if n:
+                    out.append(n[0])
+        # {...rest} e pattern array: forme non verificate su XML
+        out += param_node.xpath("./src:decl/src:object/src:decl/src:name[1]", namespaces=ns)
+        out += [n for n in param_node.xpath("./src:decl/src:array//src:name", namespaces=ns)
+                if not in_default(n)]
+        return out
     def get_parameter_name_and_type(self, param_node, namespaces):
-        decl = param_node.xpath("./src:decl[1]", namespaces=namespaces)
-        if not decl:
-            return None, None
-        type_text = self._decl_type_text(decl[0], namespaces) or ""
-        n = decl[0].xpath("./src:name[1]", namespaces=namespaces)
-        return (name_text(n[0]) if n else ""), type_text
-
+        n = self.get_parameter_name_node(param_node, namespaces)
+        return (name_text(n) if n is not None else ""), ""     # JS: nessun tipo dichiarato
+ 
+    def is_async_function(self, func_node, ns) -> bool:
+        return bool(func_node.xpath("./src:specifier[text()='async']", namespaces=ns))
+ 
+    def function_tags(self):
+        # 'lambda' e' uno scope: in Express quasi tutto il codice sta in callback
+        # (req, res) => {...}; senza questo ogni handler condividerebbe lo scope del file.
+        return ["function", "constructor", "lambda"]
+ 
+    def lambda_tags(self):     return ["lambda"]
+    def class_tags(self):      return ["class"]
+ 
+    # throw/break(etichetta)/empty_stmt verificati su XML.
+    def flow_exit_tags(self):  return ["return", "throw", "continue", "break"]
+    def flow_exit_calls(self): return ["process.exit", "process.abort"]
+    def noop_statement_tags(self): return ["empty_stmt"]
+ 
+    def resolve_variable_type(self, name_node, var_name, ns):
+        return None                            # JS non ha tipi dichiarati
+ 
+    def is_numeric_type(self, type_text) -> bool:
+        return False
+ 
     # ------------------------------------------------------------------ #
     # Taint
     # ------------------------------------------------------------------ #
-
+ 
     def taint_block_functions(self) -> list:
-        return ["strlen", "atoi", "atol", "atoll", "atof", "strcmp", "strncmp",
-                "stoi", "stol", "stoll", "stoul", "stoull", "stof", "stod",
-                "*.size", "*.length", "*.empty", "*.compare", "*.count"]
-
+        # TODO: rivedere insieme al catalogo (sanitizers cast_to_integer ecc.)
+        return ["parseInt", "parseFloat", "Number", "Boolean", "isNaN", "isFinite",
+                "Array.isArray", "*.includes", "*.startsWith", "*.endsWith",
+                "*.hasOwnProperty", "*.test"]
+ 
     def taint_propagating_calls(self) -> dict:
-        def out(*idx): return {"out": list(idx)}
-        recv = {"out_receiver": True}                 # x.append(t) rende taintato x
-        table = {
-            "sprintf": out(0), "snprintf": out(0), "_snprintf": out(0), "vsnprintf": out(0),
-            "strcpy": out(0), "strncpy": out(0), "strcat": out(0), "strncat": out(0),
-            "memcpy": out(0), "memmove": out(0),
-            "wcscpy": out(0), "wcsncpy": out(0), "wcscat": out(0), "wcsncat": out(0),
-            "wmemcpy": out(0), "swprintf": out(0), "_snwprintf": out(0),
-            "sscanf": {"in": [0], "out_variadic_from": 2},
-            "swscanf": {"in": [0], "out_variadic_from": 2},
-        }
-        for m in ("append", "assign", "push_back", "push_front", "insert",
-                  "emplace", "emplace_back", "replace"):
-            table[f"*.{m}"] = recv
-        return table
+        # push/unshift/splice modificano sempre il ricevente. add/set/append sono
+        # "structural": propagano solo se il ricevente e' un'istanza creata nello scope
+        # (evita FP tipo res.set(h, v) -> 'res' taintato).
+        recv = {"out_receiver": True}
+        local = {"out_receiver": True, "structural": True}
+        return {"*.push": recv, "*.unshift": recv, "*.splice": recv,
+                "*.add": local, "*.set": local, "*.append": local,
+                "Object.assign": {"out": [0]}}
 
     def taint_source_output_args(self) -> dict:
-        table = dict(super().taint_source_output_args())
-        table.update({
-            # std::getline(stream, out) -> out e' l'indice 1; getline POSIX -> indice 0
-            "getline": {"indices": [0, 1]},
-            # istream::getline(buf, n) / istream::read(buf, n): il buffer e' l'indice 0.
-            # Le chiavi 'cin.*' servono perche' _rule_pre accoppia sorgente (catalogo) e chiave
-            # della tabella con call_matches(chiave, sorgente): 'cin.getline' deve esistere
-            # come chiave per attivare la sorgente 'cin.getline' del catalogo.
-            "cin.getline": {"indices": [0]},
-            "cin.read": {"indices": [0]},
-            "*.getline": {"indices": [0]},
-            "*.read": {"indices": [0]},
-            "*.readsome": {"indices": [0]},
-            "fgetws": {"indices": [0], "return_tainted": True},
-            "wscanf": {"variadic_from": 1},
-            "fwscanf": {"variadic_from": 2},
-            "swscanf": {"variadic_from": 2},
-        })
-        return table
-
-    def taint_opaque_tags(self) -> list:
-        return ["sizeof", "alignof", "decltype", "typeid", "noexcept"]
-
-    def extract_output_buffer_name(self, arg_node, ns) -> str | None:
-        """Come la base, ma salta i qualificatori di namespace ('std' in std::cin) e i nomi
-        negli argomenti template, altrimenti 'std' risulterebbe una variabile taintata."""
-        skip = ["ancestor::src:index", "ancestor::src:type",
-                "ancestor::src:argument_list[@type='generic']"]
-        skip += [f"ancestor::src:{t}" for t in self.taint_opaque_tags()]
-        skip_xpath = " | ".join(skip)
-        for n in arg_node.xpath(".//src:name[not(src:name)]", namespaces=ns):
-            if n.xpath(skip_xpath, namespaces=ns):
-                continue
-            nxt = n.getnext()
-            if nxt is not None and _lname(nxt) == "operator" and _ntxt(nxt) == "::":
-                continue
-            if self.is_cast_type_name(n):
-                continue
-            txt = name_text(n)
-            if txt:
-                return txt
-        return None
-
-    def is_cast_type_name(self, name_node) -> bool:
-        """static_cast<char*>(x): 'char' sta in <argument_list type="generic"> -> tipo."""
-        if name_node.xpath("ancestor::src:argument_list[@type='generic']", namespaces=_SRC_NS):
-            return True
-        if _ntxt(name_node) in _CPP_EXTRA_TYPE_WORDS:
-            return True
-        return super().is_cast_type_name(name_node)
-
-    # ------------------------------------------------------------------ #
-    # Condizioni / membership / eccezioni
-    # ------------------------------------------------------------------ #
-
-    def extract_membership_relations(self, condition_node, ns) -> list[dict]:
-        """set.contains(x) / set.count(x) (anche negati: !s.count(x), s.count(x) == 0)."""
-        relations = []
-        calls = condition_node.xpath(
-            ".//src:call[src:name/src:name[last()][text()='contains' or text()='count']]",
-            namespaces=ns)
-        for call in calls:
-            recv = call.xpath("./src:name/src:name[last()-1]", namespaces=ns)
-            arg = call.xpath("./src:argument_list/src:argument/src:expr/*[1]", namespaces=ns)
-            if not recv or not arg:
-                continue
-            prev = call.xpath("preceding-sibling::*[not(self::src:comment)][1]", namespaces=ns)
-            negated = bool(prev) and _lname(prev[0]) == "operator" and _ntxt(prev[0]) == "!"
-            nxt = call.xpath("following-sibling::*[not(self::src:comment)][position()<=2]", namespaces=ns)
-            if len(nxt) == 2 and _lname(nxt[0]) == "operator" and _ntxt(nxt[1]) == "0":
-                op = _ntxt(nxt[0])
-                if op == "==":
-                    negated = True                     # count(x) == 0
-                elif op in ("!=", ">"):
-                    negated = False
-            relations.append({"lhs": arg[0], "rhs": recv[0], "is_negated": negated})
-        return relations
+        return {}                              # nessuna source per side-effect in JS
+ 
+    _COLLECTION_CTORS = {"Set", "Map", "Array", "WeakSet", "WeakMap"}
 
     def is_collection_assignment(self, assignment_node, ns) -> bool:
-        if super().is_collection_assignment(assignment_node, ns):      # T v = {1,2}
+        _, rhs = self.get_assignment_lhs_rhs(assignment_node, ns)
+        if rhs is None:
+            return False
+        if rhs.xpath("self::src:array | self::src:object"
+                     " | self::src:expr[count(*)=1]/src:array"
+                     " | self::src:expr[count(*)=1]/src:object", namespaces=ns):
             return True
-        for al in assignment_node.xpath(".//src:decl/src:argument_list", namespaces=ns):
-            if _ntxt(al).startswith("{"):                              # T v{1,2}
-                return True
-        return False
+        call = None
+        if _lname(rhs) == "call":            # forma piatta: 'new' e' il fratello precedente
+            prev = rhs.xpath("preceding-sibling::*[not(self::src:comment)][1]", namespaces=ns)
+            if prev and self._is_prefix(prev[0]) and _ntxt(prev[0]) == "new":
+                call = rhs
+        elif _lname(rhs) == "expr":          # forma <init>: <expr>new <call/></expr>
+            kids = [c for c in rhs if isinstance(c.tag, str)]
+            if len(kids) >= 2 and self._is_prefix(kids[0]) and _ntxt(kids[0]) == "new" \
+               and _lname(kids[1]) == "call":
+                call = kids[1]
+        if call is None:
+            return False
+        nm = call.xpath("./src:name", namespaces=ns)
+        return bool(nm) and self._dotted(nm[0]) in self._COLLECTION_CTORS
+
+    def extract_membership_relations(self, condition_node, ns) -> list:
+        """a.includes(x) / a.has(x) / a.indexOf(x) <cmp> n / 'k' in obj (anche negati)."""
+        rel = []
+
+        def negated_by_prefix(node):
+            p = node.xpath("preceding-sibling::*[not(self::src:comment)][1]", namespaces=ns)
+            return bool(p) and _lname(p[0]) == "operator" and _ntxt(p[0]) == "!"
+
+        for call in condition_node.xpath(
+                ".//src:call[src:name/src:name[last()][text()='includes' or text()='has'"
+                " or text()='indexOf']]", namespaces=ns):
+            method = name_text(call.xpath("./src:name/src:name[last()]", namespaces=ns)[0])
+            recv = call.xpath("./src:name/src:name[last()-1]", namespaces=ns)
+            arg = call.xpath("./src:argument_list/src:argument[1]/src:expr/*[1]", namespaces=ns)
+            if not recv or not arg:
+                continue
+            neg = negated_by_prefix(call)
+            if method == "indexOf":
+                # srcML spezza '-1' in <operator>-</operator><literal>1</literal>
+                f = call.xpath("following-sibling::*[not(self::src:comment)][position()<=3]", namespaces=ns)
+                if not f or _lname(f[0]) != "operator":
+                    continue
+                op = _ntxt(f[0])
+                val = _ntxt(f[1]) if len(f) > 1 else ""
+                if val == "-" and len(f) > 2:
+                    val = "-" + _ntxt(f[2])
+                if (op in ("!==", "!=") and val == "-1") or (op == ">=" and val == "0") \
+                   or (op == ">" and val == "-1"):
+                    neg = False
+                elif (op in ("===", "==") and val == "-1") or (op == "<" and val == "0"):
+                    neg = True
+                else:
+                    continue
+            rel.append({"lhs": arg[0], "rhs": recv[0], "is_negated": neg})
+
+        for op in condition_node.xpath(".//src:operator[text()='in']", namespaces=ns):
+            b = op.xpath("./preceding-sibling::*[not(self::src:comment)][1]", namespaces=ns)
+            a = op.xpath("./following-sibling::*[not(self::src:comment)][1]", namespaces=ns)
+            if a and b:
+                rel.append({"lhs": b[0], "rhs": a[0], "is_negated": False})
+        return rel
 
     def find_exception_bindings(self, tree, ns) -> list:
         bindings = []
+        # try { } catch (e) { } / catch ({ message }) { }
         for catch in tree.xpath(".//src:catch", namespaces=ns):
-            names = catch.xpath("./src:parameter_list/src:parameter/src:decl/src:name[1]", namespaces=ns)
-            if not names:                       # catch (...) / catch (const T&) senza nome
-                continue
             block = catch.xpath("./src:block[1]", namespaces=ns)
-            if block:
-                bindings.append((name_text(names[0]), block[0]))
+            if not block:
+                continue
+            for p in catch.xpath("./src:parameter_list/src:parameter", namespaces=ns):
+                for n in self.get_parameter_name_nodes(p, ns):
+                    bindings.append((name_text(n), block[0]))
+        # promise.catch(err => ...): primo parametro della callback; scope = la callback
+        for call in tree.xpath(".//src:call[src:name]", namespaces=ns):
+            nm = call.xpath("./src:name", namespaces=ns)[0]
+            if self._dotted(nm).split(".")[-1] != "catch":
+                continue
+            for fn in call.xpath(
+                    "./src:argument_list/src:argument[1]/src:expr/*[self::src:lambda or self::src:function][1]",
+                    namespaces=ns):
+                params = fn.xpath(self.parameters_xpath(), namespaces=ns)
+                if params:
+                    for n in self.get_parameter_name_nodes(params[0], ns)[:1]:
+                        bindings.append((name_text(n), fn))
         return bindings
 
-    # ------------------------------------------------------------------ #
-    # Tag srcML
-    # ------------------------------------------------------------------ #
+    def source_name_prefixes(self) -> bool:
+        return True
 
-    def function_tags(self):   return ["function", "constructor", "destructor"]
-    def lambda_tags(self):     return ["lambda"]
-    def flow_exit_tags(self):  return ["return", "throw", "goto", "continue", "break"]
-    def flow_exit_calls(self): return ["exit", "abort", "_exit", "_Exit", "quick_exit", "terminate"]
-    def class_tags(self):      return ["class", "struct", "union"]
+    def structural_only_assignment_tags(self) -> tuple:
+        return ("property",)
 
+    def compound_assignment_operators(self) -> list:
+        return ["+=", "||=", "&&=", "??="]
 
+    _ROUTER_METHODS = frozenset({
+        "get", "post", "put", "delete", "patch", "options", "head", "use", "all"
+    })
 
-    def receiver_is_local_instance(self, call_node, recv_name, ns) -> bool:
-        decls = self._decl_candidates(call_node, recv_name, ns)
-        if not decls:
+    def _route_call_of(self, fn_node, ns):
+        """La call-route di cui fn_node è la callback, o None se non ha forma di route."""
+        parent_call = fn_node.xpath(
+            "parent::src:expr/parent::src:argument/parent::src:argument_list/parent::src:call",
+            namespaces=ns)
+        if not parent_call:
+            return None
+        call = parent_call[0]
+        nm = call.xpath("./src:name", namespaces=ns)
+        if not nm:
+            return None
+        method = self._dotted(nm[0]).split(".")[-1]
+        if method not in self._ROUTER_METHODS:
+            return None
+
+        first = call.xpath("./src:argument_list/src:argument[1]/src:expr/*[1]", namespaces=ns)
+        if not first:
+            return None
+        node = first[0]
+        tag = node.tag.rsplit("}", 1)[-1]
+        if tag in ("lambda", "function"):
+            return call if method == "use" else None      # app.use((req, res, next) => ...)
+        if tag == "array":
+            return call                                    # app.get(['/a', '/b'], ...)
+        if tag == "literal":                               # stringa, template o regex
+            txt = self.normalize_string_literal("".join(node.itertext()).strip())
+            return call if txt.startswith(("/", "*")) else None
+        return None
+
+    def is_implicit_receiver_param(self, param_node, ns) -> bool:
+        fn = param_node.xpath("ancestor::*[self::src:lambda or self::src:function][1]", namespaces=ns)
+        if not fn:
             return False
-        decl = self._pick_decl(call_node, decls)
-        if decl.xpath("ancestor::src:parameter", namespaces=ns):
-            return False
-        t = self._decl_type_text(decl, ns) or ""
-        if "*" in t or "&" in t:
-            return False                      # alias o puntatore, non istanza
-        if decl.xpath("./src:init/src:expr/src:operator[text()='new']", namespaces=ns):
-            return True
-        # T x; / T x(a); / T x{a};  oppure T x = T(...)
-        return bool(decl.xpath("./src:argument_list | ./src:init | self::src:decl[not(src:init)]",
-                            namespaces=ns)) and t not in ("", "auto")
+        fn_node = fn[0]
+
+        is_arg = fn_node.xpath(
+            "parent::src:expr/parent::src:argument/parent::src:argument_list/parent::src:call",
+            namespaces=ns)
+        if not is_arg:
+            return False                                   # funzione top-level: input valido
+
+        if self._route_call_of(fn_node, ns) is None:
+            return True                                    # callback di db/fs/timer: non è input
+
+        roles = self.get_express_route_bindings(fn_node, ns)
+        if not roles:
+            return False                                   # route con 1 parametro (Koa): lo seminiamo
+        n = self.get_parameter_name_node(param_node, ns)
+        return roles.get(name_text(n) if n is not None else "") != "Express.Request"
 
 
-    
+
+    _SRC = {"src": "http://www.srcML.org/srcML/src"}
+    _FN_ANC = "ancestor::*[self::src:lambda or self::src:function]"
+
+    def role_of_name(self, head, node, ns=_SRC):
+        """Ruolo ('Express.Request'/'Express.Response') di `head` visto da `node`, o None."""
+        for fn in reversed(node.xpath(self._FN_ANC, namespaces=ns)):    # dalla più interna
+            roles = self.get_express_route_bindings(fn, ns)
+            if head in roles:
+                # una variabile locale con lo stesso nome (const res = ...) nasconde il parametro
+                local = [d for d in get_decl_index(fn).get(head, [])
+                        if not d.xpath("ancestor::src:parameter", namespaces=ns)]
+                return None if local else roles[head]
+            # parametro con lo stesso nome in una funzione che NON è una route: shadowing
+            if any(name_text(n) == head
+                for p in fn.xpath(self.parameters_xpath(), namespaces=ns)
+                for n in self.get_parameter_name_nodes(p, ns)):
+                return None
+        return None
+
+    def callback_param_flow(self) -> dict:
+        return {"*.forEach": 0, "*.map": 0, "*.filter": 0, "*.some": 0,
+                "*.every": 0, "*.flatMap": 0, "*.then": 0, "*.reduce": 1}
+
+
 # ---------------------------------------------------------------------- #
 # Registro / dispatch
 # ---------------------------------------------------------------------- #
@@ -2414,7 +2973,7 @@ ADAPTERS = {
     "python": PythonAdapter(),
     "java": JavaAdapter(),
     "c": CAdapter(),
-    "c++": CppAdapter(), #DA VALIDARE
+    "javascript": JavaScriptAdapter(),
 }
 
 def get_adapter(unit_node) -> LanguageAdapter:

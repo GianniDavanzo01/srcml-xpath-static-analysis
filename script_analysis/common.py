@@ -260,7 +260,6 @@ def node_snippet(node, max_len: int = 140) -> str:
     return text[:max_len] + ("…" if len(text) > max_len else "")
 
 _call_name_cache = {}
-_rhs_keys_cache = {}
 _assign_pairs_cache = {}
 _scope_index_cache = {}
 _dead_code_cache = {}
@@ -307,7 +306,6 @@ def _get_matcher(patterns, adapter):
 
 def reset_caches():
     _call_name_cache.clear()
-    _rhs_keys_cache.clear()
     _assign_pairs_cache.clear()
     _scope_index_cache.clear()
     _dead_code_cache.clear() 
@@ -315,6 +313,8 @@ def reset_caches():
     _macro_map_cache.clear()
     _decl_index_cache.clear()
     _field_decl_index_cache.clear()
+    _rhs_cands_cache.clear()
+    _assign_index_cache.clear()
 
 
 _X_CHILD_NAME  = etree.XPath("./src:name", namespaces=NS)
@@ -371,10 +371,20 @@ def assignment_pairs(scope_node, adapter, include_bindings=False) -> list:
     pairs = _assign_pairs_cache.get(key)
     if pairs is None:
         pairs = []
+        taint_skip = adapter.structural_only_assignment_tags() if include_bindings else ()
         for stmt in scope_node.xpath(adapter.potential_assignment_xpath(), namespaces=NS):
             if not include_bindings and stmt.tag.endswith("}control"):
                 continue
+            # if not adapter.is_assignment(stmt, NS):
+            #     continue
             if not adapter.is_assignment(stmt, NS):
+                # 'x += y' / 'x ??= y': solo per il taint (le regole strutturali non li vedono)
+                if include_bindings and adapter.is_compound_assignment(stmt, NS):
+                    lhs, rhs = adapter.get_compound_assignment_lhs_rhs(stmt, NS)
+                    if lhs is not None and rhs is not None:
+                        pairs.append((stmt, lhs, rhs))
+                continue
+            if taint_skip and stmt.tag.rsplit("}", 1)[-1] in taint_skip:
                 continue
             for lhs, rhs in adapter.get_assignment_chain(stmt, NS):
                 pairs.append((stmt, lhs, rhs))
@@ -420,35 +430,37 @@ def is_sanitized(node, sanitizers: list, adapter, imports) -> bool:
     return False
 
 
-def source_present(sources: list, rhs_node, *, adapter, imports) -> bool:
+_rhs_cands_cache = {}
 
-    # 1. Calcolo delle chiavi 
-    keys = _rhs_keys_cache.get(rhs_node)
-    if keys is None:
-        call_names, var_names = set(), set()
+def _rhs_candidates(rhs_node, adapter, imports):
+    cands = _rhs_cands_cache.get(rhs_node)
+    if cands is None:
+        cands = []
         for call in rhs_node.xpath(".//src:call | self::src:call", namespaces=NS):
-            cname = get_call_name(call, adapter, imports)
-            if cname:
-                call_names.add(cname)
-
-        for name_node in rhs_node.xpath(".//src:name | self::src:name", namespaces=NS):
-            text = "".join(name_node.itertext()).strip()
-            text = text.split('[')[0].split('(')[0].strip()
-            parent = name_node.getparent()
-            is_inner = parent is not None and parent.tag == name_node.tag
+            cn = get_call_name(call, adapter, imports)
+            if cn:
+                cands.append(((cn,), call))
+        prefixes = adapter.source_name_prefixes()
+        for n in rhs_node.xpath(".//src:name | self::src:name", namespaces=NS):
+            text = "".join(n.itertext()).strip().split('[')[0].split('(')[0].strip()
+            parent = n.getparent()
+            is_inner = parent is not None and parent.tag == n.tag
             if not is_inner:
-                text = adapter.resolve_name_text(text, imports)
-            var_names.add(text)
+                text = adapter.resolve_name_text(text, imports, node=n)
+            keys = [text]
+            if not is_inner and prefixes:
+                parts = text.split(".")
+                keys += [".".join(parts[:i]) for i in range(1, len(parts))]
+            cands.append((tuple(keys), n))
+        _rhs_cands_cache[rhs_node] = cands
+    return cands
 
-        _rhs_keys_cache[rhs_node] = (call_names, var_names)
-        call_keys, name_keys = call_names, var_names
-    else:
-        call_keys, name_keys = keys
-
+def source_present(sources, rhs_node, *, adapter, imports, block=None) -> bool:
     matcher = _get_matcher(sources, adapter)
-    
-    return any(matcher(k) for k in call_keys | name_keys)
-
+    for keys, node in _rhs_candidates(rhs_node, adapter, imports):
+        if any(matcher(k) for k in keys) and not (block and is_sanitized(node, block, adapter, imports)):
+            return True
+    return False
 
 
 _OWN_LITERALS_XP = etree.XPath(
@@ -657,15 +669,24 @@ def _is_hardcoded_string(rhs, adapter) -> bool:
     return any(not adapter.is_interpolated_string("".join(l.itertext())) for l in lits)
 
 
-def find_assignments(scope_node, adapter, var_name: str | None = None) -> list:
-    out = []
-    for stmt, lhs, rhs in assignment_pairs(scope_node, adapter):
-        if lhs is None or not lhs.tag.endswith("name"):
-            continue
-        if var_name is not None and name_text(lhs) != var_name:
-            continue
-        out.append((stmt, lhs, rhs))
-    return out
+
+_assign_index_cache = {}
+
+def _assign_index(scope_node, adapter):
+    ent = _assign_index_cache.get(scope_node)
+    if ent is None:
+        by_var, allp = defaultdict(list), []
+        for stmt, lhs, rhs in assignment_pairs(scope_node, adapter):
+            if lhs is not None and lhs.tag.endswith("name"):
+                t = (stmt, lhs, rhs)
+                allp.append(t)
+                by_var[name_text(lhs)].append(t)
+        ent = _assign_index_cache[scope_node] = (by_var, allp)
+    return ent
+
+def find_assignments(scope_node, adapter, var_name=None):
+    by_var, allp = _assign_index(scope_node, adapter)
+    return list(allp) if var_name is None else list(by_var.get(var_name, ()))
 
 
 
@@ -758,6 +779,27 @@ def _resolve_numeric_args(call_node, adapter, ns) -> list:
 
     return values
 
+
+# Helper utili per controllare i receiver dei parametri (introdotto con javascript)
+def call_root_name(call_node, adapter):
+    """Testa del receiver: res.status(404).send(x) -> 'res'. None se non è una chiamata a metodo."""
+    node = call_node
+    while (recv := adapter._chain_receiver(node, NS)) is not None:
+        node = recv
+    nm = node.xpath("./src:name", namespaces=NS)
+    parts = nm[0].xpath("./src:name", namespaces=NS) if nm else []
+    return name_text(parts[0]) if len(parts) >= 2 else None
+
+
+def is_enclosing_param(node, head, adapter) -> bool:
+    """True se `head` è un parametro di una funzione/lambda che racchiude `node`."""
+    cond = " or ".join(f"self::src:{t}" for t in
+                       set(adapter.function_tags()) | set(adapter.lambda_tags()))
+    for fn in node.xpath(f"ancestor::*[{cond}]", namespaces=NS):
+        for p in fn.xpath(adapter.parameters_xpath(), namespaces=NS):
+            if any(name_text(n) == head for n in adapter.get_parameter_name_nodes(p, NS)):
+                return True
+    return False
 
 
 # --------------------------------------------------------------------------- #

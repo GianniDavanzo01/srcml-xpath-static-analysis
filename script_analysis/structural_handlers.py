@@ -464,12 +464,14 @@ def _run_sensitive_var_patterns(tree, rule, findings, adapter, imports):
             findings.append(build_finding(rule, arg))
 
     conditions = tree.xpath(".//src:if_stmt//src:condition", namespaces=NS)
-    eq_op = adapter.equality_operator()
+    # eq_op = adapter.equality_operator()
+    eq_xp = " or ".join(f"text()='{o}'" for o in adapter.equality_operators())
     for cond in conditions:
         if cond.xpath(".//src:call", namespaces=NS):
             continue
 
-        for op_node in cond.xpath(f".//src:operator[text()='{eq_op}']", namespaces=NS):
+        # for op_node in cond.xpath(f".//src:operator[text()='{eq_op}']", namespaces=NS):
+        for op_node in cond.xpath(f".//src:operator[{eq_xp}]", namespaces=NS):
             lhs_nodes = op_node.xpath("preceding-sibling::*[not(self::src:comment)]", namespaces=NS)
             rhs_nodes = op_node.xpath("following-sibling::*[not(self::src:comment)]", namespaces=NS)
             if not lhs_nodes or not rhs_nodes:
@@ -551,16 +553,7 @@ def _run_forbidden_calls_with_kwargs(tree, rule, findings, adapter, imports):
             if is_target:
                 all_kwargs_match = True
                 
-                found_kwargs = {}
-                for arg in call.xpath("./src:argument_list/src:argument", namespaces=NS):
-                    if adapter.is_kwarg(arg, NS):
-                        name_node = arg.xpath("./src:name[1]", namespaces=NS)
-                        kw_name = "".join(name_node[0].itertext()).strip() if name_node else ""
-                        expr_node = arg.xpath("./src:expr[1] | ./src:literal[1]", namespaces=NS)
-                        val_text = adapter.normalize_string_literal(
-                            "".join(expr_node[0].itertext()).strip()
-                        ) if expr_node else ""
-                        found_kwargs[kw_name] = val_text
+                found_kwargs = adapter.call_keyword_args(call, NS)
                         
                 for k, v in kwargs.items():
                     if k not in found_kwargs or found_kwargs[k] != adapter.normalize_string_literal(v):

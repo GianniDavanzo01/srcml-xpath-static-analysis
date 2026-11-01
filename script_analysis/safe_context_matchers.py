@@ -581,21 +581,8 @@ def _safe_context_call_has_kwargs(node, spec: dict, var_name, adapter, imports) 
     arg_list_nodes = call_node[0].xpath("./src:argument_list", namespaces=NS)
     if not arg_list_nodes:
         return not spec.get("kwargs")
-        
-    arguments = arg_list_nodes[0].xpath("./src:argument", namespaces=NS)
     
-    found_kwargs = {}
-    for arg in arguments:
-        if adapter.is_kwarg(arg, NS):
-            name_node = arg.xpath("./src:name[1]", namespaces=NS)
-            if not name_node:
-                continue
-            key_name = "".join(name_node[0].itertext()).strip()
-
-            val_nodes = arg.xpath("./src:expr[1] | ./src:literal[1]", namespaces=NS)
-            if val_nodes:
-                val_text = "".join(val_nodes[0].itertext()).strip()
-                found_kwargs[key_name] = adapter.normalize_string_literal(val_text)
+    found_kwargs = adapter.call_keyword_args(call_node[0], NS)
 
     kwargs = spec.get("kwargs", {})
     if kwargs:

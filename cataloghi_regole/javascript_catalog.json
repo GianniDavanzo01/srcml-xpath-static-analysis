@@ -1,0 +1,964 @@
+{
+  "sources": {
+    "http_input": [
+      "Express.Request.query",
+      "Express.Request.body",
+      "Express.Request.params",
+      "Express.Request.headers",
+      "Express.Request.cookies",
+      "Express.Request.signedCookies",
+      "Express.Request.originalUrl",
+      "Express.Request.url",
+      "Express.Request.path",
+      "Express.Request.hostname",
+      "Express.Request.get",
+      "Express.Request.header",
+      "Express.Request.param",
+      "Express.Request.payload",
+      "*.ctx.query",
+      "*.ctx.params",
+      "*.ctx.headers",
+      "*.ctx.url",
+      "*.ctx.path",
+      "*.ctx.request.query",
+      "*.ctx.request.body",
+      "*.ctx.request.headers",
+      "*.ctx.request.url",
+      "*.ctx.cookies.get",
+      "*.event.body",
+      "*.event.headers",
+      "*.event.queryStringParameters",
+      "*.event.multiValueQueryStringParameters",
+      "*.event.pathParameters",
+      "*.socket.handshake.query",
+      "*.socket.handshake.headers",
+      "*.socket.handshake.auth",
+      "*.router.query",
+      "useSearchParams.get",
+      "window.location.search",
+      "window.location.href",
+      "window.location.hash",
+      "window.location.pathname",
+      "location.search",
+      "location.href",
+      "location.hash",
+      "location.pathname",
+      "document.location",
+      "document.URL",
+      "document.documentURI",
+      "document.cookie",
+      "document.referrer",
+      "window.name",
+      "URLSearchParams.get",
+      "*.searchParams.get"
+    ],
+    "cli_input": [
+      "process.argv",
+      "process.env",
+      "process.stdin",
+      "yargs.argv",
+      "minimist",
+      "*.parseArgs"
+    ],
+    "socket_input": [],
+    "nullable_returning_calls": [
+      "*.match",
+      "*.querySelector",
+      "*.getElementById",
+      "*.getAttribute",
+      "*.closest",
+      "*.getItem",
+      "*.findOne",
+      "*.findById",
+      "*.findUnique",
+      "*.findFirst"
+    ],
+    "file_input": [
+      "fs.readFileSync",
+      "fs.promises.readFile",
+      "fs/promises.readFile",
+      "fs-extra.readFile",
+      "fs-extra.readJson",
+      "fs-extra.readJsonSync"
+    ],
+    "file_upload_input": [
+      "Express.Request.file",
+      "Express.Request.files"
+    ]
+  },
+  "sinks": {
+    "file_system_access": [
+      {
+        "type": "call_with_var_arg",
+        "arg_index": 0,
+        "call": [
+          "fs.readFile", "fs.readFileSync",
+          "fs.writeFile", "fs.writeFileSync",
+          "fs.appendFile", "fs.appendFileSync",
+          "fs.createReadStream", "fs.createWriteStream",
+          "fs.unlink", "fs.unlinkSync",
+          "fs.rm", "fs.rmSync", "fs.rmdir", "fs.rmdirSync",
+          "fs.readdir", "fs.readdirSync",
+          "fs.stat", "fs.statSync", "fs.lstat", "fs.access", "fs.accessSync",
+          "fs.open", "fs.openSync", "fs.mkdir", "fs.mkdirSync",
+          "fs.promises.readFile", "fs.promises.writeFile", "fs.promises.appendFile",
+          "fs.promises.unlink", "fs.promises.rm", "fs.promises.readdir",
+          "fs.promises.stat", "fs.promises.mkdir", "fs.promises.open", "fs.promises.access",
+          "fs-extra.readFile", "fs-extra.writeFile", "fs-extra.outputFile",
+          "fs-extra.readJson", "fs-extra.writeJson", "fs-extra.remove",
+          "fs-extra.emptyDir", "fs-extra.ensureDir",
+          "*.sendFile", "*.sendfile", "Express.Response.download"
+        ]
+      },
+      {
+        "type": "call_with_var_arg",
+        "call": [
+          "fs.rename", "fs.renameSync", "fs.copyFile", "fs.copyFileSync",
+          "fs.cp", "fs.cpSync", "fs.symlink", "fs.link",
+          "fs.promises.rename", "fs.promises.copyFile",
+          "fs-extra.copy", "fs-extra.move",
+          "*.extractAllTo"
+        ]
+      }
+    ],
+    "path_concatenation": [
+      {
+        "type": "call_with_var_arg",
+        "call": [
+          "path.join", "path.resolve",
+          "path.posix.join", "path.posix.resolve",
+          "path.win32.join", "path.win32.resolve"
+        ]
+      }
+    ],
+    "os_command_execution": [
+      {
+        "type": "call_with_var_arg",
+        "arg_index": 0,
+        "call": [
+          "child_process.exec",
+          "child_process.execSync",
+          "shelljs.exec",
+          "execa.command",
+          "execa.commandSync",
+          "execa.execaCommand"
+        ]
+      },
+      {
+        "type": "call_with_var_arg",
+        "call": [
+          "child_process.spawn",
+          "child_process.spawnSync",
+          "child_process.execFile",
+          "child_process.execFileSync",
+          "child_process.fork",
+          "cross-spawn",
+          "cross-spawn.sync",
+          "*.execAsync"
+        ]
+      }
+    ],
+    "html_output": [
+      {
+        "type": "call_with_var_arg",
+        "call": [
+          "Express.Response.send",
+          "Express.Response.write",
+          "Express.Response.end",
+          "*.reply.send",
+          "document.write",
+          "document.writeln",
+          "*.insertAdjacentHTML",
+          "*.html"
+        ]
+      },
+      {
+      "type": "call_with_var_arg",
+      "call": ["*.send", "*.write", "*.end"],
+      "receiver_is_param": true
+    },
+      {
+        "type": "assigned_property",
+        "name": [
+          "*.innerHTML",
+          "*.outerHTML",
+          "*.srcdoc",
+          "*.src",
+          "*.ctx.body",
+          "*.ctx.response.body"
+        ]
+      }
+    ],
+    "sql_execution": [
+      {
+        "type": "call_with_var_arg",
+        "call": [
+          "*.query",
+          "*.execute",
+          "*.raw",
+          "knex.raw",
+          "*.whereRaw",
+          "*.havingRaw",
+          "*.orderByRaw",
+          "*.joinRaw",
+          "*.fromRaw",
+          "*.selectRaw",
+          "*.$queryRawUnsafe",
+          "*.$executeRawUnsafe"
+        ]
+      },
+      {
+        "type": "call_with_var_arg",
+        "call": ["*.get", "*.all", "*.run", "*.each", "*.exec", "*.prepare"],
+        "literal_contains": ["SELECT ", "INSERT ", "UPDATE ", "DELETE ", "DROP ", "UNION "]
+      }
+    ],
+    "ldap_execution": [
+      {
+        "type": "call_with_var_arg",
+        "call": [
+          "ldapjs.createClient.search",
+          "ldapts.Client.search"
+        ]
+      }
+    ],
+    "csv_writing": [
+      {
+        "type": "call_with_var_arg",
+        "call": [
+          "*.writeRecords",
+          "*.unparse",
+          "json2csv.parse",
+          "csv-stringify.stringify",
+          "csv-stringify/sync.stringify"
+        ]
+      }
+    ],
+    "client_error_output": [
+      {
+        "type": "call_with_var_arg",
+        "call": [
+          "Express.Response.send",
+          "Express.Response.json",
+          "Express.Response.jsonp",
+          "Express.Response.end",
+          "Express.Response.write",
+          "Express.Response.render",
+          "*.reply.send",
+          "*.ctx.throw"
+        ]
+      },
+      {
+        "type": "assigned_property",
+        "name": ["*.ctx.body", "*.ctx.response.body"]
+      }
+    ],
+    "exception_console_output": [
+      {
+        "type": "call_with_var_arg",
+        "call": ["console.log", "console.info", "console.warn", "console.error", "console.debug", "console.trace"]
+      }
+    ],
+    "logging_functions": [
+      {
+        "type": "call_with_var_arg",
+        "call": [
+          "console.log", "console.info", "console.warn", "console.error", "console.debug",
+          "*.logger.info", "*.logger.warn", "*.logger.error", "*.logger.debug", "*.logger.log",
+          "winston.info", "winston.warn", "winston.error", "winston.debug", "winston.log",
+          "*.createLogger.info", "*.createLogger.warn", "*.createLogger.error",
+          "*.createLogger.debug", "*.createLogger.log",
+          "*.getLogger.info", "*.getLogger.warn", "*.getLogger.error", "*.getLogger.debug",
+          "pino.info", "pino.warn", "pino.error", "pino.debug"
+        ]
+      }
+    ],
+    "unbounded_resource_read": [
+      {
+        "type": "method_call",
+        "method": ["arrayBuffer", "blob", "toBuffer", "getBuffer", "readAll", "read"]
+      }
+    ],
+    "format_string_functions": [
+      {
+        "type": "call_with_var_arg",
+        "call": [
+          "util.format",
+          "util.formatWithOptions",
+          "sprintf-js.sprintf",
+          "sprintf-js.vsprintf",
+          "*.sprintf",
+          "printf"
+        ]
+      }
+    ],
+    "file_write": [
+      {
+        "type": "call_with_var_arg",
+        "call": [
+          "fs.writeFile", "fs.writeFileSync",
+          "fs.appendFile", "fs.appendFileSync",
+          "fs.createWriteStream", "fs.rename", "fs.copyFile",
+          "fs.promises.writeFile", "fs/promises.writeFile",
+          "fs-extra.outputFile", "fs-extra.copy", "fs-extra.move",
+          "*.mv"
+        ]
+      }
+    ],
+    "resource_injection_sinks": [
+      {
+        "type": "call_with_var_arg",
+        "arg_index": 0,
+        "call": ["require", "import", "module.require", "Express.Response.render", "process.dlopen"]
+      }
+    ],
+    "http_header_setters": [
+      {
+        "type": "call_with_var_arg",
+        "call": [
+          "Express.Response.setHeader",
+          "Express.Response.header",
+          "Express.Response.set",
+          "Express.Response.append",
+          "Express.Response.writeHead",
+          "*.reply.header",
+          "*.reply.headers",
+          "*.ctx.set",
+          "*.ctx.append"
+        ]
+      }
+    ],
+    "http_redirect": [
+      {
+        "type": "call_with_var_arg",
+        "call": [
+          "Express.Response.redirect",
+          "Express.Response.location",
+          "*.reply.redirect",
+          "*.ctx.redirect",
+          "*.NextResponse.redirect",
+          "location.assign",
+          "location.replace",
+          "window.location.assign",
+          "window.location.replace",
+          "window.open"
+        ]
+      },
+      {
+        "type": "assigned_property",
+        "name": ["*.location", "*.location.href"]
+      }
+    ],
+    "http_request": [
+      {
+        "type": "call_with_var_arg",
+        "arg_index": 0,
+        "call": [
+          "fetch", "window.fetch", "node-fetch", "undici.fetch", "undici.request",
+          "axios", "axios.get", "axios.post", "axios.put", "axios.patch",
+          "axios.delete", "axios.head", "axios.request",
+          "got", "got.get", "got.post",
+          "request", "request.get", "request.post",
+          "superagent.get", "superagent.post",
+          "needle", "needle.get", "needle.post",
+          "ky", "ky.get", "ky.post",
+          "http.get", "http.request", "https.get", "https.request",
+          "ws", "ws.WebSocket", "WebSocket",
+          "*.goto"
+        ]
+      }
+    ],
+    "search_path_sinks": [
+      {
+        "type": "call_with_var_arg",
+        "call": [
+          "process.chdir",
+          "*.paths.push",
+          "*.paths.unshift",
+          "*.globalPaths.push",
+          "*.globalPaths.unshift"
+        ]
+      },
+      {
+        "type": "assigned_property",
+        "name": [
+          "process.env.PATH",
+          "process.env.NODE_PATH",
+          "process.env.LD_LIBRARY_PATH",
+          "process.env.LD_PRELOAD"
+        ]
+      }
+    ],
+    "sleep_functions": [
+      {
+        "type": "call_with_var_arg",
+        "arg_index": 1,
+        "call": ["setTimeout", "setInterval"]
+      },
+      {
+        "type": "call_with_var_arg",
+        "arg_index": 0,
+        "call": ["timers/promises.setTimeout", "timers/promises.setInterval", "*.sleep"]
+      }
+    ],
+    "memory_alloc_size": [
+      {
+        "type": "call_with_var_arg",
+        "arg_index": 0,
+        "call": [
+          "Buffer.alloc", "Buffer.allocUnsafe", "Buffer.allocUnsafeSlow",
+          "Array", "ArrayBuffer", "SharedArrayBuffer",
+          "Uint8Array", "Uint16Array", "Uint32Array", "Int8Array", "Int16Array", "Int32Array", "Float64Array",
+          "crypto.randomBytes",
+          "*.repeat", "*.padStart", "*.padEnd"
+        ]
+      }
+    ],
+    "crypto_key_sinks": [
+      {
+        "type": "call_with_var_arg",
+        "arg_index": 1,
+        "call": [
+          "crypto.createCipheriv", "crypto.createDecipheriv",
+          "crypto.createHmac",
+          "jsonwebtoken.sign", "jsonwebtoken.verify",
+          "*.AES.encrypt", "*.AES.decrypt"
+        ]
+      },
+      {
+        "type": "call_with_var_arg",
+        "arg_index": 2,
+        "call": ["crypto.createCipheriv", "crypto.createDecipheriv"]
+      }
+    ],
+    "authentication_sinks": [
+      {
+        "type": "call_with_var_arg",
+        "call": [
+          "bcrypt.compare", "bcrypt.compareSync",
+          "bcryptjs.compare", "bcryptjs.compareSync",
+          "argon2.verify",
+          "passport.authenticate",
+          "*.authenticate",
+          "jsonwebtoken.verify",
+          "ldapjs.createClient.bind",
+          "ldapts.Client.bind"
+        ]
+      }
+    ],
+    "xpath_evaluation_sinks": [
+      {
+        "type": "call_with_var_arg",
+        "arg_index": 0,
+        "call": [
+          "xpath.select",
+          "xpath.select1",
+          "xpath.evaluate",
+          "xpath.parse",
+          "document.evaluate"
+        ]
+      }
+    ],
+    "null_dereference": [
+      {
+        "type": "matches_xpath",
+        "xpath": "following-sibling::src:operator[1][text()='.'] | following-sibling::src:index[1]"
+      }
+    ],
+    "assert_conditions": [
+      {
+        "type": "matches_xpath",
+        "xpath": "ancestor::src:call[src:name[starts-with(normalize-space(.),'assert') or starts-with(normalize-space(.),'console.assert')]]"
+      }
+    ],
+    "loop_condition": [
+      {
+        "type": "loop_condition"
+      }
+    ],
+    "nosql_execution": [
+      {
+        "type": "call_with_var_arg",
+        "call": [
+          "*.findOne",
+          "*.findOneAndDelete",
+          "*.findOneAndRemove",
+          "*.deleteOne",
+          "*.deleteMany",
+          "*.countDocuments",
+          "*.distinct",
+          "*.aggregate",
+          "*.collection.find",
+          "Mongoose.Model.find",
+          "mongoose.model.find",
+          "db.collection.find"
+        ]
+      },
+      {
+        "type": "call_with_var_arg",
+        "arg_index": 0,
+        "call": [
+          "*.findOneAndUpdate",
+          "*.findOneAndReplace",
+          "*.updateOne",
+          "*.updateMany",
+          "*.replaceOne"
+        ]
+      }
+    ],
+    "regex_construction_and_matching": [
+      {
+        "type": "call_with_var_arg",
+        "arg_index": 0,
+        "call": [
+          "RegExp"
+        ]
+      },
+      {
+        "type": "call_with_var_arg",
+        "call": [
+          "RegExp.test",
+          "RegExp.exec",
+          "String.match",
+          "String.matchAll",
+          "String.search",
+          "*.match",
+          "*.search"
+        ]
+      }
+    ],
+    "array_index_use": [],
+    "array_alloc_size": []
+  },
+  "sanitizers": {
+    "cast_to_integer": [
+      "parseInt",
+      "parseFloat",
+      "Number",
+      "Number.parseInt",
+      "Number.parseFloat",
+      "BigInt",
+      "Math.floor",
+      "Math.ceil",
+      "Math.round",
+      "Math.trunc",
+      "validator.toInt",
+      "validator.toFloat"
+    ],
+    "path_sanitizers": [
+      "path.basename",
+      "path.posix.basename",
+      "path.win32.basename",
+      "sanitize-filename"
+    ],
+    "XSS_sanitizers": [
+      "*.escape",
+      "*.escapeHtml",
+      "*.escapeHTML",
+      "*.encodeHTML",
+      "*.escapeExpression",
+      "*.sanitize",
+      "escape-html",
+      "sanitize-html",
+      "xss",
+      "he.encode",
+      "he.escape",
+      "entities.encode"
+    ],
+    "url_encode_sanitizers": [
+      "encodeURIComponent",
+      "encodeURI",
+      "querystring.escape"
+    ],
+    "crlf_sanitizers": [
+      "encodeURIComponent",
+      "encodeURI",
+      "JSON.stringify"
+    ],
+    "shell_escape_sanitizers": [
+      "shell-quote.quote",
+      "shell-escape",
+      "shellescape",
+      "shescape.quote"
+    ],
+    "ldap_escape_sanitizers": [
+      "ldap-escape.filter",
+      "ldap-escape.dn"
+    ],
+    "nosql_sanitizers": [
+      "String",
+      "*.toString",
+      "*.ObjectId",
+      "mongoose.Types.ObjectId",
+      "mongo-sanitize",
+      "express-mongo-sanitize.sanitize",
+      "mongoose.sanitizeFilter"
+    ],
+    "regex_escape_sanitizers": [
+      "escape-string-regexp",
+      "lodash.escapeRegExp",
+      "_.escapeRegExp",
+      "RegExp.escape"
+    ],
+    "xpath_sanitizers": [],
+    "crypto_decryption_functions": []
+  },
+  "safe_contexts": {
+    "sql_parameterization": [
+      {
+        "type": "parametrized_query",
+        "call": [
+          "*.query",
+          "*.execute",
+          "*.raw",
+          "knex.raw",
+          "*.whereRaw",
+          "*.get",
+          "*.all",
+          "*.run"
+        ],
+        "placeholders": ["?", "$1"],
+        "min_args": 2
+      }
+    ],
+    "try_block": ["try"],
+    "if_block": ["if"],
+    "return_value_used": [
+      {
+        "type": "node_matches_xpath",
+        "xpath": "not(parent::src:expr[parent::src:expr_stmt]) or following-sibling::*[1][self::src:operator] or preceding-sibling::src:operator[not(text()='.' or text()='?.' or text()='await' or text()='new')]"
+      }
+    ],
+    "null_checked": [
+      {
+        "type": "var_truthiness_check",
+        "scope": "enclosing",
+        "require_state": "truthy"
+      },
+      {
+        "type": "var_falsy_guard_clause"
+      }
+    ],
+    "allowlist_validation": [
+      {
+        "type": "membership_check",
+        "scope": "enclosing",
+        "require_var_left": true,
+        "right_is_bare_identifier": true,
+        "allowed_negation": [false]
+      }
+    ],
+    "file_extension_validation": [
+      {
+        "type": "receiver_of_method_with_arg",
+        "method": "endsWith",
+        "dangerous_values": [
+          ".php", ".php3", ".php4", ".php5",
+          ".exe", ".dll", ".so", ".sh", ".bat", ".cmd", ".cgi", ".pl", ".py", ".jar",
+          ".js", ".mjs", ".html", ".htm", ".svg"
+        ]
+      }
+    ],
+    "safe_metadata_extraction": [
+      {"type": "var_has_attribute", "attribute": "length"},
+      {"type": "var_has_attribute", "attribute": "size"},
+      {"type": "var_has_attribute", "attribute": "byteLength"},
+      {"type": "var_has_attribute", "attribute": "mimetype"}
+    ],
+    "url_validation": [
+      {
+        "type": "condition_matches_xpath",
+        "scope": "enclosing",
+        "xpath": ".//src:call[.//src:name[last()][text()='isURL' or text()='isUri' or text()='isValidUrl' or text()='isSafeUrl' or text()='isSafeRedirect' or text()='isAllowedRedirect']][.//src:argument_list//src:name[text()='$VAR']]"
+      }
+    ],
+    "resource_safe_contexts": [
+      {
+        "type": "function_has_file_size_check",
+        "size_properties": ["size", "length", "byteLength"]
+      },
+      {
+        "type": "binary_comparison",
+        "operators": ["<", "<="],
+        "left_exact": ["$VAR"]
+      },
+      {
+        "type": "binary_comparison",
+        "operators": [">", ">="],
+        "right_exact": ["$VAR"]
+      }
+    ],
+    "format_string_position": [
+      {
+        "type": "check_format_arg_position",
+        "vulnerable_indices": {
+          "util.format": 0,
+          "util.formatWithOptions": 1,
+          "sprintf-js.sprintf": 0,
+          "sprintf-js.vsprintf": 0,
+          "*.sprintf": 0,
+          "printf": 0
+        }
+      }
+    ],
+    "secure_cookie_contexts": [
+      {
+        "type": "call_with_kwarg",
+        "call": [
+          "Express.Response.cookie",
+          "*.ctx.cookies.set",
+          "*.reply.setCookie",
+          "*.reply.cookie"
+        ],
+        "kwargs": {
+          "secure": "true",
+          "httpOnly": "true"
+        },
+        "require": "all"
+      }
+    ],
+    "manual_string_sanitization": [
+      {
+        "type": "function_has_method_call",
+        "call": ["*.replace", "*.replaceAll"],
+        "args_contain": [";", "&"]
+      }
+    ],
+    "non_security_hash_usage": [],
+    "safe_permission_defaults": [],
+    "starttls_upgrade": [],
+    "crypto_safe_contexts": [],
+    "xxe_safe_configuration": [],
+    "curl_non_url_option": [],
+    "deserialization_safe_contexts": [],
+    "bounds_checked_array_access": [],
+    "alloc_size_positive_checked": []
+  },
+  "xpath_rules": {
+    "off_by_one_loop_condition": [
+      ".//src:condition[parent::src:while or parent::src:do or parent::src:control/parent::src:for]//src:operator[text()='<='][following-sibling::*[1][(self::src:name and src:name[last()][text()='length']) or (self::src:call and src:name/src:name[last()][text()='length' or text()='size'])]][not(following-sibling::*[2][self::src:operator and text()='-'])]"
+    ]
+  },
+  "forbidden_functions": {
+    "dynamic_code_execution": [
+      "eval",
+      "Function",
+      "vm.runInContext",
+      "vm.runInNewContext",
+      "vm.runInThisContext",
+      "vm.Script",
+      "vm.compileFunction",
+      "vm2.VM.run",
+      "vm2.NodeVM.run"
+    ],
+    "unsafe_deserializers": [
+      "node-serialize.unserialize",
+      "serialize-to-js.deserialize",
+      "v8.deserialize",
+      "js-yaml.load",
+      "*.unserialize"
+    ],
+    "unsafe_xml_parsers": [
+      {
+        "type": "call_matches_ast",
+        "call": ["libxmljs.parseXml", "libxmljs.parseXmlString", "libxmljs2.parseXml", "*.parseXml", "*.parseXmlString"],
+        "contains_names": ["noent"],
+        "contains_booleans": ["true"]
+      }
+    ],
+    "weak_hash_functions": [
+      {
+        "type": "call_matches_ast",
+        "call": ["crypto.createHash"],
+        "case_insensitive": true,
+        "contains_string_containing": ["md5", "md4", "sha1"]
+      },
+      "*.MD5",
+      "*.SHA1",
+      "md5",
+      "sha1"
+    ],
+    "weak_ciphers_and_modes": [
+      {
+        "type": "call_matches_ast",
+        "call": ["crypto.createCipheriv", "crypto.createDecipheriv"],
+        "case_insensitive": true,
+        "contains_string_containing": ["des", "rc2", "rc4", "bf-", "blowfish", "ecb"]
+      },
+      "*.DES.encrypt",
+      "*.TripleDES.encrypt",
+      "*.RC4.encrypt",
+      "*.RC4Drop.encrypt"
+    ],
+    "weak_key_generation": [
+      {
+        "type": "call_matches_ast",
+        "call": ["crypto.generateKeyPairSync", "crypto.generateKeyPair", "*.rsa.generateKeyPair"],
+        "arg_less_than": 2048
+      }
+    ],
+    "weak_password_hashing": [
+      {
+        "type": "call_matches_ast",
+        "call": ["crypto.createHash.update"],
+        "contains_any_name": ["password", "passwd", "pwd", "passphrase"]
+      },
+      {
+        "type": "call_matches_ast",
+        "call": ["*.MD5", "*.SHA1", "*.SHA256", "md5", "sha1"],
+        "contains_any_name": ["password", "passwd", "pwd", "passphrase"]
+      }
+    ],
+    "weak_prngs": [
+      "Math.random",
+      "crypto.pseudoRandomBytes"
+    ],
+    "insecure_temp_functions": [
+      "tmp.tmpName",
+      "tmp.tmpNameSync"
+    ],
+    "insecure_cookie_configuration": [
+      "Express.Response.cookie",
+      "*.ctx.cookies.set",
+      "*.reply.setCookie"
+    ],
+    "insecure_network_protocols": [
+      {
+        "type": "call_matches_ast",
+        "call": ["http.get", "http.request", "axios", "axios.get", "axios.post", "axios.put", "fetch", "got", "got.get", "got.post", "request", "request.get", "request.post"],
+        "contains_string_containing": ["http://", "ftp://", "telnet://"],
+        "case_insensitive": true
+      },
+      "ftp",
+      "jsftp",
+      "telnet-client"
+    ],
+    "logging_calls_with_sensitive_content": [
+      {
+        "type": "call_matches_ast",
+        "call": [
+          "console.log", "console.info", "console.warn", "console.error", "console.debug",
+          "*.logger.info", "*.logger.warn", "*.logger.error", "*.logger.debug", "*.logger.log",
+          "winston.info", "winston.warn", "winston.error", "winston.debug", "winston.log",
+          "*.createLogger.info", "*.createLogger.warn", "*.createLogger.error", "*.createLogger.debug",
+          "*.getLogger.info", "*.getLogger.warn", "*.getLogger.error", "*.getLogger.debug",
+          "pino.info", "pino.warn", "pino.error", "pino.debug"
+        ],
+        "contains_any_name": [
+          "password", "secret",
+          "auth_token", "authtoken", "access_token", "accesstoken",
+          "api_key", "apikey", "private_key", "privatekey"
+        ]
+      }
+    ],
+    "obsolete_functions": [
+      "Buffer",
+      "crypto.createCipher",
+      "crypto.createDecipher",
+      "fs.exists",
+      "url.parse",
+      "process.binding",
+      "util.isArray",
+      "util.isString",
+      "util.isFunction",
+      "escape",
+      "unescape",
+      "*.substr"
+    ],
+    "dangerous_functions": [
+      "Buffer.allocUnsafe",
+      "Buffer.allocUnsafeSlow",
+      "process.dlopen"
+    ],
+    "insecure_default_permissions": [
+      {
+        "type": "call_matches_ast",
+        "call": ["process.umask"],
+        "exact_args_count": 1,
+        "contains_numbers": [0]
+      }
+    ],
+    "return_value_must_be_checked": [
+      "*.trim",
+      "*.trimStart",
+      "*.trimEnd",
+      "*.toLowerCase",
+      "*.toUpperCase",
+      "*.concat",
+      "*.substring",
+      "*.replaceAll",
+      "*.startsWith",
+      "*.endsWith",
+      "*.includes",
+      "crypto.timingSafeEqual",
+      "bcrypt.compareSync",
+      "bcryptjs.compareSync",
+      "fs.existsSync"
+    ]
+  },
+  "excluded_functions": {
+    "safe_prng_exceptions": [],
+    "eval_false_positive_exceptions": []
+  },
+  "patterns": {
+    "string_to_int_propagation": {
+      "propagate_only_through_calls": [
+        "parseInt",
+        "parseFloat",
+        "Number",
+        "Number.parseInt",
+        "Number.parseFloat",
+        "Math.floor",
+        "Math.ceil",
+        "Math.round",
+        "Math.trunc",
+        "Math.abs",
+        "String",
+        "*.toString",
+        "*.trim"
+      ]
+    },
+    "insecure_permission_assignment": {
+      "forbidden_functions": [
+        {
+          "type": "call_matches_ast",
+          "call": [
+            "fs.chmod", "fs.chmodSync", "fs.fchmod", "fs.fchmodSync",
+            "fs.promises.chmod", "fs/promises.chmod"
+          ],
+          "contains_numbers": ["0o777", "0777", "0o666", "0666", "0o757", "0o775", "0o755", "0755", "511", "438"]
+        },
+        {
+          "type": "call_matches_ast",
+          "call": [
+            "fs.mkdir", "fs.mkdirSync", "fs.writeFile", "fs.writeFileSync",
+            "fs.open", "fs.openSync",
+            "fs.promises.mkdir", "fs.promises.writeFile",
+            "fs/promises.mkdir", "fs/promises.writeFile"
+          ],
+          "contains_numbers": ["0o777", "0777", "0o666", "0666", "0o757", "0o775", "511", "438"]
+        }
+      ]
+    },
+    "insecure_certificate_validation": {
+      "bad_assignments": {
+        "*.rejectUnauthorized": "false",
+        "*.strictSSL": "false",
+        "process.env.NODE_TLS_REJECT_UNAUTHORIZED": "0"
+      }
+    },
+    "active_debug": {
+      "bad_assignments": {
+        "*.debug": "true"
+      }
+    },
+    "assignment_in_condition": {
+      "xpath_rules": [
+        ".//src:condition/src:expr[src:operator[text()='='] and not(src:operator[text()='==' or text()='!=' or text()='===' or text()='!==' or text()='<' or text()='>' or text()='<=' or text()='>=' or text()='&&' or text()='||' or text()='??' or text()='('])]"
+      ]
+    },
+    "unsafe_deserialization_kwargs": {},
+    "unsafe_dict_access": {},
+    "use_after_free_check": {}
+  }
+}

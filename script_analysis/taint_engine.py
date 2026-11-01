@@ -14,6 +14,8 @@ from common import NS, build_finding, is_sanitized, source_present, get_call_nam
 from sink_matchers import matches_any_sink
 from safe_context_matchers import is_in_safe_context
 
+from types import SimpleNamespace
+
 
 from lxml import etree
 
@@ -38,38 +40,97 @@ def _decl_name_xp(adapter):
         x = _DECL_NAME_XP[adapter.name] = _X("parent::*[" + " or ".join(f"self::src:{t}" for t in tags) + "]")
     return x
 
+_FN_ANC_XP = {}
+def _fn_anc(adapter):
+    x = _FN_ANC_XP.get(adapter.name)
+    if x is None:
+        tags = set(adapter.function_tags()) | set(adapter.lambda_tags())
+        x = _FN_ANC_XP[adapter.name] = _X("ancestor::*[" + " or ".join(f"self::src:{t}" for t in tags) + "]")
+    return x
 
-_PARAM_XP = {}
+_X_NAMES_SELF = _X("self::src:name | .//src:name")
+
+_UNIT_CB_CACHE = {}
+def _get_unit_callbacks(tree, adapter, imports, ctx):
+    """[(call, funzione_callback, [nomi_parametro])] delle call in callback_param_flow."""
+    ent = _UNIT_CB_CACHE.get(id(tree))
+    if ent is not None and ent[0] is tree:
+        return ent[1]
+    items = []
+    flow = adapter.callback_param_flow()
+    if flow:
+        table = CallTable(flow, adapter)
+        fn_cond = " or ".join(f"self::src:{t}" for t in
+                              set(adapter.lambda_tags()) | set(adapter.function_tags()))
+        first_fn = _X(f"./src:argument_list/src:argument[1]/src:expr/*[{fn_cond}][1]")
+        for call in ctx.calls:
+            cname = get_call_name(call, adapter, imports)
+            idx = table.get(cname) if cname else None
+            if idx is None:
+                continue
+            fns = first_fn(call)
+            if not fns:
+                continue
+            params = fns[0].xpath(adapter.parameters_xpath(), namespaces=NS)
+            if idx >= len(params):
+                continue
+            pn = [name_text(n) for n in adapter.get_parameter_name_nodes(params[idx], NS) if name_text(n)]
+            if pn:
+                items.append((call, fns[0], pn))
+    _UNIT_CB_CACHE.clear()
+    _UNIT_CB_CACHE[id(tree)] = (tree, items)
+    return items
+
+
+def _chain_carries_taint(call, visible, return_sources, block, adapter, imports) -> bool:
+    """Il receiver della call (e le call precedenti della catena) trasportano taint?"""
+    fn_anc = _fn_anc(adapter)
+    depth = len(fn_anc(call))
+    node = call
+    while node is not None:
+        parts = list(node.xpath("./src:name", namespaces=NS))
+        if node is not call:                       # per la call corrente, gli argomenti SONO la callback
+            parts += node.xpath("./src:argument_list", namespaces=NS)
+        for vn in parts:
+            if return_sources and source_present(return_sources, vn, adapter=adapter,
+                                                 imports=imports, block=block):
+                return True
+            for n in _X_NAMES_SELF(vn):
+                if (len(fn_anc(n)) == depth                     # non dentro un'altra callback
+                        and name_text(n) in visible
+                        and not is_sanitized(n, block, adapter, imports)):
+                    return True
+        node = adapter._chain_receiver(node, NS)
+    return False
+
+
 _UNIT_PARAMS_CACHE = {}   # id(tree) -> (tree, [(param_name, scope, frozenset(annots)), ...])
+_FN_XP = {}
+_PARAMS_XP = {}
 
 def _get_unit_params(tree, adapter):
     ent = _UNIT_PARAMS_CACHE.get(id(tree))
-
     if ent is not None and ent[0] is tree:
         return ent[1]
 
-    xp = _PARAM_XP.get(adapter.name)
-    if xp is None:
+    fx = _FN_XP.get(adapter.name)
+    if fx is None:
         fn = " or ".join(f"self::src:{t}" for t in adapter.function_tags())
-        xp = _PARAM_XP[adapter.name] = _X(f".//*[{fn}]/src:parameter_list/src:parameter")
+        fx = _FN_XP[adapter.name] = _X(f".//*[{fn}]")
+        _PARAMS_XP[adapter.name] = _X(adapter.parameters_xpath())
+    px = _PARAMS_XP[adapter.name]
 
     items = []
-    for param in xp(tree):
-        if adapter.is_implicit_receiver_param(param, NS):
-            continue 
-        name_node = adapter.get_parameter_name_node(param, NS)
-        if name_node is None:
-            continue
-        param_name = name_text(name_node)
-        if not param_name:
-            continue
-        scope = enclosing_scope(param, adapter)
-        # annots = frozenset(adapter.parameter_annotation_names(param, NS))
-        # items.append((param_name, scope if scope is not None else tree, annots))
-        annots = frozenset(adapter.parameter_annotation_names(param, NS))
-        numeric = adapter.is_numeric_type(adapter.get_parameter_type(param, NS))
-        items.append((param_name, scope if scope is not None else tree, annots, numeric))
-        
+    for fn_node in fx(tree):
+        for param in px(fn_node):
+            if adapter.is_implicit_receiver_param(param, NS):
+                continue
+            annots = frozenset(adapter.parameter_annotation_names(param, NS))
+            numeric = adapter.is_numeric_type(adapter.get_parameter_type(param, NS))
+            for name_node in adapter.get_parameter_name_nodes(param, NS):
+                pname = name_text(name_node)
+                if pname:
+                    items.append((pname, fn_node, annots, numeric))
 
     _UNIT_PARAMS_CACHE.clear()
     _UNIT_PARAMS_CACHE[id(tree)] = (tree, items)
@@ -136,9 +197,17 @@ def _killed_by_reassign(uso, var, scope_node, assign_infos, is_killing, side_eff
     key = _pos_key(uso)
     prior = [i for i in assign_infos
              if i.var == var and i.scope is scope_node and _pos_key(i.stmt) < key]
-    if not prior:
+    # if not prior:
+    #     return False
+    # last = max(prior, key=lambda i: _pos_key(i.stmt))
+    plain = [i for i in prior if not i.compound]   # 'x += y' non e' mai una riassegnazione
+    if not plain:
         return False
-    last = max(prior, key=lambda i: _pos_key(i.stmt))
+    last = max(plain, key=lambda i: _pos_key(i.stmt))
+    # un '+=' / '??=' dopo l'ultima riassegnazione puo' aver aggiunto taint: non cancellare
+    if any(i.compound and _pos_key(i.stmt) > _pos_key(last.stmt) for i in prior):
+        return False
+    
     if last.rhs is None or (not weak_kills and _is_weak_update(last)) or not is_killing(last):
         return False
 
@@ -185,11 +254,15 @@ def _get_unit_value_names(tree, adapter, imports):
     for n in _X_VALUE_NAMES(tree):
         parts = _X_NAME_PARTS(n)
         raw = ".".join(name_text(p) for p in parts) if parts else name_text(n)
-        dotted = adapter.resolve_name_text(raw, imports)
+        dotted = adapter.resolve_name_text(raw, imports, node=n)
         # solo nomi qualificati: un nome semplice come 'input' è quasi sempre
         # una variabile locale, non la source
         if dotted and "." in dotted:
             items.append((dotted, n))
+            if adapter.source_name_prefixes(): #Aggiunto da javascript
+                parts = dotted.split(".")
+                for i in range(2, len(parts)):
+                    items.append((".".join(parts[:i]), n))
 
     _UNIT_NAMES_CACHE.clear()            # una sola unit in cache: niente riferimenti a alberi vecchi
     _UNIT_NAMES_CACHE[id(tree)] = (tree, items)
@@ -398,6 +471,14 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
     null_seed = "null_literal" in sources
     literal_seed = "string_literal" in sources
 
+
+    only_through = rule.get("propagate_only_through_calls") or []
+    if rule.get("ignore_taint_block_functions", False):
+        block = sanitizers
+    else:
+        block = sanitizers + [f for f in adapter.taint_block_functions() if f not in only_through]
+
+
     def _is_seed(info) -> bool:
         """L'assegnazione introduce taint per QUESTA regola?
         Unica definizione di 'cosa e' taint', usata sia dal seeding sia dal kill."""
@@ -408,10 +489,9 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
         if literal_seed and _is_hardcoded_string(info.rhs, adapter):
             return True
         return any(
-            source_present(return_sources, n, adapter=adapter, imports=imports)
+            source_present(return_sources, n, adapter=adapter, imports=imports, block=block)
             for n in info.rhs_all
         )
-
     pre_tainted = {(v, id(s)) for v, s in tainted_vars_with_scope}
     for info in assign_infos:
         if numeric_safe and info.numeric_lhs:
@@ -420,8 +500,10 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
             tainted_vars_with_scope.append((info.var, info.scope))
             _note_origin(info.var, info.scope, info.stmt)
 
+    unit_cbs = _get_unit_callbacks(tree, adapter, imports, ctx)
+    cb_seeded = set()
 
-    if not tainted_vars_with_scope:
+    if not tainted_vars_with_scope and not unit_cbs:
         return inline_findings
 
     scope_nodes = {id(s): s for _, s in tainted_vars_with_scope}
@@ -444,12 +526,12 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
     # Passo 2: propagazione a catena
     if rule.get("propagate_taint", True):
 
-        only_through = rule.get("propagate_only_through_calls") or []
-        if rule.get("ignore_taint_block_functions", False):
-            block = sanitizers
-        else:
-             block = sanitizers + [
-        f for f in adapter.taint_block_functions() if f not in only_through]
+        # only_through = rule.get("propagate_only_through_calls") or []
+        # if rule.get("ignore_taint_block_functions", False):
+        #     block = sanitizers
+        # else:
+        #      block = sanitizers + [
+        # f for f in adapter.taint_block_functions() if f not in only_through]
 
         propagating_calls = adapter.taint_propagating_calls()
 
@@ -550,6 +632,22 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
                                 tainted_vars_with_scope.append((out_var, scope_node))
                                 already_tainted.add(out_var)
                                 changed = True
+
+            for call, fn, pnames in unit_cbs:
+                if all((p, id(fn)) in cb_seeded for p in pnames):
+                    continue
+                call_scope = enclosing_scope(call, adapter)
+                if call_scope is None:
+                    call_scope = tree
+                visible = _visible(SimpleNamespace(scope=call_scope, stmt=call), tainted_by_scope)
+                if not _chain_carries_taint(call, visible, return_sources, block, adapter, imports):
+                    continue
+                for p in pnames:
+                    cb_seeded.add((p, id(fn)))
+                    tainted_vars_with_scope.append((p, fn))
+                    scope_nodes[id(fn)] = fn
+                    tainted_by_scope.setdefault(id(fn), set()).add(p)
+                changed = True
 
             # Propagazione via assegnazione: nessuna query XPath
             # per ricavare lhs/rhs/scope/rhs_all, sono gia' in `info`.

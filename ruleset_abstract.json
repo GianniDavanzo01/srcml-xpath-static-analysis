@@ -2,7 +2,6 @@
 {
   "rule_id": "CWE-20-UNSAFE-DICT-ACCESS",
   "languages":["python"],
-  "description":"Applicabile solo a Python",
   "type": "structural",
   "vulnerabilities": ["CWE-20"],
   "patterns": [{"tag": "unsafe_dict_access"}],
@@ -14,7 +13,7 @@
   "vulnerabilities": ["CWE-22"],
   "sources": [
     {"tag": "http_input"},
-    {"tag": "cli_input"}, "function_parameters"
+    {"tag": "cli_input"},"function_parameters"
   ],
   "sinks": [
     {"tag": "file_system_access"},
@@ -36,7 +35,7 @@
   "vulnerabilities": ["CWE-78"],
   "sources": [
     {"tag": "http_input"},
-    {"tag": "cli_input"}, "function_parameters"
+    {"tag": "cli_input"},"function_parameters"
   ],
   "sinks": [
     {"tag": "os_command_execution"}
@@ -53,7 +52,7 @@
 {
   "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
   "type": "taint",
-  "languages":["java","python"],
+  "languages":["java","python","javascript"],
   "vulnerabilities": ["CWE-79"],
   "sources": [
     {"tag": "http_input"},
@@ -104,7 +103,7 @@
 {
   "rule_id": "CWE-95-EVAL-INJECTION",
   "type": "structural",
-  "languages":["java","python"],
+  "languages":["java","python","javascript"],
   "vulnerabilities": ["CWE-95"],
   "forbidden_functions": [{"tag": "dynamic_code_execution"}],
   "excluded_functions": [{"tag": "eval_false_positive_exceptions"}],
@@ -131,7 +130,7 @@
 {
   "rule_id": "CWE-113-HTTP-RESPONSE-SPLITTING",
   "type": "taint",
-  "languages":["java","python"],
+  "languages":["java","python","javascript"],
   "vulnerabilities": ["CWE-113"],
   "sources": [
     {"tag": "http_input"}
@@ -196,7 +195,7 @@
   "vulnerabilities": ["CWE-134"],
   "sources": [
     {"tag": "http_input"},
-    {"tag": "cli_input"}
+    {"tag": "cli_input"}, "function_parameters"
   ],
   "sinks": [
     {"tag": "format_string_functions"}
@@ -216,7 +215,7 @@
 {
   "rule_id": "CWE-209-ERROR-DETAILS-TO-CLIENT",
   "type": "taint",
-  "languages": ["java", "python"],
+  "languages": ["java", "python","javascript"],
   "vulnerabilities": ["CWE-209"],
   "sources": ["exception_variable"],
   "sinks": [{"tag": "client_error_output"}]
@@ -359,7 +358,7 @@
 {
   "rule_id": "CWE-400-UNCONTROLLED-RESOURCE-CONSUMPTION",
   "type": "taint",
-  "languages": ["python", "java"],
+  "languages": ["python", "java","javascript"],
   "vulnerabilities": ["CWE-400"],
   "sources": [{"tag": "file_upload_input"}, {"tag": "socket_input"}],
   "sinks": [{"tag": "unbounded_resource_read"}, {"tag": "sleep_functions"}],
@@ -425,7 +424,7 @@
 {
   "rule_id": "CWE-434-UNRESTRICTED-FILE-UPLOAD",
   "type": "taint",
-  "languages":["java","python"],
+  "languages":["java","python","javascript"],
   "vulnerabilities": ["CWE-434"],
   "sources": [{"tag": "file_upload_input"}],
   "sinks": [{"tag": "file_write"}],
@@ -475,7 +474,7 @@
 {
   "rule_id": "CWE-502-DESERIALIZATION",
   "type": "structural",
-  "languages":["python", "java"],
+  "languages":["python", "java","javascript"],
   "vulnerabilities": ["CWE-502"],
   "forbidden_functions": [
     {"tag": "unsafe_deserializers"}
@@ -511,7 +510,7 @@
 {
   "rule_id": "CWE-601-OPEN-REDIRECT",
   "type": "taint",
-  "languages":["java","python"],
+  "languages":["java","python","javascript"],
   "vulnerabilities": ["CWE-601"],
   "sources": [
     {"tag": "http_input"},
@@ -557,6 +556,21 @@
   ]
 },
 {
+  "rule_id": "CWE-643-XPATH-INJECTION",
+  "type": "taint",
+  "vulnerabilities": ["CWE-643"],
+  "sources": [
+    {"tag": "http_input"},
+    "function_parameters"
+  ],
+  "sinks": [
+    {"tag": "xpath_evaluation_sinks"}
+  ],
+  "sanitizers": [
+    {"tag": "xpath_sanitizers"}
+  ]
+},
+{
     "rule_id": "CWE-676-Potentially_Dangerous_Function",
     "type": "structural",
     "vulnerabilities": ["CWE-676"],
@@ -584,7 +598,7 @@
 {
   "rule_id": "CWE-770-UNCONTROLLED-RESOURCE-ALLOCATION",
   "type": "taint",
-  "languages":["java","python"],
+  "languages":["java","python","javascript"],
   "vulnerabilities": ["CWE-770"],
   "sources": [
     {"tag": "http_input"},
@@ -624,7 +638,7 @@
   "rule_id": "CWE-835-LOOP-WITH-UNREACHABLE-EXIT",
   "type": "structural",
   "vulnerabilities": ["CWE-835"],
-  "missing_while_increments": [{}]
+  "missing_while_increments": true
 },
 {
   "rule_id": "CWE-916-WEAK-PASSWORD-HASH",
@@ -637,12 +651,32 @@
   "type": "taint",
   "vulnerabilities": ["CWE-918"],
   "sources": [
-    {"tag": "http_input"}
+    {"tag": "http_input"},{"tag":"cli_input"}
   ],
   "sinks": [
     {"tag": "http_request"}
   ],
   "safe_contexts":[{"tag": "curl_non_url_option"},{"tag": "allowlist_validation"}]
+},
+{
+  "rule_id": "CWE-943-NOSQL-INJECTION",
+  "type": "taint",
+  "languages": ["javascript"],
+  "vulnerabilities": ["CWE-943"],
+  "sources": [
+    {"tag": "http_input"},
+    {"tag": "cli_input"}
+  ],
+  "sinks": [
+    {"tag": "nosql_execution"}
+  ],
+  "sanitizers": [
+    {"tag": "cast_to_integer"},
+    {"tag": "nosql_sanitizers"}
+  ],
+  "safe_contexts": [
+    {"tag": "allowlist_validation"}
+  ]
 },
 {
   "rule_id": "CWE-1071-EMPTY-CODE-BLOCK",
@@ -661,5 +695,25 @@
     {"tag": "csv_writing"}
   ],
   "sanitizers":[]
+},
+{
+  "rule_id": "CWE-1333-REGEX-DOS",
+  "type": "taint",
+  "languages": ["javascript"],
+  "vulnerabilities": ["CWE-1333"],
+  "sources": [
+    {"tag": "http_input"},
+    {"tag": "cli_input"}
+  ],
+  "sinks": [
+    {"tag": "regex_construction_and_matching"}
+  ],
+  "sanitizers": [
+    {"tag": "cast_to_integer"},
+    {"tag": "regex_escape_sanitizers"}
+  ],
+  "safe_contexts": [
+    {"tag": "allowlist_validation"}
+  ]
 }
 ]
