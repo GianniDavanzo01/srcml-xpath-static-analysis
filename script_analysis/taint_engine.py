@@ -10,7 +10,7 @@ safe-context o un sanitizer.
 
 from common import NS, build_finding, is_sanitized, source_present, get_call_name, _pos_key, name_text, get_scope_index,  \
     enclosing_scope, in_opaque_tag, macro_map, expand_macro_name, call_matches, is_dead_code, CallTable, _get_matcher, \
-    _is_hardcoded_string
+    _is_hardcoded_string, is_member_name
 from sink_matchers import matches_any_sink
 from safe_context_matchers import is_in_safe_context
 
@@ -96,6 +96,8 @@ def _chain_carries_taint(call, visible, return_sources, block, adapter, imports)
                                                  imports=imports, block=block):
                 return True
             for n in _X_NAMES_SELF(vn):
+                if is_member_name(n, adapter):
+                    continue
                 if (len(fn_anc(n)) == depth                     # non dentro un'altra callback
                         and name_text(n) in visible
                         and not is_sanitized(n, block, adapter, imports)):
@@ -241,6 +243,7 @@ _X_VALUE_NAMES = _X(
     "[not(ancestor::src:parameter or ancestor::src:type or ancestor::src:annotation)]"
 )
 
+_X_ARG_LITS = _X(".//src:argument_list//src:literal[@type='string']")
 _UNIT_NAMES_CACHE = {}   # id(tree) -> (tree, [(nome_canonico, nodo), ...])
 
 def _get_unit_value_names(tree, adapter, imports):
@@ -264,6 +267,14 @@ def _get_unit_value_names(tree, adapter, imports):
                 for i in range(2, len(parts)):
                     items.append((".".join(parts[:i]), n))
 
+    for lit in _X_ARG_LITS(tree):
+        t = "".join(lit.itertext())
+        if not adapter.is_interpolated_string(t):
+            continue
+        for v in adapter.get_interpolated_variables(t):
+            dotted = adapter.resolve_name_text(v, imports, node=lit)
+            if "." in dotted:
+                items.append((dotted, lit))
     _UNIT_NAMES_CACHE.clear()            # una sola unit in cache: niente riferimenti a alberi vecchi
     _UNIT_NAMES_CACHE[id(tree)] = (tree, items)
     return items
@@ -336,9 +347,9 @@ def _inline_source_findings(rule, tree, ctx, adapter, imports, return_sources, s
         if is_sanitized(uso, block, adapter, imports):
             continue
 
-        stmt = _X_POS_ANC(uso)
+        stmt = _X_ENCL_STMT(uso) or _X_POS_ANC(uso)
         f = build_finding(rule, stmt[0] if stmt else uso,
-                          extra={"tainted_variable": label, "source_kind": f"inline-{kind}"})
+                        extra={"tainted_variable": label, "source_kind": f"inline-{kind}"})
         key = (f["line"], f["snippet"])
         if key not in seen:
             seen.add(key)
@@ -597,7 +608,7 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
                             if i in out_idxs or (in_idxs is not None and i not in in_idxs):
                                 continue
                             for n in _X_NAMES(arg):
-                                if in_opaque_tag(n, adapter):
+                                if in_opaque_tag(n, adapter) or is_member_name(n, adapter):
                                     continue
                                 n_text = expand_macro_name("".join(n.itertext()).strip(), macros)
                                 if n_text in already_tainted and not is_sanitized(n, block, adapter, imports):

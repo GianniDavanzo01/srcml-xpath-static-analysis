@@ -1,6 +1,6 @@
 from collections import namedtuple
 
-from common import NS, name_text, assignment_pairs, enclosing_scope, in_opaque_tag, is_dead_code
+from common import NS, name_text, assignment_pairs, enclosing_scope, in_opaque_tag, is_dead_code, is_member_name
 
 # AssignInfo = namedtuple("AssignInfo", "stmt lhs rhs var scope rhs_all rhs_names rhs_interp numeric_lhs")
 AssignInfo = namedtuple("AssignInfo", "stmt lhs rhs var scope rhs_all rhs_names rhs_interp numeric_lhs compound")
@@ -28,10 +28,14 @@ def build_assign_infos(assignments, adapter, unit):
         rhs_names = []
         rhs_interp = []
         for rn in rhs_all:
-            for n in rn.xpath("self::src:name | .//src:name", namespaces=NS):
-                if in_opaque_tag(n, adapter):
+            # for n in rn.xpath("self::src:name | .//src:name", namespaces=NS):
+            for n in rn.xpath(".//src:name[not(src:name)] | self::src:name[not(src:name)]", namespaces=NS):
+                if in_opaque_tag(n, adapter) or is_member_name(n, adapter):
                     continue
-                rhs_names.append(("".join(n.itertext()).strip(), n))
+                var_txt = "".join(n.itertext()).strip()
+                if var_txt:
+                    rhs_names.append((var_txt, n))
+                # rhs_names.append(("".join(n.itertext()).strip(), n))
             for lit in rn.xpath(
                 "self::src:literal[@type='string'] | .//src:literal[@type='string']",
                 namespaces=NS,

@@ -2422,10 +2422,37 @@ class JavaScriptAdapter(LanguageAdapter):
         return ".".join(parts)
  
     _MAX_RESOLVE_DEPTH = 5
-    # TODO: allineare al catalogo javascript_catalog.json
-    _BUILTIN_FACTORIES = {"Set", "Map", "WeakSet", "WeakMap", "URL", "URLSearchParams",
-                          "XMLHttpRequest", "WebSocket", "Buffer", "RegExp", "Date"}
 
+    _FLUENT = frozenset({
+        "status", "set", "header", "type", "contentType", "cookie",
+        "append", "vary", "location", "code", "links"
+    })
+
+    _REQ_MEMBERS = frozenset({"url", "headers", "query", "body", "params",
+                              "cookies", "originalUrl"})
+    _RES_MEMBERS = frozenset({"send", "write", "end", "writeHead", "setHeader",
+                              "redirect", "render", "json", "sendFile"}) | _FLUENT
+
+    def _used_members(self, fn_node, var, ns) -> set:
+        """Membri a cui `var` accede nel corpo: var.NOME -> {'NOME'}."""
+        return {name_text(n) for n in fn_node.xpath(
+            ".//src:name[src:name[1][text()=$v]]/src:name[2]", namespaces=ns, v=var)}
+
+    def _infer_http_roles(self, fn_node, ns) -> dict:
+        params = fn_node.xpath(self.parameters_xpath(), namespaces=ns)
+        if len(params) < 2:
+            return {}
+        names = []
+        for p in params[:2]:
+            n = self.get_parameter_name_node(p, ns)
+            names.append(name_text(n) if n is not None else "")
+        req, res = names
+        if not req or not res:
+            return {}
+        if (self._used_members(fn_node, req, ns) & self._REQ_MEMBERS
+                and self._used_members(fn_node, res, ns) & self._RES_MEMBERS):
+            return {req: "Express.Request", res: "Express.Response"}
+        return {}
 
     def get_express_route_bindings(self, fn_node, ns) -> dict[str, str]:
         """
@@ -2435,38 +2462,21 @@ class JavaScriptAdapter(LanguageAdapter):
         - Express.Response
         """
         if self._route_call_of(fn_node, ns) is None:
-            return {}
+            return self._infer_http_roles(fn_node, ns)
         params = fn_node.xpath(self.parameters_xpath(), namespaces=ns)
         if len(params) < 2:                 # (ctx) di Koa e simili: nessun ruolo
             return {}
+        # (req, res, next) -> 0,1 ; error middleware (err, req, res, next) -> 1,2
         req_idx, res_idx = (1, 2) if len(params) == 4 else (0, 1)
-
-        params = fn_node.xpath(self.parameters_xpath(), namespaces=ns)
-        if not params:
-            return {}
-
-        # Standard route: (req, res, next) -> req=0, res=1
-        # Error middleware: (err, req, res, next) -> req=1, res=2
-        if len(params) == 4:
-            req_idx, res_idx = 1, 2
-        else:
-            req_idx, res_idx = 0, 1
 
         bindings = {}
         for idx, role in [(req_idx, "Express.Request"), (res_idx, "Express.Response")]:
-            if idx < len(params):
-                name_nodes = params[idx].xpath(".//src:decl/src:name | .//src:name", namespaces=ns)
-                if name_nodes:
-                    local_name = "".join(name_nodes[0].itertext()).strip()
-                    if local_name:
-                        bindings[local_name] = role
-
+            name_nodes = params[idx].xpath(".//src:decl/src:name | .//src:name", namespaces=ns)
+            if name_nodes:
+                local_name = "".join(name_nodes[0].itertext()).strip()
+                if local_name:
+                    bindings[local_name] = role
         return bindings
-
-    _FLUENT = frozenset({
-        "status", "set", "header", "type", "contentType", "cookie",
-        "append", "vary", "location", "code", "links"
-    })
 
     def _call_require_module(self, call_node, ns) -> str | None:
         """Estrae il modulo se call_node è require("mod") o import("mod")."""
@@ -2498,9 +2508,16 @@ class JavaScriptAdapter(LanguageAdapter):
                          or self.resolve_call_name(recv, ns, imports, _depth + 1))
             if recv_name:
                 parts = recv_name.split(".")
-                while len(parts) > 1 and parts[-1] in self._FLUENT:
-                    parts.pop()
-                # return f"{'.'.join(parts)}.{raw}"
+                # base = quanti segmenti formano il "ricevente di risposta" da preservare
+                if parts[:2] == ["Express", "Response"]:
+                    base = 2
+                elif parts[0] == "reply":              # Fastify: reply.code(200).send(x)
+                    base = 1
+                else:
+                    base = None                        # cache.set(k, v).get(k) resta intatta
+                if base:
+                    while len(parts) > base and parts[-1] in self._FLUENT:
+                        parts.pop()
                 raw = f"{'.'.join(parts)}.{raw}"
 
         # Normalizzazione semantica parametri Express
@@ -2508,16 +2525,6 @@ class JavaScriptAdapter(LanguageAdapter):
         role = self.role_of_name(head, call_node)
         if role:
             return f"{role}.{rest}" if rest else role
-        
-        # Cerca la funzione o lambda che racchiude questa chiamata
-        fn_nodes = call_node.xpath("ancestor::*[self::src:lambda or self::src:function][1]", namespaces=ns)
-        if fn_nodes:
-            # Recupera i binding posizionali (es. {'outgoing': 'Express.Response', 'incoming': 'Express.Request'})
-            route_bindings = self.get_express_route_bindings(fn_nodes[0], ns)
-            if head in route_bindings:
-                # Trasforma "outgoing.send" in "Express.Response.send"
-                canonical_role = route_bindings[head]
-                return f"{canonical_role}.{rest}" if rest else canonical_role
 
         # 1. Già canonico (evita doppio prefisso)
         for b in imports:
@@ -2550,9 +2557,9 @@ class JavaScriptAdapter(LanguageAdapter):
                         resolved += "." + ".".join(chain[1:])
                     if (
                         "." in resolved
-                        or resolved in self._BUILTIN_FACTORIES
+                        or self._is_instance_expr(rhs, ns)  
                         or any(resolved == b.canonical_name or resolved.startswith(f"{b.canonical_name}.")
-                               for b in imports)
+                            for b in imports)
                     ):
                         return f"{resolved}.{rest}"
         return raw
@@ -2667,7 +2674,6 @@ class JavaScriptAdapter(LanguageAdapter):
         return "==="
  
     def equality_operators(self) -> list:
-        # vedi E2: il motore oggi legge solo equality_operator()
         return ["===", "=="]
  
     def logical_and_operator(self) -> list:
@@ -2723,6 +2729,7 @@ class JavaScriptAdapter(LanguageAdapter):
         for prop in param_node.xpath("./src:decl/src:object//src:property", namespaces=ns):
             d = prop.xpath("./src:decl[1]", namespaces=ns)
             if not d:
+                out += prop.xpath("./src:expr[src:operator[text()='...']]/src:name[1]", namespaces=ns)
                 continue
             init = d[0].xpath("./src:init[1]", namespaces=ns)
             if init and "".join(init[0].itertext()).lstrip().startswith(":"):
@@ -2731,7 +2738,6 @@ class JavaScriptAdapter(LanguageAdapter):
                 n = d[0].xpath("./src:name[1]", namespaces=ns)
                 if n:
                     out.append(n[0])
-        # {...rest} e pattern array: forme non verificate su XML
         out += param_node.xpath("./src:decl/src:object/src:decl/src:name[1]", namespaces=ns)
         out += [n for n in param_node.xpath("./src:decl/src:array//src:name", namespaces=ns)
                 if not in_default(n)]
@@ -2767,10 +2773,11 @@ class JavaScriptAdapter(LanguageAdapter):
     # ------------------------------------------------------------------ #
  
     def taint_block_functions(self) -> list:
-        # TODO: rivedere insieme al catalogo (sanitizers cast_to_integer ecc.)
         return ["parseInt", "parseFloat", "Number", "Boolean", "isNaN", "isFinite",
-                "Array.isArray", "*.includes", "*.startsWith", "*.endsWith",
-                "*.hasOwnProperty", "*.test"]
+        "Array.isArray", "*.includes", "*.startsWith", "*.endsWith",
+        "*.hasOwnProperty", "*.test",
+        "*.indexOf", "*.lastIndexOf", "*.charCodeAt", "*.codePointAt", "*.localeCompare",
+        "Math.max", "Math.min", "Math.abs"]
  
     def taint_propagating_calls(self) -> dict:
         # push/unshift/splice modificano sempre il ricevente. add/set/append sono
@@ -2924,42 +2931,53 @@ class JavaScriptAdapter(LanguageAdapter):
             return False
         fn_node = fn[0]
 
+        # handler riconosciuto (route registrata o ruoli inferiti dall'uso):
+        # gli input arrivano da Express.Request.* nel catalogo, nessun parametro va seminato
+        if self._fn_roles(fn_node, ns):
+            return True
+
         is_arg = fn_node.xpath(
             "parent::src:expr/parent::src:argument/parent::src:argument_list/parent::src:call",
             namespaces=ns)
         if not is_arg:
-            return False                                   # funzione top-level: input valido
+            return False                      # funzione top-level senza ruoli: input valido
 
-        if self._route_call_of(fn_node, ns) is None:
-            return True                                    # callback di db/fs/timer: non è input
-
-        roles = self.get_express_route_bindings(fn_node, ns)
-        if not roles:
-            return False                                   # route con 1 parametro (Koa): lo seminiamo
-        n = self.get_parameter_name_node(param_node, ns)
-        return roles.get(name_text(n) if n is not None else "") != "Express.Request"
+        # callback di db/fs/timer: non è input; route senza ruoli (Koa, 1 parametro): lo seminiamo
+        return self._route_call_of(fn_node, ns) is None
 
 
 
     _SRC = {"src": "http://www.srcML.org/srcML/src"}
     _FN_ANC = "ancestor::*[self::src:lambda or self::src:function]"
+    _FN_ANC_XP = etree.XPath(_FN_ANC, namespaces=_SRC)
+    _ROLES_CACHE = {}          # id(fn) -> (fn, roles)
+
+    def _fn_roles(self, fn, ns):
+        ent = self._ROLES_CACHE.get(id(fn))
+        if ent is not None and ent[0] is fn:
+            return ent[1]
+        if len(self._ROLES_CACHE) > 4096:      # limite di sicurezza tra unit diverse
+            self._ROLES_CACHE.clear()
+        roles = self.get_express_route_bindings(fn, ns)
+        self._ROLES_CACHE[id(fn)] = (fn, roles)
+        return roles
 
     def role_of_name(self, head, node, ns=_SRC):
         """Ruolo ('Express.Request'/'Express.Response') di `head` visto da `node`, o None."""
-        for fn in reversed(node.xpath(self._FN_ANC, namespaces=ns)):    # dalla più interna
-            roles = self.get_express_route_bindings(fn, ns)
+        for fn in reversed(self._FN_ANC_XP(node)):            # dalla più interna
+            roles = self._fn_roles(fn, ns)
             if head in roles:
-                # una variabile locale con lo stesso nome (const res = ...) nasconde il parametro
+                # shadowing: solo decl dello scope di fn stessa, non delle callback annidate
                 local = [d for d in get_decl_index(fn).get(head, [])
-                        if not d.xpath("ancestor::src:parameter", namespaces=ns)]
+                         if not d.xpath("ancestor::src:parameter", namespaces=ns)
+                         and enclosing_scope(d, self) is fn]
                 return None if local else roles[head]
-            # parametro con lo stesso nome in una funzione che NON è una route: shadowing
             if any(name_text(n) == head
-                for p in fn.xpath(self.parameters_xpath(), namespaces=ns)
-                for n in self.get_parameter_name_nodes(p, ns)):
+                   for p in fn.xpath(self.parameters_xpath(), namespaces=ns)
+                   for n in self.get_parameter_name_nodes(p, ns)):
                 return None
         return None
-
+    
     def callback_param_flow(self) -> dict:
         return {"*.forEach": 0, "*.map": 0, "*.filter": 0, "*.some": 0,
                 "*.every": 0, "*.flatMap": 0, "*.then": 0, "*.reduce": 1}

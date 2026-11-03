@@ -185,6 +185,43 @@ def name_text(name_node) -> str:
     return "".join(_NAME_TEXT_XP(name_node, n=name_node)).strip()
 
 
+_member_ops_cache = {}
+_INIT_TAG = f"{{{NS['src']}}}init"
+def is_member_name(n, adapter) -> bool:
+    """True se il <name> è una proprietà/membro e NON una variabile autonoma."""
+    ops = _member_ops_cache.get(adapter.name)
+    if ops is None:
+        ops = _member_ops_cache[adapter.name] = frozenset(adapter.member_access_operator())
+
+    # 1. Chiave di un object literal: { user: 1 } -> property/decl/name
+    parent = n.getparent()
+    if parent is not None and parent.tag.endswith("}decl"):
+        gp = parent.getparent()
+        if gp is not None and gp.tag.endswith("}property"):
+            # (a) { user: 1 }: il valore è nel <init> fratello -> n è la chiave
+            if parent.find(_INIT_TAG) is not None:
+                return True
+            # (b) senza init: shorthand { user } oppure binding di destructuring.
+            #     Comportamento precedente: è un binding/chiave solo se
+            #     l'object non sta dentro un valore (init).
+            if not any(a.tag.endswith("}init") for a in n.iterancestors()):
+                return True
+
+    # 2. Preceduto da operatore membro (. o ?.)
+    prev = n.getprevious()
+    while prev is not None and (not isinstance(prev.tag, str) or prev.tag.endswith("}comment")):
+        prev = prev.getprevious()
+    if prev is not None and prev.tag.endswith("}operator") and "".join(prev.itertext()).strip() in ops:
+        return True
+
+    # 3. Forma annidata srcML: <name><name>other</name><operator>.</operator><name>user</name></name>
+    if parent is not None and parent.tag.endswith("}name"):
+        first_child = parent.xpath("./*[not(self::src:comment)][1]", namespaces=NS)
+        if first_child and first_child[0] is not n:
+            return True
+
+    return False
+
 
 #Matching dei nomi sensibili per token ----------------
 _TOK = re.compile(r'[A-Z]+(?![a-z])|[A-Z]?[a-z]+|\d+')
@@ -330,13 +367,19 @@ def get_scope_index(scope_node, adapter, macros=None):
     idx = _scope_index_cache.get(scope_node)
     if idx is None:
         names = defaultdict(list)
+
         for n in scope_node.xpath(".//src:name", namespaces=NS):
-            if n.text:
+            if is_member_name(n, adapter):
+                continue
+
+            # Se è una foglia semplice
+            if n.text and not n.xpath("./src:name", namespaces=NS):
                 names[n.text].append(n)
                 if macros and n.text in macros and not adapter.is_in_macro_definition(n):
                     names[expand_macro_name(n.text, macros)].append(n)
+
+            # Se è un nome composto (es. a.b)
             elif _X_CHILD_OP(n) and _X_CHILD_NAME(n) and not _X_PARENT_CALL(n):
-                # nome composto (w.value, s->fn, a[i].b): chiave = percorso completo
                 key = name_text(n)
                 if key:
                     names[key].append(n)
@@ -442,6 +485,8 @@ def _rhs_candidates(rhs_node, adapter, imports):
                 cands.append(((cn,), call))
         prefixes = adapter.source_name_prefixes()
         for n in rhs_node.xpath(".//src:name | self::src:name", namespaces=NS):
+            if is_member_name(n, adapter):
+                continue
             text = "".join(n.itertext()).strip().split('[')[0].split('(')[0].strip()
             parent = n.getparent()
             is_inner = parent is not None and parent.tag == n.tag
@@ -452,8 +497,18 @@ def _rhs_candidates(rhs_node, adapter, imports):
                 parts = text.split(".")
                 keys += [".".join(parts[:i]) for i in range(1, len(parts))]
             cands.append((tuple(keys), n))
+
+        for lit in rhs_node.xpath(
+                "self::src:literal[@type='string'] | .//src:literal[@type='string']",
+                namespaces=NS):
+            t = "".join(lit.itertext())
+            if adapter.is_interpolated_string(t):
+                for v in adapter.get_interpolated_variables(t):
+                    cands.append(((adapter.resolve_name_text(v, imports, node=lit),), lit))
+
         _rhs_cands_cache[rhs_node] = cands
     return cands
+    
 
 def source_present(sources, rhs_node, *, adapter, imports, block=None) -> bool:
     matcher = _get_matcher(sources, adapter)
@@ -791,16 +846,42 @@ def call_root_name(call_node, adapter):
     return name_text(parts[0]) if len(parts) >= 2 else None
 
 
+# def is_enclosing_param(node, head, adapter) -> bool:
+#     """True se `head` è un parametro di una funzione/lambda che racchiude `node`."""
+#     cond = " or ".join(f"self::src:{t}" for t in
+#                        set(adapter.function_tags()) | set(adapter.lambda_tags()))
+#     for fn in node.xpath(f"ancestor::*[{cond}]", namespaces=NS):
+#         for p in fn.xpath(adapter.parameters_xpath(), namespaces=NS):
+#             if any(name_text(n) == head for n in adapter.get_parameter_name_nodes(p, NS)):
+#                 return True
+#     return False
+
 def is_enclosing_param(node, head, adapter) -> bool:
-    """True se `head` è un parametro di una funzione/lambda che racchiude `node`."""
+    """True se `head`, visto da `node`, è un parametro di una funzione/lambda che
+    racchiude `node` e non è nascosto da una variabile locale (shadowing).
+    Si risale dalla funzione più interna verso l'esterno: la prima che lega `head`
+    (come parametro o come dichiarazione locale) decide."""
     cond = " or ".join(f"self::src:{t}" for t in
                        set(adapter.function_tags()) | set(adapter.lambda_tags()))
-    for fn in node.xpath(f"ancestor::*[{cond}]", namespaces=NS):
-        for p in fn.xpath(adapter.parameters_xpath(), namespaces=NS):
-            if any(name_text(n) == head for n in adapter.get_parameter_name_nodes(p, NS)):
-                return True
-    return False
+    scope_of = scope_xp(adapter, with_lambda=True)
 
+    for fn in reversed(node.xpath(f"ancestor::*[{cond}]", namespaces=NS)):   # dalla più interna
+        is_param = any(
+            name_text(n) == head
+            for p in fn.xpath(adapter.parameters_xpath(), namespaces=NS)
+            for n in adapter.get_parameter_name_nodes(p, NS)
+        )
+        # dichiarazioni locali di `head` nello scope di QUESTA fn (non delle callback annidate)
+        local = [
+            d for d in get_decl_index(fn).get(head, [])
+            if not d.xpath("ancestor::src:parameter", namespaces=NS)
+            and scope_of(d) and scope_of(d)[0] is fn
+        ]
+        if local:
+            return False        # variabile locale: nasconde il parametro (sia suo che esterno)
+        if is_param:
+            return True
+    return False
 
 # --------------------------------------------------------------------------- #
 # Indice di dispatch per regole
