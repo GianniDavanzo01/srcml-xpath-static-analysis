@@ -461,19 +461,68 @@ def build_finding(rule: dict, node, extra: dict | None = None) -> dict:
         finding.update(extra)
     return finding
 
+def _chain_downstream(call, adapter):
+    """Call successive nella stessa catena fluente (escluso `call`)."""
+    node = adapter._chain_next(call, NS)
+    while node is not None:
+        yield node
+        node = adapter._chain_next(node, NS)
 
+def _in_nested_function(node, call, adapter) -> bool:
+    """True se tra `node` e `call` c'è una funzione/lambda (uso dentro una callback)."""
+    tags = set(adapter.function_tags()) | set(adapter.lambda_tags())
+    cond = " or ".join(f"self::src:{t}" for t in tags)
+    for fn in node.xpath(f"ancestor::*[{cond}]", namespaces=NS):
+        if call in fn.iterancestors():
+            return True
+    return False
 
-def is_sanitized(node, sanitizers: list, adapter, imports) -> bool:
-    """Verifica se `node` e' passato come argomento a una delle funzioni sanitizer."""
-    call_ancestors = node.xpath("ancestor::src:call", namespaces=NS)
-    for call in call_ancestors:
+def is_chain_sanitized(node, spec, adapter, imports) -> bool:
+    """spec singolo: {"type": "chain", "through": [...], "then": [...]}.
+    Sanificato se una call antenata matcha 'through' e, a valle nella stessa
+    catena, c'è una call che matcha 'then'."""
+    through = _get_matcher(tuple(spec["through"]), adapter)
+    then    = _get_matcher(tuple(spec["then"]), adapter)
+    for call in node.xpath("ancestor::src:call", namespaces=NS):
         cname = get_call_name(call, adapter, imports)
-        if cname and any(call_matches(cname, san, adapter) for san in sanitizers):
+        if not cname or not through(cname):
+            continue
+        if _in_nested_function(node, call, adapter):
+            continue
+        if any((cn := get_call_name(c, adapter, imports)) and then(cn)
+               for c in _chain_downstream(call, adapter)):
             return True
     return False
 
 
+SANITIZER_MATCHERS = {
+    "chain": is_chain_sanitized,
+}
+
+
+def is_sanitized(node, sanitizers: list, adapter, imports) -> bool:
+    plain = [s for s in sanitizers if isinstance(s, str)]
+    specs = [s for s in sanitizers if isinstance(s, dict)]
+
+    for call in node.xpath("ancestor::src:call", namespaces=NS):
+        cname = get_call_name(call, adapter, imports)
+        if cname and any(call_matches(cname, san, adapter) for san in plain):
+            return True
+
+    return any((m := SANITIZER_MATCHERS.get(s.get("type"))) and m(node, s, adapter, imports)
+               for s in specs)
+
+
 _rhs_cands_cache = {}
+_member_ws_rx = {}
+def _compact_member_ws(text, adapter):
+    """Toglie gli spazi/a capo attorno agli operatori di accesso a membro."""
+    rx = _member_ws_rx.get(adapter.name)
+    if rx is None:
+        ops = sorted(adapter.member_access_operator(), key=len, reverse=True)  # '?.' prima di '.'
+        rx = _member_ws_rx[adapter.name] = re.compile(
+            r"\s*(" + "|".join(map(re.escape, ops)) + r")\s*")
+    return rx.sub(r"\1", text)
 
 def _rhs_candidates(rhs_node, adapter, imports):
     cands = _rhs_cands_cache.get(rhs_node)
@@ -488,6 +537,7 @@ def _rhs_candidates(rhs_node, adapter, imports):
             if is_member_name(n, adapter):
                 continue
             text = "".join(n.itertext()).strip().split('[')[0].split('(')[0].strip()
+            text = _compact_member_ws(text, adapter)
             parent = n.getparent()
             is_inner = parent is not None and parent.tag == n.tag
             if not is_inner:
@@ -844,17 +894,6 @@ def call_root_name(call_node, adapter):
     nm = node.xpath("./src:name", namespaces=NS)
     parts = nm[0].xpath("./src:name", namespaces=NS) if nm else []
     return name_text(parts[0]) if len(parts) >= 2 else None
-
-
-# def is_enclosing_param(node, head, adapter) -> bool:
-#     """True se `head` è un parametro di una funzione/lambda che racchiude `node`."""
-#     cond = " or ".join(f"self::src:{t}" for t in
-#                        set(adapter.function_tags()) | set(adapter.lambda_tags()))
-#     for fn in node.xpath(f"ancestor::*[{cond}]", namespaces=NS):
-#         for p in fn.xpath(adapter.parameters_xpath(), namespaces=NS):
-#             if any(name_text(n) == head for n in adapter.get_parameter_name_nodes(p, NS)):
-#                 return True
-#     return False
 
 def is_enclosing_param(node, head, adapter) -> bool:
     """True se `head`, visto da `node`, è un parametro di una funzione/lambda che

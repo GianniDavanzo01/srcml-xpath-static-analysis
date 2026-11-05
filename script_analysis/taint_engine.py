@@ -48,35 +48,56 @@ def _fn_anc(adapter):
         x = _FN_ANC_XP[adapter.name] = _X("ancestor::*[" + " or ".join(f"self::src:{t}" for t in tags) + "]")
     return x
 
+
+_CB_ARG_XP = {}
+def _cb_arg_xp(adapter):
+    x = _CB_ARG_XP.get(adapter.name)
+    if x is None:
+        x = _CB_ARG_XP[adapter.name] = _X(adapter.callback_arg_xpath())
+    return x
+
+def _callbacks_in_args(call, adapter):
+    """Funzioni passate come argomento alla call. Scarta quelle che stanno nel corpo
+    di un'altra funzione a sua volta contenuta nella call: i loro parametri
+    appartengono a una call interna, valutata a parte."""
+    fn_anc = _fn_anc(adapter)
+    return [fn for fn in _cb_arg_xp(adapter)(call)
+            if not any(call in a.iterancestors() for a in fn_anc(fn))]
+
 _X_NAMES_SELF = _X("self::src:name | .//src:name")
 
 _UNIT_CB_CACHE = {}
+
+_X_IS_METHOD_CALL = _X("boolean(./src:name/src:operator)")
+
 def _get_unit_callbacks(tree, adapter, imports, ctx):
-    """[(call, funzione_callback, [nomi_parametro])] delle call in callback_param_flow."""
     ent = _UNIT_CB_CACHE.get(id(tree))
     if ent is not None and ent[0] is tree:
         return ent[1]
     items = []
+    fn_cond = " or ".join(f"self::src:{t}" for t in
+                          set(adapter.lambda_tags()) | set(adapter.function_tags()))
     flow = adapter.callback_param_flow()
-    if flow:
-        table = CallTable(flow, adapter)
-        fn_cond = " or ".join(f"self::src:{t}" for t in
-                              set(adapter.lambda_tags()) | set(adapter.function_tags()))
-        first_fn = _X(f"./src:argument_list/src:argument[1]/src:expr/*[{fn_cond}][1]")
-        for call in ctx.calls:
-            cname = get_call_name(call, adapter, imports)
-            idx = table.get(cname) if cname else None
-            if idx is None:
-                continue
-            fns = first_fn(call)
-            if not fns:
-                continue
-            params = fns[0].xpath(adapter.parameters_xpath(), namespaces=NS)
-            if idx >= len(params):
-                continue
-            pn = [name_text(n) for n in adapter.get_parameter_name_nodes(params[idx], NS) if name_text(n)]
+    table = CallTable(flow, adapter) if flow else None
+    first_fn = _X(f"./src:argument_list/src:argument[1]/src:expr/*[{fn_cond}][1]")
+    generic  = adapter.callback_receiver_flow()
+
+    for call in ctx.calls:
+        cname = get_call_name(call, adapter, imports)
+        idx = table.get(cname) if (table and cname) else None
+        if idx is not None:                      # caso preciso (es. reduce: parametro 1)
+            fns, only = first_fn(call), [idx]
+        elif generic and (_X_IS_METHOD_CALL(call) or adapter._chain_receiver(call, NS) is not None):
+            fns, only = _callbacks_in_args(call, adapter), None
+        else:
+            continue
+        for fn in fns:
+            params = fn.xpath(adapter.parameters_xpath(), namespaces=NS)
+            sel = params if only is None else [params[i] for i in only if i < len(params)]
+            pn = [name_text(n) for p in sel
+                  for n in adapter.get_parameter_name_nodes(p, NS) if name_text(n)]
             if pn:
-                items.append((call, fns[0], pn))
+                items.append((call, fn, pn))
     _UNIT_CB_CACHE.clear()
     _UNIT_CB_CACHE[id(tree)] = (tree, items)
     return items
@@ -489,6 +510,7 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
     else:
         block = sanitizers + [f for f in adapter.taint_block_functions() if f not in only_through]
 
+    block_names = [b for b in block if isinstance(b, str)]
 
     def _is_seed(info) -> bool:
         """L'assegnazione introduce taint per QUESTA regola?
@@ -537,13 +559,6 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
     # Passo 2: propagazione a catena
     if rule.get("propagate_taint", True):
 
-        # only_through = rule.get("propagate_only_through_calls") or []
-        # if rule.get("ignore_taint_block_functions", False):
-        #     block = sanitizers
-        # else:
-        #      block = sanitizers + [
-        # f for f in adapter.taint_block_functions() if f not in only_through]
-
         propagating_calls = adapter.taint_propagating_calls()
 
         def _blocked_by_call_allowlist(n):
@@ -590,7 +605,7 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
                         if not cname:
                             continue
                         spec = _prop_table(adapter).get(cname)
-                        if spec is None and _X_STMT_CALL(call) and not any(call_matches(cname, b, adapter) for b in block):
+                        if spec is None and _X_STMT_CALL(call) and not any(call_matches(cname, b, adapter) for b in block_names):
                             spec = {"out_receiver": True, "structural": True}
                         if spec is None:
                             continue

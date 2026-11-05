@@ -49,8 +49,7 @@
       "document.cookie",
       "document.referrer",
       "window.name",
-      "URLSearchParams.get",
-      "*.searchParams.get"
+      "URLSearchParams.get"
     ],
     "cli_input": [
       "process.argv",
@@ -337,8 +336,6 @@
           "*.reply.redirect",
           "*.ctx.redirect",
           "*.NextResponse.redirect",
-          "location.assign",
-          "location.replace",
           "window.location.assign",
           "window.location.replace",
           "window.open"
@@ -346,8 +343,19 @@
       },
       {
         "type": "assigned_property",
-        "name": ["*.location", "*.location.href"]
-      }
+        "name": [
+          "window.location",
+          "window.location.href",
+          "document.location",
+          "document.location.href",
+          "location.href"
+        ]
+      },
+      {
+      "type": "call_with_var_arg",
+      "call": ["*.redirect"],
+      "receiver_is_param": true
+    }
     ],
     "http_request": [
       {
@@ -480,6 +488,8 @@
       {
         "type": "call_with_var_arg",
         "call": [
+          "*.findAll", 
+          "*.findAndCountAll",
           "*.findOne",
           "*.findOneAndDelete",
           "*.findOneAndRemove",
@@ -498,6 +508,7 @@
         "type": "call_with_var_arg",
         "arg_index": 0,
         "call": [
+          "*.find",
           "*.findOneAndUpdate",
           "*.findOneAndReplace",
           "*.updateOne",
@@ -525,6 +536,12 @@
           "*.match",
           "*.search"
         ]
+      }
+    ],
+    "xml_parsing_sinks": [
+      {
+        "type": "call_with_var_arg",
+        "call": ["node-expat.Parser.parse", "node-expat.Parser.write"]
       }
     ],
     "array_index_use": [],
@@ -592,7 +609,12 @@
       "mongoose.Types.ObjectId",
       "mongo-sanitize",
       "express-mongo-sanitize.sanitize",
-      "mongoose.sanitizeFilter"
+      "mongoose.sanitizeFilter",
+       {
+        "type": "chain",
+        "through": ["*.createHash.update", "*.createHmac.update"],
+        "then": ["*.digest"]
+      }
     ],
     "regex_escape_sanitizers": [
       "escape-string-regexp",
@@ -600,6 +622,18 @@
       "_.escapeRegExp",
       "RegExp.escape"
     ],
+      "opaque_transforms": [
+        "*.md5",
+        "*.SHA256", "*.SHA512", "*.SHA1",
+        "bcrypt.hash", "bcrypt.hashSync",
+        "bcryptjs.hash", "bcryptjs.hashSync",
+        "argon2.hash",
+        {
+          "type": "chain",
+          "through": ["*.createHash.update", "*.createHmac.update"],
+          "then": ["*.digest"]
+        }
+      ],
     "xpath_sanitizers": [],
     "crypto_decryption_functions": []
   },
@@ -705,17 +739,22 @@
       {
         "type": "call_with_kwarg",
         "call": [
-          "Express.Response.cookie",
           "*.ctx.cookies.set",
           "*.reply.setCookie",
           "*.reply.cookie"
         ],
         "kwargs": {
-          "secure": "true",
-          "httpOnly": "true"
+          "secure": "true"
+        }
+      },
+        {
+          "type": "call_with_kwarg", "call": ["express-session", "cookie-session"],
+          "kwargs": {"cookie.secure": "true"}
         },
-        "require": "all"
-      }
+        {
+            "type": "call_with_kwarg", "call": ["express-session", "cookie-session"],
+            "kwargs": {"cookie.secure": "auto"}
+        }
     ],
     "manual_string_sanitization": [
       {
@@ -818,6 +857,7 @@
       "tmp.tmpNameSync"
     ],
     "insecure_cookie_configuration": [
+      "express-session", "cookie-session",
       "Express.Response.cookie",
       "*.ctx.cookies.set",
       "*.reply.setCookie"
@@ -831,7 +871,8 @@
       },
       "ftp",
       "jsftp",
-      "telnet-client"
+      "telnet-client",
+      "http.createServer"
     ],
     "logging_calls_with_sensitive_content": [
       {

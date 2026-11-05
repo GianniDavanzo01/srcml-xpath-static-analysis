@@ -223,7 +223,7 @@
 {
   "rule_id": "CWE-209-ERROR-DETAILS-TO-CONSOLE",
   "type": "taint",
-  "languages": ["java", "python"],
+  "languages": ["java", "python","javascript"],
   "vulnerabilities": ["CWE-209"],
   "sources": ["exception_variable"],
   "sinks": [{"tag": "exception_console_output"}]
@@ -436,6 +436,7 @@
 {
   "rule_id": "CWE-476-NULL-POINTER-DEREFERENCE",
   "type": "taint",
+  "languages":["python","c","java"],
   "vulnerabilities": ["CWE-476"],
   "propagate_taint": false,
   "ignore_taint_block_functions": true,
@@ -530,6 +531,14 @@
     {"tag": "unsafe_xml_parsers"}
   ],
   "safe_contexts":[{"tag":"xxe_safe_configuration"}]
+},
+{
+  "rule_id": "CWE-611-XXE-TAINT",
+  "type": "taint",
+  "languages": ["javascript"],
+  "vulnerabilities": ["CWE-611"],
+  "sources": [{"tag": "http_input"}, "function_parameters"],
+  "sinks": [{"tag": "xml_parsing_sinks"}]
 },
 {
   "rule_id": "CWE-614-SENSITIVE-COOKIE-INSECURE",
@@ -665,14 +674,15 @@
   "vulnerabilities": ["CWE-943"],
   "sources": [
     {"tag": "http_input"},
-    {"tag": "cli_input"}
+    {"tag": "cli_input"},"function_parameters"
   ],
   "sinks": [
     {"tag": "nosql_execution"}
   ],
   "sanitizers": [
     {"tag": "cast_to_integer"},
-    {"tag": "nosql_sanitizers"}
+    {"tag": "nosql_sanitizers"},
+    {"tag":"opaque_transforms"}
   ],
   "safe_contexts": [
     {"tag": "allowlist_validation"}

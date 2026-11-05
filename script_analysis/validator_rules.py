@@ -18,11 +18,13 @@ from structural_handlers import STRUCTURAL_HANDLERS
 
 SIMPLE_SINKS = {"concat", "fstring", "return"}
 FORBIDDEN_FN_TYPES = {"exact_name", "call_matches_ast"}
+SANITIZER_TYPES = {"chain"}
 
 REGISTRIES = {
     "safe_contexts": set(SAFE_CONTEXT_MATCHERS),
     "sinks": set(SINK_MATCHERS) | SIMPLE_SINKS,
     "forbidden_functions": FORBIDDEN_FN_TYPES,
+    "sanitizers": SANITIZER_TYPES,
 }
 
 RULE_TYPES = ("taint", "structural")
@@ -56,7 +58,7 @@ ALLOWED_KEYS = {
 
 # Sezioni che dopo la compilazione devono contenere solo stringhe (niente dict)
 STRING_ONLY_SECTIONS = (
-    "sources", "sanitizers", "excluded_functions", "propagate_only_through_calls",
+    "sources", "excluded_functions", "propagate_only_through_calls",
 )
 
 

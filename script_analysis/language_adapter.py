@@ -318,6 +318,16 @@ class LanguageAdapter(ABC):
         prev = op[0].xpath("preceding-sibling::*[1][self::src:call]", namespaces=ns)
         return prev[0] if prev else None
 
+    def _chain_next(self, call_node, ns):
+        """Call successiva nella catena: a.b(x).c() -> da b(x) ritorna c()."""
+        ops = " or ".join(f"text()='{o}'" for o in self.member_access_operator())
+        op = call_node.xpath(
+            f"following-sibling::*[1][self::src:operator and ({ops})]", namespaces=ns)
+        if not op:
+            return None
+        nxt = op[0].xpath("following-sibling::*[1][self::src:call]", namespaces=ns)
+        return nxt[0] if nxt else None
+
 
     def normalize_member_access(self, name: str) -> str:
         """Riporta gli accessi a membro alla forma canonica '.' (C: s->fn == s.fn)."""
@@ -522,6 +532,19 @@ class LanguageAdapter(ABC):
     def callback_param_flow(self) -> dict:
         """pattern call -> indice del parametro della callback che riceve i dati del receiver."""
         return {}
+
+    def callback_receiver_flow(self) -> bool:
+        """True se i parametri di una funzione passata come argomento a un metodo
+        il cui receiver è taintato ricevono taint (qualunque metodo, qualunque
+        posizione). Nessun nome di API: è una regola di flusso dati."""
+        return False
+
+    def callback_arg_xpath(self) -> str:
+        """XPath (relativo alla call) che trova le funzioni passate come argomento.
+        Default: solo argomento diretto."""
+        cond = " or ".join(f"self::src:{t}" for t in
+                        set(self.lambda_tags()) | set(self.function_tags()))
+        return f"./src:argument_list/src:argument/src:expr/*[{cond}]"
 
 
     
@@ -1969,6 +1992,39 @@ class JavaScriptAdapter(LanguageAdapter):
     # ------------------------------------------------------------------ #
     # srcML e' incoerente su 'new': <operator>new</operator> dentro un <init>,
     # <name>new</name> a inizio statement. 'await' e' sempre <operator>.
+
+    def _chain_receiver(self, call_node, ns):
+        # 1. Verifica se esiste un operatore membro precedente
+        ops = " or ".join(f"normalize-space()='{o}'" for o in self.member_access_operator())
+        op = call_node.xpath(
+            f"preceding-sibling::*[not(self::src:comment)][1][self::src:operator and ({ops})]",
+            namespaces=ns
+        )
+        if not op:
+            return None
+
+        # 2. Caso fratello nello stesso <expr> (riga singola o indentazione canonica)
+        prev = op[0].xpath(
+            "preceding-sibling::*[not(self::src:comment)][1][self::src:call]",
+            namespaces=ns
+        )
+        if prev:
+            return prev[0]
+
+        # 3. Caso multilinea srcML per JS (ASI split tra due <expr_stmt>)
+        parent_stmt = call_node.xpath("ancestor::src:expr_stmt[1]", namespaces=ns)
+        if parent_stmt:
+            prev_stmt = parent_stmt[0].xpath(
+                "preceding-sibling::*[not(self::src:comment)][1][self::src:expr_stmt]",
+                namespaces=ns
+            )
+            if prev_stmt:
+                # last_call = prev_stmt[0].xpath(".//src:call[last()]", namespaces=ns)
+                last_call =  prev_stmt[0].xpath("./src:expr/src:call[last()]", namespaces=ns)
+                if last_call:
+                    return last_call[0]
+
+        return None
  
     def _is_prefix(self, n) -> bool:
         t, txt = _lname(n), _ntxt(n)
@@ -2115,19 +2171,47 @@ class JavaScriptAdapter(LanguageAdapter):
  
     def call_keyword_args(self, call_node, ns) -> dict:
         """JS non ha keyword argument: l'equivalente e' l'object literal passato come
-        ultimo argomento. res.cookie("a", v, { secure: true }) -> {"secure": "true"}.
-        Non risolve oggetti costruiti altrove ({...base}, const opts = {...})."""
+        ultimo argomento. Gli object annidati vengono appiattiti con chiavi puntate:
+        session({cookie: {secure: false}}) -> {"cookie": "{...}", "cookie.secure": "false"}."""
         out = {}
         args = call_node.xpath("./src:argument_list/src:argument", namespaces=ns)
         if not args:
             return out
         for obj in args[-1].xpath("./src:expr/src:object | ./src:object", namespaces=ns):
-            for prop in obj.xpath("./src:property", namespaces=ns):
-                k = prop.xpath("./src:decl/src:name[1]", namespaces=ns)
-                v = prop.xpath("./src:decl/src:init/src:expr[1]", namespaces=ns)
-                if k and v:
-                    out[name_text(k[0])] = self.normalize_string_literal("".join(v[0].itertext()).strip())
+            self._flatten_object(obj, "", out, ns, depth=0)
         return out
+
+    _MAX_OBJECT_DEPTH = 4
+
+    def _flatten_object(self, obj, prefix, out, ns, depth):
+        if depth > self._MAX_OBJECT_DEPTH:
+            return
+        for prop in obj.xpath("./src:property", namespaces=ns):
+            decl = prop.xpath("./src:decl[1]", namespaces=ns)
+            if not decl:
+                continue                      # spread, shorthand senza decl, ecc.
+            # chiave: identificatore oppure letterale stringa ('secure': ...)
+            k = decl[0].xpath("./src:name[1]", namespaces=ns)
+            if k:
+                key = name_text(k[0])
+            else:
+                lit = decl[0].xpath("./src:literal[@type='string'][1]", namespaces=ns)
+                if not lit:
+                    continue                  # chiave calcolata ([Op.like]): ignorata
+                key = self.normalize_string_literal("".join(lit[0].itertext()))
+            if not key:
+                continue
+            full = f"{prefix}.{key}" if prefix else key
+
+            v = decl[0].xpath("./src:init/src:expr[1]", namespaces=ns)
+            if not v:
+                continue                      # shorthand {secure}: nessun valore letterale
+            # il valore intero resta disponibile (retrocompatibilita')
+            out[full] = self.normalize_string_literal("".join(v[0].itertext()).strip())
+            # se il valore e' a sua volta un object literal, scendi
+            nested = v[0].xpath("./src:object[count(../*)=1]", namespaces=ns)
+            if nested:
+                self._flatten_object(nested[0], full, out, ns, depth + 1)
 
     def string_concat_operators(self) -> list:
         return ["+"]
@@ -2946,7 +3030,6 @@ class JavaScriptAdapter(LanguageAdapter):
         return self._route_call_of(fn_node, ns) is None
 
 
-
     _SRC = {"src": "http://www.srcML.org/srcML/src"}
     _FN_ANC = "ancestor::*[self::src:lambda or self::src:function]"
     _FN_ANC_XP = etree.XPath(_FN_ANC, namespaces=_SRC)
@@ -2982,6 +3065,14 @@ class JavaScriptAdapter(LanguageAdapter):
         return {"*.forEach": 0, "*.map": 0, "*.filter": 0, "*.some": 0,
                 "*.every": 0, "*.flatMap": 0, "*.then": 0, "*.reduce": 1}
 
+    def callback_receiver_flow(self) -> bool:
+        return True
+
+
+    def callback_arg_xpath(self) -> str:
+        cond = " or ".join(f"self::src:{t}" for t in
+                        set(self.lambda_tags()) | set(self.function_tags()))
+        return f"./src:argument_list//*[{cond}]"
 
 # ---------------------------------------------------------------------- #
 # Registro / dispatch
