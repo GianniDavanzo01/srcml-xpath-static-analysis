@@ -12,6 +12,20 @@ from common import NS, get_call_name, call_arguments_match_ast, find_assignments
 import re
 
 
+def guard_dominates(if_stmt, node) -> bool:
+    anc = set(node.iterancestors())
+    return (if_stmt.getparent() in anc      # stesso blocco o blocco esterno
+            and if_stmt not in anc          # il nodo non è dentro l'if
+            and _pos_key(if_stmt) < _pos_key(node))
+
+def branch_of(if_stmt, node):
+    anc = set(node.iterancestors())
+    for br in if_stmt.xpath("./src:if | ./src:elseif | ./src:else", namespaces=NS):
+        blk = br.xpath("./src:block", namespaces=NS)
+        if blk and blk[0] in anc:
+            return br
+    return None
+
 #HELPER PER _safe_context_parametrized_query e _safe_context_function_has_method_call
 def _spec_call_patterns(spec: dict) -> list:
     """Pattern di call dallo spec. 'call' ha la precedenza; 'method' = '*.method' (retrocompatibile)."""
@@ -223,7 +237,9 @@ def _safe_context_function_has_file_size_check(node, spec: dict, var_name, adapt
     all_if_stmts = scope.xpath(".//src:if_stmt", namespaces=NS)
     
     for if_stmt in all_if_stmts:
-        if _pos_key(if_stmt) >= node_key:
+        # if _pos_key(if_stmt) >= node_key:
+        #     continue
+        if not guard_dominates(if_stmt, node):
             continue
             
         cond = if_stmt.xpath("./src:if/src:condition", namespaces=NS)
@@ -246,99 +262,114 @@ def _safe_context_function_has_file_size_check(node, spec: dict, var_name, adapt
 
     return False
 
+def _check_protects_use(cond, check_node, use_node, adapter, op_text=None) -> bool:
+    if use_node not in cond.iterdescendants():
+        return True
+    if _pos_key(use_node) < _pos_key(check_node):
+        return False
 
+    and_ops = adapter.logical_and_operator()
+    or_ops = adapter.logical_or_operator()
+    null_ops = adapter.null_comparison_operators()
+    neg = adapter.negation_operator()
 
-def _check_protects_use(cond, check_node, use_node, adapter) -> bool:
-            """Se uso e check sono nella stessa condition, tra i due deve esserci un AND short-circuit."""
-            if use_node not in cond.iterdescendants():
-                return True  # uso fuori dalla condition (corpo dell'if): il check protegge
-            if _pos_key(use_node) < _pos_key(check_node):
-                return False  # uso prima del check
-            and_ops = adapter.logical_and_operator()
-            # operatori tra check e uso, a livello di fratelli dell'antenato comune
-            between = [
-                "".join(o.itertext()).strip()
-                for o in cond.xpath(".//src:operator", namespaces=NS)
-                if _pos_key(check_node) < _pos_key(o) < _pos_key(use_node)
-            ]
-            return bool(between) and all(op in and_ops or op in ("(", ")") for op in between)
+    between = [
+        "".join(o.itertext()).strip()
+        for o in cond.xpath(".//src:operator", namespaces=NS)
+        if _pos_key(check_node) < _pos_key(o) < _pos_key(use_node)
+    ]
+    logical = [o for o in between if o not in ("(", ")", neg)]
+    if not logical:
+        return False
+
+    if op_text in null_ops["truthy"]:
+        return all(o in and_ops for o in logical)
+    if op_text in null_ops["falsy"]:
+        return all(o in or_ops for o in logical)
+    return all(o in and_ops for o in logical)
 
 
 def _safe_context_var_truthiness_check(node, spec: dict, var_name, adapter, imports) -> bool:
-    """{"type": "var_truthiness_check", "scope": "enclosing", "require_state": "truthy"}
-    "require_state": "truthy" quando il codice vulnerabile si trova all'interno del blocco if
-    l'esecuzione avviene solo se la condizione è vera, la condizione deve esplicitamente affermare che il dato esiste ed è valido (non è nullo).
-    "require_state": "falsy" quando il codice vulnerabile si trova fuori e dopo il blocco if"""
     if not var_name:
         return False
 
     search_scope = spec.get("scope", "enclosing")
     required_state = spec.get("require_state", "truthy" if search_scope == "enclosing" else "any")
 
+    # conditions: lista di (nodo_condition, stato_richiesto_per_questa_condition)
     if search_scope == "enclosing":
-        conditions = node.xpath("ancestor::src:if_stmt//src:condition", namespaces=NS)
-    elif search_scope in ("file", "unit"):
-        unit_node = node.xpath("ancestor::src:unit[1]", namespaces=NS)
-        target = unit_node[0] if unit_node else _function_or_unit_scope(node, adapter)
-        conditions = target.xpath(".//src:if_stmt//src:condition", namespaces=NS)
+        conditions = []
+        for if_stmt in node.xpath("ancestor::src:if_stmt", namespaces=NS):
+            cond = if_stmt.xpath("./src:if/src:condition", namespaces=NS)
+            if not cond:
+                continue
+            if cond[0] in node.iterancestors():
+                # uso nella condizione stessa: vale lo short-circuit (check && uso)
+                conditions.append((cond[0], "any"))
+                continue
+            br = branch_of(if_stmt, node)
+            if br is None:
+                continue
+            br_tag = br.tag.rsplit("}", 1)[-1]
+            branch_state = "truthy" if br_tag == "if" else "falsy"
+            if required_state != "any" and required_state != branch_state:
+                continue
+            conditions.append((cond[0], branch_state))
     else:
-        target = _function_or_unit_scope(node, adapter)
-        conditions = target.xpath(".//src:if_stmt//src:condition", namespaces=NS)
+        if search_scope in ("file", "unit"):
+            unit_node = node.xpath("ancestor::src:unit[1]", namespaces=NS)
+            target = unit_node[0] if unit_node else _function_or_unit_scope(node, adapter)
+        else:
+            target = _function_or_unit_scope(node, adapter)
+        conditions = [(c, required_state)
+                      for c in target.xpath(".//src:if_stmt//src:condition", namespaces=NS)]
 
     neg_op = adapter.negation_operator()
-
     null_ops = adapter.null_comparison_operators()
     falsy_ops = null_ops["falsy"]
     truthy_ops = null_ops["truthy"]
+    xpath_op_condition = " or ".join(f"text()='{op}'" for op in falsy_ops + truthy_ops)
 
-    all_ops = falsy_ops + truthy_ops
-    xpath_op_condition = " or ".join(f"text()='{op}'" for op in all_ops)
-
-    for cond in conditions:
-        # --- A. Controllo Booleano Unario (es. !var o not var) ---
-        negations = cond.xpath(f".//src:operator[text()='{neg_op}']", namespaces=NS)
-        for nop in negations:
+    for cond, state in conditions:          # <-- unpack della tupla
+        # A. negazione unaria (!var / not var)
+        for nop in cond.xpath(f".//src:operator[text()='{neg_op}']", namespaces=NS):
             next_node = nop.xpath("./following-sibling::*[not(self::src:comment)][1]", namespaces=NS)
-            if next_node and next_node[0].tag.endswith("name"):
-                if name_text(next_node[0]) == var_name:
-                    if required_state in ("falsy", "any"):
-                        return True
+            if next_node and next_node[0].tag.endswith("name") \
+               and name_text(next_node[0]) == var_name \
+               and state in ("falsy", "any"):
+                return True
 
-        # --- B. Controllo Esplicito con Null (es. var == null, var != null) ---
-        equality_ops = cond.xpath(f".//src:operator[{xpath_op_condition}]", namespaces=NS)
-        for eq_op in equality_ops:
+        # B. confronto esplicito con null
+        for eq_op in cond.xpath(f".//src:operator[{xpath_op_condition}]", namespaces=NS):
             op_text = "".join(eq_op.itertext()).strip()
             lhs = eq_op.xpath("./preceding-sibling::*[not(self::src:comment)][1]", namespaces=NS)
             rhs = eq_op.xpath("./following-sibling::*[not(self::src:comment)][1]", namespaces=NS)
-
             if not lhs or not rhs:
                 continue
-
-            # name_text() per i nomi di variabili, altrimenti teniamo il testo grezzo (es. per 'null')
             lhs_text = name_text(lhs[0]) if lhs[0].tag.endswith("name") else "".join(lhs[0].itertext()).strip()
             rhs_text = name_text(rhs[0]) if rhs[0].tag.endswith("name") else "".join(rhs[0].itertext()).strip()
 
             is_null_check = (lhs_text == var_name and adapter.is_none_literal(rhs_text)) or \
                             (adapter.is_none_literal(lhs_text) and rhs_text == var_name)
+            if not is_null_check:
+                continue
+            if not _check_protects_use(cond, eq_op, node, adapter, op_text):
+                continue
+            if state == "truthy" and op_text in truthy_ops:
+                return True
+            if state == "falsy" and op_text in falsy_ops:
+                return True
+            if state == "any":
+                return True
 
-            if is_null_check:
-                if not _check_protects_use(cond, eq_op, node, adapter):
-                    continue
-                if required_state == "truthy" and op_text in truthy_ops:
-                    return True
-                if required_state == "falsy" and op_text in falsy_ops:
-                    return True
-                if required_state == "any":
-                    return True
-
-        # --- C. Controllo Booleano nudo (es. if var:) ---
-        if required_state in ("truthy", "any"):
+        # C. controllo booleano nudo (if var:)
+        if state in ("truthy", "any"):
             expr_children = cond.xpath("./src:expr", namespaces=NS)
             if len(expr_children) == 1:
-                bare_names = expr_children[0].xpath("./src:name", namespaces=NS)
-                if len(bare_names) == 1 and len(list(expr_children[0])) == 1:
-                    if name_text(bare_names[0]) == var_name:
-                        return True
+                bare = expr_children[0].xpath("./src:name", namespaces=NS)
+                if len(bare) == 1 and len(list(expr_children[0])) == 1 \
+                   and name_text(bare[0]) == var_name:
+                    return True
 
     return False
 
@@ -657,7 +688,6 @@ def _safe_context_receiver_of_method_with_arg(node, spec, var_name, adapter, imp
     return False
 
 
-
 def _safe_context_var_falsy_guard_clause(node, spec: dict, var_name, adapter, imports) -> bool:
     if not var_name:
         return False
@@ -679,7 +709,9 @@ def _safe_context_var_falsy_guard_clause(node, spec: dict, var_name, adapter, im
             
 
     for if_stmt in all_if_stmts:
-        if _pos_key(if_stmt) >= node_key:
+        # if _pos_key(if_stmt) >= node_key:
+        #     continue
+        if not guard_dominates(if_stmt, node):
             continue
 
         cond = if_stmt.xpath("./src:if/src:condition", namespaces=NS)

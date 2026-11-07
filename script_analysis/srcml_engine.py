@@ -26,7 +26,7 @@ from RuleCompiler import RuleCompiler
 from validator_rules import validate_or_exit
 
 
-_COMPILED_RULESETS_CACHE = {} # language -> (compiled, catalog_obj)
+_COMPILED_RULESETS_CACHE = {} 
 
 def collect_xml_files(xml_args: list[str] | None, xml_dir: str | None) -> list[Path]:
     """
@@ -114,7 +114,7 @@ def analyze_unit(unit_node, raw_rules: list, xml_source: str, source_file: str |
         if rule_type == "taint":
             findings.extend(run_taint_rule(unit_node, rule, adapter, imports, ctx=ctx))
         elif rule_type == "structural":
-            findings.extend(run_structural_rule(unit_node, rule, adapter, imports, ctx=ctx))
+            findings.extend(run_structural_rule(unit_node, rule, adapter, imports))
 
     return {
         "source_file": source_file or unit_node.get("filename", "Sconosciuto"),

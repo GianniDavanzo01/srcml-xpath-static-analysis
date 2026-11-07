@@ -51,6 +51,8 @@ class LanguageAdapter(ABC):
 
     name: str  # "python", "java", ...
 
+
+    _MAX_RESOLVE_DEPTH = 5 
     @abstractmethod
     def potential_assignment_xpath(self) -> str:
         """Potenziale statement di assegnazione"""
@@ -212,7 +214,7 @@ class LanguageAdapter(ABC):
         """
 
 
-    @abstractmethod
+    
     def taint_source_output_args(self) -> dict:
         """Mappa nome_funzione -> spec degli argomenti che la funzione RIEMPIE con
         dati esterni (source per side-effect, non per valore di ritorno).
@@ -222,6 +224,7 @@ class LanguageAdapter(ABC):
             "return_tainted": bool,      # (opz., default False) il valore di ritorno e' anch'esso source
         }
         Linguaggi senza questo pattern ritornano {}."""
+        return {}
 
 
     @abstractmethod
@@ -239,6 +242,10 @@ class LanguageAdapter(ABC):
     @abstractmethod
     def flow_exit_tags(self) -> list:
         """Tag srcML che interrompono il flusso (return, throw, ...)."""
+
+    def function_exit_tags(self) -> list:
+        """Tag che terminano la funzione (non solo il ciclo): flow_exit_tags senza break/continue."""
+        return [t for t in self.flow_exit_tags() if t not in ("break", "continue")]
 
     @abstractmethod
     def flow_exit_calls(self) -> list:
@@ -707,8 +714,6 @@ class PythonAdapter(LanguageAdapter):
  
         return bindings
 
-
-    _MAX_RESOLVE_DEPTH = 5 #Guardia per evitare ricorsione infinita di catene eccessivamente lunghe all'interno di resolve_call_name
     
     # Funzioni factory built-in (non richiedono import) i cui oggetti restituiti
     # hanno metodi tracciati nel catalogo (es. f = open(...); f.read() -> 'open.read').
@@ -889,8 +894,6 @@ class PythonAdapter(LanguageAdapter):
             "truthy": ["!=", "is not"]
         }
 
-    def taint_source_output_args(self) -> dict:
-        return {}
 
     def get_parameter_name_node(self, param_node, ns):
         n = param_node.xpath("./src:name[1]", namespaces=ns)
@@ -949,7 +952,6 @@ class PythonAdapter(LanguageAdapter):
         scope più interno verso l'esterno (funzioni annidate -> funzione -> modulo).
         Ritorna None se non c'è, o se `head` è un parametro (shadowing)."""
         
-
         call_key = _pos_key(call_node)
         call_ancestors = set(call_node.iterancestors())     
         fn_cond = " or ".join(f"self::src:{t}" for t in self.function_tags())
@@ -1043,6 +1045,9 @@ class PythonAdapter(LanguageAdapter):
         unit = call_node.xpath("ancestor::src:unit[1]", namespaces=ns)[0]
         classes = {name_text(n) for n in unit.xpath(".//src:class/src:name", namespaces=ns)}
         return cname in classes
+
+    def compound_assignment_operators(self) -> list:
+        return ["+=", "|="]
 
 
 # ---------------------------------------------------------------------- #
@@ -1231,7 +1236,6 @@ class JavaAdapter(LanguageAdapter):
         return bindings
 
 
-    _MAX_RESOLVE_DEPTH = 5
 
     def resolve_call_name(self, call_node, ns, imports, _depth: int = 0) -> str:
         if _depth > self._MAX_RESOLVE_DEPTH:
@@ -1413,8 +1417,6 @@ class JavaAdapter(LanguageAdapter):
             "truthy": ["!="]
         }
 
-    def taint_source_output_args(self) -> dict:
-        return {}
 
     def get_parameter_name_node(self, param_node, ns):
         n = param_node.xpath("./src:decl/src:name[1]", namespaces=ns)
@@ -1527,6 +1529,9 @@ class JavaAdapter(LanguageAdapter):
         decl = (before or decls)[-1]          # dichiarazione più vicina che precede la call
         return bool(decl.xpath(
             "./src:init/src:expr/src:operator[text()='new']", namespaces=ns))
+
+    def compound_assignment_operators(self) -> list:
+        return ["+="]
 
 
 # ---------------------------------------------------------------------- #
@@ -1963,6 +1968,7 @@ class CAdapter(LanguageAdapter):
             if n and v and _C_STRING_VALUE_RE.match("".join(v[0].itertext()).strip()):
                 out.append((d, n[0]))
         return out
+
 
 
 #---------------------------------------------------
@@ -2511,8 +2517,6 @@ class JavaScriptAdapter(LanguageAdapter):
                     parts.append(k)
         return ".".join(parts)
  
-    _MAX_RESOLVE_DEPTH = 5
-
     _FLUENT = frozenset({
         "status", "set", "header", "type", "contentType", "cookie",
         "append", "vary", "location", "code", "links"
@@ -2879,8 +2883,6 @@ class JavaScriptAdapter(LanguageAdapter):
                 "*.add": local, "*.set": local, "*.append": local,
                 "Object.assign": {"out": [0]}}
 
-    def taint_source_output_args(self) -> dict:
-        return {}                              # nessuna source per side-effect in JS
  
     _COLLECTION_CTORS = {"Set", "Map", "Array", "WeakSet", "WeakMap"}
 

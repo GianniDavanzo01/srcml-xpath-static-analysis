@@ -189,20 +189,24 @@ def enclosing_scope(node, adapter):
     r = scope_xp(adapter)(node)
     return r[0] if r else None
 
+
 def block_exits_flow(block, adapter, imports) -> bool:
-    fn = scope_xp(adapter, with_lambda=True)
-    my_scope = fn(block)
-    same = lambda n: fn(n) == my_scope
+    content = block.xpath("./src:block_content", namespaces=NS)
+    stmts = content[0] if content else block
+    exit_tags = set(adapter.function_exit_tags())
+    exit_calls = adapter.flow_exit_calls()
 
-    tags = " | ".join(f".//src:{t}" for t in adapter.flow_exit_tags())
-    if any(same(n) for n in block.xpath(tags, namespaces=NS)):
-        return True
-
-    exits = adapter.flow_exit_calls()
-    for c in block.xpath(".//src:call", namespaces=NS):
-        cn = get_call_name(c, adapter, imports)
-        if cn and any(call_matches(cn, e, adapter) for e in exits) and same(c):
+    for child in stmts:
+        if not isinstance(child.tag, str):      # salta commenti/nodi speciali
+            continue
+        t = child.tag.rsplit("}", 1)[-1]
+        if t in exit_tags:
             return True
+        if t == "expr_stmt":
+            for c in child.xpath(".//src:call", namespaces=NS):
+                cn = get_call_name(c, adapter, imports)
+                if cn and any(call_matches(cn, e, adapter) for e in exit_calls):
+                    return True
     return False
 
 _name_text_cache = {}        

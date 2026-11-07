@@ -164,8 +164,6 @@ def _sink_call_with_var_arg(uso, spec, fstring_nodes, adapter, imports):
         if call_name is None:
             continue
 
-        # if not any(call_matches(call_name,c, adapter) for c in target_calls):
-        #     continue
         if not _spec_matcher(spec, adapter)(call_name):
             continue
 
@@ -262,29 +260,18 @@ SINK_MATCHERS = {
 }
 
 
-def match_sink(uso, sink_spec, fstring_nodes: list, adapter, imports) -> bool:
-    """
-    Dispatcher: supporta pattern semplici (str) e tipizzati (dict).
-    """
-    is_match = False
+SIMPLE_SINKS = frozenset({"concat", "fstring", "return"})
 
+def match_sink(uso, sink_spec, fstring_nodes, adapter, imports) -> bool:
     if isinstance(sink_spec, str):
-        is_match = _sink_string_pattern(uso, sink_spec, adapter, imports, fstring_nodes)
-
-    elif isinstance(sink_spec, dict):
-        sink_type = sink_spec.get("type")
-
-        simple_patterns = ["concat", "fstring", "return"]
-        if sink_type in simple_patterns:
-            is_match = _sink_string_pattern(uso, sink_type, adapter, imports, fstring_nodes)
-        else:
-            matcher = SINK_MATCHERS.get(sink_type)
-            is_match = matcher(uso, sink_spec, fstring_nodes, adapter, imports) if matcher else False
-
-    if not is_match:
-        return False
-    
-    return True
+        return _sink_string_pattern(uso, sink_spec, adapter, imports, fstring_nodes)
+    if isinstance(sink_spec, dict):
+        t = sink_spec.get("type")
+        if t in SIMPLE_SINKS:
+            return _sink_string_pattern(uso, t, adapter, imports, fstring_nodes)
+        m = SINK_MATCHERS.get(t)
+        return bool(m and m(uso, sink_spec, fstring_nodes, adapter, imports))
+    return False
 
 
 def matches_any_sink(uso, sinks, fstring_nodes, adapter, imports):

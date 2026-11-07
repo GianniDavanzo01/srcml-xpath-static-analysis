@@ -6,7 +6,7 @@ from common import NS, name_text, assignment_pairs, enclosing_scope, in_opaque_t
 AssignInfo = namedtuple("AssignInfo", "stmt lhs rhs var scope rhs_all rhs_names rhs_interp numeric_lhs compound")
 
 
-def build_assign_infos(assignments, adapter, unit):
+def build_assign_infos(adapter, unit):
     """Calcola UNA volta lhs/rhs/scope e i contenuti dell'RHS di ogni assegnazione con LHS <name>."""
 
     infos = []
@@ -54,18 +54,12 @@ def build_assign_infos(assignments, adapter, unit):
     return infos
 
 class UnitContext:
-    __slots__ = (
-        "unit", "calls", "assignments",
-        "assign_infos", "assign_by_stmt","assign_lhs","call_keys"
-    )
+    __slots__ = ("unit", "calls", "assign_infos", "assign_lhs", "call_keys")
 
     def __init__(self, unit, adapter, catalog=None):
         self.unit = unit
         self.calls = unit.xpath(".//src:call", namespaces=NS)
-
-        self.assignments = [stmt for stmt, _, _ in assignment_pairs(unit, adapter, include_bindings=True)]
-        self.assign_infos = build_assign_infos(self.assignments, adapter, unit)
-        self.assign_by_stmt = {i.stmt: i for i in self.assign_infos}
+        self.assign_infos = build_assign_infos(adapter, unit)
         self.assign_lhs = {i.lhs for i in self.assign_infos}
         self.call_keys = None
 

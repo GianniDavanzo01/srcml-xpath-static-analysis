@@ -13,10 +13,9 @@ Controlla, dopo l'espansione dei tag, che:
 import sys
 
 from safe_context_matchers import SAFE_CONTEXT_MATCHERS
-from sink_matchers import SINK_MATCHERS
+from sink_matchers import SINK_MATCHERS, SIMPLE_SINKS
 from structural_handlers import STRUCTURAL_HANDLERS
 
-SIMPLE_SINKS = {"concat", "fstring", "return"}
 FORBIDDEN_FN_TYPES = {"exact_name", "call_matches_ast"}
 SANITIZER_TYPES = {"chain"}
 

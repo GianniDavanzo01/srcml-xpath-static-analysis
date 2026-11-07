@@ -13,7 +13,7 @@ from safe_context_matchers import is_in_safe_context
 from structural_handlers import STRUCTURAL_HANDLERS
 
 
-def run_structural_rule(tree, rule: dict, adapter, imports, ctx) -> list:
+def run_structural_rule(tree, rule: dict, adapter, imports) -> list:
     findings = []
     for key, val in rule.items():
         if val and (handler := STRUCTURAL_HANDLERS.get(key)) is not None:
