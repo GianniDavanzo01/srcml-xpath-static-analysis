@@ -122,7 +122,42 @@ def call_lookup_keys(call_name, adapter) -> list:
 # ---------------------------------------------------------------
 
 
+
+_tree_xp_cache = {}
+
+def tree_xpath(node, expr):
+    k = (node, expr)
+    r = _tree_xp_cache.get(k)
+    if r is None:
+        r = _tree_xp_cache[k] = node.xpath(expr, namespaces=NS)
+    return r
+
+_const_defs_cache = {}      
+
+def get_const_defs(unit, adapter):
+    k = (unit, adapter.name)
+    r = _const_defs_cache.get(k)
+    if r is None:
+        r = _const_defs_cache[k] = adapter.constant_string_definitions(unit, NS)
+    return r
+
+_fn_index_cache = {}     
+
 def function_nodes(tree, adapter, name=None):
+    k = (tree, adapter.name)
+    ent = _fn_index_cache.get(k)
+    if ent is None:
+        allf = _function_nodes_uncached(tree, adapter)
+        by_name = defaultdict(list)
+        for f in allf:
+            for n in f.findall(f"{{{NS['src']}}}name"):
+                if n.text:
+                    by_name[n.text].append(f)
+        ent = _fn_index_cache[k] = (allf, by_name)
+    return ent[0] if name is None else ent[1].get(name, [])
+
+
+def _function_nodes_uncached(tree, adapter, name=None):
     """Nodi funzione/costruttore dello scope, secondo i tag dell'adapter.
     Se `name` è dato, filtra per nome dichiarato."""
     cond = " or ".join(f"self::src:{t}" for t in adapter.function_tags())
@@ -130,18 +165,13 @@ def function_nodes(tree, adapter, name=None):
         return tree.xpath(f".//*[{cond}]", namespaces=NS)
     return tree.xpath(f".//*[({cond}) and src:name[text()=$n]]", namespaces=NS, n=name)
 
-_opaque_xpath_cache = {} #Dipende solo dall'adapter, non va svuotata ad ogni unit
+_opaque_tags_cache  = {}    #Dipende solo dall'adapter, non va svuotata ad ogni unit
 def in_opaque_tag(node, adapter) -> bool:
-    """True se `node` sta dentro un costrutto che non propaga taint (es. sizeof)."""
-    xp = _opaque_xpath_cache.get(adapter.name)
-    if xp is None:
-        tags = adapter.taint_opaque_tags()
-        xp = etree.XPath(
-            "ancestor::*[" + " or ".join(f"self::src:{t}" for t in tags) + "]",
-            namespaces=NS,
-        ) if tags else False
-        _opaque_xpath_cache[adapter.name] = xp
-    return bool(xp(node)) if xp else False
+    tags = _opaque_tags_cache.get(adapter.name)
+    if tags is None:
+        tags = _opaque_tags_cache[adapter.name] = tuple(
+            f"{{{NS['src']}}}{t}" for t in adapter.taint_opaque_tags())
+    return bool(tags) and next(node.iterancestors(*tags), None) is not None
 
 
 _scope_xp_cache = {}  #dipende solo dall'adapter, non va svuotata in reset_caches()
@@ -175,19 +205,34 @@ def block_exits_flow(block, adapter, imports) -> bool:
             return True
     return False
 
+_name_text_cache = {}        
+_INDEX_TAG = f"{{{NS['src']}}}index"
 
-_NAME_TEXT_XP = etree.XPath(
-    ".//text()[count(ancestor::src:index) = count($n/ancestor::src:index)]", namespaces=NS)
-
-def name_text(name_node) -> str:
-    """Testo di un <name> senza i suffissi [..] della propria dichiarazione/accesso
-    ('names[]' -> 'names', 'a[i].b[0]' -> 'a.b'). Per un nome semplice è identico a prima."""
-    return "".join(_NAME_TEXT_XP(name_node, n=name_node)).strip()
+def name_text(n) -> str:
+    r = _name_text_cache.get(n)
+    if r is not None:
+        return r
+    if len(n) == 0:
+        r = (n.text or "").strip()
+    else:
+        parts = []
+        def walk(e):
+            if e.text:
+                parts.append(e.text)
+            for c in e:
+                if isinstance(c.tag, str) and c.tag != _INDEX_TAG:
+                    walk(c)
+                if c.tail:
+                    parts.append(c.tail)
+        walk(n)
+        r = "".join(parts).strip()
+    _name_text_cache[n] = r
+    return r
 
 
 _member_ops_cache = {}
 _INIT_TAG = f"{{{NS['src']}}}init"
-def is_member_name(n, adapter) -> bool:
+def _is_member_name_uncached(n, adapter) -> bool:
     """True se il <name> è una proprietà/membro e NON una variabile autonoma."""
     ops = _member_ops_cache.get(adapter.name)
     if ops is None:
@@ -223,11 +268,20 @@ def is_member_name(n, adapter) -> bool:
     return False
 
 
+_member_name_cache = {}     
+def is_member_name(n, adapter) -> bool:
+    r = _member_name_cache.get(n)
+    if r is None:
+        r = _member_name_cache[n] = _is_member_name_uncached(n, adapter)
+    return r
+
+
 #Matching dei nomi sensibili per token ----------------
 _TOK = re.compile(r'[A-Z]+(?![a-z])|[A-Z]?[a-z]+|\d+')
 
-def name_tokens(n: str) -> list:
-    return [t.lower() for t in _TOK.findall(n.replace("_", " "))]
+@lru_cache(maxsize=None)
+def name_tokens(n: str) -> tuple:
+    return tuple(t.lower() for t in _TOK.findall(n.replace("_", " ")))
 
 def name_matches(var: str, patterns, excluded=frozenset()) -> bool:
     toks = name_tokens(var)
@@ -341,6 +395,7 @@ def _get_matcher(patterns, adapter):
         m = _matcher_cache[key] = CallMatcher(patterns, adapter)
     return m
 
+
 def reset_caches():
     _call_name_cache.clear()
     _assign_pairs_cache.clear()
@@ -352,6 +407,14 @@ def reset_caches():
     _field_decl_index_cache.clear()
     _rhs_cands_cache.clear()
     _assign_index_cache.clear()
+    _SAN_CACHE.clear()
+    _member_name_cache.clear()
+    _stmt_assign_cache.clear()
+    _name_text_cache.clear()
+    _const_defs_cache.clear()
+    _fn_index_cache.clear()
+    _src_hits_cache.clear()
+    _tree_xp_cache.clear()
 
 
 _X_CHILD_NAME  = etree.XPath("./src:name", namespaces=NS)
@@ -395,6 +458,19 @@ def get_scope_index(scope_node, adapter, macros=None):
         _scope_index_cache[scope_node] = idx
     return idx
 
+
+_stmt_assign_cache = {}      
+
+def _stmt_assign(stmt, adapter):
+    r = _stmt_assign_cache.get(stmt)
+    if r is None:
+        if adapter.is_assignment(stmt, NS):
+            r = (True, adapter.get_assignment_chain(stmt, NS))
+        else:
+            r = (False, ())
+        _stmt_assign_cache[stmt] = r
+    return r
+
 def assignment_pairs(scope_node, adapter, include_bindings=False) -> list:
     """
     (stmt, lhs, rhs) di ogni assegnazione nello scope, calcolate una volta sola.
@@ -419,8 +495,8 @@ def assignment_pairs(scope_node, adapter, include_bindings=False) -> list:
             if not include_bindings and stmt.tag.endswith("}control"):
                 continue
             # if not adapter.is_assignment(stmt, NS):
-            #     continue
-            if not adapter.is_assignment(stmt, NS):
+            is_assign, chain = _stmt_assign(stmt, adapter)
+            if not is_assign:
                 # 'x += y' / 'x ??= y': solo per il taint (le regole strutturali non li vedono)
                 if include_bindings and adapter.is_compound_assignment(stmt, NS):
                     lhs, rhs = adapter.get_compound_assignment_lhs_rhs(stmt, NS)
@@ -429,7 +505,7 @@ def assignment_pairs(scope_node, adapter, include_bindings=False) -> list:
                 continue
             if taint_skip and stmt.tag.rsplit("}", 1)[-1] in taint_skip:
                 continue
-            for lhs, rhs in adapter.get_assignment_chain(stmt, NS):
+            for lhs, rhs in chain:
                 pairs.append((stmt, lhs, rhs))
         _assign_pairs_cache[key] = pairs
     return pairs
@@ -499,16 +575,24 @@ SANITIZER_MATCHERS = {
     "chain": is_chain_sanitized,
 }
 
+_SAN_CACHE = {}   
+_CALL_TAG = f"{{{NS['src']}}}call"
 
-def is_sanitized(node, sanitizers: list, adapter, imports) -> bool:
-    plain = [s for s in sanitizers if isinstance(s, str)]
-    specs = [s for s in sanitizers if isinstance(s, dict)]
+def _san_parts(sanitizers, adapter):
+    ent = _SAN_CACHE.get(id(sanitizers))
+    if ent is None or ent[0] is not sanitizers:
+        plain = [s for s in sanitizers if isinstance(s, str)]
+        specs = [s for s in sanitizers if isinstance(s, dict)]
+        ent = _SAN_CACHE[id(sanitizers)] = (sanitizers, CallMatcher(plain, adapter) if plain else None, specs)
+    return ent[1], ent[2]
 
-    for call in node.xpath("ancestor::src:call", namespaces=NS):
-        cname = get_call_name(call, adapter, imports)
-        if cname and any(call_matches(cname, san, adapter) for san in plain):
-            return True
-
+def is_sanitized(node, sanitizers, adapter, imports) -> bool:
+    matcher, specs = _san_parts(sanitizers, adapter)
+    if matcher is not None:
+        for call in node.iterancestors(_CALL_TAG):
+            cname = get_call_name(call, adapter, imports)
+            if cname and matcher(cname):
+                return True
     return any((m := SANITIZER_MATCHERS.get(s.get("type"))) and m(node, s, adapter, imports)
                for s in specs)
 
@@ -559,11 +643,18 @@ def _rhs_candidates(rhs_node, adapter, imports):
         _rhs_cands_cache[rhs_node] = cands
     return cands
     
+_src_hits_cache = {}     
 
 def source_present(sources, rhs_node, *, adapter, imports, block=None) -> bool:
     matcher = _get_matcher(sources, adapter)
-    for keys, node in _rhs_candidates(rhs_node, adapter, imports):
-        if any(matcher(k) for k in keys) and not (block and is_sanitized(node, block, adapter, imports)):
+    key = (matcher, rhs_node)
+    hits = _src_hits_cache.get(key)
+    if hits is None:
+        hits = _src_hits_cache[key] = [
+            node for keys, node in _rhs_candidates(rhs_node, adapter, imports)
+            if any(matcher(k) for k in keys)]
+    for node in hits:
+        if not (block and is_sanitized(node, block, adapter, imports)):
             return True
     return False
 

@@ -12,7 +12,7 @@ handler lo rende subito eseguibile e ammissibile nelle regole.
 
 from common import NS, get_call_name, build_finding, _pos_key, find_assignments, _is_pure_literal_expr, \
 assignment_pairs, enclosing_scope, node_snippet, call_matches, function_nodes, scope_xp, name_text, \
-_is_hardcoded_string, name_matches, literal_value_ok
+_is_hardcoded_string, name_matches, literal_value_ok, get_const_defs, tree_xpath
 from safe_context_matchers import is_in_safe_context
 
 
@@ -98,7 +98,7 @@ def _run_missing_while_increments(tree, rule, findings, adapter, imports):
     safe_contexts = rule.get("safe_contexts", [])
     
     # Intercetta sia while che do-while
-    loop_nodes = tree.xpath(".//src:while | .//src:do", namespaces=NS)
+    loop_nodes = tree_xpath(tree, ".//src:while | .//src:do")
 
         # Cerca qualsiasi operatore di confronto, non solo '<'
     cmp_xp = " or ".join(f"text()='{o}'" for o in adapter.comparison_operators())
@@ -229,7 +229,8 @@ def _run_empty_catch_blocks(tree, rule, findings, adapter, imports):
         return
 
     safe_contexts = rule.get("safe_contexts", [])
-    catches = tree.xpath(".//src:catch", namespaces=NS)
+    catches = tree_xpath(tree, ".//src:catch")
+
 
     noop = " or ".join(f"self::src:{t}" for t in ["comment"] + adapter.noop_statement_tags())
     for catch in catches:
@@ -257,7 +258,8 @@ def _run_empty_if_blocks(tree, rule, findings, adapter, imports):
     noop = " or ".join(f"self::src:{t}" for t in ["comment"] + adapter.noop_statement_tags())
 
     # srcML raggruppa <if>, <elseif> ed <else> dentro <if_stmt>. Li analizziamo tutti.
-    for block_container in tree.xpath(".//src:if | .//src:elseif | .//src:else", namespaces=NS):
+    # for block_container in tree.xpath(".//src:if | .//src:elseif | .//src:else", namespaces=NS):
+    for block_container in tree_xpath(tree, ".//src:if | .//src:elseif | .//src:else"):
         
 
         block_content = block_container.xpath("./src:block/src:block_content", namespaces=NS)
@@ -286,7 +288,7 @@ def _check_use_after_free(tree, rule, findings, adapter, imports):
     safe_allocations = spec.get("safe_allocation_calls", [])
     safe_reassignments = spec.get("safe_reassignments", [])
 
-    for node in tree.xpath(".//src:call", namespaces=NS):
+    for node in tree_xpath(tree, ".//src:call"):
         call_name = get_call_name(node, adapter, imports)
         if not call_name or not any(call_matches(call_name, t, adapter) for t in target_calls):
             continue
@@ -416,14 +418,22 @@ def _run_sensitive_var_patterns(tree, rule, findings, adapter, imports):
     sensitive_patterns = rule.get("sensitive_var_patterns", [])
     safe_contexts = rule.get("safe_contexts", [])
     excluded = {t.lower() for t in rule.get("sensitive_var_exclusions", [])}
-    is_sensitive = lambda v: name_matches(v, sensitive_patterns, excluded)
+    _memo = {}
+    def is_sensitive(v):
+        r = _memo.get(v)
+        if r is None:
+            r = _memo[v] = name_matches(v, sensitive_patterns, excluded)
+        return r
 
-    for define, name_node in adapter.constant_string_definitions(tree, NS):
+    for define, name_node in get_const_defs(tree, adapter):
         if is_sensitive(name_text(name_node)) and not is_in_safe_context(define, safe_contexts, None, adapter, imports):
             findings.append(build_finding(rule, define))
 
     for assign, lhs, rhs in find_assignments(tree, adapter):
         if rhs is None:
+            continue
+
+        if not is_sensitive(name_text(lhs)):
             continue
 
         rhs_nodes = rhs.xpath("self::* | following-sibling::*", namespaces=NS)
@@ -453,7 +463,7 @@ def _run_sensitive_var_patterns(tree, rule, findings, adapter, imports):
         if is_sensitive(var_name) and not is_in_safe_context(lhs, safe_contexts, None, adapter, imports):
             findings.append(build_finding(rule, assign))
 
-    for arg in tree.xpath(".//src:call/src:argument_list/src:argument", namespaces=NS):
+    for arg in tree_xpath(tree, ".//src:call/src:argument_list/src:argument"):
         if not adapter.is_kwarg(arg, NS):
             continue
         key = arg.xpath("./src:name[1]", namespaces=NS)
@@ -463,15 +473,13 @@ def _run_sensitive_var_patterns(tree, rule, findings, adapter, imports):
            and not is_in_safe_context(arg, safe_contexts, None, adapter, imports):
             findings.append(build_finding(rule, arg))
 
-    conditions = tree.xpath(".//src:if_stmt//src:condition", namespaces=NS)
-    # eq_op = adapter.equality_operator()
+    conditions = tree_xpath(tree, ".//src:if_stmt//src:condition")
     eq_xp = " or ".join(f"text()='{o}'" for o in adapter.equality_operators())
     for cond in conditions:
-        if cond.xpath(".//src:call", namespaces=NS):
+        if tree_xpath(cond, ".//src:call"):
             continue
 
-        # for op_node in cond.xpath(f".//src:operator[text()='{eq_op}']", namespaces=NS):
-        for op_node in cond.xpath(f".//src:operator[{eq_xp}]", namespaces=NS):
+        for op_node in tree_xpath(cond, f".//src:operator[{eq_xp}]"):
             lhs_nodes = op_node.xpath("preceding-sibling::*[not(self::src:comment)]", namespaces=NS)
             rhs_nodes = op_node.xpath("following-sibling::*[not(self::src:comment)]", namespaces=NS)
             if not lhs_nodes or not rhs_nodes:
@@ -537,7 +545,7 @@ def _run_forbidden_calls_with_kwargs(tree, rule, findings, adapter, imports):
     forbidden_calls_with_kwargs = rule.get("forbidden_calls_with_kwargs", [])
     safe_contexts = rule.get("safe_contexts", [])
     
-    calls = tree.xpath(".//src:call", namespaces=NS)
+    calls = tree_xpath(tree, ".//src:call")
     for call in calls:
         call_name = get_call_name(call, adapter, imports)
         if not call_name:
@@ -570,7 +578,7 @@ def _run_forbidden_subscripts(tree, rule, findings, adapter, imports):
     forbidden_subscripts = rule.get("forbidden_subscripts", [])
     safe_contexts = rule.get("safe_contexts", [])
     
-    for node in tree.xpath(".//src:name[src:index]", namespaces=NS):
+    for node in tree_xpath(tree, ".//src:name[src:index]"):
         if node.xpath("ancestor::src:parameter", namespaces=NS):
             continue
         if node.xpath("parent::src:decl", namespaces=NS):

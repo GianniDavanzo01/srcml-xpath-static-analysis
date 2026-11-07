@@ -31,6 +31,10 @@ _MACRO_FWD_RE   = re.compile(r"^\s*([A-Za-z_]\w*)\s*\(")             # #define F
 _C_STRING_VALUE_RE = re.compile(r'^\(?\s*(?:(?:L|u8|u|U)?"(?:[^"\\\n]|\\.)*"\s*)+\)?$')  #Verificare che la define sia costante: #define PASSWORD "ABCD1234!"
 
 
+_SRC_NS = {"src": "http://www.srcML.org/srcML/src"}
+_JS_PARAM_NAME_XP = etree.XPath("./src:decl/src:name[1]", namespaces=_SRC_NS)
+
+
 @dataclass
 class ImportBinding:
     """Rappresenta un binding di import risolto a un nome canonico.
@@ -308,15 +312,18 @@ class LanguageAdapter(ABC):
         """Nome puntato (non call) -> nome canonico. Default: invariato."""
         return text
 
-    
+
+    _CR_XP = {}
+
     def _chain_receiver(self, call_node, ns):
-        ops = " or ".join(f"text()='{o}'" for o in self.member_access_operator())
-        op = call_node.xpath(
-            f"preceding-sibling::*[1][self::src:operator and ({ops})]", namespaces=ns)
-        if not op:
-            return None
-        prev = op[0].xpath("preceding-sibling::*[1][self::src:call]", namespaces=ns)
-        return prev[0] if prev else None
+        xp = LanguageAdapter._CR_XP.get(self.name)
+        if xp is None:
+            ops = " or ".join(f"text()='{o}'" for o in self.member_access_operator())
+            xp = LanguageAdapter._CR_XP[self.name] = etree.XPath(
+                f"preceding-sibling::*[1][self::src:operator and ({ops})]"
+                f"/preceding-sibling::*[1][self::src:call]", namespaces=ns)
+        r = xp(call_node)
+        return r[0] if r else None
 
     def _chain_next(self, call_node, ns):
         """Call successiva nella catena: a.b(x).c() -> da b(x) ritorna c()."""
@@ -937,8 +944,6 @@ class PythonAdapter(LanguageAdapter):
             node = nxt[0]
         return names
 
-
-
     def _reaching_rhs(self, call_node, head, ns):
         """RHS dell'assegnazione di `head` che raggiunge `call_node`, cercando dallo
         scope più interno verso l'esterno (funzioni annidate -> funzione -> modulo).
@@ -1062,6 +1067,9 @@ class JavaAdapter(LanguageAdapter):
         ".//text()[not(ancestor::src:argument_list[@type='generic'])]",
         namespaces={"src": "http://www.srcML.org/srcML/src"},
     )
+
+    _J_NAME  = etree.XPath("./src:name", namespaces={"src": "http://www.srcML.org/srcML/src"})
+    _J_DOT   = etree.XPath("./src:operator[text()='.']", namespaces={"src": "http://www.srcML.org/srcML/src"})
 
     def _find_decls(self, node, var_name: str, include_fields: bool = False) -> list:
         # 1. Scope locale + parametri (function/constructor/class/unit)
@@ -1229,14 +1237,13 @@ class JavaAdapter(LanguageAdapter):
         if _depth > self._MAX_RESOLVE_DEPTH:
             return None
 
-        name_nodes = call_node.xpath("./src:name", namespaces=ns)
+        name_nodes = self._J_NAME(call_node)
         if not name_nodes:
             return None
 
-        # raw_name = "".join(name_nodes[0].itertext()).strip()
         raw_name = "".join(self._GENERIC_FREE_TEXT_XP(name_nodes[0])).strip()
 
-        if not name_nodes[0].xpath("./src:name", namespaces=ns):   # nome semplice
+        if not self._J_NAME(name_nodes[0]):
             recv = self._chain_receiver(call_node, ns)
             if recv is not None:
                 recv_name = self.resolve_call_name(recv, ns, imports, _depth + 1)
@@ -1244,7 +1251,7 @@ class JavaAdapter(LanguageAdapter):
                     return f"{recv_name}.{raw_name}"
 
         parts = name_nodes[0].xpath("./src:name", namespaces=ns)
-        ops = name_nodes[0].xpath("./src:operator[text()='.']", namespaces=ns)
+        ops = self._J_DOT(name_nodes[0])
 
         if len(parts) >= 2 and ops:
             var_name = "".join(parts[0].itertext()).strip()
@@ -1555,9 +1562,6 @@ def _skip_leading_casts(nodes):
         i = j + 1
     return nodes[i:]
 
-
-
-    
 # ---------------------------------------------------------------------- #
 # Implementazione C
 # ---------------------------------------------------------------------- #
@@ -1789,7 +1793,6 @@ class CAdapter(LanguageAdapter):
 
     def member_access_operator(self) -> list:
         # Operatore base per l'accesso ai membri. L'adapter gestisce esplicitamente 
-        
         return [".", "->"]
 
     def taint_block_functions(self) -> list:
@@ -1962,7 +1965,6 @@ class CAdapter(LanguageAdapter):
         return out
 
 
-
 #---------------------------------------------------
 #Implementazione Adapter Javascritpt
 #---------------------------------------------------
@@ -1977,6 +1979,10 @@ _JS_CHAIN_RE = re.compile(
     r"(?<![\w$.])[A-Za-z_$][\w$]*(?:\s*\??\.\s*[A-Za-z_$][\w$]*)*"
 )
 _JS_PREFIX_OPS = ("await", "new", "yield")
+
+
+_JS_FN_QTAGS = ("{http://www.srcML.org/srcML/src}lambda",
+                "{http://www.srcML.org/srcML/src}function")
  
  
 class JavaScriptAdapter(LanguageAdapter):
@@ -2793,7 +2799,7 @@ class JavaScriptAdapter(LanguageAdapter):
         return "./src:parameter_list/src:parameter | ./src:parameter"
  
     def get_parameter_name_node(self, param_node, ns):
-        n = param_node.xpath("./src:decl/src:name[1]", namespaces=ns)
+        n = _JS_PARAM_NAME_XP(param_node)
         return n[0] if n else None
  
     def get_parameter_name_nodes(self, param_node, ns) -> list:
@@ -3034,6 +3040,7 @@ class JavaScriptAdapter(LanguageAdapter):
     _FN_ANC = "ancestor::*[self::src:lambda or self::src:function]"
     _FN_ANC_XP = etree.XPath(_FN_ANC, namespaces=_SRC)
     _ROLES_CACHE = {}          # id(fn) -> (fn, roles)
+    _ROLE_CACHE = {}
 
     def _fn_roles(self, fn, ns):
         ent = self._ROLES_CACHE.get(id(fn))
@@ -3045,21 +3052,41 @@ class JavaScriptAdapter(LanguageAdapter):
         self._ROLES_CACHE[id(fn)] = (fn, roles)
         return roles
 
+
     def role_of_name(self, head, node, ns=_SRC):
-        """Ruolo ('Express.Request'/'Express.Response') di `head` visto da `node`, o None."""
-        for fn in reversed(self._FN_ANC_XP(node)):            # dalla più interna
+        inner = next(node.iterancestors(*_JS_FN_QTAGS), None)
+        if inner is None:
+            return None
+        key = (id(inner), head)
+        ent = self._ROLE_CACHE.get(key)
+        if ent is not None and ent[0] is inner:
+            return ent[1]
+        fns = self._FN_ANC_XP(node)
+        if not fns:
+            return None
+        inner = fns[-1]
+        key = (id(inner), head)
+        ent = self._ROLE_CACHE.get(key)
+        if ent is not None and ent[0] is inner:
+            return ent[1]
+        if len(self._ROLE_CACHE) > 20000:
+            self._ROLE_CACHE.clear()
+        result = None
+        for fn in reversed(fns):
             roles = self._fn_roles(fn, ns)
             if head in roles:
-                # shadowing: solo decl dello scope di fn stessa, non delle callback annidate
                 local = [d for d in get_decl_index(fn).get(head, [])
-                         if not d.xpath("ancestor::src:parameter", namespaces=ns)
-                         and enclosing_scope(d, self) is fn]
-                return None if local else roles[head]
+                        if not d.xpath("ancestor::src:parameter", namespaces=ns)
+                        and enclosing_scope(d, self) is fn]
+                result = None if local else roles[head]
+                break
             if any(name_text(n) == head
-                   for p in fn.xpath(self.parameters_xpath(), namespaces=ns)
-                   for n in self.get_parameter_name_nodes(p, ns)):
-                return None
-        return None
+                for p in fn.xpath(self.parameters_xpath(), namespaces=ns)
+                for n in self.get_parameter_name_nodes(p, ns)):
+                result = None
+                break
+        self._ROLE_CACHE[key] = (inner, result)
+        return result
     
     def callback_param_flow(self) -> dict:
         return {"*.forEach": 0, "*.map": 0, "*.filter": 0, "*.some": 0,

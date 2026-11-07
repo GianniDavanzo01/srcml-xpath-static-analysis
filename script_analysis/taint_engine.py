@@ -10,7 +10,8 @@ safe-context o un sanitizer.
 
 from common import NS, build_finding, is_sanitized, source_present, get_call_name, _pos_key, name_text, get_scope_index,  \
     enclosing_scope, in_opaque_tag, macro_map, expand_macro_name, call_matches, is_dead_code, CallTable, _get_matcher, \
-    _is_hardcoded_string, is_member_name
+    _is_hardcoded_string, is_member_name, _norm
+
 from sink_matchers import matches_any_sink
 from safe_context_matchers import is_in_safe_context
 
@@ -31,6 +32,7 @@ _X_ARGS       = _X("./src:argument_list/src:argument")
 _X_NAMES      = _X(".//src:name")
 _X_CALLS      = _X(".//src:call")
 _X_STMT_CALL = _X("parent::src:expr[count(*)=1]/parent::src:expr_stmt")
+_X_LOOP_ANC = _X("ancestor::*[self::src:while or self::src:for or self::src:do]")
 
 _DECL_NAME_XP = {}
 def _decl_name_xp(adapter):
@@ -103,10 +105,20 @@ def _get_unit_callbacks(tree, adapter, imports, ctx):
     return items
 
 
+
+_FN_QT = {}
+def _fn_qtags(adapter):
+    t = _FN_QT.get(adapter.name)
+    if t is None:
+        t = _FN_QT[adapter.name] = tuple(
+            f"{{{NS['src']}}}{x}" for x in set(adapter.function_tags()) | set(adapter.lambda_tags()))
+    return t
+
 def _chain_carries_taint(call, visible, return_sources, block, adapter, imports) -> bool:
     """Il receiver della call (e le call precedenti della catena) trasportano taint?"""
-    fn_anc = _fn_anc(adapter)
-    depth = len(fn_anc(call))
+    tags = _fn_qtags(adapter)
+    depth = sum(1 for _ in call.iterancestors(*tags))
+
     node = call
     while node is not None:
         parts = list(node.xpath("./src:name", namespaces=NS))
@@ -119,8 +131,9 @@ def _chain_carries_taint(call, visible, return_sources, block, adapter, imports)
             for n in _X_NAMES_SELF(vn):
                 if is_member_name(n, adapter):
                     continue
-                if (len(fn_anc(n)) == depth                     # non dentro un'altra callback
-                        and name_text(n) in visible
+
+                if (name_text(n) in visible
+                        and sum(1 for _ in n.iterancestors(*tags)) == depth
                         and not is_sanitized(n, block, adapter, imports)):
                     return True
         node = adapter._chain_receiver(node, NS)
@@ -220,9 +233,6 @@ def _killed_by_reassign(uso, var, scope_node, assign_infos, is_killing, side_eff
     key = _pos_key(uso)
     prior = [i for i in assign_infos
              if i.var == var and i.scope is scope_node and _pos_key(i.stmt) < key]
-    # if not prior:
-    #     return False
-    # last = max(prior, key=lambda i: _pos_key(i.stmt))
     plain = [i for i in prior if not i.compound]   # 'x += y' non e' mai una riassegnazione
     if not plain:
         return False
@@ -378,6 +388,30 @@ def _inline_source_findings(rule, tree, ctx, adapter, imports, return_sources, s
     return out
 
 
+_SINK_KEYS = {}
+def _rule_sink_keys(rule, adapter):
+    k = (id(rule), adapter.name)
+    ent = _SINK_KEYS.get(k)
+    if ent is None:
+        keys = set()
+        for s in rule.get("sinks", []):
+            if not (isinstance(s, dict) and s.get("type") == "call_with_var_arg"):
+                keys = None          # sink strutturali: nessun gate
+                break
+            calls = s.get("call", [])
+            keys.update(_norm(p, adapter) for p in ([calls] if isinstance(calls, str) else calls))
+        ent = _SINK_KEYS[k] = (rule, frozenset(keys) if keys is not None else None)
+    return ent[1]
+
+
+_ANNOT = {}
+def _annot_sources(rule, sources):
+    ent = _ANNOT.get(id(rule))
+    if ent is None or ent[0] is not rule:
+        ent = _ANNOT[id(rule)] = (rule, frozenset(
+            s[1:] for s in sources if isinstance(s, str) and s.startswith("@")))
+    return ent[1]
+
 
 def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
     macros = macro_map(imports)
@@ -391,10 +425,14 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
     if not sources or not sinks:
         return []
 
+    sink_keys = _rule_sink_keys(rule, adapter)
+    if sink_keys is not None and sink_keys.isdisjoint(ctx.get_call_keys(adapter, imports)):
+        return []
+
     tainted_vars_with_scope = []
 
 
-    annot_sources = {s[1:] for s in sources if isinstance(s, str) and s.startswith("@")}
+    annot_sources = _annot_sources(rule, sources)
 
     numeric_safe = rule.get("numeric_types_sanitize", False)
 
@@ -423,8 +461,6 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
     return_sources, active_output_sources, out_spec_table = _rule_pre(rule, sources, adapter)
 
     source_origin_pos = {}     # (var, id(scope)) -> posizione della prima call che riempie var
-
-    _X_LOOP_ANC = _X("ancestor::*[self::src:while or self::src:for or self::src:do]")
 
     assign_origin = {}   # (var, id(scope)) -> (posizione, stmt) della prima assegnazione che tainta var
 
@@ -511,6 +547,7 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
         block = sanitizers + [f for f in adapter.taint_block_functions() if f not in only_through]
 
     block_names = [b for b in block if isinstance(b, str)]
+    block_matcher = _get_matcher(block_names, adapter)   
 
     def _is_seed(info) -> bool:
         """L'assegnazione introduce taint per QUESTA regola?
@@ -605,7 +642,7 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
                         if not cname:
                             continue
                         spec = _prop_table(adapter).get(cname)
-                        if spec is None and _X_STMT_CALL(call) and not any(call_matches(cname, b, adapter) for b in block_names):
+                        if spec is None and _X_STMT_CALL(call) and not block_matcher(cname):
                             spec = {"out_receiver": True, "structural": True}
                         if spec is None:
                             continue
