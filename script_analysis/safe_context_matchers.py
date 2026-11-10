@@ -889,6 +889,16 @@ def _safe_context_check_format_arg_position(node, spec, var_name, adapter, impor
     # 5. È sicuro se la sua posizione NON coincide con l'indice vulnerabile.
     return preceding_args != target_index
 
+
+def _safe_context_instanceof_checked(node, spec, var_name, adapter, imports) -> bool:
+    if not var_name:
+        return False
+    for cond in node.xpath("ancestor::src:if_stmt//src:condition", namespaces=NS):
+        if any(chk["var"] == var_name for chk in adapter.extract_type_checks(cond, NS)):
+            return True
+    return False
+
+
 SAFE_CONTEXT_MATCHERS = {
     "parametrized_query": _safe_context_parametrized_query,
     "receiver_of_method": _safe_context_member_access_name,
@@ -907,7 +917,8 @@ SAFE_CONTEXT_MATCHERS = {
     "receiver_of_method_with_arg": _safe_context_receiver_of_method_with_arg,
     "var_falsy_guard_clause":_safe_context_var_falsy_guard_clause,
     "all_args_are_literals": _safe_context_all_args_are_literals,
-    "check_format_arg_position":_safe_context_check_format_arg_position
+    "check_format_arg_position":_safe_context_check_format_arg_position,
+    "instanceof_checked": _safe_context_instanceof_checked
 }
 
 

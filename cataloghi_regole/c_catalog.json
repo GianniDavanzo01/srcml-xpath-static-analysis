@@ -144,7 +144,23 @@
             "type": "matches_xpath",
             "xpath": "ancestor::src:index[parent::src:name/parent::src:decl][not(ancestor::src:parameter)]"
             }
+        ],
+        "xpath_evaluation_sinks": [
+      {
+        "type": "call_with_var_arg",
+        "call": [
+          "xmlXPathEval",
+          "xmlXPathEvalExpression",
+          "xmlXPathCompile"
         ]
+      }
+    ],
+    "division_operand": [
+      {
+        "type": "matches_xpath",
+        "xpath": "preceding-sibling::*[not(self::src:comment)][1][self::src:operator][text()='/' or text()='%' or text()='/=' or text()='%=']"
+      }
+]
     },
     "forbidden_functions":{
         "weak_key_generation": [
@@ -272,7 +288,8 @@
         "crlf_sanitizers": [],
         "shell_escape_sanitizers": [],
         "XSS_sanitizers": [],
-        "ldap_escape_sanitizers": []
+        "ldap_escape_sanitizers": [],
+        "xpath_sanitizers": []
     },
     "safe_contexts":{
         "secure_cookie_contexts": [
@@ -353,6 +370,13 @@
                     {"type": "binary_comparison", "operators": ["<", "<="], "left_exact": ["$VAR"]},
                     {"type": "binary_comparison", "operators": [">", ">="], "right_exact": ["$VAR"]}
                 ],
+
+                "nonzero_checked": [{
+                    "type": "binary_comparison",
+                    "operators": ["!=", "!==", "==", "===", ">", "<"],
+                    "left_exact": ["$VAR"],
+                    "right_exact": ["0"]
+                }],
             "crypto_safe_contexts": [],
             "manual_string_sanitization":[],
             "non_security_hash_usage":[],

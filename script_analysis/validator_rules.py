@@ -15,15 +15,16 @@ import sys
 from safe_context_matchers import SAFE_CONTEXT_MATCHERS
 from sink_matchers import SINK_MATCHERS, SIMPLE_SINKS
 from structural_handlers import STRUCTURAL_HANDLERS
+from common import SANITIZER_MATCHERS
 
 FORBIDDEN_FN_TYPES = {"exact_name", "call_matches_ast"}
-SANITIZER_TYPES = {"chain"}
+# SANITIZER_TYPES = {"chain"}
 
 REGISTRIES = {
     "safe_contexts": set(SAFE_CONTEXT_MATCHERS),
     "sinks": set(SINK_MATCHERS) | SIMPLE_SINKS,
     "forbidden_functions": FORBIDDEN_FN_TYPES,
-    "sanitizers": SANITIZER_TYPES,
+    "sanitizers": set(SANITIZER_MATCHERS),
 }
 
 RULE_TYPES = ("taint", "structural")
@@ -46,7 +47,7 @@ TAINT_KEYS = {
 # accessorie che gli handler leggono
 STRUCTURAL_OPTION_KEYS = {
     "sensitive_var_exclusions", "sensitive_value_min_len", "sensitive_value_placeholders",
-    "skip_literal_subscript_index",
+    "skip_literal_subscript_index","cast_skip_types", "cast_mode", "narrowing_pairs"
 }
 STRUCTURAL_KEYS = set(STRUCTURAL_HANDLERS) | STRUCTURAL_OPTION_KEYS
 

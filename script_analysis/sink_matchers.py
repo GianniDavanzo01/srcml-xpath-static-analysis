@@ -246,8 +246,10 @@ def _sink_assigned_property(uso, spec, fstring_nodes, adapter, imports):
     if not lhs or not lhs[0].tag.endswith("}name") or uso in lhs[0].iter():
         return False
     if op[0] not in uso.xpath("ancestor-or-self::*/preceding-sibling::*", namespaces=NS):
-        return False                                   # l'uso deve stare DOPO l'operatore
+        return False                                   
     target = adapter.resolve_name_text(name_text(lhs[0]), imports, node=lhs[0])
+    var_type = adapter.resolve_variable_type(lhs[0], name_text(lhs[0]).split(".")[0], NS)
+    target = f"{var_type}.{'.'.join(name_text(lhs[0]).split('.')[1:])}" if var_type else target
     return any(call_matches(target, n, adapter) for n in spec.get("name", []))
 
 

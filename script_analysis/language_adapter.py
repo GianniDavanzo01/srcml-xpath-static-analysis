@@ -561,6 +561,13 @@ class LanguageAdapter(ABC):
         return f"./src:argument_list/src:argument/src:expr/*[{cond}]"
 
 
+    def extract_type_checks(self, condition_node, ns) -> list[dict]:
+        return []
+
+    def division_operators(self) -> list:
+        return ["/", "%", "/=", "%="]
+
+
     
 # ---------------------------------------------------------------------- #
 # Implementazione Python
@@ -886,7 +893,21 @@ class PythonAdapter(LanguageAdapter):
         return bindings
 
     def resolve_variable_type(self, name_node, var_name, ns) -> str | None:
-        return None
+        """Python non ha tipi dichiarati: risale all'ultima assegnazione di
+        `var_name` che precede `name_node` nello stesso scope lessicale e, se
+        l'RHS è una chiamata (es. `response = Response(...)`), ritorna il nome
+        della call come 'tipo' approssimato. None se non c'è un'assegnazione
+        risolvibile nello scope (parametro, import, scope diverso)."""
+        call_node = name_node.xpath("ancestor::src:call[1] | ancestor::src:name[1]", namespaces=ns)
+        anchor = call_node[0] if call_node else name_node
+        rhs = self._reaching_rhs(anchor, var_name, ns)
+        if rhs is None:
+            return None
+        call = rhs.xpath("self::src:call | descendant-or-self::src:call[1]", namespaces=ns)
+        if not call:
+            return None
+        nm = call[0].xpath("./src:name", namespaces=ns)
+        return name_text(nm[0]) if nm else None
 
     def null_comparison_operators(self) -> dict:
         return {
@@ -1048,6 +1069,9 @@ class PythonAdapter(LanguageAdapter):
 
     def compound_assignment_operators(self) -> list:
         return ["+=", "|="]
+
+    def division_operators(self) -> list:
+        return ["/", "//", "/=", "//="]
 
 
 # ---------------------------------------------------------------------- #
@@ -1532,6 +1556,16 @@ class JavaAdapter(LanguageAdapter):
 
     def compound_assignment_operators(self) -> list:
         return ["+="]
+
+    def extract_type_checks(self, condition_node, ns) -> list:
+        out = []
+        for op in condition_node.xpath(".//src:operator[text()='instanceof']", namespaces=ns):
+            lhs = op.xpath("./preceding-sibling::*[not(self::src:comment)][1]", namespaces=ns)
+            rhs = op.xpath("./following-sibling::*[not(self::src:comment)][1]", namespaces=ns)  # primo <name> = tipo, anche col pattern-matching (caso 3)
+            if lhs and rhs:
+                out.append({"var": name_text(lhs[0]),
+                            "type": "".join(rhs[0].itertext()).strip().split("<")[0]})
+        return out
 
 
 # ---------------------------------------------------------------------- #

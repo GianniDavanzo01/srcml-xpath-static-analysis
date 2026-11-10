@@ -21,6 +21,7 @@
       "*.request.COOKIES",
       "*.request.META",
       "*.request.body",
+      "*.request.get_data",
       "*.request.resolver_match.kwargs",
       "django.http.HttpRequest.GET",
       "django.http.HttpRequest.POST",
@@ -85,13 +86,14 @@
       {
         "type": "call_with_var_arg",
         "call": [
-        "*.cursor.execute", "*.cursor.executemany",
+        "*.execute", "*.cursor.executemany",
         "*.connection.execute", "*.conn.execute",
         "sqlalchemy.orm.Session.execute",
         "sqlalchemy.engine.Engine.execute",
         "sqlalchemy.engine.Connection.execute",
         "sqlite3.connect.execute",        
-        "sqlite3.connect.executemany",     
+        "sqlite3.connect.executemany",    
+        "sqlite3.connect.cursor.execute", 
         "sqlite3.connect.executescript"     
       ]
       }
@@ -161,7 +163,9 @@
           "*.HttpResponseForbidden",
           "*.Markup",
           "*.mark_safe",
-          "*.render_template_string"
+          "*.render_template_string",
+          "*.Environment.get_template.render",
+          "*.Template.render"
         ]
       }
     ],
@@ -172,8 +176,13 @@
           "flask.redirect",
           "*.HttpResponseRedirect",
           "*.HttpResponsePermanentRedirect",
-          "*.RedirectResponse"
+          "*.RedirectResponse",
+          "flask.Response.headers"
         ]
+      },
+      {
+        "type": "assigned_property",
+        "name": ["Response.headers"]
       }
     ],
     "http_request": [
@@ -204,8 +213,12 @@
           "*.BaseHTTPRequestHandler.send_header",
           "*.HttpResponse.set_cookie",
           "*.Response.set_cookie",
-          "*.headers.add"
+          "*.Headers.add"
         ]
+      },
+      {
+        "type": "assigned_property",
+        "name": ["Response.headers"]
       }
     ],
     "ldap_execution": [
@@ -379,7 +392,36 @@
           "type": "call_with_var_arg", "arg_index": 0,
           "call": ["bytearray", "bytes", "*.numpy.zeros", "*.numpy.empty"]
         }
-      ]
+      ],
+      "xpath_evaluation_sinks": [
+      {
+        "type": "call_with_var_arg",
+        "call": [
+          "lxml.etree.XPath",
+          "*.xpath",
+          "xml.etree.ElementTree.Element.find",
+          "xml.etree.ElementTree.Element.findall",
+          "xml.etree.ElementTree.Element.iterfind",
+          "*.find",
+          "*.findall",
+          "*.iterfind"
+        ]
+      }
+    ],
+    "division_operand": [{
+    "type": "matches_xpath",
+    "xpath": "preceding-sibling::*[not(self::src:comment)][1][self::src:operator][text()='/' or text()='//' or text()='/=' or text()='//=']"
+  }],
+  "xml_parsing_sinks":[
+      {
+        "type": "call_with_var_arg",
+        "call": [
+          "lxml.etree.fromstring",
+          "lxml.etree.XML",
+          "lxml.etree.parse"
+        ]
+    }
+  ]
   },
   "forbidden_functions": {
     "dangerous_functions": [
@@ -438,7 +480,13 @@
         "arg_less_than": 2048
       }
     ],
-    "dynamic_code_execution": ["eval", "exec", "*.zip_importer.exec_module"],
+    "dynamic_code_execution": ["eval", "exec", "*.zip_importer.exec_module",
+      {
+        "type": "call_matches_ast",
+        "call": ["compile"],
+        "contains_string_containing": ["exec"]
+      }
+    ],
     "unsafe_xml_parsers": [
       "xml.sax.make_parser",
       "xml.sax.parse",
@@ -446,7 +494,8 @@
       "xml.etree.ElementTree.parse",
       "xml.etree.ElementTree.fromstring",
       "xml.dom.minidom.parse",
-      "xml.dom.pulldom.parse"
+      "xml.dom.pulldom.parse",
+      "lxml.etree.XMLParser"
     ],
     "unsafe_deserializers": [
       "pickle.load",
@@ -460,6 +509,7 @@
       "shelve.open",
       "yaml.load",
       "yaml.unsafe_load",
+      "yaml.dump",
       "pandas.read_pickle",
       "pickle.Unpickler.load"
     ],
@@ -501,7 +551,7 @@
     "weak_password_hashing": [
       {
         "type": "call_matches_ast",
-        "call": ["hashlib.md5", "hashlib.sha1"],
+        "call": ["hashlib.md5", "hashlib.sha1","hashlib.sha256", "hashlib.sha512"],
         "contains_any_name": [
           "password",
           "passwd",
@@ -563,7 +613,8 @@
     "url_encode_sanitizers": ["urllib.parse.quote", "urllib.parse.quote_plus"],
     "crlf_sanitizers": ["urllib.parse.quote", "urllib.parse.quote_plus", "werkzeug.urls.url_quote"],
     "ldap_escape_sanitizers": ["ldap3.utils.conv.escape_filter_chars", "ldap.filter.escape_filter_chars"],
-    "crypto_decryption_functions": ["*.decrypt"]
+    "crypto_decryption_functions": ["*.decrypt"],
+    "xpath_sanitizers": []
   },
   "safe_contexts": {
     "sql_parameterization": [
@@ -784,6 +835,12 @@
         }
       }
     ],
+    "nonzero_checked": [{
+      "type": "binary_comparison",
+      "operators": ["!=", "!==", "==", "===", ">", "<"],
+      "left_exact": ["$VAR"],
+      "right_exact": ["0"]
+  }],
     "crypto_safe_contexts": [],
     "curl_non_url_option": [],
     "bounds_checked_array_access": [],
@@ -888,6 +945,22 @@
         "*.strip",
         "*.lstrip",
         "*.rstrip"
+      ]
+    },
+    "insecure_jwt_verification": {
+      "forbidden_functions": [
+        {
+          "type": "call_matches_ast",
+          "call": ["jwt.decode"],
+          "contains_string_containing": ["verify_signature"],
+          "contains_booleans": ["False"]
+        }
+      ],
+      "forbidden_calls_with_kwargs": [
+        {
+          "call": ["jwt.decode"],
+          "kwargs": {"verify": "False"}
+        }
       ]
     }
   }

@@ -12,11 +12,12 @@ handler lo rende subito eseguibile e ammissibile nelle regole.
 
 from common import NS, get_call_name, build_finding, _pos_key, find_assignments, _is_pure_literal_expr, \
 assignment_pairs, enclosing_scope, node_snippet, call_matches, function_nodes, scope_xp, name_text, \
-_is_hardcoded_string, name_matches, literal_value_ok, get_const_defs, tree_xpath
+_is_hardcoded_string, name_matches, literal_value_ok, get_const_defs, tree_xpath, _last_literal_assignment
 from safe_context_matchers import is_in_safe_context
 
 
 def _run_forbidden_function_defs(tree, rule, findings, adapter, imports):
+    import re
     specs = rule.get("forbidden_function_defs", [])
     if not specs:
         return
@@ -40,28 +41,50 @@ def _run_forbidden_function_defs(tree, rule, findings, adapter, imports):
         if not target_name:
             continue
 
-        noop = " or ".join(f"self::src:{t}" for t in ["comment"] + adapter.noop_statement_tags())
-        for func_node in function_nodes(tree, adapter, name=target_name):
-            if is_async and not adapter.is_async_function(func_node, NS):
+        # 1. Trova i metodi standard (<function>)
+        matched_targets = []
+        for fn in function_nodes(tree, adapter):
+            fn_names = fn.xpath("./src:name[1]", namespaces=NS)
+            if fn_names and name_text(fn_names[0]) == target_name:
+                matched_targets.append((fn, fn.xpath("./src:block", namespaces=NS)))
+
+        # 2. Gestione edge-case srcML (classi anonime in Java: <call> seguito da <block>)
+        for call_node in tree.xpath(f".//src:call[src:name[text()='{target_name}']]", namespaces=NS):
+            next_block = call_node.xpath("following-sibling::*[not(self::src:comment)][1][self::src:block]", namespaces=NS)
+            if next_block:
+                matched_targets.append((call_node, next_block))
+
+        # 3. Validazione del corpo del metodo
+        for node, blocks in matched_targets:
+            if not blocks:
                 continue
-                    
+
+            block = blocks[0]
+
+            if is_async and not adapter.is_async_function(node, NS):
+                continue
+
             if max_params is not None:
-                params = func_node.xpath(".//src:parameter_list//src:parameter", namespaces=NS)
+                params = node.xpath(".//src:parameter_list//src:parameter | .//src:argument_list//src:argument", namespaces=NS)
                 if len(params) > max_params:
                     continue
-                    
+
             if exact_body in ["{}", "empty"]:
-                block_content = func_node.xpath("./src:block/src:block_content", namespaces=NS)
-                if not block_content:
-                    continue
-                valid_stmts = block_content[0].xpath(f"./*[not({noop})]", namespaces=NS)
-                if len(valid_stmts) > 0:
+                # Normalizzazione del testo del blocco per ignorare spazi come '{ }'
+                clean_body = re.sub(r"\s+", "", "".join(block.itertext()))
+                child_stmts = [
+                    el for el in block.xpath(".//src:block_content/* | ./src:*", namespaces=NS)
+                    if el.tag.split("}")[-1] not in (set(adapter.noop_statement_tags()) | {"comment", "block_content"})
+                ]
+
+                # Se ci sono statement reali o il testo non è vuoto, il metodo non è vulnerabile
+                if len(child_stmts) > 0 or clean_body not in ("{}", "{;}"):
                     continue
 
-            if is_in_safe_context(func_node, safe_contexts, None, adapter, imports):
+            if is_in_safe_context(node, safe_contexts, None, adapter, imports):
                 continue
 
-            findings.append(build_finding(rule, func_node))
+            findings.append(build_finding(rule, node))
 
 
 #HELPER PER _run_missing_while_increments
@@ -637,6 +660,102 @@ def _run_xpath_rules(tree, rule, findings, adapter, imports):
             findings.append(build_finding(rule, node))
 
 
+def _run_unchecked_casts(tree, rule, findings, adapter, imports):
+    if not rule.get("unchecked_casts"):
+        return
+    mode = rule.get("cast_mode", "reference")
+    safe_contexts = rule.get("safe_contexts", [])
+
+    if mode == "primitive":
+        narrowing_pairs = {tuple(p) for p in rule.get("narrowing_pairs", [])}
+        for expr in tree.xpath(".//src:expr", namespaces=NS):
+            kids = [c for c in expr if isinstance(c.tag, str)]
+            for i in range(len(kids) - 3):
+                if not _is_cast_shape(kids, i):
+                    continue
+                target_type = "".join(kids[i+1].itertext()).strip()
+                operand = kids[i+3]
+                if not operand.tag.endswith("}name"):
+                    continue
+                var_name = name_text(operand)
+                declared_type = adapter.resolve_variable_type(operand, var_name, NS)
+                if declared_type is None:
+                    continue   # senza il tipo sorgente non posso dire se è narrowing
+                if (declared_type.strip(), target_type) not in narrowing_pairs:
+                    continue
+                if is_in_safe_context(operand, safe_contexts, var_name, adapter, imports):
+                    continue
+                findings.append(build_finding(rule, operand))
+        return
+
+    # --- ramo "reference" ---
+    skip_types = set(rule.get("cast_skip_types", []))
+    for expr in tree.xpath(".//src:expr", namespaces=NS):
+        kids = [c for c in expr if isinstance(c.tag, str)]
+        for i in range(len(kids) - 3):
+            if not _is_cast_shape(kids, i):
+                continue
+            target_type = "".join(kids[i+1].itertext()).strip().split("<")[0]
+            if target_type in skip_types or not target_type[:1].isupper():
+                continue
+            operand = kids[i+3]
+            if not operand.tag.endswith("}name"):
+                continue
+            var_name = name_text(operand)
+            declared_type = adapter.resolve_variable_type(operand, var_name, NS)
+            if declared_type is not None:
+                declared_base = declared_type.strip().split("<")[0].split()[-1]
+                if declared_base == target_type:
+                    continue
+            if is_in_safe_context(operand, safe_contexts, var_name, adapter, imports):
+                continue
+            findings.append(build_finding(rule, operand))
+
+
+def _is_cast_shape(kids, i) -> bool:
+    return (kids[i].tag.endswith("}operator") and "".join(kids[i].itertext()).strip() == "("
+            and kids[i+1].tag.endswith("}name")
+            and kids[i+2].tag.endswith("}operator") and "".join(kids[i+2].itertext()).strip() == ")"
+            and kids[i+3].tag.endswith("}name"))
+
+
+def _num(node, adapter):
+    t = "".join(node.itertext()).strip()
+    if "." in t:
+        try:
+            return float(t.rstrip("fFdD"))
+        except ValueError:
+            return None
+    return adapter.parse_numeric_literal(t)
+
+def _run_zero_division(tree, rule, findings, adapter, imports):
+    if not rule.get("zero_division_check"):
+        return
+    safe_contexts = rule.get("safe_contexts", [])
+    ops = " or ".join(f"text()='{o}'" for o in adapter.division_operators())
+
+    for op in tree.xpath(f".//src:operator[{ops}]", namespaces=NS):
+        rhs = op.xpath("./following-sibling::*[not(self::src:comment)][1]", namespaces=NS)
+        if not rhs:
+            continue
+        node = rhs[0]
+
+        if node.tag.endswith("}literal") and node.get("type") == "number":
+            var_name, val = None, _num(node, adapter)
+        elif node.tag.endswith("}name") and not node.xpath("./src:index", namespaces=NS):
+            var_name = name_text(node)
+            lit = _last_literal_assignment(op, var_name, adapter)
+            val = _num(lit, adapter) if lit is not None else None
+        else:
+            continue
+
+        if val != 0:          # copre anche None (non interpretabile)
+            continue
+        if is_in_safe_context(node, safe_contexts, var_name, adapter, imports):
+            continue
+        findings.append(build_finding(rule, op))
+
+
 STRUCTURAL_HANDLERS = {
     "bad_assignments": _run_bad_assignments,
     "sensitive_var_patterns": _run_sensitive_var_patterns,
@@ -650,4 +769,6 @@ STRUCTURAL_HANDLERS = {
     "use_after_free": _check_use_after_free,
     "empty_if_blocks": _run_empty_if_blocks,
     "xpath_rules": _run_xpath_rules,
+    "unchecked_casts": _run_unchecked_casts,
+    "zero_division_check": _run_zero_division
 }

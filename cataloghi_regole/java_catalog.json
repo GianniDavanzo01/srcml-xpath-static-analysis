@@ -21,7 +21,8 @@
       "*.Scanner.nextLine",
       "*.Scanner.next",
       "*.Console.readLine",
-      "*.Console.readPassword"
+      "*.Console.readPassword",
+      "*.Scanner.nextInt", "*.Scanner.nextLong", "*.Scanner.nextShort", "*.Scanner.nextByte"
     ],
     "nullable_returning_calls": [
       "*.Map.get",
@@ -254,8 +255,7 @@
         "System.out.println", "System.out.print", "System.out.printf", "System.out.format",
         "System.err.println", "System.err.print", "System.err.printf", "System.err.format"
       ]
-    },
-    { "type": "method_call", "method": "printStackTrace", "arg_count_max": 0 }
+    }
   ],
     "logging_functions": [
       {
@@ -388,7 +388,25 @@
         "call": ["*.ArrayList", "*.Vector", "*.HashMap", "*.HashSet",
                   "*.Hashtable", "*.LinkedHashMap", "*.ArrayDeque",
                   "*.PriorityQueue", "*.StringBuilder", "*.ByteArrayOutputStream"]}
-      ]
+      ],
+      "xpath_evaluation_sinks": [
+      {
+        "type": "call_with_var_arg",
+        "call": [
+          "*.XPath.evaluate",
+          "*.XPath.compile",
+          "*.XPathExpression.evaluate",
+          "*.selectNodes",
+          "*.selectSingleNode"
+        ]
+      }
+    ],
+    "division_operand": [
+      {
+        "type": "matches_xpath",
+        "xpath": "preceding-sibling::*[not(self::src:comment)][1][self::src:operator][text()='/' or text()='%' or text()='/=' or text()='%=']"
+      }
+  ]
   },
   "forbidden_functions": {
     "dangerous_functions": [
@@ -410,7 +428,7 @@
       "*.Jwts.builder",
       {
         "type": "call_matches_ast",
-        "call": "*.Cipher.getInstance",
+        "call": ["*.Cipher.getInstance","*.Signature.getInstance"],
         "case_insensitive": true,
         "contains_string_containing": [
           "DES",
@@ -418,7 +436,8 @@
           "RC2",
           "RC4",
           "Blowfish",
-          "ECB"
+          "ECB",
+          "MD5withRSA"
         ]
       }
     ],
@@ -444,7 +463,8 @@
       "*.MVEL.eval",
       "*.JShell.eval",
       "*.SourceCodeAnalysis.wrappers",
-      "*.runsource"
+      "*.runsource",
+      "*.Interpreter.eval"
     ],
     "unsafe_xml_parsers": [
       "*.DocumentBuilderFactory.newDocumentBuilder",
@@ -502,7 +522,10 @@
           "api_key",
           "apikey",
           "private_key",
-          "privatekey"
+          "privatekey",
+          "secure",
+          "security",
+          "sensitive"
         ]
       }
     ],
@@ -600,6 +623,10 @@
     "crypto_decryption_functions": [
       "*.Cipher.doFinal",
       "*.Cipher.update"
+    ],
+    "xpath_sanitizers": [
+      "org.owasp.esapi.Encoder.encodeForXPath",
+      "*.encodeForXPath"
     ],
     "shell_escape_sanitizers": []
   },
@@ -865,6 +892,12 @@
         "xpath": "not(.//src:call[src:name/src:name[last()][text()='enableDefaultTyping' or text()='activateDefaultTyping']])"
       }
     ],
+    "nonzero_checked": [{
+      "type": "binary_comparison",
+      "operators": ["!=", "!==", "==", "===", ">", "<"],
+      "left_exact": ["$VAR"],
+      "right_exact": ["0"]
+  }],
     "non_security_hash_usage":[],
     "curl_non_url_option": [],
     "sql_parameterization": []
@@ -935,6 +968,19 @@
       "xpath_rules": [
         ".//src:condition/src:expr[src:operator[text()='='] and not(src:operator[text()='==' or text()='!=' or text()='<' or text()='>' or text()='<=' or text()='>=' or text()='&&' or text()='||'])]"
       ]
+    },
+    "unchecked_casts": {
+      "unchecked_casts": true,
+      "cast_skip_types": ["Object"],
+      "safe_contexts": [
+        {"type": "instanceof_checked"},
+        {"type": "var_falsy_guard_clause"}
+      ]
+    },
+    "narrowing_primitive_casts": {
+      "unchecked_casts": true,
+      "cast_mode": "primitive",
+      "narrowing_pairs": [["double","int"], ["double","float"], ["long","int"], ["float","int"]]
     },
     "unsafe_deserialization_kwargs": {}
   }

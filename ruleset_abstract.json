@@ -173,7 +173,7 @@
   "languages":["c","java"],
   "vulnerabilities": ["CWE-129"],
   "sources": [
-    {"tag": "http_input"}
+    {"tag": "http_input"}, "function_parameters"
   ],
   "sinks": [{"tag": "array_index_use"}],
   "safe_contexts": [{"tag": "bounds_checked_array_access"}],
@@ -184,7 +184,7 @@
   "type": "taint",
   "languages":["c","java"],
   "vulnerabilities": ["CWE-129"],
-  "sources": [{"tag": "http_input"}],
+  "sources": [{"tag": "http_input"},"function_parameters"],
   "sinks": [{"tag": "array_alloc_size"}],
   "patterns": [{"tag": "string_to_int_propagation"}],
   "safe_contexts": [{"tag": "alloc_size_positive_checked"}]
@@ -211,6 +211,13 @@
   "xpath_rules": [
     {"tag": "off_by_one_loop_condition"}
   ]
+},
+{
+  "rule_id": "CWE-197", 
+  "type": "structural", 
+  "languages": ["java"],
+  "vulnerabilities": ["CWE-197"], 
+  "patterns": [{"tag": "narrowing_primitive_casts"}]
 },
 {
   "rule_id": "CWE-209-ERROR-DETAILS-TO-CLIENT",
@@ -250,7 +257,7 @@
 {
   "rule_id": "CWE-276-INCORRECT-DEFAULT-PERMISSIONS",
   "type": "structural",
-  "languages":["c","python"],
+  "languages":["c","python","javascript"],
   "vulnerabilities": ["CWE-276"],
   "forbidden_functions": [{"tag": "insecure_default_permissions"}]
 },
@@ -346,6 +353,35 @@
   "excluded_functions": [
     {"tag": "safe_prng_exceptions"}
   ]
+},
+{
+  "rule_id": "CWE-347-JWT-NO-VERIFY",
+  "type": "structural",
+  "languages": ["python"],
+  "vulnerabilities": ["CWE-347"],
+  "patterns": [{"tag": "insecure_jwt_verification"}]
+},
+{
+  "rule_id": "CWE-369-DIVIDE-BY-ZERO",
+  "type": "structural",
+  "languages": ["java", "python", "c"],
+  "vulnerabilities": ["CWE-369"],
+  "zero_division_check": true,
+  "safe_contexts": [
+    {"type": "binary_comparison", "operators": ["!="], "left_exact": ["$VAR"], "right_exact": ["0"]},
+    {"type": "binary_comparison", "operators": [">"], "left_exact": ["$VAR"], "right_exact": ["0"]},
+    {"type": "var_falsy_guard_clause"}
+  ]
+},
+{
+  "rule_id": "CWE-369-DIVIDE-BY-ZERO-TAINT",
+  "type": "taint",
+  "languages": ["java", "python", "c"],
+  "vulnerabilities": ["CWE-369"],
+  "sources": [{"tag": "http_input"}, {"tag": "cli_input"},"function_parameters"],
+  "sinks": [{"tag": "division_operand"}],
+  "patterns": [{"tag": "string_to_int_propagation"}],
+  "safe_contexts": [{"tag": "nonzero_checked"}]
 },
 {
   "rule_id": "CWE-377-INSECURE-TEMP-FILE",
@@ -535,10 +571,11 @@
 {
   "rule_id": "CWE-611-XXE-TAINT",
   "type": "taint",
-  "languages": ["javascript"],
+  "languages": ["javascript","python"],
   "vulnerabilities": ["CWE-611"],
   "sources": [{"tag": "http_input"}, "function_parameters"],
-  "sinks": [{"tag": "xml_parsing_sinks"}]
+  "sinks": [{"tag": "xml_parsing_sinks"}],
+  "safe_contexts":[{"tag":"xxe_safe_configuration"}]
 },
 {
   "rule_id": "CWE-614-SENSITIVE-COOKIE-INSECURE",
@@ -557,7 +594,7 @@
   "vulnerabilities": ["CWE-617"],
   "sources": [
     {"tag": "http_input"},
-    {"tag": "cli_input"}
+    {"tag": "cli_input"},"function_parameters"
   ],
   "ignore_taint_block_functions":true,
   "sinks": [
@@ -592,6 +629,13 @@
   "type": "structural",
   "vulnerabilities": ["CWE-703"],
   "empty_catch_blocks": true
+},
+{
+  "rule_id": "UNCHECKED-CAST",
+  "type": "structural",
+  "languages": ["java"],
+  "vulnerabilities": ["CWE-704"],
+  "patterns": [{"tag": "unchecked_casts"}]
 },
 {
   "rule_id": "CWE-732-INCORRECT-PERMISSION-ASSIGNMENT",
