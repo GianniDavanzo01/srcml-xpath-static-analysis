@@ -1,0 +1,762 @@
+{
+  "summary": {
+    "units_analyzed": 25,
+    "units_failed": 0,
+    "files_failed": 0,
+    "vulnerable_files": 15,
+    "total_findings": 38,
+    "categories_count": {
+      "CWE-78": 1,
+      "CWE-209": 1,
+      "CWE-614": 1,
+      "CWE-319": 1,
+      "CWE-321": 3,
+      "CWE-798": 3,
+      "CWE-22": 1,
+      "CWE-338": 7,
+      "CWE-259": 5,
+      "CWE-943": 7,
+      "CWE-1333": 1,
+      "CWE-117": 1,
+      "CWE-601": 2,
+      "CWE-95": 3,
+      "CWE-918": 1
+    }
+  },
+  "errors": [],
+  "details": [
+    {
+      "source_file": "NodeGoat/Gruntfile.js",
+      "xml_source": "NodeGoat.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-209-ERROR-DETAILS-TO-CONSOLE",
+        "CWE-78-OS-CMD-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-209",
+        "CWE-78"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-78-OS-CMD-INJECTION",
+          "vulnerabilities": [
+            "CWE-78"
+          ],
+          "source_file": "NodeGoat/Gruntfile.js",
+          "line": "165:9",
+          "snippet": "exec( cmd + \"node artifacts/db-reset.js\", function(err, stdout, stderr) { if (err) { grunt.log.error(\"db-reset:\"); grunt.log.error(err); gru…",
+          "tainted_variable": "cmd"
+        },
+        {
+          "rule_id": "CWE-209-ERROR-DETAILS-TO-CONSOLE",
+          "vulnerabilities": [
+            "CWE-209"
+          ],
+          "source_file": "NodeGoat/Gruntfile.js",
+          "line": "101:29",
+          "snippet": "console.log(e);",
+          "tainted_variable": "e"
+        }
+      ]
+    },
+    {
+      "source_file": "NodeGoat/server.js",
+      "xml_source": "NodeGoat.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-319-CLEARTEXT-TRANSMISSION",
+        "CWE-614-SENSITIVE-COOKIE-INSECURE"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-319",
+        "CWE-614"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-614-SENSITIVE-COOKIE-INSECURE",
+          "vulnerabilities": [
+            "CWE-614"
+          ],
+          "source_file": "NodeGoat/server.js",
+          "line": "78:13",
+          "snippet": "session({ // genid: (req) => { // return genuuid() // use UUIDs for session IDs //}, secret: cookieSecret, // Both mandatory in Express v4 s…"
+        },
+        {
+          "rule_id": "CWE-319-CLEARTEXT-TRANSMISSION",
+          "vulnerabilities": [
+            "CWE-319"
+          ],
+          "source_file": "NodeGoat/server.js",
+          "line": "145:5",
+          "snippet": "http.createServer(app)"
+        }
+      ]
+    },
+    {
+      "source_file": "NodeGoat/config/env/production.js",
+      "xml_source": "NodeGoat.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "NodeGoat/config/env/test.js",
+      "xml_source": "NodeGoat.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-321-HARDCODED-CRYPTO-KEY",
+        "CWE-798-HARDCODED-CREDENTIALS"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-321",
+        "CWE-798"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-321-HARDCODED-CRYPTO-KEY",
+          "vulnerabilities": [
+            "CWE-321"
+          ],
+          "source_file": "NodeGoat/config/env/test.js",
+          "line": "6:4",
+          "snippet": "zapApiKey: \"v9dn0balpqas1pcc281tn5ood1\""
+        },
+        {
+          "rule_id": "CWE-798-HARDCODED-CREDENTIALS",
+          "vulnerabilities": [
+            "CWE-798"
+          ],
+          "source_file": "NodeGoat/config/env/test.js",
+          "line": "6:4",
+          "snippet": "zapApiKey: \"v9dn0balpqas1pcc281tn5ood1\""
+        }
+      ]
+    },
+    {
+      "source_file": "NodeGoat/config/env/all.js",
+      "xml_source": "NodeGoat.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-321-HARDCODED-CRYPTO-KEY",
+        "CWE-798-HARDCODED-CREDENTIALS"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-321",
+        "CWE-798"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-321-HARDCODED-CRYPTO-KEY",
+          "vulnerabilities": [
+            "CWE-321"
+          ],
+          "source_file": "NodeGoat/config/env/all.js",
+          "line": "9:5",
+          "snippet": "cryptoKey: \"a_secure_key_for_crypto_here\""
+        },
+        {
+          "rule_id": "CWE-798-HARDCODED-CREDENTIALS",
+          "vulnerabilities": [
+            "CWE-798"
+          ],
+          "source_file": "NodeGoat/config/env/all.js",
+          "line": "8:5",
+          "snippet": "cookieSecret: \"session_cookie_secret_key_here\""
+        }
+      ]
+    },
+    {
+      "source_file": "NodeGoat/config/env/development.js",
+      "xml_source": "NodeGoat.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-321-HARDCODED-CRYPTO-KEY",
+        "CWE-798-HARDCODED-CREDENTIALS"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-321",
+        "CWE-798"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-321-HARDCODED-CRYPTO-KEY",
+          "vulnerabilities": [
+            "CWE-321"
+          ],
+          "source_file": "NodeGoat/config/env/development.js",
+          "line": "6:4",
+          "snippet": "zapApiKey: \"v9dn0balpqas1pcc281tn5ood1\""
+        },
+        {
+          "rule_id": "CWE-798-HARDCODED-CREDENTIALS",
+          "vulnerabilities": [
+            "CWE-798"
+          ],
+          "source_file": "NodeGoat/config/env/development.js",
+          "line": "6:4",
+          "snippet": "zapApiKey: \"v9dn0balpqas1pcc281tn5ood1\""
+        }
+      ]
+    },
+    {
+      "source_file": "NodeGoat/config/config.js",
+      "xml_source": "NodeGoat.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-22-PATH-TRAVERSAL"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-22"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "NodeGoat/config/config.js",
+          "line": "8:1",
+          "snippet": "const envConf = require(path.resolve(__dirname + \"/../config/env/\" + finalEnv.toLowerCase() + \".js\")) || {};",
+          "tainted_variable": "finalEnv"
+        }
+      ]
+    },
+    {
+      "source_file": "NodeGoat/artifacts/db-reset.js",
+      "xml_source": "NodeGoat.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-259-HARDCODED-PASSWORD",
+        "CWE-338-WEAK-PRNG"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-259",
+        "CWE-338"
+      ],
+      "findings_count": 5,
+      "findings": [
+        {
+          "rule_id": "CWE-338-WEAK-PRNG",
+          "vulnerabilities": [
+            "CWE-338"
+          ],
+          "source_file": "NodeGoat/artifacts/db-reset.js",
+          "line": "113:44",
+          "snippet": "Math.random()"
+        },
+        {
+          "rule_id": "CWE-338-WEAK-PRNG",
+          "vulnerabilities": [
+            "CWE-338"
+          ],
+          "source_file": "NodeGoat/artifacts/db-reset.js",
+          "line": "114:43",
+          "snippet": "Math.random()"
+        },
+        {
+          "rule_id": "CWE-259-HARDCODED-PASSWORD",
+          "vulnerabilities": [
+            "CWE-259"
+          ],
+          "source_file": "NodeGoat/artifacts/db-reset.js",
+          "line": "18:9",
+          "snippet": "\"password\": \"Admin_123\""
+        },
+        {
+          "rule_id": "CWE-259-HARDCODED-PASSWORD",
+          "vulnerabilities": [
+            "CWE-259"
+          ],
+          "source_file": "NodeGoat/artifacts/db-reset.js",
+          "line": "27:9",
+          "snippet": "\"password\": \"User1_123\""
+        },
+        {
+          "rule_id": "CWE-259-HARDCODED-PASSWORD",
+          "vulnerabilities": [
+            "CWE-259"
+          ],
+          "source_file": "NodeGoat/artifacts/db-reset.js",
+          "line": "35:9",
+          "snippet": "\"password\": \"User2_123\""
+        }
+      ]
+    },
+    {
+      "source_file": "NodeGoat/app/data/benefits-dao.js",
+      "xml_source": "NodeGoat.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "NodeGoat/app/data/user-dao.js",
+      "xml_source": "NodeGoat.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-338-WEAK-PRNG",
+        "CWE-943-NOSQL-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-338",
+        "CWE-943"
+      ],
+      "findings_count": 8,
+      "findings": [
+        {
+          "rule_id": "CWE-338-WEAK-PRNG",
+          "vulnerabilities": [
+            "CWE-338"
+          ],
+          "source_file": "NodeGoat/app/data/user-dao.js",
+          "line": "51:33",
+          "snippet": "Math.random()"
+        },
+        {
+          "rule_id": "CWE-338-WEAK-PRNG",
+          "vulnerabilities": [
+            "CWE-338"
+          ],
+          "source_file": "NodeGoat/app/data/user-dao.js",
+          "line": "52:35",
+          "snippet": "Math.random()"
+        },
+        {
+          "rule_id": "CWE-338-WEAK-PRNG",
+          "vulnerabilities": [
+            "CWE-338"
+          ],
+          "source_file": "NodeGoat/app/data/user-dao.js",
+          "line": "53:32",
+          "snippet": "Math.random()"
+        },
+        {
+          "rule_id": "CWE-943-NOSQL-INJECTION",
+          "vulnerabilities": [
+            "CWE-943"
+          ],
+          "source_file": "NodeGoat/app/data/user-dao.js",
+          "line": "91:9",
+          "snippet": "usersCol.findOne({ userName: userName }, validateUserDoc);",
+          "tainted_variable": "userName"
+        },
+        {
+          "rule_id": "CWE-943-NOSQL-INJECTION",
+          "vulnerabilities": [
+            "CWE-943"
+          ],
+          "source_file": "NodeGoat/app/data/user-dao.js",
+          "line": "98:9",
+          "snippet": "usersCol.findOne({ _id: parseInt(userId) }, callback);",
+          "tainted_variable": "callback"
+        },
+        {
+          "rule_id": "CWE-943-NOSQL-INJECTION",
+          "vulnerabilities": [
+            "CWE-943"
+          ],
+          "source_file": "NodeGoat/app/data/user-dao.js",
+          "line": "104:9",
+          "snippet": "usersCol.findOne({ userName: userName }, callback);",
+          "tainted_variable": "userName"
+        },
+        {
+          "rule_id": "CWE-943-NOSQL-INJECTION",
+          "vulnerabilities": [
+            "CWE-943"
+          ],
+          "source_file": "NodeGoat/app/data/user-dao.js",
+          "line": "104:9",
+          "snippet": "usersCol.findOne({ userName: userName }, callback);",
+          "tainted_variable": "callback"
+        },
+        {
+          "rule_id": "CWE-943-NOSQL-INJECTION",
+          "vulnerabilities": [
+            "CWE-943"
+          ],
+          "source_file": "NodeGoat/app/data/user-dao.js",
+          "line": "91:9",
+          "snippet": "usersCol.findOne({ userName: userName }, validateUserDoc);",
+          "tainted_variable": "validateUserDoc"
+        }
+      ]
+    },
+    {
+      "source_file": "NodeGoat/app/data/memos-dao.js",
+      "xml_source": "NodeGoat.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "NodeGoat/app/data/research-dao.js",
+      "xml_source": "NodeGoat.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "NodeGoat/app/data/profile-dao.js",
+      "xml_source": "NodeGoat.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "NodeGoat/app/data/contributions-dao.js",
+      "xml_source": "NodeGoat.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-943-NOSQL-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-943"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-943-NOSQL-INJECTION",
+          "vulnerabilities": [
+            "CWE-943"
+          ],
+          "source_file": "NodeGoat/app/data/contributions-dao.js",
+          "line": "57:9",
+          "snippet": "contributionsDB.findOne({ userId: userId }, (err, contributions) => { if (err) return callback(err, null); // Set defualt contributions if n…",
+          "tainted_variable": "userId"
+        }
+      ]
+    },
+    {
+      "source_file": "NodeGoat/app/data/allocations-dao.js",
+      "xml_source": "NodeGoat.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-943-NOSQL-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-943"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-943-NOSQL-INJECTION",
+          "vulnerabilities": [
+            "CWE-943"
+          ],
+          "source_file": "NodeGoat/app/data/allocations-dao.js",
+          "line": "86:9",
+          "snippet": "allocationsCol.find(searchCriteria()).toArray((err, allocations) => { if (err) return callback(err, null); if (!allocations.length) return c…",
+          "tainted_variable": "searchCriteria"
+        }
+      ]
+    },
+    {
+      "source_file": "NodeGoat/app/routes/allocations.js",
+      "xml_source": "NodeGoat.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "NodeGoat/app/routes/memos.js",
+      "xml_source": "NodeGoat.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "NodeGoat/app/routes/profile.js",
+      "xml_source": "NodeGoat.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-1333-REGEX-DOS"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-1333"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-1333-REGEX-DOS",
+          "vulnerabilities": [
+            "CWE-1333"
+          ],
+          "source_file": "NodeGoat/app/routes/profile.js",
+          "line": "61:9",
+          "snippet": "const testComplyWithRequirements = regexPattern.test(bankRouting);",
+          "tainted_variable": "bankRouting"
+        }
+      ]
+    },
+    {
+      "source_file": "NodeGoat/app/routes/error.js",
+      "xml_source": "NodeGoat.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "NodeGoat/app/routes/session.js",
+      "xml_source": "NodeGoat.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-117-LOG-INJECTION",
+        "CWE-259-HARDCODED-PASSWORD",
+        "CWE-338-WEAK-PRNG",
+        "CWE-601-OPEN-REDIRECT"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-117",
+        "CWE-259",
+        "CWE-338",
+        "CWE-601"
+      ],
+      "findings_count": 6,
+      "findings": [
+        {
+          "rule_id": "CWE-338-WEAK-PRNG",
+          "vulnerabilities": [
+            "CWE-338"
+          ],
+          "source_file": "NodeGoat/app/routes/session.js",
+          "line": "16:36",
+          "snippet": "Math.random()"
+        },
+        {
+          "rule_id": "CWE-338-WEAK-PRNG",
+          "vulnerabilities": [
+            "CWE-338"
+          ],
+          "source_file": "NodeGoat/app/routes/session.js",
+          "line": "17:35",
+          "snippet": "Math.random()"
+        },
+        {
+          "rule_id": "CWE-117-LOG-INJECTION",
+          "vulnerabilities": [
+            "CWE-117"
+          ],
+          "source_file": "NodeGoat/app/routes/session.js",
+          "line": "64:21",
+          "snippet": "console.log(\"Error: attempt to login with invalid user: \", userName);",
+          "tainted_variable": "userName"
+        },
+        {
+          "rule_id": "CWE-259-HARDCODED-PASSWORD",
+          "vulnerabilities": [
+            "CWE-259"
+          ],
+          "source_file": "NodeGoat/app/routes/session.js",
+          "line": "61:13",
+          "snippet": "const invalidPasswordErrorMessage = \"Invalid password\";"
+        },
+        {
+          "rule_id": "CWE-259-HARDCODED-PASSWORD",
+          "vulnerabilities": [
+            "CWE-259"
+          ],
+          "source_file": "NodeGoat/app/routes/session.js",
+          "line": "172:13",
+          "snippet": "errors.passwordError = \"Password must be 8 to 18 characters\" + \" including numbers, lowercase and uppercase letters.\";"
+        },
+        {
+          "rule_id": "CWE-601-OPEN-REDIRECT",
+          "vulnerabilities": [
+            "CWE-601"
+          ],
+          "source_file": "NodeGoat/app/routes/session.js",
+          "line": "117:33",
+          "snippet": "user.isAdmin ?",
+          "tainted_variable": "user"
+        }
+      ]
+    },
+    {
+      "source_file": "NodeGoat/app/routes/contributions.js",
+      "xml_source": "NodeGoat.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-95-EVAL-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-95"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "CWE-95-EVAL-INJECTION",
+          "vulnerabilities": [
+            "CWE-95"
+          ],
+          "source_file": "NodeGoat/app/routes/contributions.js",
+          "line": "32:24",
+          "snippet": "eval(req.body.preTax)"
+        },
+        {
+          "rule_id": "CWE-95-EVAL-INJECTION",
+          "vulnerabilities": [
+            "CWE-95"
+          ],
+          "source_file": "NodeGoat/app/routes/contributions.js",
+          "line": "33:26",
+          "snippet": "eval(req.body.afterTax)"
+        },
+        {
+          "rule_id": "CWE-95-EVAL-INJECTION",
+          "vulnerabilities": [
+            "CWE-95"
+          ],
+          "source_file": "NodeGoat/app/routes/contributions.js",
+          "line": "34:22",
+          "snippet": "eval(req.body.roth)"
+        }
+      ]
+    },
+    {
+      "source_file": "NodeGoat/app/routes/tutorial.js",
+      "xml_source": "NodeGoat.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "NodeGoat/app/routes/research.js",
+      "xml_source": "NodeGoat.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-918-SSRF"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-918"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-918-SSRF",
+          "vulnerabilities": [
+            "CWE-918"
+          ],
+          "source_file": "NodeGoat/app/routes/research.js",
+          "line": "16:13",
+          "snippet": "return needle.get(url, (error, newResponse, body) => { if (!error && newResponse.statusCode === 200) { res.writeHead(200, { \"Content-Type\": …",
+          "tainted_variable": "url"
+        }
+      ]
+    },
+    {
+      "source_file": "NodeGoat/app/routes/benefits.js",
+      "xml_source": "NodeGoat.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "NodeGoat/app/routes/index.js",
+      "xml_source": "NodeGoat.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-601-OPEN-REDIRECT"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-601"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-601-OPEN-REDIRECT",
+          "vulnerabilities": [
+            "CWE-601"
+          ],
+          "source_file": "NodeGoat/app/routes/index.js",
+          "line": "72:9",
+          "snippet": "return res.redirect(req.query.url);",
+          "tainted_variable": "req"
+        }
+      ]
+    }
+  ],
+  "rules_skipped": {
+    "javascript": [
+      {
+        "rule_id": "CWE-20-UNSAFE-DICT-ACCESS",
+        "reason": "non applicabile a 'javascript' (languages=['python'])"
+      },
+      {
+        "rule_id": "CWE-120-BUFFER-OVERFLOW",
+        "reason": "non applicabile a 'javascript' (languages=['c'])"
+      },
+      {
+        "rule_id": "CWE-129-IMPROPER-ARRAY-INDEX-VALIDATION",
+        "reason": "non applicabile a 'javascript' (languages=['c', 'java'])"
+      },
+      {
+        "rule_id": "CWE-129-ARRAY-SIZE-VALIDATION",
+        "reason": "non applicabile a 'javascript' (languages=['c', 'java'])"
+      },
+      {
+        "rule_id": "CWE-197",
+        "reason": "non applicabile a 'javascript' (languages=['java'])"
+      },
+      {
+        "rule_id": "CWE-347-JWT-NO-VERIFY",
+        "reason": "non applicabile a 'javascript' (languages=['python'])"
+      },
+      {
+        "rule_id": "CWE-369-DIVIDE-BY-ZERO",
+        "reason": "non applicabile a 'javascript' (languages=['java', 'python', 'c'])"
+      },
+      {
+        "rule_id": "CWE-369-DIVIDE-BY-ZERO-TAINT",
+        "reason": "non applicabile a 'javascript' (languages=['java', 'python', 'c'])"
+      },
+      {
+        "rule_id": "CWE-400-UNCONTROLLED-SLEEP-C",
+        "reason": "non applicabile a 'javascript' (languages=['c'])"
+      },
+      {
+        "rule_id": "CWE-415-416-MEMORY-MISUSE-AFTER-FREE",
+        "reason": "non applicabile a 'javascript' (languages=['c'])"
+      },
+      {
+        "rule_id": "CWE-476-NULL-POINTER-DEREFERENCE",
+        "reason": "non applicabile a 'javascript' (languages=['python', 'c', 'java'])"
+      },
+      {
+        "rule_id": "CWE-502-JACKSON-UNSAFE-DESERIALIZATION",
+        "reason": "non applicabile a 'javascript' (languages=['java'])"
+      },
+      {
+        "rule_id": "UNCHECKED-CAST",
+        "reason": "non applicabile a 'javascript' (languages=['java'])"
+      }
+    ]
+  }
+}

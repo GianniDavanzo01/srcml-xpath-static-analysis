@@ -1,7 +1,7 @@
 ## Struttura del Progetto
 
 * **`script_analysis/`**: Script Python del motore di analisi statica e dell'orchestrazione (Engine, Adapter di linguaggio e Context).
-* **`cataloghi/`**: File JSON dei cataloghi (`java_catalog.json`, `python_catalog.json`, `c_catalog.json`). Sono dizionari di traduzione che mappano i concetti astratti di sicurezza (sorgenti, sink, sanitizer, safe-context) sulle funzioni e librerie dei singoli linguaggi. Nome file obbligatorio: `<linguaggio>_catalog.json`.
+* **`cataloghi/`**: File JSON dei cataloghi (`java_catalog.json`, `python_catalog.json`, `c_catalog.json`,`javascript_catalog.json`). Sono dizionari di traduzione che mappano i concetti astratti di sicurezza (sorgenti, sink, sanitizer, safe-context) sulle funzioni e librerie dei singoli linguaggi. Nome file obbligatorio: `<linguaggio>_catalog.json`.
 * **`regole/`**: Ruleset semantico e astratto (CWE), indipendente dal linguaggio (es. `ruleset_abstract.json`). Può contenere uno o più file `.json`, ciascuno con un array di regole.
 * **`Testset/`**: Dataset e snippet di codice sorgente usati per validare il motore.
 * **`xml_archivi/`**: Rappresentazioni AST in XML generate da srcML a partire dal codice sorgente originale.
@@ -40,4 +40,5 @@ I casi di test presenti nella cartella `Testset/` derivano dalle seguenti reposi
 * **[SecurityEval](https://github.com/s2e-lab/SecurityEval)**
 * **[juliet-test-suite-c](https://github.com/arichardson/juliet-test-suite-c/tree/master)**
 * **[juliet-java-test-suite](https://github.com/UnitTestBot/juliet-java-test-suite)**
+* **[JavascriptObfuscationSAST](https://github.com/X3no21/JavascriptObfuscationSAST)**
 

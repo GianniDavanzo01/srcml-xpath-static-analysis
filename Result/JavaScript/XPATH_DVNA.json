@@ -1,0 +1,385 @@
+{
+  "summary": {
+    "units_analyzed": 12,
+    "units_failed": 0,
+    "files_failed": 0,
+    "vulnerable_files": 7,
+    "total_findings": 16,
+    "categories_count": {
+      "CWE-319": 4,
+      "CWE-477": 3,
+      "CWE-22": 2,
+      "CWE-95": 2,
+      "CWE-79": 4,
+      "CWE-1333": 1
+    }
+  },
+  "errors": [],
+  "details": [
+    {
+      "source_file": "DVNA/app.js",
+      "xml_source": "archivio_DVNA.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "DVNA/dvna.js",
+      "xml_source": "archivio_DVNA.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "DVNA/template.js",
+      "xml_source": "archivio_DVNA.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "DVNA/vulnerabilities/command_injection.js",
+      "xml_source": "archivio_DVNA.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-319-CLEARTEXT-TRANSMISSION",
+        "CWE-477-OBSOLETE-FUNCTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-319",
+        "CWE-477"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-319-CLEARTEXT-TRANSMISSION",
+          "vulnerabilities": [
+            "CWE-319"
+          ],
+          "source_file": "DVNA/vulnerabilities/command_injection.js",
+          "line": "4:1",
+          "snippet": "http.createServer(function(request, response){ var parsedUrl = url.parse(request.url, true); response.writeHead(200, {\"Content-Type\" : \"text…"
+        },
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "DVNA/vulnerabilities/command_injection.js",
+          "line": "5:19",
+          "snippet": "url.parse(request.url, true)"
+        }
+      ]
+    },
+    {
+      "source_file": "DVNA/vulnerabilities/denial_of_service.js",
+      "xml_source": "archivio_DVNA.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-319-CLEARTEXT-TRANSMISSION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-319"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-319-CLEARTEXT-TRANSMISSION",
+          "vulnerabilities": [
+            "CWE-319"
+          ],
+          "source_file": "DVNA/vulnerabilities/denial_of_service.js",
+          "line": "13:1",
+          "snippet": "dos.createServer(function(request, response) { explodeNodeJS(600000); explodeNodeJS(700000); explodeNodeJS(800000); explodeNodeJS(900000); }…"
+        }
+      ]
+    },
+    {
+      "source_file": "DVNA/vulnerabilities/directory_traversal.js",
+      "xml_source": "archivio_DVNA.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-22-PATH-TRAVERSAL"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-22"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "DVNA/vulnerabilities/directory_traversal.js",
+          "line": "12:3",
+          "snippet": "var readStream = fs.createReadStream(filePath);",
+          "tainted_variable": "filePath"
+        },
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "DVNA/vulnerabilities/directory_traversal.js",
+          "line": "11:3",
+          "snippet": "var filePath = p.join(__dirname, '/' + req.query.traverse);",
+          "tainted_variable": "Express.Request.query",
+          "source_kind": "inline-name"
+        }
+      ]
+    },
+    {
+      "source_file": "DVNA/vulnerabilities/eval_remote_code_execution.js",
+      "xml_source": "archivio_DVNA.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-95-EVAL-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-95"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-95-EVAL-INJECTION",
+          "vulnerabilities": [
+            "CWE-95"
+          ],
+          "source_file": "DVNA/vulnerabilities/eval_remote_code_execution.js",
+          "line": "5:13",
+          "snippet": "eval(\"(\"+req.query.e+\")\")"
+        }
+      ]
+    },
+    {
+      "source_file": "DVNA/vulnerabilities/global_namespace_pollution.js",
+      "xml_source": "archivio_DVNA.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "DVNA/vulnerabilities/information_disclosure.js",
+      "xml_source": "archivio_DVNA.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "DVNA/vulnerabilities/parameter_pollution.js",
+      "xml_source": "archivio_DVNA.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-79-CROSS-SITE-SCRIPTING",
+        "CWE-95-EVAL-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-79",
+        "CWE-95"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-95-EVAL-INJECTION",
+          "vulnerabilities": [
+            "CWE-95"
+          ],
+          "source_file": "DVNA/vulnerabilities/parameter_pollution.js",
+          "line": "4:12",
+          "snippet": "eval(\"(\"+req.query.target+\")\")"
+        },
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "DVNA/vulnerabilities/parameter_pollution.js",
+          "line": "5:3",
+          "snippet": "res.send('Parameter Value:</br>'+resp);",
+          "tainted_variable": "resp"
+        }
+      ]
+    },
+    {
+      "source_file": "DVNA/vulnerabilities/regex_dos.js",
+      "xml_source": "archivio_DVNA.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-1333-REGEX-DOS",
+        "CWE-319-CLEARTEXT-TRANSMISSION",
+        "CWE-477-OBSOLETE-FUNCTION",
+        "CWE-79-CROSS-SITE-SCRIPTING"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-1333",
+        "CWE-319",
+        "CWE-477",
+        "CWE-79"
+      ],
+      "findings_count": 5,
+      "findings": [
+        {
+          "rule_id": "CWE-319-CLEARTEXT-TRANSMISSION",
+          "vulnerabilities": [
+            "CWE-319"
+          ],
+          "source_file": "DVNA/vulnerabilities/regex_dos.js",
+          "line": "6:1",
+          "snippet": "http.createServer(function(req, res){ time = process.hrtime(); // Unsafe regex var emailCapture = /^([a-zA-Z0-9_\\.\\-])+\\@(([a-zA-Z0-9\\-])+\\.…"
+        },
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "DVNA/vulnerabilities/regex_dos.js",
+          "line": "10:19",
+          "snippet": "url.parse(req.url, true)"
+        },
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "DVNA/vulnerabilities/regex_dos.js",
+          "line": "12:3",
+          "snippet": "res.write(\"Enter your email: \" + parsedUrl.query.email);",
+          "tainted_variable": "parsedUrl"
+        },
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "DVNA/vulnerabilities/regex_dos.js",
+          "line": "13:3",
+          "snippet": "res.write(\"</br>Valid Email: \" + emailCapture.test(parsedUrl.query.email));",
+          "tainted_variable": "parsedUrl"
+        },
+        {
+          "rule_id": "CWE-1333-REGEX-DOS",
+          "vulnerabilities": [
+            "CWE-1333"
+          ],
+          "source_file": "DVNA/vulnerabilities/regex_dos.js",
+          "line": "13:3",
+          "snippet": "res.write(\"</br>Valid Email: \" + emailCapture.test(parsedUrl.query.email));",
+          "tainted_variable": "parsedUrl"
+        }
+      ]
+    },
+    {
+      "source_file": "DVNA/vulnerabilities/xss_reflected.js",
+      "xml_source": "archivio_DVNA.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-319-CLEARTEXT-TRANSMISSION",
+        "CWE-477-OBSOLETE-FUNCTION",
+        "CWE-79-CROSS-SITE-SCRIPTING"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-319",
+        "CWE-477",
+        "CWE-79"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "CWE-319-CLEARTEXT-TRANSMISSION",
+          "vulnerabilities": [
+            "CWE-319"
+          ],
+          "source_file": "DVNA/vulnerabilities/xss_reflected.js",
+          "line": "4:1",
+          "snippet": "http.createServer(function(req, res){ var parsedUrl = url.parse(req.url, true); res.writeHead(200, {\"Content-Type\":\"text/html\"}); res.write(…"
+        },
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "DVNA/vulnerabilities/xss_reflected.js",
+          "line": "5:19",
+          "snippet": "url.parse(req.url, true)"
+        },
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "DVNA/vulnerabilities/xss_reflected.js",
+          "line": "7:3",
+          "snippet": "res.write(\"Unsanitized input: \" + parsedUrl.query.xss);",
+          "tainted_variable": "parsedUrl"
+        }
+      ]
+    }
+  ],
+  "rules_skipped": {
+    "javascript": [
+      {
+        "rule_id": "CWE-20-UNSAFE-DICT-ACCESS",
+        "reason": "non applicabile a 'javascript' (languages=['python'])"
+      },
+      {
+        "rule_id": "CWE-120-BUFFER-OVERFLOW",
+        "reason": "non applicabile a 'javascript' (languages=['c'])"
+      },
+      {
+        "rule_id": "CWE-129-IMPROPER-ARRAY-INDEX-VALIDATION",
+        "reason": "non applicabile a 'javascript' (languages=['c', 'java'])"
+      },
+      {
+        "rule_id": "CWE-129-ARRAY-SIZE-VALIDATION",
+        "reason": "non applicabile a 'javascript' (languages=['c', 'java'])"
+      },
+      {
+        "rule_id": "CWE-197",
+        "reason": "non applicabile a 'javascript' (languages=['java'])"
+      },
+      {
+        "rule_id": "CWE-347-JWT-NO-VERIFY",
+        "reason": "non applicabile a 'javascript' (languages=['python'])"
+      },
+      {
+        "rule_id": "CWE-369-DIVIDE-BY-ZERO",
+        "reason": "non applicabile a 'javascript' (languages=['java', 'python', 'c'])"
+      },
+      {
+        "rule_id": "CWE-369-DIVIDE-BY-ZERO-TAINT",
+        "reason": "non applicabile a 'javascript' (languages=['java', 'python', 'c'])"
+      },
+      {
+        "rule_id": "CWE-400-UNCONTROLLED-SLEEP-C",
+        "reason": "non applicabile a 'javascript' (languages=['c'])"
+      },
+      {
+        "rule_id": "CWE-415-416-MEMORY-MISUSE-AFTER-FREE",
+        "reason": "non applicabile a 'javascript' (languages=['c'])"
+      },
+      {
+        "rule_id": "CWE-476-NULL-POINTER-DEREFERENCE",
+        "reason": "non applicabile a 'javascript' (languages=['python', 'c', 'java'])"
+      },
+      {
+        "rule_id": "CWE-502-JACKSON-UNSAFE-DESERIALIZATION",
+        "reason": "non applicabile a 'javascript' (languages=['java'])"
+      },
+      {
+        "rule_id": "UNCHECKED-CAST",
+        "reason": "non applicabile a 'javascript' (languages=['java'])"
+      }
+    ]
+  }
+}
