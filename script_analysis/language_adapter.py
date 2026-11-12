@@ -593,6 +593,21 @@ class PythonAdapter(LanguageAdapter):
             
         return False
 
+    _UNPACK_TAGS = ("tuple", "array")   # a, b = ... / (a, b) = ... / [a, b] = ...
+
+    def get_assignment_chain(self, node, ns) -> list:
+        out = []
+        for lhs, rhs in super().get_assignment_chain(node, ns):
+            if lhs is not None and lhs.tag.rsplit("}", 1)[-1] in self._UNPACK_TAGS:
+                # nomi di primo livello (non dentro un altro name né in un index)
+                targets = lhs.xpath(
+                    ".//src:name[not(ancestor::src:name)][not(ancestor::src:index)]",
+                    namespaces=ns)
+                out.extend((t, rhs) for t in targets)
+            else:
+                out.append((lhs, rhs))
+        return out
+
     def get_assignment_lhs_rhs(self, node, ns):
         if node.tag.endswith("expr_stmt"):
             op = node.xpath(".//src:operator[text()='='][1]", namespaces=ns)
@@ -1030,17 +1045,22 @@ class PythonAdapter(LanguageAdapter):
 
     def is_implicit_receiver_param(self, param_node, ns) -> bool:
         if param_node.get("type") in ("args", "kwargs"):
-            return False                      # *args / **kwargs sono input veri
+            return False
         plist = param_node.getparent()
         first = plist.xpath("./src:parameter[1]", namespaces=ns)
         if not first or first[0] is not param_node:
-            return False                      # solo il primo parametro
+            return False
         func = plist.getparent()
         owner = func.xpath("ancestor::*[self::src:class or self::src:function][1]", namespaces=ns)
         if not owner or not owner[0].tag.endswith("}class"):
-            return False                      # non è un metodo
-        # @staticmethod: il primo parametro è un argomento vero
-        return not func.xpath("./src:attribute//src:name[text()='staticmethod']", namespaces=ns)
+            return False
+        if func.xpath("./src:attribute//src:name[text()='staticmethod']", namespaces=ns):
+            return False
+
+        name_node = self.get_parameter_name_node(param_node, ns)
+        pname = name_text(name_node) if name_node is not None else ""
+        is_classmethod = bool(func.xpath("./src:attribute//src:name[text()='classmethod']", namespaces=ns))
+        return pname in ({"cls", "mcs"} if is_classmethod else {"self"})
 
     def is_numeric_type(self, type_text) -> bool:
         return (type_text or "").strip() in ("int", "float", "bool", "complex")

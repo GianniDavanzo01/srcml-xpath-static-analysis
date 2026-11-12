@@ -698,6 +698,13 @@ def _bool_text(value, adapter) -> str:
         value = "true" if value else "false"
     return adapter.canonical_literal(str(value))
 
+
+
+_OWN_INDEX_LITERALS_XP = etree.XPath(
+    "./src:argument_list//src:index//src:literal[@type='string']"
+    "[count(ancestor::src:call[1] | $c) = 1]",
+    namespaces=NS,
+)
 def call_arguments_match_ast(call_node, spec: dict, adapter, imports) -> bool:
     """
     Motore universale AST per validare gli argomenti di una chiamata a funzione.
@@ -759,9 +766,7 @@ def call_arguments_match_ast(call_node, spec: dict, adapter, imports) -> bool:
         found_names = [name_text(n) for n in own_names(call_node)]
 
         # chiavi di subscript con letterale stringa: creds["password"]
-        for lit in call_node.xpath(
-                "./src:argument_list//src:index//src:literal[@type='string']"
-                "[count(ancestor::src:call[1] | $c) = 1]", namespaces=NS):
+        for lit in _OWN_INDEX_LITERALS_XP(call_node, c=call_node):
             found_names.append(adapter.normalize_string_literal("".join(lit.itertext()).strip()))
 
         for lit in own_literals(call_node, "string"):

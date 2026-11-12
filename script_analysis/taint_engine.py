@@ -13,7 +13,7 @@ from common import NS, build_finding, is_sanitized, source_present, get_call_nam
     _is_hardcoded_string, is_member_name, _norm
 
 from sink_matchers import matches_any_sink
-from safe_context_matchers import is_in_safe_context
+from safe_context_matchers import is_in_safe_context, validation_contexts
 
 from types import SimpleNamespace
 
@@ -249,7 +249,24 @@ def _killed_by_reassign(uso, var, scope_node, assign_infos, is_killing, side_eff
         return False
 
     anc = set(uso.iterancestors())
-    return all(c in anc for c in _X_COND_ANC(last.stmt))
+    # return all(c in anc for c in _X_COND_ANC(last.stmt))
+    for c in _X_COND_ANC(last.stmt):
+        if c not in anc:
+            return False
+        # uso in catch/finally di un try che racchiude l'assegnazione:
+        # l'assegnazione puo' non essere avvenuta
+        if c.tag.endswith("}try"):
+            in_try_body = any(
+                a.tag.endswith("}block") and a.getparent() is c
+                for a in last.stmt.iterancestors()
+            )
+            uso_in_handler = any(
+                a.getparent() is c and a.tag.rsplit("}", 1)[-1] in ("catch", "finally")
+                for a in uso.iterancestors()
+            )
+            if in_try_body and uso_in_handler:
+                return False
+    return True
 
 
 def _rhs_fully_sanitized(info, tainted_names, sanitizers, adapter, imports) -> bool:
@@ -413,6 +430,7 @@ def _annot_sources(rule, sources):
     return ent[1]
 
 
+
 def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
     macros = macro_map(imports)
 
@@ -420,6 +438,7 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
     sources = rule.get("sources", [])
     sanitizers = rule.get("sanitizers", [])
     safe_contexts = rule.get("safe_contexts", [])
+    val_contexts = validation_contexts(safe_contexts)
     sinks = rule.get("sinks", [])
 
     if not sources or not sinks:
@@ -746,6 +765,8 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
                         ):
                             continue
                         if _blocked_by_call_allowlist(n):
+                            continue
+                        if val_contexts and is_in_safe_context(n, val_contexts, eff, adapter, imports):
                             continue
                         propagates = True
                         break
