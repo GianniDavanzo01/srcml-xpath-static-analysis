@@ -31,6 +31,7 @@ _X_POS_ANC    = _X("ancestor::*[@pos:start][1]")
 _X_ARGS       = _X("./src:argument_list/src:argument")
 _X_NAMES      = _X(".//src:name")
 _X_CALLS      = _X(".//src:call")
+_X_RHS_CALLS  = _X("self::src:call | .//src:call")
 _X_STMT_CALL = _X("parent::src:expr[count(*)=1]/parent::src:expr_stmt")
 _X_LOOP_ANC = _X("ancestor::*[self::src:while or self::src:for or self::src:do]")
 
@@ -777,6 +778,26 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
                         if any(v in already_tainted for v in interpolated_vars) \
                            and not is_sanitized(lit, block, adapter, imports):
                             propagates = True
+                            break
+
+                if not propagates:
+                    # Invocazione di variabile closure/callable taintata (es. data = readInput())
+                    for rhs_node in info.rhs_all:
+                        for call in _X_RHS_CALLS(rhs_node):
+                            cname_nodes = _X_FIRST_NAME(call)
+                            if not cname_nodes or _X_NAME_PARTS(cname_nodes[0]):
+                                continue
+                            callee = expand_macro_name(name_text(cname_nodes[0]), macros)
+                            if (
+                                adapter.is_identifier(callee)
+                                and callee in already_tainted
+                                and not is_sanitized(call, block, adapter, imports)
+                                and not _before_origin(callee, scope_node, info.stmt)
+                                and not _blocked_by_call_allowlist(call)
+                            ):
+                                propagates = True
+                                break
+                        if propagates:
                             break
 
                 if propagates:

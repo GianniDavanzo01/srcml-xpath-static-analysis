@@ -7,7 +7,7 @@ con il relativo registro e dispatcher.
 """
 
 from common import NS, get_call_name, call_arguments_match_ast, find_assignments,_pos_key, block_exits_flow, enclosing_scope, \
-    call_matches, own_literals, assignment_pairs, name_text, _is_pure_literal_expr, block_exits_flow
+    call_matches, own_literals, assignment_pairs, name_text, _is_pure_literal_expr, block_exits_flow, is_member_name
 
 import re
 
@@ -52,10 +52,26 @@ def _safe_context_current_call_matches(node, spec: dict, var_name, adapter, impo
     return call_arguments_match_ast(target_node, spec, adapter, imports)
 
 
+# def _safe_context_function_has_call_matching(node, spec: dict, var_name, adapter, imports) -> bool:
+#     """Cerca in tutta la funzione una chiamata che rispetti i requisiti degli argomenti."""
+#     target = _function_or_unit_scope(node, adapter)
+#     return any(call_arguments_match_ast(c, spec, adapter, imports) for c in target.xpath(".//src:call", namespaces=NS))
 def _safe_context_function_has_call_matching(node, spec: dict, var_name, adapter, imports) -> bool:
-    """Cerca in tutta la funzione una chiamata che rispetti i requisiti degli argomenti."""
+    """Cerca nella funzione una chiamata che rispetti i requisiti degli argomenti."""
     target = _function_or_unit_scope(node, adapter)
-    return any(call_arguments_match_ast(c, spec, adapter, imports) for c in target.xpath(".//src:call", namespaces=NS))
+    node_key = _pos_key(node)
+    calls = target.xpath(".//src:call", namespaces=NS)
+
+    if spec.get("before_sink", False):
+        calls = [c for c in calls if _pos_key(c) < node_key]
+
+    also_calls = spec.get("also_has_call", [])
+    if also_calls:
+        found_names = [get_call_name(c, adapter, imports) for c in calls]
+        if not all(any(cn and call_matches(cn, req, adapter) for cn in found_names) for req in also_calls):
+            return False
+
+    return any(call_arguments_match_ast(c, spec, adapter, imports) for c in calls)
 
 
 
@@ -906,6 +922,298 @@ def _safe_context_instanceof_checked(node, spec, var_name, adapter, imports) -> 
     return False
 
 
+def _check_dominates(node, if_stmt, cond, negated, adapter, imports) -> bool:
+    """Il check in `cond` protegge `node`? (polarità + dominanza + AND/OR)"""
+    node_anc = set(node.iterancestors())
+    then = if_stmt.xpath("./src:if/src:block", namespaces=NS)
+    if not then or cond in node_anc:
+        return False
+    else_ = if_stmt.xpath("./src:else/src:block", namespaces=NS)
+    in_then = then[0] in node_anc
+    in_else = bool(else_) and else_[0] in node_anc
+    after = (not in_then and not in_else
+             and _pos_key(if_stmt) < _pos_key(node)
+             and if_stmt.getparent() in node_anc)
+
+    def has_op(ops):
+        return any("".join(o.itertext()).strip() in ops
+                   for o in cond.xpath(".//src:operator", namespaces=NS))
+
+    if not negated:
+        return in_then and not has_op(adapter.logical_or_operator())
+    return ((in_else or (after and block_exits_flow(then[0], adapter, imports)))
+            and not has_op(adapter.logical_and_operator()))
+
+
+def _pattern_rejects(pattern: str, probes) -> bool:
+    """True se il pattern (full-match) non accetta nessuna sonda pericolosa."""
+    try:
+        rx = re.compile(pattern)
+    except re.error:
+        return False                      # sintassi non Python-compatibile: conservativo
+    return not any(rx.fullmatch(s) for p in probes for s in (p, "a" + p, "a" + p + "a"))
+
+
+_TRY_BRANCH_TAGS = ("if_stmt", "switch", "while", "for", "do")
+
+def _in_nested_branch(elem, boundary) -> bool:
+    curr = elem.getparent()
+    while curr is not None and curr is not boundary:
+        if curr.tag.rsplit("}", 1)[-1] in _TRY_BRANCH_TAGS:
+            return True
+        curr = curr.getparent()
+    return False
+
+
+def _safe_context_try_validated_var(node, spec: dict, var_name, adapter, imports) -> bool:
+    """{"type": "try_validated_var", "call": ["*.valueOf", "Integer.parseInt"], "exclude_call": ["String.valueOf"]}
+    Verifica che `var_name` sia validata da una call che solleva eccezione dentro un `try`
+    dominante, e che ogni `catch` associato esca dal flusso o sovrascriva `var_name` senza riutilizzarla.
+    """
+    if not var_name:
+        return False
+
+    targets = spec.get("call", [])
+    if isinstance(targets, str):
+        targets = [targets]
+    if not targets:
+        return False
+
+    excluded = spec.get("exclude_call", [])
+    if isinstance(excluded, str):
+        excluded = [excluded]
+
+    scope = _function_or_unit_scope(node, adapter)
+    names = _equivalent_names(node, var_name, scope, adapter)
+    node_key = _pos_key(node)
+    all_assign = find_assignments(scope, adapter)
+
+    for try_stmt in scope.xpath(".//src:try", namespaces=NS):
+        if not guard_dominates(try_stmt, node):
+            continue
+
+        try_block = try_stmt.xpath("./src:block[1]", namespaces=NS)
+        if not try_block:
+            continue
+
+        # 1. Chiamata validante incondizionata su `var_name` nel blocco `try`
+        validating_call_found = False
+        for call in try_block[0].xpath(".//src:call", namespaces=NS):
+            if _in_nested_branch(call, try_block[0]):
+                continue
+            cn = get_call_name(call, adapter, imports)
+            if not cn or not any(call_matches(cn, t, adapter) for t in targets):
+                continue
+            if excluded and any(call_matches(cn, ex, adapter) for ex in excluded):
+                continue
+
+            arg_names = {
+                name_text(n)
+                for n in call.xpath("./src:argument_list//src:name", namespaces=NS)
+                if not is_member_name(n, adapter)
+            }
+            if arg_names & names:
+                validating_call_found = True
+                break
+
+        if not validating_call_found:
+            continue
+
+        # 2. Ogni `catch` deve uscire dal flusso o riassegnare `var_name` con un valore indipendente
+        all_catches_safe = True
+        for catch in try_stmt.xpath("./src:catch", namespaces=NS):
+            c_blocks = catch.xpath("./src:block[1]", namespaces=NS)
+            if not c_blocks:
+                all_catches_safe = False
+                break
+            cb = c_blocks[0]
+
+            if block_exits_flow(cb, adapter, imports):
+                continue
+
+            safe_reassign = False
+            for stmt, lhs, rhs in assignment_pairs(cb, adapter):
+                if rhs is None or name_text(lhs) not in names:
+                    continue
+                if _in_nested_branch(stmt, cb):
+                    continue
+
+                rhs_vars = {
+                    name_text(n)
+                    for n in stmt.xpath(".//src:name", namespaces=NS)
+                    if n is not lhs and lhs not in n.iterancestors() and not is_member_name(n, adapter)
+                }
+                if not (rhs_vars & names):
+                    safe_reassign = True
+                    break
+
+            if not safe_reassign:
+                all_catches_safe = False
+                break
+
+        if not all_catches_safe:
+            continue
+
+        # 3. Nessuna riassegnazione successiva tra `try_stmt` e `node`
+        chk = _pos_key(try_stmt)
+        try_desc = set(try_stmt.iterdescendants())
+        clobbered = any(
+            chk < _pos_key(s) < node_key
+            and s not in try_desc
+            and name_text(l) in names
+            and _pure_copy_source(r) is None
+            for s, l, r in all_assign
+        )
+        if not clobbered:
+            return True
+
+    return False
+
+def _safe_context_method_call_guard(node, spec, var_name, adapter, imports) -> bool:
+    """{"type": "method_call_guard", "call": ["*.startsWith", "*.endsWith"]}
+    Guard-clause negata su una chiamata booleana del ricevente: 
+    if (!X.startsWith(PREFIX)) { return/throw; }  ... uso di X dopo.
+    Analogo a _safe_context_var_falsy_guard_clause ma per una call invece
+    che per un nudo confronto/negazione di nome."""
+    if not var_name:
+        return False
+    targets = spec.get("call", [])
+    if isinstance(targets, str):
+        targets = [targets]
+    neg_op = adapter.negation_operator()
+    scope = _function_or_unit_scope(node, adapter)
+    names = _equivalent_names(node, var_name, scope, adapter)
+
+    for if_stmt in scope.xpath(".//src:if_stmt", namespaces=NS):
+        if not guard_dominates(if_stmt, node):
+            continue
+        cond = if_stmt.xpath("./src:if/src:condition", namespaces=NS)
+        block = if_stmt.xpath("./src:if/src:block[1]", namespaces=NS)
+        if not cond or not block or not block_exits_flow(block[0], adapter, imports):
+            continue
+        cond = cond[0]
+
+        for call in cond.xpath(".//src:call", namespaces=NS):
+            cn = get_call_name(call, adapter, imports)
+            if not cn or not any(call_matches(cn, t, adapter) for t in targets):
+                continue
+            # il ricevente (o un suo alias) deve essere var_name
+            recv = adapter.call_receiver_name(call, NS)
+            if recv not in names:
+                continue
+            # polarità: la call deve essere negata
+            prev = call.xpath("preceding-sibling::*[not(self::src:comment)][1]", namespaces=NS)
+            if not (prev and prev[0].tag.endswith("}operator")
+                    and "".join(prev[0].itertext()).strip() == neg_op):
+                continue
+            return True
+    return False
+
+
+def _rgv_pattern_literal(call, loc, ns):
+    """Letterale del pattern: 'receiver' (/P/.test(x)) o 'argument' (x.matches(P))."""
+    lit_type = loc.get("literal_type", "string")
+    if loc["at"] == "receiver":
+        recv = call.xpath(
+            f"preceding-sibling::*[1][self::src:operator and (text()='.' or text()='?.')]"
+            f"/preceding-sibling::*[1][self::src:literal[@type='{lit_type}']]",
+            namespaces=ns)
+        return recv[0] if recv else None
+    args = call.xpath("./src:argument_list/src:argument", namespaces=ns)
+    idx = loc.get("index", 0)
+    if idx >= len(args):
+        return None
+    lits = args[idx].xpath(f".//src:literal[@type='{lit_type}']", namespaces=ns)
+    return lits[0] if len(lits) == 1 else None
+
+
+def _rgv_subject_matches(call, loc, names, ns):
+    """True se il soggetto testato (receiver o argomento) è var_name o un suo alias."""
+    if loc["at"] == "receiver":
+        head = call.xpath("./src:name/src:name[1]", namespaces=ns)
+        return bool(head) and name_text(head[0]) in names
+    args = call.xpath("./src:argument_list/src:argument", namespaces=ns)
+    idx = loc.get("index", 0)
+    if idx >= len(args):
+        return False
+    e = args[idx].xpath("./src:expr", namespaces=ns)
+    return bool(e) and _pure_copy_source(e[0]) in names
+
+
+def _rgv_negation_anchor(call, pattern_loc, pattern_node):
+    """Nodo da cui risalire per la negazione: la testa della catena (il
+    letterale) se il pattern è il ricevente, altrimenti la call stessa."""
+    return pattern_node if pattern_loc["at"] == "receiver" else call
+
+
+def _safe_context_regex_guarded_validation(node, spec, var_name, adapter, imports) -> bool:
+    """{"type": "regex_guarded_validation", "call": [...], "reject": [...],
+        "pattern": {"at": "argument"|"receiver", "index": int, "literal_type": "string"|"regex"},
+        "subject": {"at": "receiver"|"argument", "index": int}}
+
+    Guard-clause negata su validazione regex (if (!check) return/throw; ... uso),
+    indipendente da come linguaggio/API posizionano pattern e soggetto rispetto
+    alla call: subject.matches(pattern) (Java/Python) o /pattern/.test(subject)
+    (JS). Richiede: pattern letterale non interpolato che respinge le `reject`
+    probe; soggetto == var_name (o alias di copia pura); call negata rispetto
+    all'anchor corretto; guard che domina e chiude il flusso; nessuna
+    riassegnazione di var_name tra guard e uso. Sostituisce regex_validation
+    e regex_literal_test, identiche salvo la geometria AST pattern/soggetto.
+    """
+    if not var_name:
+        return False
+    targets = spec.get("call", [])
+    probes = spec.get("reject", [])
+    pattern_loc = spec.get("pattern", {"at": "argument", "index": 0})
+    subject_loc = spec.get("subject", {"at": "receiver"})
+    neg_op = adapter.negation_operator()
+    scope = _function_or_unit_scope(node, adapter)
+    names = _equivalent_names(node, var_name, scope, adapter)
+    node_key = _pos_key(node)
+
+    for if_stmt in scope.xpath(".//src:if_stmt", namespaces=NS):
+        cond = if_stmt.xpath("./src:if/src:condition", namespaces=NS)
+        if not cond:
+            continue
+        for call in cond[0].xpath(".//src:call", namespaces=NS):
+            cn = get_call_name(call, adapter, imports)
+            if not cn or not any(call_matches(cn, t, adapter) for t in targets):
+                continue
+            if not _rgv_subject_matches(call, subject_loc, names, NS):
+                continue
+
+            lit = _rgv_pattern_literal(call, pattern_loc, NS)
+            if lit is None:
+                continue
+            raw = "".join(lit.itertext())
+            lit_type = pattern_loc.get("literal_type", "string")
+            if lit_type == "string" and adapter.is_interpolated_string(raw):
+                continue
+            pattern = adapter.normalize_string_literal(raw).replace("\\\\", "\\")
+            if lit_type == "regex":
+                pattern = pattern.strip("/")
+                pattern = re.sub(r"/[a-z]*$", "", pattern) if pattern.count("/") else pattern
+            if not _pattern_rejects(pattern, probes):
+                continue
+
+            anchor = _rgv_negation_anchor(call, pattern_loc, lit)
+            prev = anchor.xpath("preceding-sibling::*[not(self::src:comment)][1]", namespaces=NS)
+            negated = bool(prev) and prev[0].tag.endswith("}operator") \
+                and "".join(prev[0].itertext()).strip() == neg_op
+            if not negated:
+                continue
+
+            if not _check_dominates(node, if_stmt, cond[0], True, adapter, imports):
+                continue
+
+            chk = _pos_key(if_stmt)
+            if any(chk < _pos_key(s) < node_key and name_text(l) in names
+                   for s, l, r in find_assignments(scope, adapter)):
+                continue
+
+            return True
+    return False
+
 SAFE_CONTEXT_MATCHERS = {
     "parametrized_query": _safe_context_parametrized_query,
     "receiver_of_method": _safe_context_member_access_name,
@@ -925,11 +1233,15 @@ SAFE_CONTEXT_MATCHERS = {
     "var_falsy_guard_clause":_safe_context_var_falsy_guard_clause,
     "all_args_are_literals": _safe_context_all_args_are_literals,
     "check_format_arg_position":_safe_context_check_format_arg_position,
-    "instanceof_checked": _safe_context_instanceof_checked
+    "instanceof_checked": _safe_context_instanceof_checked,
+    "try_validated_var": _safe_context_try_validated_var,
+    "method_call_guard": _safe_context_method_call_guard,
+    "regex_guarded_validation": _safe_context_regex_guarded_validation,
 }
 
 
-VALIDATION_MATCHERS = {"membership_check", "var_truthiness_check", "var_falsy_guard_clause"}
+VALIDATION_MATCHERS = {"membership_check", "var_truthiness_check", "var_falsy_guard_clause","try_validated_var","method_call_guard",
+                       "regex_guarded_validation"}
 
 def validation_contexts(safe_contexts):
     return [c for c in safe_contexts

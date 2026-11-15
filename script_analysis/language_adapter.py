@@ -1388,7 +1388,15 @@ class JavaAdapter(LanguageAdapter):
 
 
     def taint_block_functions(self) -> list:
-        return ["*.length", "*.hashCode", "*.isEmpty", "*.equals", "*.compareTo"]
+        return [
+            "*.length", "*.hashCode", "*.isEmpty", "*.equals", "*.compareTo",
+            "*.startsWith", "*.endsWith", "*.contains", "*.indexOf", "*.lastIndexOf",
+            "Integer.parseInt", "Integer.valueOf",
+            "Long.parseLong", "Long.valueOf",
+            "Double.parseDouble", "Double.valueOf",
+            "Float.parseFloat", "Float.valueOf",
+            "Boolean.parseBoolean", "Boolean.valueOf",
+        ]
 
     def taint_propagating_calls(self) -> dict:
         # Metodi che modificano il RICEVENTE: x.add(tainted) rende taintato x.
@@ -2964,24 +2972,51 @@ class JavaScriptAdapter(LanguageAdapter):
         return bool(nm) and self._dotted(nm[0]) in self._COLLECTION_CTORS
 
     def extract_membership_relations(self, condition_node, ns) -> list:
-        """a.includes(x) / a.has(x) / a.indexOf(x) <cmp> n / 'k' in obj (anche negati)."""
+        """a.includes(x) / a.has(x) / a.indexOf(x) <cmp> n / 'k' in obj (anche negati).
+        Il nome del metodo può essere annidato in un <name> composito (receiver = <name>,
+        es. obj.includes(x)) oppure un <name> semplice quando il receiver non è un
+        identificatore (letterale array/object, o il risultato di una call in catena:
+        ['a','b'].includes(x), getAllowed().includes(x)). In quest'ultimo caso il
+        receiver si recupera come fratello precedente collegato dall'operatore membro,
+        e la negazione '!' si verifica sulla TESTA della catena (il receiver esterno),
+        non sulla <call>."""
         rel = []
 
         def negated_by_prefix(node):
             p = node.xpath("preceding-sibling::*[not(self::src:comment)][1]", namespaces=ns)
             return bool(p) and _lname(p[0]) == "operator" and _ntxt(p[0]) == "!"
 
-        for call in condition_node.xpath(
-                ".//src:call[src:name/src:name[last()][text()='includes' or text()='has'"
-                " or text()='indexOf']]", namespaces=ns):
-            method = name_text(call.xpath("./src:name/src:name[last()]", namespaces=ns)[0])
-            recv = call.xpath("./src:name/src:name[last()-1]", namespaces=ns)
+        ops_xpath = " or ".join(f"text()='{o}'" for o in self.member_access_operator())
+        method_cond = " or ".join(f"text()='{m}'" for m in ("includes", "has", "indexOf"))
+
+        # Seleziona la call per nome del metodo, sia che il <name> sia composito
+        # (receiver annidato) sia che sia semplice (receiver esterno: letterale/call)
+        calls = condition_node.xpath(
+            f".//src:call[(src:name/src:name[last()][{method_cond}])"
+            f" or (not(src:name/src:name) and src:name[{method_cond}])]",
+            namespaces=ns)
+
+        for call in calls:
+            name_node = call.xpath("./src:name", namespaces=ns)[0]
+            nested = name_node.xpath("./src:name[last()]", namespaces=ns)
+            method = name_text(nested[0]) if nested else name_text(name_node)
+
+            recv = name_node.xpath("./src:name[last()-1]", namespaces=ns) if nested else []
+            chain_head = call   # nodo da cui verificare la negazione '!'
+            if not recv:
+                ext_recv = call.xpath(
+                    f"preceding-sibling::*[1][self::src:operator and ({ops_xpath})]"
+                    f"/preceding-sibling::*[1][self::src:array or self::src:object or self::src:call]",
+                    namespaces=ns)
+                if ext_recv:
+                    recv = ext_recv
+                    chain_head = ext_recv[0]
+
             arg = call.xpath("./src:argument_list/src:argument[1]/src:expr/*[1]", namespaces=ns)
             if not recv or not arg:
                 continue
-            neg = negated_by_prefix(call)
+            neg = negated_by_prefix(chain_head)
             if method == "indexOf":
-                # srcML spezza '-1' in <operator>-</operator><literal>1</literal>
                 f = call.xpath("following-sibling::*[not(self::src:comment)][position()<=3]", namespaces=ns)
                 if not f or _lname(f[0]) != "operator":
                     continue
@@ -2990,7 +3025,7 @@ class JavaScriptAdapter(LanguageAdapter):
                 if val == "-" and len(f) > 2:
                     val = "-" + _ntxt(f[2])
                 if (op in ("!==", "!=") and val == "-1") or (op == ">=" and val == "0") \
-                   or (op == ">" and val == "-1"):
+                or (op == ">" and val == "-1"):
                     neg = False
                 elif (op in ("===", "==") and val == "-1") or (op == "<" and val == "0"):
                     neg = True
