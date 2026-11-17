@@ -52,10 +52,6 @@ def _safe_context_current_call_matches(node, spec: dict, var_name, adapter, impo
     return call_arguments_match_ast(target_node, spec, adapter, imports)
 
 
-# def _safe_context_function_has_call_matching(node, spec: dict, var_name, adapter, imports) -> bool:
-#     """Cerca in tutta la funzione una chiamata che rispetti i requisiti degli argomenti."""
-#     target = _function_or_unit_scope(node, adapter)
-#     return any(call_arguments_match_ast(c, spec, adapter, imports) for c in target.xpath(".//src:call", namespaces=NS))
 def _safe_context_function_has_call_matching(node, spec: dict, var_name, adapter, imports) -> bool:
     """Cerca nella funzione una chiamata che rispetti i requisiti degli argomenti."""
     target = _function_or_unit_scope(node, adapter)
@@ -168,7 +164,8 @@ def _safe_context_function_has_method_call(node, spec, var_name, adapter, import
 
         # pertinenza: var_name compare nell'espressione che racchiude la call (method chaining)
         if var_name:
-            expr = c.xpath("ancestor::src:expr[1]", namespaces=NS)
+            # expr = c.xpath("ancestor::src:expr[1]", namespaces=NS)
+            expr = c.xpath("ancestor::src:expr[last()]", namespaces=NS)
             if not expr:
                 continue
             names = expr[0].xpath(".//src:name", namespaces=NS)
@@ -1127,7 +1124,21 @@ def _rgv_pattern_literal(call, loc, ns):
     return lits[0] if len(lits) == 1 else None
 
 
-def _rgv_subject_matches(call, loc, names, ns):
+def _unwrap_identity(expr, adapter, imports):
+    """str(x) -> x (un solo livello). Se expr non è un wrapper identità, lo ritorna invariato."""
+    kids = [c for c in expr if isinstance(c.tag, str)]
+    if len(kids) != 1 or not kids[0].tag.endswith("}call"):
+        return expr
+    call = kids[0]
+    cn = get_call_name(call, adapter, imports)
+    args = call.xpath("./src:argument_list/src:argument", namespaces=NS)
+    if not (cn and len(args) == 1 and
+            any(call_matches(cn, w, adapter) for w in adapter.identity_wrapper_calls())):
+        return expr
+    inner = args[0].xpath("./src:expr", namespaces=NS)
+    return inner[0] if inner else expr
+
+def _rgv_subject_matches(call, loc, names, ns, adapter, imports):
     """True se il soggetto testato (receiver o argomento) è var_name o un suo alias."""
     if loc["at"] == "receiver":
         head = call.xpath("./src:name/src:name[1]", namespaces=ns)
@@ -1137,7 +1148,7 @@ def _rgv_subject_matches(call, loc, names, ns):
     if idx >= len(args):
         return False
     e = args[idx].xpath("./src:expr", namespaces=ns)
-    return bool(e) and _pure_copy_source(e[0]) in names
+    return bool(e) and _pure_copy_source(_unwrap_identity(e[0], adapter, imports)) in names
 
 
 def _rgv_negation_anchor(call, pattern_loc, pattern_node):
@@ -1179,7 +1190,7 @@ def _safe_context_regex_guarded_validation(node, spec, var_name, adapter, import
             cn = get_call_name(call, adapter, imports)
             if not cn or not any(call_matches(cn, t, adapter) for t in targets):
                 continue
-            if not _rgv_subject_matches(call, subject_loc, names, NS):
+            if not _rgv_subject_matches(call, subject_loc, names, NS, adapter, imports):
                 continue
 
             lit = _rgv_pattern_literal(call, pattern_loc, NS)
@@ -1207,7 +1218,11 @@ def _safe_context_regex_guarded_validation(node, spec, var_name, adapter, import
                 continue
 
             chk = _pos_key(if_stmt)
+            # if any(chk < _pos_key(s) < node_key and name_text(l) in names
+            #        for s, l, r in find_assignments(scope, adapter)):
+            #     continue
             if any(chk < _pos_key(s) < node_key and name_text(l) in names
+                   and _pure_copy_source(r) is None
                    for s, l, r in find_assignments(scope, adapter)):
                 continue
 

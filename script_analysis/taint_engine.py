@@ -912,7 +912,7 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
             if not matches_any_sink(uso, sinks, usi_fstring, adapter, imports):
                 continue
 
-            if is_in_safe_context(uso, safe_contexts, var, adapter, imports):
+            if is_sanitized(uso, sanitizers, adapter, imports):
                 continue
 
             if kill_any is not None and _killed_by_reassign(
@@ -920,8 +920,10 @@ def run_taint_rule(tree, rule: dict, adapter, imports, ctx) -> list:
                     side_effects=side_effect_pos.get((var, id(scope_node)), ()),weak_kills=not rule_propagates):
                 continue
 
-            if is_sanitized(uso, sanitizers, adapter, imports):
+            if is_in_safe_context(uso, safe_contexts, var, adapter, imports):
                 continue
+
+
 
             stmt = _X_ENCL_STMT(uso)
             if not stmt:

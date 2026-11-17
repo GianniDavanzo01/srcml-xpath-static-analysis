@@ -567,6 +567,12 @@ class LanguageAdapter(ABC):
     def division_operators(self) -> list:
         return ["/", "%", "/=", "%="]
 
+    def identity_wrapper_calls(self) -> list:
+        """Call a un solo argomento che restituiscono lo stesso contenuto dell'argomento
+        (str(x), String.valueOf(x)). Usate per riconoscere il soggetto di una validazione.
+        Default: nessuna."""
+        return []
+
 
     
 # ---------------------------------------------------------------------- #
@@ -1093,6 +1099,8 @@ class PythonAdapter(LanguageAdapter):
     def division_operators(self) -> list:
         return ["/", "//", "/=", "//="]
 
+    def identity_wrapper_calls(self): return ["str"]
+
 
 # ---------------------------------------------------------------------- #
 # Implementazione Java
@@ -1594,6 +1602,8 @@ class JavaAdapter(LanguageAdapter):
                 out.append({"var": name_text(lhs[0]),
                             "type": "".join(rhs[0].itertext()).strip().split("<")[0]})
         return out
+
+    def identity_wrapper_calls(self): return ["String.valueOf"]
 
 
 # ---------------------------------------------------------------------- #
@@ -3191,6 +3201,9 @@ class JavaScriptAdapter(LanguageAdapter):
         cond = " or ".join(f"self::src:{t}" for t in
                         set(self.lambda_tags()) | set(self.function_tags()))
         return f"./src:argument_list//*[{cond}]"
+
+
+    def identity_wrapper_calls(self): return ["String"]
 
 # ---------------------------------------------------------------------- #
 # Registro / dispatch

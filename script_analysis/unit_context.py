@@ -27,7 +27,7 @@ def build_assign_infos(adapter, unit):
         rhs_names = []
         rhs_interp = []
         for rn in rhs_all:
-            for n in rn.xpath(".//src:name[not(src:name)] | self::src:name[not(src:name)]", namespaces=NS):
+            for n in rn.xpath("(.//src:name[not(src:name)] | self::src:name[not(src:name)])[not(ancestor::src:condition)]", namespaces=NS):
                 if in_opaque_tag(n, adapter) or is_member_name(n, adapter):
                     continue
                 var_txt = "".join(n.itertext()).strip()
