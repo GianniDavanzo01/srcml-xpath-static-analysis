@@ -699,6 +699,28 @@ def _bool_text(value, adapter) -> str:
     return adapter.canonical_literal(str(value))
 
 
+# HELEPR RICERCHE REGEX
+def _regex_receiver_pattern(call_node, adapter):
+    """Pattern di /P/flags.test(x): letterale regex che fa da receiver della call."""
+    ops = " or ".join(f"text()='{o}'" for o in adapter.member_access_operator())
+    r = call_node.xpath(
+        f"preceding-sibling::*[1][self::src:operator and ({ops})]"
+        f"/preceding-sibling::*[1][self::src:literal[@type='regex']]",
+        namespaces=NS)
+    if not r:
+        return None
+    m = re.match(r"^/(.*)/[a-z]*$", "".join(r[0].itertext()).strip(), re.S)
+    return m.group(1) if m else None
+
+# HELEPR RICERCHE REGEX
+def pattern_rejects(pattern: str, probes, search: bool = False) -> bool:
+    """True se il pattern non accetta nessuna delle stringhe pericolose."""
+    try:
+        rx = re.compile(re.sub(r"(?<!\\)\$$", r"\\Z", pattern))   # '$' stretto, come POSIX/JS
+    except re.error:
+        return False                       # dialetto non gestito: conservativo
+    m = rx.search if search else rx.fullmatch
+    return not any(m(s) for p in probes for s in (p, "a" + p, "a" + p + "a"))
 
 _OWN_INDEX_LITERALS_XP = etree.XPath(
     "./src:argument_list//src:index//src:literal[@type='string']"
@@ -781,6 +803,16 @@ def call_arguments_match_ast(call_node, spec: dict, adapter, imports) -> bool:
         if not any(req in f for req in lowered_reqs for f in lowered_found):
             return False
 
+    probes = spec.get("pattern_rejects")
+    if probes:
+        search = spec.get("semantics") == "search"
+        texts = [adapter.normalize_string_literal("".join(l.itertext())).replace("\\\\", "\\")
+                 for l in _resolve_string_literals(call_node, adapter)]
+        rp = _regex_receiver_pattern(call_node, adapter)
+        if rp is not None:
+            texts.append(rp)          # il letterale regex non va de-escapato
+        if not any(pattern_rejects(t, probes, search) for t in texts):
+            return False
         
     substr_targets = spec.get("contains_string_containing", [])
     if substr_targets:
@@ -1014,6 +1046,7 @@ def is_enclosing_param(node, head, adapter) -> bool:
         local = [
             d for d in get_decl_index(fn).get(head, [])
             if not d.xpath("ancestor::src:parameter", namespaces=NS)
+            and adapter.is_binding_decl(d, NS)
             and scope_of(d) and scope_of(d)[0] is fn
         ]
         if local:

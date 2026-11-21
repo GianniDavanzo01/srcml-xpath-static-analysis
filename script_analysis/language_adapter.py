@@ -404,6 +404,13 @@ class LanguageAdapter(ABC):
         Default: False (Python, Java non hanno macro)."""
         return False
 
+    def is_binding_decl(self, decl_node, ns) -> bool:
+        """True se il <decl> INTRODUCE davvero una variabile nello scope (può quindi
+        nascondere un parametro con lo stesso nome). Default: sì.
+        I linguaggi in cui srcML usa <decl> anche per costrutti che non legano nulla
+        (es. chiavi/shorthand di un object literal) lo sovrascrivono."""
+        return True
+
 
     def call_receiver_name(self, call_node, ns) -> str | None:
         """Nome della variabile su cui e' invocato il metodo ('x' in x.add(...)).
@@ -945,7 +952,7 @@ class PythonAdapter(LanguageAdapter):
     def lambda_tags(self):     return ["lambda"]
     def flow_exit_tags(self):  return ["return", "throw", "continue", "break"]
     def flow_exit_calls(self): return ["sys.exit", "exit", "quit", "os._exit"]
-    def noop_statement_tags(self): return ["pass"]
+    def noop_statement_tags(self): return ["pass","continue"]
     def class_tags(self): return ["class"]
 
 
@@ -1399,11 +1406,7 @@ class JavaAdapter(LanguageAdapter):
         return [
             "*.length", "*.hashCode", "*.isEmpty", "*.equals", "*.compareTo",
             "*.startsWith", "*.endsWith", "*.contains", "*.indexOf", "*.lastIndexOf",
-            "Integer.parseInt", "Integer.valueOf",
-            "Long.parseLong", "Long.valueOf",
-            "Double.parseDouble", "Double.valueOf",
-            "Float.parseFloat", "Float.valueOf",
-            "Boolean.parseBoolean", "Boolean.valueOf",
+            "*.parseInt","*.parseLong","*.valueOf"
         ]
 
     def taint_propagating_calls(self) -> dict:
@@ -1888,6 +1891,7 @@ class CAdapter(LanguageAdapter):
             "strcat": 0, "strncat": 0,
             "memcpy": 0,  "_snprintf": 0,
             "sscanf": {"in": [0], "out_variadic_from": 2},
+            "getaddrinfo": {"in": [0], "out": [3]},
         }
 
     def extract_membership_relations(self, condition_node, ns) -> list[dict]:
@@ -3178,6 +3182,7 @@ class JavaScriptAdapter(LanguageAdapter):
             if head in roles:
                 local = [d for d in get_decl_index(fn).get(head, [])
                         if not d.xpath("ancestor::src:parameter", namespaces=ns)
+                        and self.is_binding_decl(d, ns)
                         and enclosing_scope(d, self) is fn]
                 result = None if local else roles[head]
                 break
@@ -3202,6 +3207,22 @@ class JavaScriptAdapter(LanguageAdapter):
                         set(self.lambda_tags()) | set(self.function_tags()))
         return f"./src:argument_list//*[{cond}]"
 
+
+    def is_binding_decl(self, decl_node, ns) -> bool:
+        """In un object literal ({ a: 1, req }) srcML modella ogni proprietà come
+        property/decl/name, ma NON è una dichiarazione: 'req' shorthand e' un USO.
+        Nel destructuring ({ req } = x, ({ req }) => ...) invece lega un nome.
+        Si distingue dal contenitore piu' esterno: se l'object/array e' un valore
+        (<expr>) e' un letterale, se e' figlio di un <decl> e' un pattern."""
+        parent = decl_node.getparent()
+        if parent is None or not parent.tag.endswith("}property"):
+            return True
+        outer = decl_node.xpath(
+            "ancestor::*[self::src:object or self::src:array][last()]", namespaces=ns)
+        if not outer:
+            return True
+        top = outer[0].getparent()
+        return not (top is not None and top.tag.endswith("}expr"))
 
     def identity_wrapper_calls(self): return ["String"]
 

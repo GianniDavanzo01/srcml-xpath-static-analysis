@@ -1,7 +1,7 @@
 {
     "sources":{
         "http_input": ["recv", "recvfrom", "recvmsg", "read", "fread"], 
-        "nullable_returning_calls": ["malloc", "calloc", "realloc", "fopen", "getenv","tmpfile", "opendir","getcwd"],
+        "nullable_returning_calls": ["malloc", "calloc", "realloc", "fopen", "getenv","tmpfile", "opendir","getcwd","strchr"],
         "cli_input": ["getenv","argv","optarg","fgets", "scanf","fscanf"],
         "socket_input": ["recv", "recvfrom", "recvmsg", "read", "WSARecv", "WSARecvFrom"],
         "file_input": ["fgets", "fread", "getline", "getdelim","fgetc", "getc","fscanf", "read", "pread"]
@@ -13,17 +13,34 @@
                 "call":["*.fopen","*.open","*.remove","*.unlink","*.rename","*.mkdir","*.rmdir","*.stat","*.lstat"]
             }
         ],
-        "path_concatenation": [
-            {
-                "type": "call_with_var_arg",
-                "call": ["strcat", "strncat", "sprintf", "snprintf", "asprintf"],
-                "literal_contains": ["/", "\\\\", ".."]
-            }
-        ],
+        "path_concatenation": [],
         "os_command_execution": [
             {
                 "type": "call_with_var_arg",
-                "call": ["system", "popen", "execl", "execlp", "execle", "execv", "execvp", "execvpe", "execve","_wsystem", "_wpopen", "_execl", "_wexecl","_spawnv"]
+                "call": [
+                "system", "popen", "_popen", "_wpopen",
+                "ShellExecute", "ShellExecuteA", "ShellExecuteW",
+                "WinExec","_spawnv",
+                "execl", "execlp", "execle"
+                ]
+            },
+            {
+                "type": "call_with_var_arg",
+                "arg_index": 0,
+                "call": [
+                "execv", "execvp", "execvpe", "execve"
+                ]
+            },
+            {
+                "type": "call_with_var_arg",
+                "arg_index": 1,
+                "call": [
+                "execv", "execvp", "execvpe", "execve"
+                ],
+                "literal_contains": [
+                "/sh", "/bash", "/dash", "/zsh", "/ash", "/ksh",
+                "cmd.exe", "powershell"
+                ]
             }
         ],
         "sql_execution": [
@@ -36,7 +53,8 @@
             }
         ],
         "http_request": [
-            {"type": "call_with_var_arg", "call": ["curl_easy_setopt", "curl_easy_perform"]}
+            {"type": "call_with_var_arg", "call": ["curl_easy_setopt", "curl_easy_perform"]},
+            {"type": "call_with_var_arg", "arg_index": 1, "call": ["connect"]}
         ],
         "ldap_execution": [
             {
@@ -179,6 +197,16 @@
             "DES_encrypt1", "DES_encrypt2", "DES_encrypt3", "DES_ecb_encrypt",
             "EVP_des_ecb", "EVP_des_cbc","EVP_rc4", "EVP_rc2_ecb",
             "RC4","EVP_bf_ecb","DES_set_key", "DES_set_key_checked", "DES_set_key_unchecked",
+            "EVP_des_ede", "EVP_des_ede_cbc", "EVP_des_ede_ecb",
+            "EVP_des_ede3", "EVP_des_ede3_cbc", "EVP_des_ede3_ecb",
+            "EVP_des_ede3_cfb", "EVP_des_ede3_ofb",
+            "EVP_des_cfb", "EVP_des_ofb",
+            "EVP_rc4_40", "EVP_rc4_hmac_md5", "EVP_rc2_cbc", "EVP_rc2_40_cbc",
+            "EVP_bf_cbc", "EVP_bf_cfb", "EVP_bf_ofb",
+            "EVP_cast5_ecb", "EVP_cast5_cbc", "EVP_idea_ecb", "EVP_idea_cbc",
+            "EVP_aes_128_ecb", "EVP_aes_192_ecb", "EVP_aes_256_ecb",
+            "EVP_camellia_128_ecb", "EVP_camellia_256_ecb",
+            "DES_ede3_cbc_encrypt", "DES_ecb3_encrypt", "DES_cbc_encrypt", "BF_cbc_encrypt", "RC4_set_key",
             {
                 "type": "call_matches_ast",
                 "call": "CryptDeriveKey",
@@ -306,7 +334,7 @@
             "curl_non_url_option": [
                     {
                     "type": "node_matches_xpath",
-                    "xpath": "not(ancestor::src:call[1]//src:argument_list//src:name[text()='CURLOPT_URL'])"
+                    "xpath": "ancestor::src:call[1][.//src:name[1][contains(., 'curl_easy_setopt')]][not(.//src:argument_list//src:name[text()='CURLOPT_URL'])]"
                     }
                 ],
             "starttls_upgrade": [
@@ -378,13 +406,43 @@
                     "right_exact": ["0"]
                 }],
             "crypto_safe_contexts": [],
-            "manual_string_sanitization":[],
+            "manual_string_sanitization":[
+                {
+                    "type": "function_has_call_matching_ast",
+                    "call": ["regcomp"],
+                    "pattern_rejects": [";", "&", "$", "`", "(", ")", "<", ">", "\n", " ", "\"", "'", "\\"],
+                    "also_has_call": ["regexec"],
+                    "before_sink": true
+                }
+            ],
+
+            "sql_regex_validation":[
+                {
+                    "type": "function_has_call_matching_ast",
+                    "call": ["regcomp"],
+                    "pattern_rejects": ["'", "\"", "\\", ";"],
+                    "semantics": "search",
+                    "also_has_call": ["regexec"],
+                    "before_sink": true
+                }
+            ],
             "non_security_hash_usage":[],
             "sql_parameterization": [],
+            "ldap_regex_validation":[
+                 {
+                    "type": "function_has_call_matching_ast",
+                    "call": ["regcomp"],
+                    "pattern_rejects": ["(", ")", "*", "\\", "\u0000"],
+                    "semantics": "search",
+                    "also_has_call": ["regexec"],
+                    "before_sink": true
+                }
+            ],
             "try_block": [],
             "allowlist_validation": [],
             "file_extension_validation":[],
-            "url_validation": []
+            "url_validation": [],
+            "regex_validation":[]
     },
     "patterns":{
         "insecure_certificate_validation": {

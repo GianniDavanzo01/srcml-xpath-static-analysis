@@ -4,12 +4,16 @@
       "*.request.args",
       "*.request.args.get",
       "*.request.form",
+      "*.request.form.get",
       "*.request.data",
       "*.request.files",
       "*.request.headers",
+      "*.request.headers.get",
       "*.request.cookies",
+      "*.request.cookies.get",
       "*.request.values",
       "*.request.json",
+      "*.request.get_json",
       "*.request.view_args",
       "*.request.path",
       "*.request.url",
@@ -17,6 +21,7 @@
       "*.request.query_string",
       "*.request.endpoint",
       "*.request.GET",
+      "*.request.GET.get",
       "*.request.POST",
       "*.request.COOKIES",
       "*.request.META",
@@ -30,6 +35,7 @@
       "*.request.query_params",
       "*.request.path_params",
       "*.request.client",
+      "*.requests.get",
       "fastapi.Request",
       "starlette.requests.Request"
     ],
@@ -40,18 +46,6 @@
       "os.environ.get",
       "os.getenv",
       "argparse.ArgumentParser.parse_args"
-    ],
-    "nullable_returning_calls": [
-      "re.match",
-      "re.search",
-      "re.fullmatch",
-      "os.environ.get",
-      "os.getenv",
-      "*.request.args.get",
-      "*.request.form.get",
-      "*.request.headers.get",
-      "*.request.cookies.get",
-      "*.fetchone"
     ],
   "file_upload_input": [
     "*.request.files",
@@ -118,6 +112,16 @@
         ]
       }
     ],
+    "dynamic_code_execution":[
+        {
+          "type": "call_with_var_arg",
+          "call":["eval", "exec", "*.zip_importer.exec_module"]
+        },
+        {
+          "type": "call_with_var_arg",
+          "call": ["compile"],
+          "literal_contains": ["exec"]
+        }],
     "file_system_access": [
       {
         "type": "call_with_var_arg",
@@ -126,6 +130,7 @@
           "builtins.open",
           "io.open",
           "os.open",
+          "os.unlink",
           "codecs.open",
           "gzip.open",
           "bz2.open",
@@ -139,7 +144,9 @@
           "*.send_static_file",
           "fastapi.responses.FileResponse",
           "starlette.responses.FileResponse",
-          "django.http.FileResponse"
+          "django.http.FileResponse",
+          "urllib.request.urlopen",
+          "urllib.request.urlretrieve"
         ]
       }
     ],
@@ -164,9 +171,13 @@
           "*.Markup",
           "*.mark_safe",
           "*.render_template_string",
-          "*.Environment.get_template.render",
+          "*.get_template.render",
           "*.Template.render"
         ]
+      },
+      {
+        "type": "matches_xpath",
+        "xpath": "ancestor::src:return[not(ancestor::src:lambda)][.//src:literal[@type='string'][contains(., '<')]]"
       }
     ],
     "http_redirect": [
@@ -177,7 +188,9 @@
           "*.HttpResponseRedirect",
           "*.HttpResponsePermanentRedirect",
           "*.RedirectResponse",
-          "flask.Response.headers"
+          "flask.Response.headers",
+          "django.shortcuts.redirect",
+          "django.redirect"
         ]
       },
       {
@@ -202,7 +215,8 @@
           "ldap.initialize",
           "urllib3.HTTPConnectionPool.request",
           "http.client.HTTPConnection.request",
-          "http.client.HTTPSConnection.request"
+          "http.client.HTTPSConnection.request",
+          "*.socket.create_connection"
         ]
       }
     ],
@@ -339,12 +353,6 @@
         ]
       }
     ],
-    "null_dereference": [
-      {
-        "type": "matches_xpath",
-        "xpath": "following-sibling::src:operator[1][text()='.'] | following-sibling::src:index[1]"
-      }
-    ],
     "authentication_sinks": [
       {
         "type": "call_with_var_arg",
@@ -421,6 +429,10 @@
           "lxml.etree.parse"
         ]
     }
+  ],
+  "regex_construction_and_matching": [
+    {"type": "call_with_var_arg",
+    "call": ["re.compile", "re.match", "re.search", "re.fullmatch", "re.findall", "re.sub"]}
   ]
   },
   "forbidden_functions": {
@@ -480,13 +492,6 @@
         "arg_less_than": 2048
       }
     ],
-    "dynamic_code_execution": ["eval", "exec", "*.zip_importer.exec_module",
-      {
-        "type": "call_matches_ast",
-        "call": ["compile"],
-        "contains_string_containing": ["exec"]
-      }
-    ],
     "unsafe_xml_parsers": [
       "xml.sax.make_parser",
       "xml.sax.parse",
@@ -495,7 +500,7 @@
       "xml.etree.ElementTree.fromstring",
       "xml.dom.minidom.parse",
       "xml.dom.pulldom.parse",
-      "lxml.etree.XMLParser"
+      "*.etree.XMLParser"
     ],
     "unsafe_deserializers": [
       "pickle.load",
@@ -571,10 +576,6 @@
       }
     ],
     "return_value_must_be_checked": [
-      "subprocess.call",
-      "os.system",
-      "os.fork",
-      "subprocess.Popen",
       "urllib.parse.quote",
       "urllib.parse.quote_plus",
       "shlex.quote",
@@ -584,11 +585,17 @@
       "re.fullmatch",
       "hmac.compare_digest",
       "secrets.compare_digest"
+    ],
+    "unrestricted_network_bind": [
+      {
+        "type": "call_matches_ast",
+        "call": ["*.bind"],
+        "contains_string_containing": ["0.0.0.0", "::"]
+      }
     ]
   },
   "excluded_functions": {
-    "safe_prng_exceptions": ["secrets.choice", "secrets.randbelow", "secrets.randbits"],
-    "eval_false_positive_exceptions": ["context.eval", "ctx.eval"]
+    "safe_prng_exceptions": ["secrets.choice", "secrets.randbelow", "secrets.randbits"]
   },
   "xpath_rules": {
     "off_by_one_loop_condition": [
@@ -608,12 +615,14 @@
       "werkzeug.escape",
       "werkzeug.utils.escape",
       "html.escape",
-      "bleach.clean"
+      "bleach.clean",
+      "django.forms.utils.flatatt"
     ],
     "url_encode_sanitizers": ["urllib.parse.quote", "urllib.parse.quote_plus"],
     "crlf_sanitizers": ["urllib.parse.quote", "urllib.parse.quote_plus", "werkzeug.urls.url_quote"],
     "ldap_escape_sanitizers": ["ldap3.utils.conv.escape_filter_chars", "ldap.filter.escape_filter_chars"],
     "crypto_decryption_functions": ["*.decrypt"],
+    "regex_escape_sanitizers": ["re.escape", "regex.escape"],
     "xpath_sanitizers": []
   },
   "safe_contexts": {
@@ -622,11 +631,11 @@
         "type": "parametrized_query",
         "call": [
         "*.cursor.execute", "*.cursor.executemany",
-        "*.connection.execute", "*.conn.execute",
+        "*.connection.execute", "*.conn.execute","*.db.execute",
         "sqlite3.connect.execute",         
         "sqlite3.connect.executemany"       
         ],
-        "placeholders": ["%s", "?"], 
+        "placeholders": ["%s", "?", "%(", ":"], 
         "min_args": 2
       }
     ],
@@ -706,15 +715,7 @@
       }
     ],
     "allowlist_validation": [
-      {
-        "type": "membership_check",
-        "scope": "enclosing",
-        "require_var_left": true,
-        "right_is_bare_identifier": true,
-        "allowed_negation": [
-          false
-        ]
-      }
+       { "type": "membership_check", "require_var_left": true, "right_is_constant": true }
     ],
     "file_extension_validation": [
       {
@@ -743,16 +744,25 @@
         "type": "function_has_method_call",
         "call": "*.replace",
         "args_contain": [";", "&"]
-      }
-    ],
-    "null_checked": [
-      {
-        "type": "var_truthiness_check",
-        "scope": "enclosing",
-        "require_state": "truthy"
       },
       {
-        "type": "var_falsy_guard_clause"
+        "type": "function_has_method_call",
+        "call": "*.replace",
+        "args_contain": ["\\n", "\\r"]
+      },
+      {
+        "type": "regex_guarded_validation",
+        "call": ["re.fullmatch"],
+        "pattern": {"at": "argument", "index": 0},
+        "subject": {"at": "argument", "index": 1},
+        "reject": [";", "&", "|", "$", "`", "<", ">", "(", ")", "\n", "'", "\""]
+      },
+      {
+        "type": "try_validated_var",
+        "call": ["jsonschema.validate"],
+        "pattern": {"at": "argument", "index": 1, "after_key": "pattern"},
+        "subject": {"at": "argument", "index": 0},
+        "reject": [";", "&", "|", "$", "`", "<", ">", "\n", "'", "\"", "\\"]
       }
     ],
     "safe_metadata_extraction": [
@@ -841,8 +851,58 @@
       "left_exact": ["$VAR"],
       "right_exact": ["0"]
   }],
+  "try_enum_or_numeric_validation": [
+  {
+    "type": "try_validated_var",
+    "call": [
+      "int",
+      "float",
+      "complex",
+      "decimal.Decimal"
+    ],
+    "exclude_call": [
+      "str",
+      "bool"
+    ]
+  }
+],
+    "regex_validation": [
+      {
+        "type": "regex_guarded_validation",
+        "call": ["re.fullmatch"],
+        "pattern": {"at": "argument", "index": 0},
+        "subject": {"at": "argument", "index": 1},
+        "reject": ["<", ">", "\"", "'", "&", "/"]
+      }
+    ],
+    "ldap_regex_validation":[
+      {
+        "type": "regex_guarded_validation", "call": ["re.fullmatch"],
+        "pattern": {"at": "argument", "index": 0},
+        "subject": {"at": "argument", "index": 1},
+        "reject": ["*","(",")","\\","\u0000",",","=","+","\"","<",">",";"]
+      }
+    ],
+    "sql_regex_validation": [
+      {
+        "type": "regex_guarded_validation",
+        "call": ["re.fullmatch"],
+        "pattern": {"at": "argument", "index": 0},
+        "subject": {"at": "argument", "index": 1},
+        "reject": ["'", "\"", ";", "/*"]
+      }
+    ],
+  "regex_validation_markup":[],
     "crypto_safe_contexts": [],
-    "curl_non_url_option": [],
+    "curl_non_url_option": [
+      {
+          "type": "regex_guarded_validation",
+          "call": ["re.fullmatch"],
+          "pattern": {"at": "argument", "index": 0},
+          "subject": {"at": "argument", "index": 1},
+          "reject": ["localhost", "127.0.0.1", "169.254.169.254", "evil.com"]
+        }
+    ],
     "bounds_checked_array_access": [],
     "alloc_size_positive_checked": []
   },
@@ -910,6 +970,7 @@
       },
       "forbidden_functions": [
         "ssl.wrap_socket",
+        "*.SSL.Context",
         {
           "type": "call_matches_ast",
           "call": ["ssl._create_unverified_context"],
@@ -920,7 +981,10 @@
           "call": ["ssl._create_stdlib_context"],
           "exact_args_count": 0
         }
-      ]
+      ],
+      "safe_contexts": [
+      { "type": "function_has_call_matching_ast", "call": ["*.set_verify"] }
+    ]
     },
     "unsafe_deserialization_kwargs": {
       "forbidden_calls_with_kwargs": [
@@ -931,9 +995,6 @@
           }
         }
       ]
-    },
-    "unsafe_dict_access": {
-      "forbidden_subscripts": ["*.request.form", "*.request.args", "os.environ"]
     },
     "assignment_in_condition": {
       "xpath_rules": [".//src:condition/src:expr[src:operator[text()='='] and not(src:operator[text()='==' or text()='!=' or text()='<' or text()='>' or text()='<=' or text()='>=' or text()='&&' or text()='||'])]"]
@@ -960,6 +1021,14 @@
         {
           "call": ["jwt.decode"],
           "kwargs": {"verify": "False"}
+        }
+      ]
+    },
+    "insecure_xslt_access_control": {
+      "forbidden_calls_with_kwargs": [
+        {
+          "call": ["*.XSLTAccessControl"],
+          "kwargs": { "read_network": "True" }
         }
       ]
     }

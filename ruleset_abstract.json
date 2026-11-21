@@ -1,13 +1,5 @@
 [
 {
-  "rule_id": "CWE-20-UNSAFE-DICT-ACCESS",
-  "languages":["python"],
-  "type": "structural",
-  "vulnerabilities": ["CWE-20"],
-  "patterns": [{"tag": "unsafe_dict_access"}],
-  "safe_contexts": [{"tag": "try_block"}, {"tag": "if_block"}]
-},
-{
   "rule_id": "CWE-22-PATH-TRAVERSAL",
   "type": "taint",
   "vulnerabilities": ["CWE-22"],
@@ -26,7 +18,8 @@
   "safe_contexts": [
     {"tag": "allowlist_validation"},
     {"tag": "file_extension_validation"},
-    {"tag": "safe_metadata_extraction"}
+    {"tag": "safe_metadata_extraction"},
+    {"tag": "regex_validation"}
   ]
 },
 {
@@ -65,7 +58,7 @@
     {"tag": "XSS_sanitizers"},
     {"tag": "cast_to_integer"}
   ],
-  "safe_contexts": [{"tag": "allowlist_validation"}]
+  "safe_contexts": [{"tag": "allowlist_validation"},{"tag":"regex_validation_markup"},{"tag": "try_enum_or_numeric_validation"}]
 },
 {
   "rule_id": "CWE-89-SQLI",
@@ -80,7 +73,8 @@
   ],
   "sanitizers": [{"tag": "cast_to_integer"}],
   "safe_contexts": [
-    {"tag": "sql_parameterization"}
+    {"tag": "sql_parameterization"},
+    {"tag": "sql_regex_validation"}
   ]
 },
 {
@@ -98,16 +92,18 @@
     {"tag": "ldap_escape_sanitizers"},
     {"tag": "cast_to_integer"}
   ],
-  "safe_contexts": [{"tag": "allowlist_validation"}]
+  "safe_contexts": [{"tag": "allowlist_validation"},{"tag":"ldap_regex_validation"}]
 },
 {
-  "rule_id": "CWE-95-EVAL-INJECTION",
-  "type": "structural",
+  "rule_id": "EVAL-INJECTION",
+  "type": "taint",
   "languages":["java","python","javascript"],
-  "vulnerabilities": ["CWE-95"],
-  "forbidden_functions": [{"tag": "dynamic_code_execution"}],
-  "excluded_functions": [{"tag": "eval_false_positive_exceptions"}],
-  "safe_contexts": [{"type": "all_args_are_literals"}]
+  "vulnerabilities": ["CWE-95","CWE-94"],
+  "sources":[{"tag": "http_input"},
+            {"tag": "cli_input"},"function_parameters"],
+  "sinks": [{"tag": "dynamic_code_execution"}],
+  "sanitizers": [{"tag": "cast_to_integer"}],
+  "safe_contexts": [{"tag": "allowlist_validation"},{"tag": "try_enum_or_numeric_validation"}]
 },
 {
   "rule_id": "CWE-99-RESOURCE-INJECTION",
@@ -141,14 +137,14 @@
   "sanitizers": [
     {"tag": "crlf_sanitizers"}
   ],
-  "safe_contexts": [{"tag": "allowlist_validation"}]
+  "safe_contexts": [{"tag": "allowlist_validation"},{"tag": "try_enum_or_numeric_validation"}]
 },
 {
   "rule_id": "CWE-117-LOG-INJECTION",
   "type": "taint",
   "vulnerabilities": ["CWE-117"],
   "sources": [
-    {"tag": "http_input"}
+    {"tag": "http_input"},{"tag":"cli_input"},"function_parameters"
   ],
   "sinks": [
     {"tag": "logging_functions"}
@@ -156,7 +152,10 @@
   "sanitizers": [
     {"tag": "crlf_sanitizers"},
     {"tag": "cast_to_integer"}
-  ]
+  ],
+  "safe_contexts":[{"tag": "manual_string_sanitization"},
+  {"tag":"allowlist_validation"},
+  {"tag":"regex_validation"}]
 },
 {
   "rule_id": "CWE-120-BUFFER-OVERFLOW",
@@ -213,25 +212,25 @@
   ]
 },
 {
-  "rule_id": "CWE-197", 
+  "rule_id": "Numeric Truncation Error", 
   "type": "structural", 
   "languages": ["java"],
-  "vulnerabilities": ["CWE-197"], 
+  "vulnerabilities": ["CWE-197","CWE-681"], 
   "patterns": [{"tag": "narrowing_primitive_casts"}]
 },
 {
-  "rule_id": "CWE-209-ERROR-DETAILS-TO-CLIENT",
+  "rule_id": "CWE-ERROR-DETAILS-TO-CLIENT",
   "type": "taint",
   "languages": ["java", "python","javascript"],
-  "vulnerabilities": ["CWE-209"],
+  "vulnerabilities": ["CWE-200","CWE-209"],
   "sources": ["exception_variable"],
   "sinks": [{"tag": "client_error_output"}]
 },
 {
-  "rule_id": "CWE-209-ERROR-DETAILS-TO-CONSOLE",
+  "rule_id": "CWE-ERROR-DETAILS-TO-CONSOLE",
   "type": "taint",
   "languages": ["java", "python","javascript"],
-  "vulnerabilities": ["CWE-209"],
+  "vulnerabilities": ["CWE-200","CWE-209"],
   "sources": ["exception_variable"],
   "sinks": [{"tag": "exception_console_output"}]
 },
@@ -324,9 +323,9 @@
   ]
 },
 {
-  "rule_id": "CWE-327-BROKEN-CRYPTO-ALGORITHM",
+  "rule_id": "CWE-BROKEN-CRYPTO-ALGORITHM",
   "type": "structural",
-  "vulnerabilities": ["CWE-327"],
+  "vulnerabilities": ["CWE-327","CWE-326"],
   "forbidden_functions": [
     {"tag": "weak_ciphers_and_modes"}
   ],
@@ -472,7 +471,7 @@
 {
   "rule_id": "CWE-476-NULL-POINTER-DEREFERENCE",
   "type": "taint",
-  "languages":["python","c","java"],
+  "languages":["c","java"],
   "vulnerabilities": ["CWE-476"],
   "propagate_taint": false,
   "ignore_taint_block_functions": true,
@@ -557,16 +556,24 @@
     {"tag": "http_redirect"}
   ],
   "sanitizers": [{"tag": "cast_to_integer"},{"tag": "url_encode_sanitizers"}],
-  "safe_contexts": [{"tag": "url_validation"}]
+  "safe_contexts": [{"tag": "url_validation"},{"tag": "allowlist_validation"}]
 },
 {
   "rule_id": "CWE-611-XXE",
   "type": "structural",
+  "languages": ["python", "java", "c"],
   "vulnerabilities": ["CWE-611"],
   "forbidden_functions": [
     {"tag": "unsafe_xml_parsers"}
   ],
   "safe_contexts":[{"tag":"xxe_safe_configuration"}]
+},
+{
+  "rule_id": "CWE-611-XXE-KWARGS",
+  "type": "structural",
+  "languages": ["javascript"],
+  "vulnerabilities": ["CWE-611"],
+  "patterns": [{"tag": "xxe_unsafe_kwargs"}]
 },
 {
   "rule_id": "CWE-611-XXE-TAINT",
@@ -704,12 +711,21 @@
   "type": "taint",
   "vulnerabilities": ["CWE-918"],
   "sources": [
-    {"tag": "http_input"},{"tag":"cli_input"}
+    {"tag": "http_input"},{"tag":"cli_input"},"function_parameters"
   ],
   "sinks": [
     {"tag": "http_request"}
   ],
   "safe_contexts":[{"tag": "curl_non_url_option"},{"tag": "allowlist_validation"}]
+},
+{
+  "rule_id": "CWE-918-XSLT-SSRF",
+  "type": "structural",
+  "languages": ["python"],
+  "vulnerabilities": ["CWE-918"],
+  "patterns": [
+    { "tag": "insecure_xslt_access_control" }
+  ]
 },
 {
   "rule_id": "CWE-943-NOSQL-INJECTION",
@@ -729,7 +745,8 @@
     {"tag":"opaque_transforms"}
   ],
   "safe_contexts": [
-    {"tag": "allowlist_validation"}
+    {"tag": "allowlist_validation"},
+    {"tag": "sql_regex_validation"}
   ]
 },
 {
@@ -751,13 +768,20 @@
   "sanitizers":[]
 },
 {
+  "rule_id": "CWE-1327-UNRESTRICTED-BIND-ADDRESS",
+  "type": "structural",
+  "languages": ["python"],
+  "vulnerabilities": ["CWE-1327"],
+  "forbidden_functions": [{"tag": "unrestricted_network_bind"}]
+},
+{
   "rule_id": "CWE-1333-REGEX-DOS",
   "type": "taint",
-  "languages": ["javascript"],
+  "languages": ["javascript","python"],
   "vulnerabilities": ["CWE-1333"],
   "sources": [
     {"tag": "http_input"},
-    {"tag": "cli_input"}
+    {"tag": "cli_input"}, "function_parameters"
   ],
   "sinks": [
     {"tag": "regex_construction_and_matching"}

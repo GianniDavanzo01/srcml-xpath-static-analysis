@@ -49,7 +49,11 @@
       "document.cookie",
       "document.referrer",
       "window.name",
-      "URLSearchParams.get"
+      "URLSearchParams.get",
+      "h3.getQuery",
+      "h3.readBody",
+      "h3.getRouterParam",
+      "h3.getRouterParams"
     ],
     "cli_input": [
       "process.argv",
@@ -57,7 +61,8 @@
       "process.stdin",
       "yargs.argv",
       "minimist",
-      "*.parseArgs"
+      "*.parseArgs",
+      "fs.readFileSync"
     ],
     "socket_input": [],
     "nullable_returning_calls": [
@@ -120,42 +125,40 @@
         ]
       }
     ],
+    "dynamic_code_execution": [
+      {
+      "type": "call_with_var_arg",
+      "call":["eval",
+      "Function",
+      "vm.runInContext",
+      "vm.runInNewContext",
+      "vm.runInThisContext",
+      "vm.Script",
+      "vm.compileFunction",
+      "vm2.VM.run",
+      "vm2.NodeVM.run"]
+      }
+    ],
     "path_concatenation": [
       {
         "type": "call_with_var_arg",
         "call": [
-          "path.join", "path.resolve",
+          "path.join",
           "path.posix.join", "path.posix.resolve",
           "path.win32.join", "path.win32.resolve"
         ]
       }
     ],
     "os_command_execution": [
-      {
-        "type": "call_with_var_arg",
-        "arg_index": 0,
-        "call": [
-          "child_process.exec",
-          "child_process.execSync",
-          "shelljs.exec",
-          "execa.command",
-          "execa.commandSync",
-          "execa.execaCommand"
-        ]
-      },
-      {
-        "type": "call_with_var_arg",
-        "call": [
-          "child_process.spawn",
-          "child_process.spawnSync",
-          "child_process.execFile",
-          "child_process.execFileSync",
-          "child_process.fork",
-          "cross-spawn",
-          "cross-spawn.sync",
-          "*.execAsync"
-        ]
-      }
+    {
+      "type": "call_with_var_arg",
+      "arg_index": 0,
+      "call": ["child_process.exec", "child_process.execSync", "shelljs.exec",
+              "execa.command", "execa.commandSync", "execa.execaCommand",
+              "child_process.spawn", "child_process.spawnSync",
+              "child_process.execFile", "child_process.execFileSync",
+              "child_process.fork", "cross-spawn", "cross-spawn.sync", "*.execAsync"]
+    }
     ],
     "html_output": [
       {
@@ -373,6 +376,14 @@
           "http.get", "http.request", "https.get", "https.request",
           "ws", "ws.WebSocket", "WebSocket",
           "*.goto"
+        ]
+      },
+      {
+        "type": "call_with_var_arg",
+        "call": [
+          "net.connect",
+          "net.createConnection",
+          "tls.connect"
         ]
       }
     ],
@@ -603,8 +614,7 @@
       "ldap-escape.dn"
     ],
     "nosql_sanitizers": [
-      "String",
-      "*.toString",
+      "*.safeParse",
       "*.ObjectId",
       "mongoose.Types.ObjectId",
       "mongo-sanitize",
@@ -674,13 +684,8 @@
       }
     ],
     "allowlist_validation": [
-      {
-        "type": "membership_check",
-        "scope": "enclosing",
-        "require_var_left": true,
-        "right_is_bare_identifier": true,
-        "allowed_negation": [false]
-      }
+      { "type": "membership_check", "require_var_left": true, "right_is_constant": true },
+      {"type": "method_call_guard", "call": ["*.startsWith"]}
     ],
     "file_extension_validation": [
       {
@@ -741,7 +746,8 @@
         "call": [
           "*.ctx.cookies.set",
           "*.reply.setCookie",
-          "*.reply.cookie"
+          "*.reply.cookie",
+          "*.cookie"
         ],
         "kwargs": {
           "secure": "true"
@@ -761,14 +767,97 @@
         "type": "function_has_method_call",
         "call": ["*.replace", "*.replaceAll"],
         "args_contain": [";", "&"]
+      },
+      {
+        "type": "regex_guarded_validation",
+        "call": ["*.test"],
+        "pattern": {"at": "receiver", "literal_type": "regex"},
+        "subject": {"at": "argument", "index": 0},
+        "reject": [";", "|", "&", "$", "`", "(", ")", "<", ">", "\n", " ", "\"", "'", "\\"]
       }
     ],
+    "try_enum_or_numeric_validation": [
+      {
+        "type": "try_validated_var",
+        "call": [
+          "BigInt",
+          "*.parse",
+          "*.validateSync"
+        ],
+        "exclude_call": [
+          "String",
+          "Boolean",
+          "Number",
+          "parseInt",
+          "parseFloat",
+          "JSON.parse"
+        ]
+      },
+      {
+        "type": "regex_guarded_validation",
+        "call": ["*.test"],
+        "pattern": {"at": "receiver", "literal_type": "regex"},
+        "subject": {"at": "argument", "index": 0},
+        "reject": [";", "&", "|", "$", "`", "<", ">", "'", "\"", "\\", "/", " "]
+      }
+    ],
+    "regex_validation": [
+      {
+        "type": "regex_guarded_validation",
+        "call": ["*.test"],
+        "pattern": {"at": "receiver", "literal_type": "regex"},
+        "subject": {"at": "argument", "index": 0},
+        "reject": ["<", ">", "\"", "'", "&", "/"]
+      },
+      {
+        "type": "function_has_method_call",
+        "call": ["*.replace", "*.replaceAll"],
+        "args_contain": ["..", "\\.\\."],
+        "include_regex": true,
+        "match_mode": "any_substring",
+        "before_sink": true
+      }
+    ],
+    "ldap_regex_validation": [
+        {
+          "type": "regex_guarded_validation",
+          "call": ["*.test"],
+          "pattern": {"at": "receiver", "literal_type": "regex"},
+          "subject": {"at": "argument", "index": 0},
+          "reject": ["*", "(", ")", "\\", "\u0000", ",", "=", "+", "\"", "<", ">", ";", "#"]
+        }
+      ],
+    "sql_regex_validation": [
+       {
+        "type": "regex_guarded_validation",
+        "call": ["*.test"],
+        "pattern": {"at": "receiver", "literal_type": "regex"},
+        "subject": {"at": "argument", "index": 0},
+        "reject": ["'", "\"", ";", "#", "/*"]
+      }
+    ],
+    "regex_validation_markup":[],
     "non_security_hash_usage": [],
     "safe_permission_defaults": [],
     "starttls_upgrade": [],
     "crypto_safe_contexts": [],
     "xxe_safe_configuration": [],
-    "curl_non_url_option": [],
+    "curl_non_url_option": [
+        {
+          "type": "regex_guarded_validation",
+          "call": ["*.test"],
+          "pattern": {"at": "argument", "index": 0},
+          "subject": {"at": "argument", "index": 1},
+          "reject": ["localhost", "127.0.0.1", "169.254.169.254", "evil.com"]
+        },
+        {
+          "type": "function_has_call_matching_ast",
+          "call": ["*.test"], 
+          "pattern_rejects": ["localhost", "127.0.0.1", "169.254.169.254", "evil.com"], 
+          "semantics": "search", 
+          "before_sink": true 
+        }
+    ],
     "deserialization_safe_contexts": [],
     "bounds_checked_array_access": [],
     "alloc_size_positive_checked": []
@@ -779,31 +868,12 @@
     ]
   },
   "forbidden_functions": {
-    "dynamic_code_execution": [
-      "eval",
-      "Function",
-      "vm.runInContext",
-      "vm.runInNewContext",
-      "vm.runInThisContext",
-      "vm.Script",
-      "vm.compileFunction",
-      "vm2.VM.run",
-      "vm2.NodeVM.run"
-    ],
     "unsafe_deserializers": [
       "node-serialize.unserialize",
       "serialize-to-js.deserialize",
       "v8.deserialize",
       "js-yaml.load",
       "*.unserialize"
-    ],
-    "unsafe_xml_parsers": [
-      {
-        "type": "call_matches_ast",
-        "call": ["libxmljs.parseXml", "libxmljs.parseXmlString", "libxmljs2.parseXml", "*.parseXml", "*.parseXmlString"],
-        "contains_names": ["noent"],
-        "contains_booleans": ["true"]
-      }
     ],
     "weak_hash_functions": [
       {
@@ -860,7 +930,8 @@
       "express-session", "cookie-session",
       "Express.Response.cookie",
       "*.ctx.cookies.set",
-      "*.reply.setCookie"
+      "*.reply.setCookie",
+      "*.cookie"
     ],
     "insecure_network_protocols": [
       {
@@ -938,8 +1009,7 @@
     ]
   },
   "excluded_functions": {
-    "safe_prng_exceptions": [],
-    "eval_false_positive_exceptions": []
+    "safe_prng_exceptions": []
   },
   "patterns": {
     "string_to_int_propagation": {
@@ -998,6 +1068,14 @@
         ".//src:condition/src:expr[src:operator[text()='='] and not(src:operator[text()='==' or text()='!=' or text()='===' or text()='!==' or text()='<' or text()='>' or text()='<=' or text()='>=' or text()='&&' or text()='||' or text()='??' or text()='('])]"
       ]
     },
+    "xxe_unsafe_kwargs": {
+        "forbidden_calls_with_kwargs": [
+          {
+            "call": ["libxmljs.parseXml", "libxmljs.parseXmlString", "libxmljs2.parseXml", "*.parseXml", "*.parseXmlString"],
+            "kwargs": {"noent": "true"}
+          }
+        ]
+      },
     "unsafe_deserialization_kwargs": {},
     "unsafe_dict_access": {},
     "use_after_free_check": {}
