@@ -1,0 +1,838 @@
+{
+  "summary": {
+    "units_analyzed": 30,
+    "units_failed": 0,
+    "files_failed": 0,
+    "vulnerable_files": 25,
+    "total_findings": 37,
+    "categories_count": {
+      "CWE-89": 5,
+      "CWE-703": 10,
+      "CWE-918": 7,
+      "CWE-90": 4,
+      "CWE-326": 3,
+      "CWE-327": 3,
+      "CWE-95": 2,
+      "CWE-94": 2,
+      "CWE-476": 3
+    }
+  },
+  "errors": [],
+  "details": [
+    {
+      "source_file": "testcode/BenchmarkTest00004.java",
+      "xml_source": "benchproctor_Jakarta_2_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-703-IMPROPER-EXCEPTION-HANDLING",
+        "CWE-89-SQLI"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-703",
+        "CWE-89"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-89-SQLI",
+          "vulnerabilities": [
+            "CWE-89"
+          ],
+          "source_file": "testcode/BenchmarkTest00004.java",
+          "line": "46:41",
+          "snippet": "sql",
+          "tainted_variable": "sql"
+        },
+        {
+          "rule_id": "CWE-703-IMPROPER-EXCEPTION-HANDLING",
+          "vulnerabilities": [
+            "CWE-703"
+          ],
+          "source_file": "testcode/BenchmarkTest00004.java",
+          "line": "42:11",
+          "snippet": "catch (java.sql.SQLException ignored) {}"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/BenchmarkTest00005.java",
+      "xml_source": "benchproctor_Jakarta_2_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-918-SSRF"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-918"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "CWE-918-SSRF",
+          "vulnerabilities": [
+            "CWE-918"
+          ],
+          "source_file": "testcode/BenchmarkTest00005.java",
+          "line": "41:54",
+          "snippet": "data.contains(\"://\") ?",
+          "tainted_variable": "data"
+        },
+        {
+          "rule_id": "CWE-918-SSRF",
+          "vulnerabilities": [
+            "CWE-918"
+          ],
+          "source_file": "testcode/BenchmarkTest00005.java",
+          "line": "41:9",
+          "snippet": "java.net.URI parsedUri = java.net.URI.create(data.contains(\"://\") ? data : \"https://\" + data);",
+          "tainted_variable": "data"
+        },
+        {
+          "rule_id": "CWE-918-SSRF",
+          "vulnerabilities": [
+            "CWE-918"
+          ],
+          "source_file": "testcode/BenchmarkTest00005.java",
+          "line": "46:9",
+          "snippet": "String socketHost = socketRaw.contains(\"://\") ? java.net.URI.create(socketRaw).getHost() : socketRaw;",
+          "tainted_variable": "socketRaw"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/BenchmarkTest00015.java",
+      "xml_source": "benchproctor_Jakarta_2_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-90-LDAP-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-90"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-90-LDAP-INJECTION",
+          "vulnerabilities": [
+            "CWE-90"
+          ],
+          "source_file": "testcode/BenchmarkTest00015.java",
+          "line": "47:13",
+          "snippet": "ctx.search(\"ou=people,dc=example,dc=com\", \"(uid=\" + data + \")\", new javax.naming.directory.SearchControls());",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/BenchmarkTest00020.java",
+      "xml_source": "benchproctor_Jakarta_2_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-326-INADEQUATE-ENCRYPTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-326"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-326-INADEQUATE-ENCRYPTION",
+          "vulnerabilities": [
+            "CWE-326"
+          ],
+          "source_file": "testcode/BenchmarkTest00020.java",
+          "line": "43:9",
+          "snippet": "keyGen.init(256)"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/BenchmarkTest00022.java",
+      "xml_source": "benchproctor_Jakarta_2_2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/BenchmarkTest00026.java",
+      "xml_source": "benchproctor_Jakarta_2_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-326-INADEQUATE-ENCRYPTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-326"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-326-INADEQUATE-ENCRYPTION",
+          "vulnerabilities": [
+            "CWE-326"
+          ],
+          "source_file": "testcode/BenchmarkTest00026.java",
+          "line": "44:9",
+          "snippet": "keyGen.init(256)"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/BenchmarkTest00027.java",
+      "xml_source": "benchproctor_Jakarta_2_2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/BenchmarkTest00029.java",
+      "xml_source": "benchproctor_Jakarta_2_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-327-BROKEN-CRYPTO-ALGORITHM"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-327"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-327-BROKEN-CRYPTO-ALGORITHM",
+          "vulnerabilities": [
+            "CWE-327"
+          ],
+          "source_file": "testcode/BenchmarkTest00029.java",
+          "line": "39:38",
+          "snippet": "javax.crypto.Cipher.getInstance(\"DESede/CBC/PKCS5Padding\")"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/BenchmarkTest00032.java",
+      "xml_source": "benchproctor_Jakarta_2_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-90-LDAP-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-90"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-90-LDAP-INJECTION",
+          "vulnerabilities": [
+            "CWE-90"
+          ],
+          "source_file": "testcode/BenchmarkTest00032.java",
+          "line": "47:13",
+          "snippet": "ctx.search(\"ou=people,dc=example,dc=com\", \"(uid=\" + data + \")\", new javax.naming.directory.SearchControls());",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/BenchmarkTest00035.java",
+      "xml_source": "benchproctor_Jakarta_2_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-918-SSRF"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-918"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-918-SSRF",
+          "vulnerabilities": [
+            "CWE-918"
+          ],
+          "source_file": "testcode/BenchmarkTest00035.java",
+          "line": "43:13",
+          "snippet": "java.net.http.HttpRequest httpReq = java.net.http.HttpRequest.newBuilder(java.net.URI.create(data)).GET().build();",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/BenchmarkTest00040.java",
+      "xml_source": "benchproctor_Jakarta_2_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-703-IMPROPER-EXCEPTION-HANDLING",
+        "CWE-89-SQLI"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-703",
+        "CWE-89"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-89-SQLI",
+          "vulnerabilities": [
+            "CWE-89"
+          ],
+          "source_file": "testcode/BenchmarkTest00040.java",
+          "line": "45:41",
+          "snippet": "sql",
+          "tainted_variable": "sql"
+        },
+        {
+          "rule_id": "CWE-703-IMPROPER-EXCEPTION-HANDLING",
+          "vulnerabilities": [
+            "CWE-703"
+          ],
+          "source_file": "testcode/BenchmarkTest00040.java",
+          "line": "41:11",
+          "snippet": "catch (java.sql.SQLException ignored) {}"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/BenchmarkTest00041.java",
+      "xml_source": "benchproctor_Jakarta_2_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-703-IMPROPER-EXCEPTION-HANDLING",
+        "CWE-89-SQLI"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-703",
+        "CWE-89"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-89-SQLI",
+          "vulnerabilities": [
+            "CWE-89"
+          ],
+          "source_file": "testcode/BenchmarkTest00041.java",
+          "line": "45:41",
+          "snippet": "sql",
+          "tainted_variable": "sql"
+        },
+        {
+          "rule_id": "CWE-703-IMPROPER-EXCEPTION-HANDLING",
+          "vulnerabilities": [
+            "CWE-703"
+          ],
+          "source_file": "testcode/BenchmarkTest00041.java",
+          "line": "41:11",
+          "snippet": "catch (java.sql.SQLException ignored) {}"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/BenchmarkTest00046.java",
+      "xml_source": "benchproctor_Jakarta_2_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-95-EVAL-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-94",
+        "CWE-95"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-95-EVAL-INJECTION",
+          "vulnerabilities": [
+            "CWE-95",
+            "CWE-94"
+          ],
+          "source_file": "testcode/BenchmarkTest00046.java",
+          "line": "41:9",
+          "snippet": "Object codeResult = new jakarta.el.ELProcessor().eval(data);",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/BenchmarkTest00050.java",
+      "xml_source": "benchproctor_Jakarta_2_2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/BenchmarkTest00052.java",
+      "xml_source": "benchproctor_Jakarta_2_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-95-EVAL-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-94",
+        "CWE-95"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-95-EVAL-INJECTION",
+          "vulnerabilities": [
+            "CWE-95",
+            "CWE-94"
+          ],
+          "source_file": "testcode/BenchmarkTest00052.java",
+          "line": "41:9",
+          "snippet": "Object codeResult = new jakarta.el.ELProcessor().eval(data);",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/BenchmarkTest00057.java",
+      "xml_source": "benchproctor_Jakarta_2_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-703-IMPROPER-EXCEPTION-HANDLING",
+        "CWE-89-SQLI"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-703",
+        "CWE-89"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-89-SQLI",
+          "vulnerabilities": [
+            "CWE-89"
+          ],
+          "source_file": "testcode/BenchmarkTest00057.java",
+          "line": "49:41",
+          "snippet": "sql",
+          "tainted_variable": "sql"
+        },
+        {
+          "rule_id": "CWE-703-IMPROPER-EXCEPTION-HANDLING",
+          "vulnerabilities": [
+            "CWE-703"
+          ],
+          "source_file": "testcode/BenchmarkTest00057.java",
+          "line": "45:11",
+          "snippet": "catch (java.sql.SQLException ignored) {}"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/BenchmarkTest00059.java",
+      "xml_source": "benchproctor_Jakarta_2_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-90-LDAP-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-90"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-90-LDAP-INJECTION",
+          "vulnerabilities": [
+            "CWE-90"
+          ],
+          "source_file": "testcode/BenchmarkTest00059.java",
+          "line": "47:13",
+          "snippet": "ctx.search(\"ou=people,dc=example,dc=com\", \"(uid=\" + data + \")\", new javax.naming.directory.SearchControls());",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/BenchmarkTest00060.java",
+      "xml_source": "benchproctor_Jakarta_2_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-476-NULL-POINTER-DEREFERENCE",
+        "CWE-703-IMPROPER-EXCEPTION-HANDLING"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-476",
+        "CWE-703"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-476-NULL-POINTER-DEREFERENCE",
+          "vulnerabilities": [
+            "CWE-476"
+          ],
+          "source_file": "testcode/BenchmarkTest00060.java",
+          "line": "61:9",
+          "snippet": "response.setHeader(\"X-Name-Length\", String.valueOf(fetched.length()));",
+          "tainted_variable": "fetched"
+        },
+        {
+          "rule_id": "CWE-703-IMPROPER-EXCEPTION-HANDLING",
+          "vulnerabilities": [
+            "CWE-703"
+          ],
+          "source_file": "testcode/BenchmarkTest00060.java",
+          "line": "42:11",
+          "snippet": "catch (java.sql.SQLException ignored) {}"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/BenchmarkTest00066.java",
+      "xml_source": "benchproctor_Jakarta_2_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-476-NULL-POINTER-DEREFERENCE",
+        "CWE-703-IMPROPER-EXCEPTION-HANDLING"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-476",
+        "CWE-703"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-476-NULL-POINTER-DEREFERENCE",
+          "vulnerabilities": [
+            "CWE-476"
+          ],
+          "source_file": "testcode/BenchmarkTest00066.java",
+          "line": "59:9",
+          "snippet": "response.setHeader(\"X-Name-Length\", String.valueOf(fetched.length()));",
+          "tainted_variable": "fetched"
+        },
+        {
+          "rule_id": "CWE-703-IMPROPER-EXCEPTION-HANDLING",
+          "vulnerabilities": [
+            "CWE-703"
+          ],
+          "source_file": "testcode/BenchmarkTest00066.java",
+          "line": "41:11",
+          "snippet": "catch (java.sql.SQLException ignored) {}"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/BenchmarkTest00068.java",
+      "xml_source": "benchproctor_Jakarta_2_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-918-SSRF"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-918"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-918-SSRF",
+          "vulnerabilities": [
+            "CWE-918"
+          ],
+          "source_file": "testcode/BenchmarkTest00068.java",
+          "line": "42:9",
+          "snippet": "String socketHost = socketRaw.contains(\"://\") ? java.net.URI.create(socketRaw).getHost() : socketRaw;",
+          "tainted_variable": "socketRaw"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/BenchmarkTest00069.java",
+      "xml_source": "benchproctor_Jakarta_2_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-327-BROKEN-CRYPTO-ALGORITHM",
+        "CWE-703-IMPROPER-EXCEPTION-HANDLING",
+        "CWE-89-SQLI"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-327",
+        "CWE-703",
+        "CWE-89"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "CWE-327-BROKEN-CRYPTO-ALGORITHM",
+          "vulnerabilities": [
+            "CWE-327"
+          ],
+          "source_file": "testcode/BenchmarkTest00069.java",
+          "line": "60:38",
+          "snippet": "javax.crypto.Cipher.getInstance(\"DESede/CBC/PKCS5Padding\")"
+        },
+        {
+          "rule_id": "CWE-89-SQLI",
+          "vulnerabilities": [
+            "CWE-89"
+          ],
+          "source_file": "testcode/BenchmarkTest00069.java",
+          "line": "45:41",
+          "snippet": "sql",
+          "tainted_variable": "sql"
+        },
+        {
+          "rule_id": "CWE-703-IMPROPER-EXCEPTION-HANDLING",
+          "vulnerabilities": [
+            "CWE-703"
+          ],
+          "source_file": "testcode/BenchmarkTest00069.java",
+          "line": "41:11",
+          "snippet": "catch (java.sql.SQLException ignored) {}"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/BenchmarkTest00070.java",
+      "xml_source": "benchproctor_Jakarta_2_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-703-IMPROPER-EXCEPTION-HANDLING"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-703"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-703-IMPROPER-EXCEPTION-HANDLING",
+          "vulnerabilities": [
+            "CWE-703"
+          ],
+          "source_file": "testcode/BenchmarkTest00070.java",
+          "line": "41:11",
+          "snippet": "catch (java.sql.SQLException ignored) {}"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/BenchmarkTest00071.java",
+      "xml_source": "benchproctor_Jakarta_2_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-326-INADEQUATE-ENCRYPTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-326"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-326-INADEQUATE-ENCRYPTION",
+          "vulnerabilities": [
+            "CWE-326"
+          ],
+          "source_file": "testcode/BenchmarkTest00071.java",
+          "line": "44:9",
+          "snippet": "keyGen.init(256)"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/BenchmarkTest00073.java",
+      "xml_source": "benchproctor_Jakarta_2_2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/BenchmarkTest00078.java",
+      "xml_source": "benchproctor_Jakarta_2_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-90-LDAP-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-90"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-90-LDAP-INJECTION",
+          "vulnerabilities": [
+            "CWE-90"
+          ],
+          "source_file": "testcode/BenchmarkTest00078.java",
+          "line": "44:13",
+          "snippet": "ctx.search(\"ou=people,dc=example,dc=com\", \"(uid=\" + data + \")\", new javax.naming.directory.SearchControls());",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/BenchmarkTest00096.java",
+      "xml_source": "benchproctor_Jakarta_2_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-918-SSRF"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-918"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-918-SSRF",
+          "vulnerabilities": [
+            "CWE-918"
+          ],
+          "source_file": "testcode/BenchmarkTest00096.java",
+          "line": "41:9",
+          "snippet": "java.net.URI parsed = java.net.URI.create(data);",
+          "tainted_variable": "data"
+        },
+        {
+          "rule_id": "CWE-918-SSRF",
+          "vulnerabilities": [
+            "CWE-918"
+          ],
+          "source_file": "testcode/BenchmarkTest00096.java",
+          "line": "46:9",
+          "snippet": "String socketHost = socketRaw.contains(\"://\") ? java.net.URI.create(socketRaw).getHost() : socketRaw;",
+          "tainted_variable": "socketRaw"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/BenchmarkTest00101.java",
+      "xml_source": "benchproctor_Jakarta_2_2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/BenchmarkTest00102.java",
+      "xml_source": "benchproctor_Jakarta_2_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-476-NULL-POINTER-DEREFERENCE",
+        "CWE-703-IMPROPER-EXCEPTION-HANDLING"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-476",
+        "CWE-703"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-476-NULL-POINTER-DEREFERENCE",
+          "vulnerabilities": [
+            "CWE-476"
+          ],
+          "source_file": "testcode/BenchmarkTest00102.java",
+          "line": "59:9",
+          "snippet": "response.setHeader(\"X-Name-Length\", String.valueOf(fetched.length()));",
+          "tainted_variable": "fetched"
+        },
+        {
+          "rule_id": "CWE-703-IMPROPER-EXCEPTION-HANDLING",
+          "vulnerabilities": [
+            "CWE-703"
+          ],
+          "source_file": "testcode/BenchmarkTest00102.java",
+          "line": "41:11",
+          "snippet": "catch (java.sql.SQLException ignored) {}"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/BenchmarkTest00103.java",
+      "xml_source": "benchproctor_Jakarta_2_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-327-BROKEN-CRYPTO-ALGORITHM"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-327"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-327-BROKEN-CRYPTO-ALGORITHM",
+          "vulnerabilities": [
+            "CWE-327"
+          ],
+          "source_file": "testcode/BenchmarkTest00103.java",
+          "line": "41:38",
+          "snippet": "javax.crypto.Cipher.getInstance(\"DESede/CBC/PKCS5Padding\")"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/BenchmarkTest00108.java",
+      "xml_source": "benchproctor_Jakarta_2_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-703-IMPROPER-EXCEPTION-HANDLING"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-703"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-703-IMPROPER-EXCEPTION-HANDLING",
+          "vulnerabilities": [
+            "CWE-703"
+          ],
+          "source_file": "testcode/BenchmarkTest00108.java",
+          "line": "48:11",
+          "snippet": "catch (java.sql.SQLException ignored) {}"
+        }
+      ]
+    }
+  ],
+  "rules_skipped": {
+    "java": [
+      {
+        "rule_id": "CWE-120-BUFFER-OVERFLOW",
+        "reason": "non applicabile a 'java' (languages=['c'])"
+      },
+      {
+        "rule_id": "CWE-276-INCORRECT-DEFAULT-PERMISSIONS",
+        "reason": "non applicabile a 'java' (languages=['c', 'python', 'javascript'])"
+      },
+      {
+        "rule_id": "CWE-347-JWT-NO-VERIFY",
+        "reason": "non applicabile a 'java' (languages=['python'])"
+      },
+      {
+        "rule_id": "CWE-400-UNCONTROLLED-SLEEP-C",
+        "reason": "non applicabile a 'java' (languages=['c'])"
+      },
+      {
+        "rule_id": "CWE-415-416-MEMORY-MISUSE-AFTER-FREE",
+        "reason": "non applicabile a 'java' (languages=['c'])"
+      },
+      {
+        "rule_id": "CWE-611-XXE-TAINT",
+        "reason": "non applicabile a 'java' (languages=['javascript', 'python'])"
+      },
+      {
+        "rule_id": "CWE-918-XSLT-SSRF",
+        "reason": "non applicabile a 'java' (languages=['python'])"
+      },
+      {
+        "rule_id": "CWE-943-NOSQL-INJECTION",
+        "reason": "non applicabile a 'java' (languages=['javascript'])"
+      },
+      {
+        "rule_id": "CWE-1327-UNRESTRICTED-BIND-ADDRESS",
+        "reason": "non applicabile a 'java' (languages=['python'])"
+      },
+      {
+        "rule_id": "CWE-1333-REGEX-DOS",
+        "reason": "non applicabile a 'java' (languages=['javascript', 'python'])"
+      }
+    ]
+  }
+}

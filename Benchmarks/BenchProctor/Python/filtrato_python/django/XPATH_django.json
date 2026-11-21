@@ -1,0 +1,1066 @@
+{
+  "summary": {
+    "units_analyzed": 48,
+    "units_failed": 0,
+    "files_failed": 0,
+    "vulnerable_files": 32,
+    "total_findings": 39,
+    "categories_count": {
+      "CWE-1333": 6,
+      "CWE-601": 5,
+      "CWE-22": 4,
+      "CWE-78": 5,
+      "CWE-611": 4,
+      "CWE-369": 1,
+      "CWE-79": 3,
+      "CWE-89": 3,
+      "CWE-400": 2,
+      "CWE-502": 3,
+      "CWE-327": 3,
+      "CWE-326": 3
+    }
+  },
+  "errors": [],
+  "details": [
+    {
+      "source_file": "testcode/benchmark_test_00005.py",
+      "xml_source": "django_2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/benchmark_test_00009.py",
+      "xml_source": "django_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-1333-REGEX-DOS"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-1333"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-1333-REGEX-DOS",
+          "vulnerabilities": [
+            "CWE-1333"
+          ],
+          "source_file": "testcode/benchmark_test_00009.py",
+          "line": "10:8",
+          "snippet": "not re.fullmatch(\"^[a-zA-Z0-9_.#\\\\-]+$\", data)",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00010.py",
+      "xml_source": "django_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-601-OPEN-REDIRECT"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-601"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-601-OPEN-REDIRECT",
+          "vulnerabilities": [
+            "CWE-601"
+          ],
+          "source_file": "testcode/benchmark_test_00010.py",
+          "line": "8:5",
+          "snippet": "return redirect(str(data))",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00017.py",
+      "xml_source": "django_2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/benchmark_test_00019.py",
+      "xml_source": "django_2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/benchmark_test_00023.py",
+      "xml_source": "django_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-22-PATH-TRAVERSAL"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-22"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "testcode/benchmark_test_00023.py",
+          "line": "14:15",
+          "snippet": "checked_path",
+          "tainted_variable": "checked_path"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00025.py",
+      "xml_source": "django_2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/benchmark_test_00029.py",
+      "xml_source": "django_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-78-OS-CMD-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-78"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-78-OS-CMD-INJECTION",
+          "vulnerabilities": [
+            "CWE-78"
+          ],
+          "source_file": "testcode/benchmark_test_00029.py",
+          "line": "10:5",
+          "snippet": "subprocess.run('echo ' + str(data), shell=True)",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00030.py",
+      "xml_source": "django_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-611-XXE",
+        "CWE-611-XXE-TAINT"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-611"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-611-XXE",
+          "vulnerabilities": [
+            "CWE-611"
+          ],
+          "source_file": "testcode/benchmark_test_00030.py",
+          "line": "13:15",
+          "snippet": "etree.XMLParser(resolve_entities=True, no_network=False)"
+        },
+        {
+          "rule_id": "CWE-611-XXE-TAINT",
+          "vulnerabilities": [
+            "CWE-611"
+          ],
+          "source_file": "testcode/benchmark_test_00030.py",
+          "line": "14:5",
+          "snippet": "etree.fromstring(str(data).encode(), _parser)",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00032.py",
+      "xml_source": "django_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-22-PATH-TRAVERSAL",
+        "CWE-369-DIVIDE-BY-ZERO-TAINT"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-22",
+        "CWE-369"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "testcode/benchmark_test_00032.py",
+          "line": "15:5",
+          "snippet": "os.unlink(checked_path)",
+          "tainted_variable": "checked_path"
+        },
+        {
+          "rule_id": "CWE-369-DIVIDE-BY-ZERO-TAINT",
+          "vulnerabilities": [
+            "CWE-369"
+          ],
+          "source_file": "testcode/benchmark_test_00032.py",
+          "line": "11:5",
+          "snippet": "candidate = (base / data).resolve()",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00033.py",
+      "xml_source": "django_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-78-OS-CMD-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-78"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-78-OS-CMD-INJECTION",
+          "vulnerabilities": [
+            "CWE-78"
+          ],
+          "source_file": "testcode/benchmark_test_00033.py",
+          "line": "9:5",
+          "snippet": "subprocess.run(['echo', data], shell=False)",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00035.py",
+      "xml_source": "django_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-78-OS-CMD-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-78"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-78-OS-CMD-INJECTION",
+          "vulnerabilities": [
+            "CWE-78"
+          ],
+          "source_file": "testcode/benchmark_test_00035.py",
+          "line": "15:5",
+          "snippet": "subprocess.run('echo ' + str(data), shell=True)",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00036.py",
+      "xml_source": "django_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-22-PATH-TRAVERSAL"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-22"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "testcode/benchmark_test_00036.py",
+          "line": "16:5",
+          "snippet": "os.unlink('/var/app/data/' + str(data))",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00037.py",
+      "xml_source": "django_2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/benchmark_test_00039.py",
+      "xml_source": "django_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-1333-REGEX-DOS",
+        "CWE-79-CROSS-SITE-SCRIPTING"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-1333",
+        "CWE-79"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "testcode/benchmark_test_00039.py",
+          "line": "14:5",
+          "snippet": "return HttpResponse(mark_safe('<div>' + str(processed) + '</div>'))",
+          "tainted_variable": "processed"
+        },
+        {
+          "rule_id": "CWE-1333-REGEX-DOS",
+          "vulnerabilities": [
+            "CWE-1333"
+          ],
+          "source_file": "testcode/benchmark_test_00039.py",
+          "line": "11:8",
+          "snippet": "not re.fullmatch(\"^(asc|desc|name|created)$\", str(data))",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00040.py",
+      "xml_source": "django_2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/benchmark_test_00045.py",
+      "xml_source": "django_2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/benchmark_test_00046.py",
+      "xml_source": "django_2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/benchmark_test_00050.py",
+      "xml_source": "django_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-400-UNCONTROLLED-LOOP-BOUND",
+        "CWE-89-SQLI"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-400",
+        "CWE-89"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-89-SQLI",
+          "vulnerabilities": [
+            "CWE-89"
+          ],
+          "source_file": "testcode/benchmark_test_00050.py",
+          "line": "13:5",
+          "snippet": "db.execute(\"SELECT * FROM users WHERE id = '\" + str(data) + \"'\")",
+          "tainted_variable": "data"
+        },
+        {
+          "rule_id": "CWE-400-UNCONTROLLED-LOOP-BOUND",
+          "vulnerabilities": [
+            "CWE-400"
+          ],
+          "source_file": "testcode/benchmark_test_00050.py",
+          "line": "10:9",
+          "snippet": "token in str(api_value).split(',')",
+          "tainted_variable": "api_value"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00052.py",
+      "xml_source": "django_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-79-CROSS-SITE-SCRIPTING"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-79"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "testcode/benchmark_test_00052.py",
+          "line": "9:5",
+          "snippet": "return HttpResponse(mark_safe('<div>' + str(data) + '</div>'))",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00053.py",
+      "xml_source": "django_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-22-PATH-TRAVERSAL"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-22"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "testcode/benchmark_test_00053.py",
+          "line": "13:5",
+          "snippet": "os.unlink('/var/app/data/' + str(data))",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00055.py",
+      "xml_source": "django_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-78-OS-CMD-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-78"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-78-OS-CMD-INJECTION",
+          "vulnerabilities": [
+            "CWE-78"
+          ],
+          "source_file": "testcode/benchmark_test_00055.py",
+          "line": "9:5",
+          "snippet": "subprocess.run('echo ' + str(env_value), shell=True)",
+          "tainted_variable": "env_value"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00056.py",
+      "xml_source": "django_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-502-DESERIALIZATION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-502"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-502-DESERIALIZATION",
+          "vulnerabilities": [
+            "CWE-502"
+          ],
+          "source_file": "testcode/benchmark_test_00056.py",
+          "line": "14:5",
+          "snippet": "pickle.loads(base64.b64decode(data))"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00057.py",
+      "xml_source": "django_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-1333-REGEX-DOS"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-1333"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-1333-REGEX-DOS",
+          "vulnerabilities": [
+            "CWE-1333"
+          ],
+          "source_file": "testcode/benchmark_test_00057.py",
+          "line": "12:8",
+          "snippet": "not re.fullmatch(\"^[a-zA-Z0-9 _.%\\\\-]+$\", data)",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00060.py",
+      "xml_source": "django_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-611-XXE"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-611"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-611-XXE",
+          "vulnerabilities": [
+            "CWE-611"
+          ],
+          "source_file": "testcode/benchmark_test_00060.py",
+          "line": "10:15",
+          "snippet": "etree.XMLParser(resolve_entities=True, no_network=False)"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00062.py",
+      "xml_source": "django_2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/benchmark_test_00063.py",
+      "xml_source": "django_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-1333-REGEX-DOS",
+        "CWE-601-OPEN-REDIRECT"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-1333",
+        "CWE-601"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-601-OPEN-REDIRECT",
+          "vulnerabilities": [
+            "CWE-601"
+          ],
+          "source_file": "testcode/benchmark_test_00063.py",
+          "line": "15:5",
+          "snippet": "return redirect(str(target_url))",
+          "tainted_variable": "target_url"
+        },
+        {
+          "rule_id": "CWE-1333-REGEX-DOS",
+          "vulnerabilities": [
+            "CWE-1333"
+          ],
+          "source_file": "testcode/benchmark_test_00063.py",
+          "line": "12:8",
+          "snippet": "not re.fullmatch(\"^(api\\\\.prod\\\\.internal|cdn\\\\.pycdn\\\\.io)$\", parsed.hostname or '')",
+          "tainted_variable": "parsed"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00064.py",
+      "xml_source": "django_2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/benchmark_test_00066.py",
+      "xml_source": "django_2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/benchmark_test_00068.py",
+      "xml_source": "django_2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/benchmark_test_00069.py",
+      "xml_source": "django_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-1333-REGEX-DOS",
+        "CWE-601-OPEN-REDIRECT"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-1333",
+        "CWE-601"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-601-OPEN-REDIRECT",
+          "vulnerabilities": [
+            "CWE-601"
+          ],
+          "source_file": "testcode/benchmark_test_00069.py",
+          "line": "15:5",
+          "snippet": "return redirect(str(target_url))",
+          "tainted_variable": "target_url"
+        },
+        {
+          "rule_id": "CWE-1333-REGEX-DOS",
+          "vulnerabilities": [
+            "CWE-1333"
+          ],
+          "source_file": "testcode/benchmark_test_00069.py",
+          "line": "12:8",
+          "snippet": "not re.fullmatch(\"^(api\\\\.prod\\\\.internal|cdn\\\\.pycdn\\\\.io)$\", parsed.hostname or '')",
+          "tainted_variable": "parsed"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00071.py",
+      "xml_source": "django_2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/benchmark_test_00075.py",
+      "xml_source": "django_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-1333-REGEX-DOS",
+        "CWE-601-OPEN-REDIRECT"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-1333",
+        "CWE-601"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-601-OPEN-REDIRECT",
+          "vulnerabilities": [
+            "CWE-601"
+          ],
+          "source_file": "testcode/benchmark_test_00075.py",
+          "line": "19:5",
+          "snippet": "return redirect(str(target_url))",
+          "tainted_variable": "target_url"
+        },
+        {
+          "rule_id": "CWE-1333-REGEX-DOS",
+          "vulnerabilities": [
+            "CWE-1333"
+          ],
+          "source_file": "testcode/benchmark_test_00075.py",
+          "line": "16:8",
+          "snippet": "not re.fullmatch(\"^(api\\\\.prod\\\\.internal|cdn\\\\.pycdn\\\\.io)$\", parsed.hostname or '')",
+          "tainted_variable": "parsed"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00078.py",
+      "xml_source": "django_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-89-SQLI"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-89"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-89-SQLI",
+          "vulnerabilities": [
+            "CWE-89"
+          ],
+          "source_file": "testcode/benchmark_test_00078.py",
+          "line": "8:5",
+          "snippet": "db.execute(\"SELECT * FROM users WHERE id = '\" + str(header_value) + \"'\")",
+          "tainted_variable": "header_value"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00080.py",
+      "xml_source": "django_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-89-SQLI"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-89"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-89-SQLI",
+          "vulnerabilities": [
+            "CWE-89"
+          ],
+          "source_file": "testcode/benchmark_test_00080.py",
+          "line": "9:5",
+          "snippet": "db.execute(\"SELECT * FROM users WHERE id = '\" + str(data) + \"'\")",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00083.py",
+      "xml_source": "django_2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/benchmark_test_00084.py",
+      "xml_source": "django_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-BROKEN-CRYPTO-ALGORITHM"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-326",
+        "CWE-327"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-BROKEN-CRYPTO-ALGORITHM",
+          "vulnerabilities": [
+            "CWE-327",
+            "CWE-326"
+          ],
+          "source_file": "testcode/benchmark_test_00084.py",
+          "line": "18:18",
+          "snippet": "DES.new(_des_key, DES.MODE_ECB)"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00085.py",
+      "xml_source": "django_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-BROKEN-CRYPTO-ALGORITHM"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-326",
+        "CWE-327"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-BROKEN-CRYPTO-ALGORITHM",
+          "vulnerabilities": [
+            "CWE-327",
+            "CWE-326"
+          ],
+          "source_file": "testcode/benchmark_test_00085.py",
+          "line": "17:18",
+          "snippet": "DES.new(_des_key, DES.MODE_ECB)"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00088.py",
+      "xml_source": "django_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-78-OS-CMD-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-78"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-78-OS-CMD-INJECTION",
+          "vulnerabilities": [
+            "CWE-78"
+          ],
+          "source_file": "testcode/benchmark_test_00088.py",
+          "line": "9:5",
+          "snippet": "subprocess.run(['echo', data], shell=False)",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00090.py",
+      "xml_source": "django_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-611-XXE"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-611"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-611-XXE",
+          "vulnerabilities": [
+            "CWE-611"
+          ],
+          "source_file": "testcode/benchmark_test_00090.py",
+          "line": "10:15",
+          "snippet": "etree.XMLParser(resolve_entities=True, no_network=False)"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00092.py",
+      "xml_source": "django_2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/benchmark_test_00093.py",
+      "xml_source": "django_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-601-OPEN-REDIRECT"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-601"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-601-OPEN-REDIRECT",
+          "vulnerabilities": [
+            "CWE-601"
+          ],
+          "source_file": "testcode/benchmark_test_00093.py",
+          "line": "16:5",
+          "snippet": "return redirect(str(data))",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00097.py",
+      "xml_source": "django_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-502-DESERIALIZATION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-502"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-502-DESERIALIZATION",
+          "vulnerabilities": [
+            "CWE-502"
+          ],
+          "source_file": "testcode/benchmark_test_00097.py",
+          "line": "10:5",
+          "snippet": "yaml.load(data, Loader=yaml.UnsafeLoader)"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00101.py",
+      "xml_source": "django_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-BROKEN-CRYPTO-ALGORITHM"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-326",
+        "CWE-327"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-BROKEN-CRYPTO-ALGORITHM",
+          "vulnerabilities": [
+            "CWE-327",
+            "CWE-326"
+          ],
+          "source_file": "testcode/benchmark_test_00101.py",
+          "line": "13:18",
+          "snippet": "DES.new(_des_key, DES.MODE_ECB)"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00102.py",
+      "xml_source": "django_2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/benchmark_test_00103.py",
+      "xml_source": "django_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-400-UNCONTROLLED-LOOP-BOUND"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-400"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-400-UNCONTROLLED-LOOP-BOUND",
+          "vulnerabilities": [
+            "CWE-400"
+          ],
+          "source_file": "testcode/benchmark_test_00103.py",
+          "line": "9:9",
+          "snippet": "token in str(user_id).split(',')",
+          "tainted_variable": "user_id"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00104.py",
+      "xml_source": "django_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-79-CROSS-SITE-SCRIPTING"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-79"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "testcode/benchmark_test_00104.py",
+          "line": "10:5",
+          "snippet": "return HttpResponse(mark_safe('<div>' + str(data) + '</div>'))",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00108.py",
+      "xml_source": "django_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-502-DESERIALIZATION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-502"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-502-DESERIALIZATION",
+          "vulnerabilities": [
+            "CWE-502"
+          ],
+          "source_file": "testcode/benchmark_test_00108.py",
+          "line": "17:5",
+          "snippet": "yaml.load(data, Loader=yaml.UnsafeLoader)"
+        }
+      ]
+    }
+  ],
+  "rules_skipped": {
+    "python": [
+      {
+        "rule_id": "CWE-120-BUFFER-OVERFLOW",
+        "reason": "non applicabile a 'python' (languages=['c'])"
+      },
+      {
+        "rule_id": "CWE-129-IMPROPER-ARRAY-INDEX-VALIDATION",
+        "reason": "non applicabile a 'python' (languages=['c', 'java'])"
+      },
+      {
+        "rule_id": "CWE-129-ARRAY-SIZE-VALIDATION",
+        "reason": "non applicabile a 'python' (languages=['c', 'java'])"
+      },
+      {
+        "rule_id": "Numeric Truncation Error",
+        "reason": "non applicabile a 'python' (languages=['java'])"
+      },
+      {
+        "rule_id": "CWE-400-UNCONTROLLED-SLEEP-C",
+        "reason": "non applicabile a 'python' (languages=['c'])"
+      },
+      {
+        "rule_id": "CWE-415-416-MEMORY-MISUSE-AFTER-FREE",
+        "reason": "non applicabile a 'python' (languages=['c'])"
+      },
+      {
+        "rule_id": "CWE-476-NULL-POINTER-DEREFERENCE",
+        "reason": "non applicabile a 'python' (languages=['c', 'java'])"
+      },
+      {
+        "rule_id": "CWE-502-JACKSON-UNSAFE-DESERIALIZATION",
+        "reason": "non applicabile a 'python' (languages=['java'])"
+      },
+      {
+        "rule_id": "CWE-611-XXE-KWARGS",
+        "reason": "non applicabile a 'python' (languages=['javascript'])"
+      },
+      {
+        "rule_id": "UNCHECKED-CAST",
+        "reason": "non applicabile a 'python' (languages=['java'])"
+      },
+      {
+        "rule_id": "CWE-943-NOSQL-INJECTION",
+        "reason": "non applicabile a 'python' (languages=['javascript'])"
+      }
+    ]
+  }
+}

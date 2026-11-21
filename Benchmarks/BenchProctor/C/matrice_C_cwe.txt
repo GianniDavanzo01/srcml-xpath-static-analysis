@@ -1,0 +1,17 @@
+=== standalone (language=c) | mode=cwe | valutati 60/60 test ===
+categoria            CWE     N    TP    FN    FP    TN   prec recall     F1
+---------------------------------------------------------------------------
+pathtraver            22     6     3     0     1     2  0.750  1.000  0.857
+cmdi                  78     6     3     0     0     3  1.000  1.000  1.000
+sqli                  89     6     3     0     0     3  1.000  1.000  1.000
+ldapi                 90     6     3     0     0     3  1.000  1.000  1.000
+weakcipher           327     6     3     0     0     3  1.000  1.000  1.000
+weakhash             328     6     3     0     0     3  1.000  1.000  1.000
+use_after_free       416     6     3     0     0     3  1.000  1.000  1.000
+null_deref           476     6     3     0     1     2  0.750  1.000  0.857
+xxe                  611     6     3     0     0     3  1.000  1.000  1.000
+xpathi               643     6     2     1     3     0  0.400  0.667  0.500
+---------------------------------------------------------------------------
+TOTALE (micro)              60    29     1     5    25  0.853  0.967  0.906
+MEDIA (macro)                                           0.890  0.967  0.921
+  [INFO] 29 test con finding di CWE diverso da quello atteso (ignorati in mode=cwe)

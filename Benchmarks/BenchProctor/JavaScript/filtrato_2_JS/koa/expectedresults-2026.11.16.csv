@@ -1,0 +1,32 @@
+# test name, category, real vulnerability, CWE
+# language=javascript framework=koa shape=standalone
+BenchmarkTest00003,xxe,false,611
+BenchmarkTest00014,weakcipher,true,327
+BenchmarkTest00016,securecookie,false,614
+BenchmarkTest00018,securecookie,false,614
+BenchmarkTest00020,redirect,true,601
+BenchmarkTest00022,redirect,false,601
+BenchmarkTest00028,xxe,true,611
+BenchmarkTest00029,deserial,true,502
+BenchmarkTest00032,weakcipher,true,327
+BenchmarkTest00035,weakcipher,false,327
+BenchmarkTest00036,redirect,true,601
+BenchmarkTest00037,xxe,true,611
+BenchmarkTest00043,deserial,false,502
+BenchmarkTest00044,weakcipher,true,327
+BenchmarkTest00045,xxe,true,611
+BenchmarkTest00049,redirect,false,601
+BenchmarkTest00051,redirect,false,601
+BenchmarkTest00053,deserial,true,502
+BenchmarkTest00057,weakcipher,false,327
+BenchmarkTest00058,deserial,true,502
+BenchmarkTest00059,securecookie,true,614
+BenchmarkTest00068,xxe,false,611
+BenchmarkTest00077,xxe,false,611
+BenchmarkTest00080,redirect,true,601
+BenchmarkTest00083,deserial,false,502
+BenchmarkTest00090,securecookie,true,614
+BenchmarkTest00092,securecookie,false,614
+BenchmarkTest00095,weakcipher,false,327
+BenchmarkTest00096,securecookie,true,614
+BenchmarkTest00105,deserial,false,502

@@ -1,0 +1,586 @@
+{
+  "summary": {
+    "units_analyzed": 30,
+    "units_failed": 0,
+    "files_failed": 0,
+    "vulnerable_files": 15,
+    "total_findings": 16,
+    "categories_count": {
+      "CWE-327": 3,
+      "CWE-326": 3,
+      "CWE-601": 2,
+      "CWE-611": 3,
+      "CWE-502": 3,
+      "CWE-400": 2,
+      "CWE-614": 3
+    }
+  },
+  "errors": [],
+  "details": [
+    {
+      "source_file": "testcode/benchmark_test_00003.js",
+      "xml_source": "benchproctor_JS2_koa_2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/benchmark_test_00014.js",
+      "xml_source": "benchproctor_JS2_koa_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-BROKEN-CRYPTO-ALGORITHM"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-326",
+        "CWE-327"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-BROKEN-CRYPTO-ALGORITHM",
+          "vulnerabilities": [
+            "CWE-327",
+            "CWE-326"
+          ],
+          "source_file": "testcode/benchmark_test_00014.js",
+          "line": "7:3",
+          "snippet": "crypto.createCipheriv(\"des-ede3-ecb\", Buffer.alloc(24), null)"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00016.js",
+      "xml_source": "benchproctor_JS2_koa_2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/benchmark_test_00018.js",
+      "xml_source": "benchproctor_JS2_koa_2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/benchmark_test_00020.js",
+      "xml_source": "benchproctor_JS2_koa_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-601-OPEN-REDIRECT"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-601"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-601-OPEN-REDIRECT",
+          "vulnerabilities": [
+            "CWE-601"
+          ],
+          "source_file": "testcode/benchmark_test_00020.js",
+          "line": "7:3",
+          "snippet": "ctx.redirect(data);",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00022.js",
+      "xml_source": "benchproctor_JS2_koa_2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/benchmark_test_00028.js",
+      "xml_source": "benchproctor_JS2_koa_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-611-XXE-KWARGS"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-611"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-611-XXE-KWARGS",
+          "vulnerabilities": [
+            "CWE-611"
+          ],
+          "source_file": "testcode/benchmark_test_00028.js",
+          "line": "7:3",
+          "snippet": "libxmljs.parseXml(data, { noent: true, dtdload: true, nonet: false })"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00029.js",
+      "xml_source": "benchproctor_JS2_koa_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-502-DESERIALIZATION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-502"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-502-DESERIALIZATION",
+          "vulnerabilities": [
+            "CWE-502"
+          ],
+          "source_file": "testcode/benchmark_test_00029.js",
+          "line": "8:3",
+          "snippet": "nodeSerialize.unserialize(data)"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00032.js",
+      "xml_source": "benchproctor_JS2_koa_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-BROKEN-CRYPTO-ALGORITHM"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-326",
+        "CWE-327"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-BROKEN-CRYPTO-ALGORITHM",
+          "vulnerabilities": [
+            "CWE-327",
+            "CWE-326"
+          ],
+          "source_file": "testcode/benchmark_test_00032.js",
+          "line": "7:3",
+          "snippet": "crypto.createCipheriv(\"des-ede3-ecb\", Buffer.alloc(24), null)"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00035.js",
+      "xml_source": "benchproctor_JS2_koa_2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/benchmark_test_00036.js",
+      "xml_source": "benchproctor_JS2_koa_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-400-UNCONTROLLED-LOOP-BOUND",
+        "CWE-601-OPEN-REDIRECT"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-400",
+        "CWE-601"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-400-UNCONTROLLED-LOOP-BOUND",
+          "vulnerabilities": [
+            "CWE-400"
+          ],
+          "source_file": "testcode/benchmark_test_00036.js",
+          "line": "7:9",
+          "snippet": "(pending.length)",
+          "tainted_variable": "pending"
+        },
+        {
+          "rule_id": "CWE-601-OPEN-REDIRECT",
+          "vulnerabilities": [
+            "CWE-601"
+          ],
+          "source_file": "testcode/benchmark_test_00036.js",
+          "line": "9:3",
+          "snippet": "ctx.redirect(data);",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00037.js",
+      "xml_source": "benchproctor_JS2_koa_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-611-XXE-KWARGS"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-611"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-611-XXE-KWARGS",
+          "vulnerabilities": [
+            "CWE-611"
+          ],
+          "source_file": "testcode/benchmark_test_00037.js",
+          "line": "9:3",
+          "snippet": "libxmljs.parseXml(data, { noent: true, dtdload: true, nonet: false })"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00043.js",
+      "xml_source": "benchproctor_JS2_koa_2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/benchmark_test_00044.js",
+      "xml_source": "benchproctor_JS2_koa_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-BROKEN-CRYPTO-ALGORITHM"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-326",
+        "CWE-327"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-BROKEN-CRYPTO-ALGORITHM",
+          "vulnerabilities": [
+            "CWE-327",
+            "CWE-326"
+          ],
+          "source_file": "testcode/benchmark_test_00044.js",
+          "line": "7:3",
+          "snippet": "crypto.createCipheriv(\"des-ede3-ecb\", Buffer.alloc(24), null)"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00045.js",
+      "xml_source": "benchproctor_JS2_koa_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-611-XXE-KWARGS"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-611"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-611-XXE-KWARGS",
+          "vulnerabilities": [
+            "CWE-611"
+          ],
+          "source_file": "testcode/benchmark_test_00045.js",
+          "line": "8:3",
+          "snippet": "libxmljs.parseXml(data, { noent: true, dtdload: true, nonet: false })"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00049.js",
+      "xml_source": "benchproctor_JS2_koa_2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/benchmark_test_00051.js",
+      "xml_source": "benchproctor_JS2_koa_2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/benchmark_test_00053.js",
+      "xml_source": "benchproctor_JS2_koa_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-502-DESERIALIZATION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-502"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-502-DESERIALIZATION",
+          "vulnerabilities": [
+            "CWE-502"
+          ],
+          "source_file": "testcode/benchmark_test_00053.js",
+          "line": "8:3",
+          "snippet": "nodeSerialize.unserialize(data)"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00057.js",
+      "xml_source": "benchproctor_JS2_koa_2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/benchmark_test_00058.js",
+      "xml_source": "benchproctor_JS2_koa_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-502-DESERIALIZATION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-502"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-502-DESERIALIZATION",
+          "vulnerabilities": [
+            "CWE-502"
+          ],
+          "source_file": "testcode/benchmark_test_00058.js",
+          "line": "7:3",
+          "snippet": "nodeSerialize.unserialize(data)"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00059.js",
+      "xml_source": "benchproctor_JS2_koa_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-614-SENSITIVE-COOKIE-INSECURE"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-614"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-614-SENSITIVE-COOKIE-INSECURE",
+          "vulnerabilities": [
+            "CWE-614"
+          ],
+          "source_file": "testcode/benchmark_test_00059.js",
+          "line": "9:3",
+          "snippet": "ctx.cookies.set(\"session\", data, { secure: false, httpOnly: true, sameSite: \"strict\" })"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00068.js",
+      "xml_source": "benchproctor_JS2_koa_2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/benchmark_test_00077.js",
+      "xml_source": "benchproctor_JS2_koa_2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/benchmark_test_00080.js",
+      "xml_source": "benchproctor_JS2_koa_2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/benchmark_test_00083.js",
+      "xml_source": "benchproctor_JS2_koa_2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/benchmark_test_00090.js",
+      "xml_source": "benchproctor_JS2_koa_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-614-SENSITIVE-COOKIE-INSECURE"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-614"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-614-SENSITIVE-COOKIE-INSECURE",
+          "vulnerabilities": [
+            "CWE-614"
+          ],
+          "source_file": "testcode/benchmark_test_00090.js",
+          "line": "5:3",
+          "snippet": "ctx.cookies.set(\"session\", userInput, { secure: false, httpOnly: true, sameSite: \"strict\" })"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00092.js",
+      "xml_source": "benchproctor_JS2_koa_2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/benchmark_test_00095.js",
+      "xml_source": "benchproctor_JS2_koa_2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/benchmark_test_00096.js",
+      "xml_source": "benchproctor_JS2_koa_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-614-SENSITIVE-COOKIE-INSECURE"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-614"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-614-SENSITIVE-COOKIE-INSECURE",
+          "vulnerabilities": [
+            "CWE-614"
+          ],
+          "source_file": "testcode/benchmark_test_00096.js",
+          "line": "8:3",
+          "snippet": "ctx.cookies.set(\"session\", data, { secure: false, httpOnly: true, sameSite: \"strict\" })"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00105.js",
+      "xml_source": "benchproctor_JS2_koa_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-400-UNCONTROLLED-LOOP-BOUND"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-400"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-400-UNCONTROLLED-LOOP-BOUND",
+          "vulnerabilities": [
+            "CWE-400"
+          ],
+          "source_file": "testcode/benchmark_test_00105.js",
+          "line": "6:7",
+          "snippet": "(const token of String(userInput).split(','))",
+          "tainted_variable": "userInput"
+        }
+      ]
+    }
+  ],
+  "rules_skipped": {
+    "javascript": [
+      {
+        "rule_id": "CWE-120-BUFFER-OVERFLOW",
+        "reason": "non applicabile a 'javascript' (languages=['c'])"
+      },
+      {
+        "rule_id": "CWE-129-IMPROPER-ARRAY-INDEX-VALIDATION",
+        "reason": "non applicabile a 'javascript' (languages=['c', 'java'])"
+      },
+      {
+        "rule_id": "CWE-129-ARRAY-SIZE-VALIDATION",
+        "reason": "non applicabile a 'javascript' (languages=['c', 'java'])"
+      },
+      {
+        "rule_id": "Numeric Truncation Error",
+        "reason": "non applicabile a 'javascript' (languages=['java'])"
+      },
+      {
+        "rule_id": "CWE-347-JWT-NO-VERIFY",
+        "reason": "non applicabile a 'javascript' (languages=['python'])"
+      },
+      {
+        "rule_id": "CWE-369-DIVIDE-BY-ZERO",
+        "reason": "non applicabile a 'javascript' (languages=['java', 'python', 'c'])"
+      },
+      {
+        "rule_id": "CWE-369-DIVIDE-BY-ZERO-TAINT",
+        "reason": "non applicabile a 'javascript' (languages=['java', 'python', 'c'])"
+      },
+      {
+        "rule_id": "CWE-400-UNCONTROLLED-SLEEP-C",
+        "reason": "non applicabile a 'javascript' (languages=['c'])"
+      },
+      {
+        "rule_id": "CWE-415-416-MEMORY-MISUSE-AFTER-FREE",
+        "reason": "non applicabile a 'javascript' (languages=['c'])"
+      },
+      {
+        "rule_id": "CWE-476-NULL-POINTER-DEREFERENCE",
+        "reason": "non applicabile a 'javascript' (languages=['c', 'java'])"
+      },
+      {
+        "rule_id": "CWE-502-JACKSON-UNSAFE-DESERIALIZATION",
+        "reason": "non applicabile a 'javascript' (languages=['java'])"
+      },
+      {
+        "rule_id": "CWE-611-XXE",
+        "reason": "non applicabile a 'javascript' (languages=['python', 'java', 'c'])"
+      },
+      {
+        "rule_id": "UNCHECKED-CAST",
+        "reason": "non applicabile a 'javascript' (languages=['java'])"
+      },
+      {
+        "rule_id": "CWE-918-XSLT-SSRF",
+        "reason": "non applicabile a 'javascript' (languages=['python'])"
+      },
+      {
+        "rule_id": "CWE-1327-UNRESTRICTED-BIND-ADDRESS",
+        "reason": "non applicabile a 'javascript' (languages=['python'])"
+      }
+    ]
+  }
+}

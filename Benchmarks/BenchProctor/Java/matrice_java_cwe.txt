@@ -1,0 +1,18 @@
+=== java (jakarta & spring) | mode=cwe | valutati 132/132 test ===
+categoria            CWE     N    TP    FN    FP    TN   prec recall     F1
+---------------------------------------------------------------------------
+pathtraver            22    12     6     0     0     6  1.000  1.000  1.000
+xss                   79    12     4     2     0     6  1.000  0.667  0.800
+sqli                  89    12     4     2     2     4  0.667  0.667  0.667
+ldapi                 90    12     6     0     4     2  0.600  1.000  0.750
+codeinj               94    12     4     2     0     6  1.000  0.667  0.800
+weakcipher           327    12     6     0     0     6  1.000  1.000  1.000
+null_deref           476    12     6     0     0     6  1.000  1.000  1.000
+deserial             502    12     6     0     0     6  1.000  1.000  1.000
+redirect             601    12     6     0     6     0  0.500  1.000  0.667
+securecookie         614    12     6     0     0     6  1.000  1.000  1.000
+ssrf                 918    12     4     2     4     2  0.500  0.667  0.571
+---------------------------------------------------------------------------
+TOTALE (micro)             132    58     8    16    50  0.784  0.879  0.829
+MEDIA (macro)                                           0.842  0.879  0.841
+  [INFO] 55 test con finding di CWE diverso da quello atteso (ignorati in mode=cwe)

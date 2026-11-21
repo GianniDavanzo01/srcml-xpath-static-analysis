@@ -1,0 +1,801 @@
+{
+  "summary": {
+    "units_analyzed": 30,
+    "units_failed": 0,
+    "files_failed": 0,
+    "vulnerable_files": 22,
+    "total_findings": 33,
+    "categories_count": {
+      "CWE-338": 6,
+      "CWE-614": 3,
+      "CWE-328": 3,
+      "CWE-918": 11,
+      "CWE-1333": 5,
+      "CWE-90": 2,
+      "CWE-400": 1,
+      "CWE-95": 2,
+      "CWE-94": 2
+    }
+  },
+  "errors": [],
+  "details": [
+    {
+      "source_file": "testcode/benchmark_test_00012.py",
+      "xml_source": "proctor_py2_flask2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/benchmark_test_00013.py",
+      "xml_source": "proctor_py2_flask2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-338-WEAK-PRNG",
+        "CWE-614-SENSITIVE-COOKIE-INSECURE"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-338",
+        "CWE-614"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-338-WEAK-PRNG",
+          "vulnerabilities": [
+            "CWE-338"
+          ],
+          "source_file": "testcode/benchmark_test_00013.py",
+          "line": "8:54",
+          "snippet": "os.urandom(32)"
+        },
+        {
+          "rule_id": "CWE-614-SENSITIVE-COOKIE-INSECURE",
+          "vulnerabilities": [
+            "CWE-614"
+          ],
+          "source_file": "testcode/benchmark_test_00013.py",
+          "line": "27:5",
+          "snippet": "resp.set_cookie('session', str(data), httponly=True, samesite='Strict')"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00018.py",
+      "xml_source": "proctor_py2_flask2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-338-WEAK-PRNG",
+        "CWE-614-SENSITIVE-COOKIE-INSECURE"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-338",
+        "CWE-614"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-338-WEAK-PRNG",
+          "vulnerabilities": [
+            "CWE-338"
+          ],
+          "source_file": "testcode/benchmark_test_00018.py",
+          "line": "8:54",
+          "snippet": "os.urandom(32)"
+        },
+        {
+          "rule_id": "CWE-614-SENSITIVE-COOKIE-INSECURE",
+          "vulnerabilities": [
+            "CWE-614"
+          ],
+          "source_file": "testcode/benchmark_test_00018.py",
+          "line": "27:5",
+          "snippet": "resp.set_cookie('session', str(data), httponly=True, samesite='Strict')"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00019.py",
+      "xml_source": "proctor_py2_flask2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-328-WEAK-HASH-FUNCTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-328"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-328-WEAK-HASH-FUNCTION",
+          "vulnerabilities": [
+            "CWE-328"
+          ],
+          "source_file": "testcode/benchmark_test_00019.py",
+          "line": "23:14",
+          "snippet": "hashlib.md5(str(upload_name).encode())"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00021.py",
+      "xml_source": "proctor_py2_flask2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-1333-REGEX-DOS",
+        "CWE-918-SSRF"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-1333",
+        "CWE-918"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-918-SSRF",
+          "vulnerabilities": [
+            "CWE-918"
+          ],
+          "source_file": "testcode/benchmark_test_00021.py",
+          "line": "29:5",
+          "snippet": "conn = ldap.initialize(os.environ.get('LDAP_URL', 'ldap://directory:1389'))",
+          "tainted_variable": "os.environ.get",
+          "source_kind": "inline-call"
+        },
+        {
+          "rule_id": "CWE-1333-REGEX-DOS",
+          "vulnerabilities": [
+            "CWE-1333"
+          ],
+          "source_file": "testcode/benchmark_test_00021.py",
+          "line": "26:8",
+          "snippet": "not re.fullmatch(\"^[a-zA-Z0-9 _.#%\\\\-]+$\", data)",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00023.py",
+      "xml_source": "proctor_py2_flask2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-918-SSRF"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-918"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-918-SSRF",
+          "vulnerabilities": [
+            "CWE-918"
+          ],
+          "source_file": "testcode/benchmark_test_00023.py",
+          "line": "24:5",
+          "snippet": "requests.get(str(data))",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00033.py",
+      "xml_source": "proctor_py2_flask2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/benchmark_test_00040.py",
+      "xml_source": "proctor_py2_flask2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-1333-REGEX-DOS",
+        "CWE-918-SSRF"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-1333",
+        "CWE-918"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-918-SSRF",
+          "vulnerabilities": [
+            "CWE-918"
+          ],
+          "source_file": "testcode/benchmark_test_00040.py",
+          "line": "31:5",
+          "snippet": "s = socket.create_connection((str(target_url), 80))",
+          "tainted_variable": "target_url"
+        },
+        {
+          "rule_id": "CWE-1333-REGEX-DOS",
+          "vulnerabilities": [
+            "CWE-1333"
+          ],
+          "source_file": "testcode/benchmark_test_00040.py",
+          "line": "28:8",
+          "snippet": "not re.fullmatch(\"^(api\\\\.prod\\\\.internal|cdn\\\\.pycdn\\\\.io)$\", parsed.hostname or '')",
+          "tainted_variable": "parsed"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00044.py",
+      "xml_source": "proctor_py2_flask2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-338-WEAK-PRNG"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-338"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-338-WEAK-PRNG",
+          "vulnerabilities": [
+            "CWE-338"
+          ],
+          "source_file": "testcode/benchmark_test_00044.py",
+          "line": "8:54",
+          "snippet": "os.urandom(32)"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00045.py",
+      "xml_source": "proctor_py2_flask2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-338-WEAK-PRNG"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-338"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-338-WEAK-PRNG",
+          "vulnerabilities": [
+            "CWE-338"
+          ],
+          "source_file": "testcode/benchmark_test_00045.py",
+          "line": "9:54",
+          "snippet": "os.urandom(32)"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00054.py",
+      "xml_source": "proctor_py2_flask2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-90-LDAP-INJECTION",
+        "CWE-918-SSRF"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-90",
+        "CWE-918"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-90-LDAP-INJECTION",
+          "vulnerabilities": [
+            "CWE-90"
+          ],
+          "source_file": "testcode/benchmark_test_00054.py",
+          "line": "26:5",
+          "snippet": "conn.search_s('dc=example,dc=com', ldap.SCOPE_SUBTREE, '(uid=' + str(data) + ')')",
+          "tainted_variable": "data"
+        },
+        {
+          "rule_id": "CWE-918-SSRF",
+          "vulnerabilities": [
+            "CWE-918"
+          ],
+          "source_file": "testcode/benchmark_test_00054.py",
+          "line": "25:5",
+          "snippet": "conn = ldap.initialize(os.environ.get('LDAP_URL', 'ldap://directory:1389'))",
+          "tainted_variable": "os.environ.get",
+          "source_kind": "inline-call"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00057.py",
+      "xml_source": "proctor_py2_flask2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-90-LDAP-INJECTION",
+        "CWE-918-SSRF"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-90",
+        "CWE-918"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-90-LDAP-INJECTION",
+          "vulnerabilities": [
+            "CWE-90"
+          ],
+          "source_file": "testcode/benchmark_test_00057.py",
+          "line": "30:5",
+          "snippet": "conn.search_s('dc=example,dc=com', ldap.SCOPE_SUBTREE, '(uid=' + str(data) + ')')",
+          "tainted_variable": "data"
+        },
+        {
+          "rule_id": "CWE-918-SSRF",
+          "vulnerabilities": [
+            "CWE-918"
+          ],
+          "source_file": "testcode/benchmark_test_00057.py",
+          "line": "29:5",
+          "snippet": "conn = ldap.initialize(os.environ.get('LDAP_URL', 'ldap://directory:1389'))",
+          "tainted_variable": "os.environ.get",
+          "source_kind": "inline-call"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00059.py",
+      "xml_source": "proctor_py2_flask2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/benchmark_test_00060.py",
+      "xml_source": "proctor_py2_flask2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/benchmark_test_00064.py",
+      "xml_source": "proctor_py2_flask2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-918-SSRF"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-918"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-918-SSRF",
+          "vulnerabilities": [
+            "CWE-918"
+          ],
+          "source_file": "testcode/benchmark_test_00064.py",
+          "line": "26:5",
+          "snippet": "conn = ldap.initialize(os.environ.get('LDAP_URL', 'ldap://directory:1389'))",
+          "tainted_variable": "os.environ.get",
+          "source_kind": "inline-call"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00069.py",
+      "xml_source": "proctor_py2_flask2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-1333-REGEX-DOS",
+        "CWE-918-SSRF"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-1333",
+        "CWE-918"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-918-SSRF",
+          "vulnerabilities": [
+            "CWE-918"
+          ],
+          "source_file": "testcode/benchmark_test_00069.py",
+          "line": "29:5",
+          "snippet": "conn = ldap.initialize(os.environ.get('LDAP_URL', 'ldap://directory:1389'))",
+          "tainted_variable": "os.environ.get",
+          "source_kind": "inline-call"
+        },
+        {
+          "rule_id": "CWE-1333-REGEX-DOS",
+          "vulnerabilities": [
+            "CWE-1333"
+          ],
+          "source_file": "testcode/benchmark_test_00069.py",
+          "line": "26:8",
+          "snippet": "not re.fullmatch(\"^[a-zA-Z0-9 _.#%\\\\-]+$\", data)",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00070.py",
+      "xml_source": "proctor_py2_flask2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/benchmark_test_00071.py",
+      "xml_source": "proctor_py2_flask2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-338-WEAK-PRNG"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-338"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-338-WEAK-PRNG",
+          "vulnerabilities": [
+            "CWE-338"
+          ],
+          "source_file": "testcode/benchmark_test_00071.py",
+          "line": "8:54",
+          "snippet": "os.urandom(32)"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00078.py",
+      "xml_source": "proctor_py2_flask2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-338-WEAK-PRNG",
+        "CWE-400-UNCONTROLLED-LOOP-BOUND",
+        "CWE-614-SENSITIVE-COOKIE-INSECURE"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-338",
+        "CWE-400",
+        "CWE-614"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "CWE-338-WEAK-PRNG",
+          "vulnerabilities": [
+            "CWE-338"
+          ],
+          "source_file": "testcode/benchmark_test_00078.py",
+          "line": "8:54",
+          "snippet": "os.urandom(32)"
+        },
+        {
+          "rule_id": "CWE-614-SENSITIVE-COOKIE-INSECURE",
+          "vulnerabilities": [
+            "CWE-614"
+          ],
+          "source_file": "testcode/benchmark_test_00078.py",
+          "line": "30:5",
+          "snippet": "resp.set_cookie('session', str(data), httponly=True, samesite='Strict')"
+        },
+        {
+          "rule_id": "CWE-400-UNCONTROLLED-LOOP-BOUND",
+          "vulnerabilities": [
+            "CWE-400"
+          ],
+          "source_file": "testcode/benchmark_test_00078.py",
+          "line": "26:9",
+          "snippet": "token in str(cookie_value).split(',')",
+          "tainted_variable": "cookie_value"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00079.py",
+      "xml_source": "proctor_py2_flask2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "EVAL-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-94",
+        "CWE-95"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "EVAL-INJECTION",
+          "vulnerabilities": [
+            "CWE-95",
+            "CWE-94"
+          ],
+          "source_file": "testcode/benchmark_test_00079.py",
+          "line": "29:5",
+          "snippet": "eval(str(data))",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00080.py",
+      "xml_source": "proctor_py2_flask2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-1333-REGEX-DOS",
+        "CWE-918-SSRF"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-1333",
+        "CWE-918"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-918-SSRF",
+          "vulnerabilities": [
+            "CWE-918"
+          ],
+          "source_file": "testcode/benchmark_test_00080.py",
+          "line": "34:5",
+          "snippet": "s = socket.create_connection((str(target_url), 80))",
+          "tainted_variable": "target_url"
+        },
+        {
+          "rule_id": "CWE-1333-REGEX-DOS",
+          "vulnerabilities": [
+            "CWE-1333"
+          ],
+          "source_file": "testcode/benchmark_test_00080.py",
+          "line": "31:8",
+          "snippet": "re.match(\"^(0\\\\.|10\\\\.|127\\\\.|169\\\\.254\\\\.|192\\\\.168\\\\.|172\\\\.(1[6-9]|2[0-9]|3[01])\\\\.|::1$|::[fF]{4}:(0\\\\.|10\\\\.|127\\\\.|169\\\\.254\\\\.|192\\\\.…",
+          "tainted_variable": "resolved"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00081.py",
+      "xml_source": "proctor_py2_flask2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-918-SSRF"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-918"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-918-SSRF",
+          "vulnerabilities": [
+            "CWE-918"
+          ],
+          "source_file": "testcode/benchmark_test_00081.py",
+          "line": "24:5",
+          "snippet": "requests.get(str(data))",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00088.py",
+      "xml_source": "proctor_py2_flask2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "EVAL-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-94",
+        "CWE-95"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "EVAL-INJECTION",
+          "vulnerabilities": [
+            "CWE-95",
+            "CWE-94"
+          ],
+          "source_file": "testcode/benchmark_test_00088.py",
+          "line": "27:5",
+          "snippet": "eval(str(data))",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00091.py",
+      "xml_source": "proctor_py2_flask2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/benchmark_test_00093.py",
+      "xml_source": "proctor_py2_flask2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-328-WEAK-HASH-FUNCTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-328"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-328-WEAK-HASH-FUNCTION",
+          "vulnerabilities": [
+            "CWE-328"
+          ],
+          "source_file": "testcode/benchmark_test_00093.py",
+          "line": "28:14",
+          "snippet": "hashlib.md5(str(data).encode())"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00095.py",
+      "xml_source": "proctor_py2_flask2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-328-WEAK-HASH-FUNCTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-328"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-328-WEAK-HASH-FUNCTION",
+          "vulnerabilities": [
+            "CWE-328"
+          ],
+          "source_file": "testcode/benchmark_test_00095.py",
+          "line": "30:14",
+          "snippet": "hashlib.md5(str(data).encode())"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00099.py",
+      "xml_source": "proctor_py2_flask2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/benchmark_test_00101.py",
+      "xml_source": "proctor_py2_flask2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-1333-REGEX-DOS",
+        "CWE-918-SSRF"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-1333",
+        "CWE-918"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-918-SSRF",
+          "vulnerabilities": [
+            "CWE-918"
+          ],
+          "source_file": "testcode/benchmark_test_00101.py",
+          "line": "34:5",
+          "snippet": "conn = ldap.initialize(os.environ.get('LDAP_URL', 'ldap://directory:1389'))",
+          "tainted_variable": "os.environ.get",
+          "source_kind": "inline-call"
+        },
+        {
+          "rule_id": "CWE-1333-REGEX-DOS",
+          "vulnerabilities": [
+            "CWE-1333"
+          ],
+          "source_file": "testcode/benchmark_test_00101.py",
+          "line": "31:8",
+          "snippet": "not re.fullmatch(\"^[a-zA-Z0-9 _.#%\\\\-]+$\", data)",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00102.py",
+      "xml_source": "proctor_py2_flask2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-918-SSRF"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-918"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-918-SSRF",
+          "vulnerabilities": [
+            "CWE-918"
+          ],
+          "source_file": "testcode/benchmark_test_00102.py",
+          "line": "25:5",
+          "snippet": "requests.get(str(data))",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00108.py",
+      "xml_source": "proctor_py2_flask2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    }
+  ],
+  "rules_skipped": {
+    "python": [
+      {
+        "rule_id": "CWE-120-BUFFER-OVERFLOW",
+        "reason": "non applicabile a 'python' (languages=['c'])"
+      },
+      {
+        "rule_id": "CWE-129-IMPROPER-ARRAY-INDEX-VALIDATION",
+        "reason": "non applicabile a 'python' (languages=['c', 'java'])"
+      },
+      {
+        "rule_id": "CWE-129-ARRAY-SIZE-VALIDATION",
+        "reason": "non applicabile a 'python' (languages=['c', 'java'])"
+      },
+      {
+        "rule_id": "Numeric Truncation Error",
+        "reason": "non applicabile a 'python' (languages=['java'])"
+      },
+      {
+        "rule_id": "CWE-400-UNCONTROLLED-SLEEP-C",
+        "reason": "non applicabile a 'python' (languages=['c'])"
+      },
+      {
+        "rule_id": "CWE-415-416-MEMORY-MISUSE-AFTER-FREE",
+        "reason": "non applicabile a 'python' (languages=['c'])"
+      },
+      {
+        "rule_id": "CWE-476-NULL-POINTER-DEREFERENCE",
+        "reason": "non applicabile a 'python' (languages=['c', 'java'])"
+      },
+      {
+        "rule_id": "CWE-502-JACKSON-UNSAFE-DESERIALIZATION",
+        "reason": "non applicabile a 'python' (languages=['java'])"
+      },
+      {
+        "rule_id": "CWE-611-XXE-KWARGS",
+        "reason": "non applicabile a 'python' (languages=['javascript'])"
+      },
+      {
+        "rule_id": "UNCHECKED-CAST",
+        "reason": "non applicabile a 'python' (languages=['java'])"
+      },
+      {
+        "rule_id": "CWE-943-NOSQL-INJECTION",
+        "reason": "non applicabile a 'python' (languages=['javascript'])"
+      }
+    ]
+  }
+}

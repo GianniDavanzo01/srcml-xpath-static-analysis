@@ -1,0 +1,32 @@
+# test name, category, real vulnerability, CWE
+# language=python framework=django shape=standalone
+BenchmarkTest00001,weakhash,true,328
+BenchmarkTest00004,securecookie,false,614
+BenchmarkTest00008,securecookie,false,614
+BenchmarkTest00011,weakhash,false,328
+BenchmarkTest00014,weakhash,true,328
+BenchmarkTest00015,codeinj,false,94
+BenchmarkTest00016,codeinj,true,94
+BenchmarkTest00022,ldapi,false,90
+BenchmarkTest00024,ssrf,false,918
+BenchmarkTest00026,securecookie,true,614
+BenchmarkTest00027,ldapi,true,90
+BenchmarkTest00044,ldapi,true,90
+BenchmarkTest00048,codeinj,false,94
+BenchmarkTest00054,securecookie,false,614
+BenchmarkTest00059,ssrf,true,918
+BenchmarkTest00061,ssrf,false,918
+BenchmarkTest00065,ssrf,false,918
+BenchmarkTest00067,weakhash,true,328
+BenchmarkTest00072,securecookie,true,614
+BenchmarkTest00074,codeinj,true,94
+BenchmarkTest00077,weakhash,false,328
+BenchmarkTest00081,codeinj,false,94
+BenchmarkTest00086,ldapi,false,90
+BenchmarkTest00087,codeinj,true,94
+BenchmarkTest00089,ldapi,true,90
+BenchmarkTest00091,weakhash,false,328
+BenchmarkTest00094,ssrf,true,918
+BenchmarkTest00096,ssrf,true,918
+BenchmarkTest00105,securecookie,true,614
+BenchmarkTest00107,ldapi,false,90

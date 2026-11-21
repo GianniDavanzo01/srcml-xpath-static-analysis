@@ -1,0 +1,863 @@
+{
+  "summary": {
+    "units_analyzed": 30,
+    "units_failed": 0,
+    "files_failed": 0,
+    "vulnerable_files": 25,
+    "total_findings": 36,
+    "categories_count": {
+      "CWE-90": 3,
+      "CWE-400": 11,
+      "CWE-643": 5,
+      "CWE-476": 11,
+      "CWE-611": 3,
+      "CWE-328": 3
+    }
+  },
+  "errors": [],
+  "details": [
+    {
+      "source_file": "testcode/benchmark_test_00002.c",
+      "xml_source": "benchproctor_C_2_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-400-UNCONTROLLED-LOOP-BOUND",
+        "CWE-90-LDAP-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-400",
+        "CWE-90"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-90-LDAP-INJECTION",
+          "vulnerabilities": [
+            "CWE-90"
+          ],
+          "source_file": "testcode/benchmark_test_00002.c",
+          "line": "35:5",
+          "snippet": "ldap_search_ext_s(_ld, \"ou=people,dc=example,dc=com\", LDAP_SCOPE_SUBTREE, _filter, NULL, 0, NULL, NULL, NULL, 0, &_res);",
+          "tainted_variable": "_filter"
+        },
+        {
+          "rule_id": "CWE-400-UNCONTROLLED-LOOP-BOUND",
+          "vulnerabilities": [
+            "CWE-400"
+          ],
+          "source_file": "testcode/benchmark_test_00002.c",
+          "line": "25:9",
+          "snippet": "(char *_r = data; *_r; ++_r)",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00005.c",
+      "xml_source": "benchproctor_C_2_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-400-UNCONTROLLED-LOOP-BOUND",
+        "CWE-643-XPATH-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-400",
+        "CWE-643"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-400-UNCONTROLLED-LOOP-BOUND",
+          "vulnerabilities": [
+            "CWE-400"
+          ],
+          "source_file": "testcode/benchmark_test_00005.c",
+          "line": "27:9",
+          "snippet": "(char *_r = data; *_r; ++_r)",
+          "tainted_variable": "data"
+        },
+        {
+          "rule_id": "CWE-643-XPATH-INJECTION",
+          "vulnerabilities": [
+            "CWE-643"
+          ],
+          "source_file": "testcode/benchmark_test_00005.c",
+          "line": "32:5",
+          "snippet": "xmlXPathObjectPtr _xo = xmlXPathEvalExpression((const unsigned char *)_expr, _xpc);",
+          "tainted_variable": "_expr"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00014.c",
+      "xml_source": "benchproctor_C_2_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-400-UNCONTROLLED-LOOP-BOUND"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-400"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-400-UNCONTROLLED-LOOP-BOUND",
+          "vulnerabilities": [
+            "CWE-400"
+          ],
+          "source_file": "testcode/benchmark_test_00014.c",
+          "line": "18:9",
+          "snippet": "(char *_r = data; *_r; ++_r)",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00016.c",
+      "xml_source": "benchproctor_C_2_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-476-NULL-POINTER-DEREFERENCE"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-476"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-476-NULL-POINTER-DEREFERENCE",
+          "vulnerabilities": [
+            "CWE-476"
+          ],
+          "source_file": "testcode/benchmark_test_00016.c",
+          "line": "16:5",
+          "snippet": "size_t _len = strlen(user_input);",
+          "tainted_variable": "user_input"
+        },
+        {
+          "rule_id": "CWE-476-NULL-POINTER-DEREFERENCE",
+          "vulnerabilities": [
+            "CWE-476"
+          ],
+          "source_file": "testcode/benchmark_test_00016.c",
+          "line": "18:50",
+          "snippet": "data[_w] = user_input[_w];",
+          "tainted_variable": "user_input"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00020.c",
+      "xml_source": "benchproctor_C_2_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-400-UNCONTROLLED-LOOP-BOUND",
+        "CWE-476-NULL-POINTER-DEREFERENCE",
+        "CWE-611-XXE"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-400",
+        "CWE-476",
+        "CWE-611"
+      ],
+      "findings_count": 4,
+      "findings": [
+        {
+          "rule_id": "CWE-611-XXE",
+          "vulnerabilities": [
+            "CWE-611"
+          ],
+          "source_file": "testcode/benchmark_test_00020.c",
+          "line": "31:22",
+          "snippet": "xmlReadMemory(data, (int)strlen(data), \"noname.xml\", NULL, XML_PARSE_NOENT)"
+        },
+        {
+          "rule_id": "CWE-400-UNCONTROLLED-LOOP-BOUND",
+          "vulnerabilities": [
+            "CWE-400"
+          ],
+          "source_file": "testcode/benchmark_test_00020.c",
+          "line": "29:12",
+          "snippet": "user_input[_li] != '\\0' && _li < sizeof(data) - 1;",
+          "tainted_variable": "user_input"
+        },
+        {
+          "rule_id": "CWE-476-NULL-POINTER-DEREFERENCE",
+          "vulnerabilities": [
+            "CWE-476"
+          ],
+          "source_file": "testcode/benchmark_test_00020.c",
+          "line": "29:12",
+          "snippet": "user_input[_li] != '\\0' && _li < sizeof(data) - 1;",
+          "tainted_variable": "user_input"
+        },
+        {
+          "rule_id": "CWE-476-NULL-POINTER-DEREFERENCE",
+          "vulnerabilities": [
+            "CWE-476"
+          ],
+          "source_file": "testcode/benchmark_test_00020.c",
+          "line": "29:70",
+          "snippet": "data[_li] = user_input[_li];",
+          "tainted_variable": "user_input"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00021.c",
+      "xml_source": "benchproctor_C_2_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-400-UNCONTROLLED-LOOP-BOUND"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-400"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-400-UNCONTROLLED-LOOP-BOUND",
+          "vulnerabilities": [
+            "CWE-400"
+          ],
+          "source_file": "testcode/benchmark_test_00021.c",
+          "line": "23:9",
+          "snippet": "(char *_r = data; *_r; ++_r)",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00024.c",
+      "xml_source": "benchproctor_C_2_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-400-UNCONTROLLED-LOOP-BOUND",
+        "CWE-476-NULL-POINTER-DEREFERENCE"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-400",
+        "CWE-476"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-400-UNCONTROLLED-LOOP-BOUND",
+          "vulnerabilities": [
+            "CWE-400"
+          ],
+          "source_file": "testcode/benchmark_test_00024.c",
+          "line": "15:9",
+          "snippet": "(char *_r = data; *_r; ++_r)",
+          "tainted_variable": "data"
+        },
+        {
+          "rule_id": "CWE-476-NULL-POINTER-DEREFERENCE",
+          "vulnerabilities": [
+            "CWE-476"
+          ],
+          "source_file": "testcode/benchmark_test_00024.c",
+          "line": "17:5",
+          "snippet": "printf(\"%c\\n\", *_found);",
+          "tainted_variable": "_found"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00029.c",
+      "xml_source": "benchproctor_C_2_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-328-WEAK-HASH-FUNCTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-328"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-328-WEAK-HASH-FUNCTION",
+          "vulnerabilities": [
+            "CWE-328"
+          ],
+          "source_file": "testcode/benchmark_test_00029.c",
+          "line": "25:5",
+          "snippet": "MD5((const unsigned char *)data, strlen(data), _digest)"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00039.c",
+      "xml_source": "benchproctor_C_2_2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/benchmark_test_00044.c",
+      "xml_source": "benchproctor_C_2_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-400-UNCONTROLLED-LOOP-BOUND"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-400"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-400-UNCONTROLLED-LOOP-BOUND",
+          "vulnerabilities": [
+            "CWE-400"
+          ],
+          "source_file": "testcode/benchmark_test_00044.c",
+          "line": "35:12",
+          "snippet": "user_input[_li] != '\\0' && _li < sizeof(data) - 1;",
+          "tainted_variable": "user_input"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00045.c",
+      "xml_source": "benchproctor_C_2_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-476-NULL-POINTER-DEREFERENCE",
+        "CWE-90-LDAP-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-476",
+        "CWE-90"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "CWE-90-LDAP-INJECTION",
+          "vulnerabilities": [
+            "CWE-90"
+          ],
+          "source_file": "testcode/benchmark_test_00045.c",
+          "line": "39:5",
+          "snippet": "ldap_search_ext_s(_ld, \"ou=people,dc=example,dc=com\", LDAP_SCOPE_SUBTREE, _filter, NULL, 0, NULL, NULL, NULL, 0, &_res);",
+          "tainted_variable": "_filter"
+        },
+        {
+          "rule_id": "CWE-476-NULL-POINTER-DEREFERENCE",
+          "vulnerabilities": [
+            "CWE-476"
+          ],
+          "source_file": "testcode/benchmark_test_00045.c",
+          "line": "26:5",
+          "snippet": "size_t _len = strlen(user_input);",
+          "tainted_variable": "user_input"
+        },
+        {
+          "rule_id": "CWE-476-NULL-POINTER-DEREFERENCE",
+          "vulnerabilities": [
+            "CWE-476"
+          ],
+          "source_file": "testcode/benchmark_test_00045.c",
+          "line": "28:50",
+          "snippet": "data[_w] = user_input[_w];",
+          "tainted_variable": "user_input"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00046.c",
+      "xml_source": "benchproctor_C_2_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-400-UNCONTROLLED-LOOP-BOUND"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-400"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-400-UNCONTROLLED-LOOP-BOUND",
+          "vulnerabilities": [
+            "CWE-400"
+          ],
+          "source_file": "testcode/benchmark_test_00046.c",
+          "line": "28:9",
+          "snippet": "(char *_r = data; *_r; ++_r)",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00047.c",
+      "xml_source": "benchproctor_C_2_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-643-XPATH-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-643"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-643-XPATH-INJECTION",
+          "vulnerabilities": [
+            "CWE-643"
+          ],
+          "source_file": "testcode/benchmark_test_00047.c",
+          "line": "41:5",
+          "snippet": "xmlXPathObjectPtr _xo = xmlXPathEvalExpression((const unsigned char *)_expr, _xpc);",
+          "tainted_variable": "_expr"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00050.c",
+      "xml_source": "benchproctor_C_2_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-90-LDAP-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-90"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-90-LDAP-INJECTION",
+          "vulnerabilities": [
+            "CWE-90"
+          ],
+          "source_file": "testcode/benchmark_test_00050.c",
+          "line": "37:5",
+          "snippet": "ldap_search_ext_s(_ld, \"ou=people,dc=example,dc=com\", LDAP_SCOPE_SUBTREE, _filter, NULL, 0, NULL, NULL, NULL, 0, &_res);",
+          "tainted_variable": "_filter"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00051.c",
+      "xml_source": "benchproctor_C_2_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-643-XPATH-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-643"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-643-XPATH-INJECTION",
+          "vulnerabilities": [
+            "CWE-643"
+          ],
+          "source_file": "testcode/benchmark_test_00051.c",
+          "line": "51:5",
+          "snippet": "xmlXPathObjectPtr _xo = xmlXPathEvalExpression((const unsigned char *)_expr, _xpc);",
+          "tainted_variable": "_expr"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00052.c",
+      "xml_source": "benchproctor_C_2_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-643-XPATH-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-643"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-643-XPATH-INJECTION",
+          "vulnerabilities": [
+            "CWE-643"
+          ],
+          "source_file": "testcode/benchmark_test_00052.c",
+          "line": "32:5",
+          "snippet": "xmlXPathObjectPtr _xo = xmlXPathEvalExpression((const unsigned char *)_expr, _xpc);",
+          "tainted_variable": "_expr"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00055.c",
+      "xml_source": "benchproctor_C_2_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-328-WEAK-HASH-FUNCTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-328"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-328-WEAK-HASH-FUNCTION",
+          "vulnerabilities": [
+            "CWE-328"
+          ],
+          "source_file": "testcode/benchmark_test_00055.c",
+          "line": "28:5",
+          "snippet": "MD5((const unsigned char *)data, strlen(data), _digest)"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00061.c",
+      "xml_source": "benchproctor_C_2_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-611-XXE"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-611"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-611-XXE",
+          "vulnerabilities": [
+            "CWE-611"
+          ],
+          "source_file": "testcode/benchmark_test_00061.c",
+          "line": "29:22",
+          "snippet": "xmlReadMemory(data, (int)strlen(data), \"noname.xml\", NULL, XML_PARSE_NOENT)"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00062.c",
+      "xml_source": "benchproctor_C_2_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-400-UNCONTROLLED-LOOP-BOUND"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-400"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-400-UNCONTROLLED-LOOP-BOUND",
+          "vulnerabilities": [
+            "CWE-400"
+          ],
+          "source_file": "testcode/benchmark_test_00062.c",
+          "line": "38:12",
+          "snippet": "user_input[_li] != '\\0' && _li < sizeof(data) - 1;",
+          "tainted_variable": "user_input"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00064.c",
+      "xml_source": "benchproctor_C_2_2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/benchmark_test_00071.c",
+      "xml_source": "benchproctor_C_2_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-476-NULL-POINTER-DEREFERENCE"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-476"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-476-NULL-POINTER-DEREFERENCE",
+          "vulnerabilities": [
+            "CWE-476"
+          ],
+          "source_file": "testcode/benchmark_test_00071.c",
+          "line": "17:8",
+          "snippet": "(strlen(user_input) > 0)",
+          "tainted_variable": "user_input"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00074.c",
+      "xml_source": "benchproctor_C_2_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-328-WEAK-HASH-FUNCTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-328"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-328-WEAK-HASH-FUNCTION",
+          "vulnerabilities": [
+            "CWE-328"
+          ],
+          "source_file": "testcode/benchmark_test_00074.c",
+          "line": "20:5",
+          "snippet": "MD5((const unsigned char *)data, strlen(data), _digest)"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00075.c",
+      "xml_source": "benchproctor_C_2_2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/benchmark_test_00080.c",
+      "xml_source": "benchproctor_C_2_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-476-NULL-POINTER-DEREFERENCE"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-476"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-476-NULL-POINTER-DEREFERENCE",
+          "vulnerabilities": [
+            "CWE-476"
+          ],
+          "source_file": "testcode/benchmark_test_00080.c",
+          "line": "16:8",
+          "snippet": "(strlen(user_input) > 0)",
+          "tainted_variable": "user_input"
+        },
+        {
+          "rule_id": "CWE-476-NULL-POINTER-DEREFERENCE",
+          "vulnerabilities": [
+            "CWE-476"
+          ],
+          "source_file": "testcode/benchmark_test_00080.c",
+          "line": "18:5",
+          "snippet": "printf(\"%c\\n\", *_found);",
+          "tainted_variable": "_found"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00082.c",
+      "xml_source": "benchproctor_C_2_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-611-XXE"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-611"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-611-XXE",
+          "vulnerabilities": [
+            "CWE-611"
+          ],
+          "source_file": "testcode/benchmark_test_00082.c",
+          "line": "27:22",
+          "snippet": "xmlReadMemory(data, (int)strlen(data), \"noname.xml\", NULL, XML_PARSE_NOENT)"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00084.c",
+      "xml_source": "benchproctor_C_2_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-400-UNCONTROLLED-LOOP-BOUND"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-400"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-400-UNCONTROLLED-LOOP-BOUND",
+          "vulnerabilities": [
+            "CWE-400"
+          ],
+          "source_file": "testcode/benchmark_test_00084.c",
+          "line": "35:9",
+          "snippet": "(char *_r = data; *_r; ++_r)",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00088.c",
+      "xml_source": "benchproctor_C_2_2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/benchmark_test_00089.c",
+      "xml_source": "benchproctor_C_2_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-643-XPATH-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-643"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-643-XPATH-INJECTION",
+          "vulnerabilities": [
+            "CWE-643"
+          ],
+          "source_file": "testcode/benchmark_test_00089.c",
+          "line": "49:5",
+          "snippet": "xmlXPathObjectPtr _xo = xmlXPathEvalExpression((const unsigned char *)_expr, _xpc);",
+          "tainted_variable": "_expr"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00092.c",
+      "xml_source": "benchproctor_C_2_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-400-UNCONTROLLED-LOOP-BOUND",
+        "CWE-476-NULL-POINTER-DEREFERENCE"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-400",
+        "CWE-476"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-400-UNCONTROLLED-LOOP-BOUND",
+          "vulnerabilities": [
+            "CWE-400"
+          ],
+          "source_file": "testcode/benchmark_test_00092.c",
+          "line": "20:12",
+          "snippet": "user_input[_li] != '\\0' && _li < sizeof(data) - 1;",
+          "tainted_variable": "user_input"
+        },
+        {
+          "rule_id": "CWE-476-NULL-POINTER-DEREFERENCE",
+          "vulnerabilities": [
+            "CWE-476"
+          ],
+          "source_file": "testcode/benchmark_test_00092.c",
+          "line": "23:5",
+          "snippet": "printf(\"%c\\n\", *_found);",
+          "tainted_variable": "_found"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00093.c",
+      "xml_source": "benchproctor_C_2_2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    }
+  ],
+  "rules_skipped": {
+    "c": [
+      {
+        "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+        "reason": "non applicabile a 'c' (languages=['java', 'python', 'javascript'])"
+      },
+      {
+        "rule_id": "CWE-95-EVAL-INJECTION",
+        "reason": "non applicabile a 'c' (languages=['java', 'python', 'javascript'])"
+      },
+      {
+        "rule_id": "CWE-113-HTTP-RESPONSE-SPLITTING",
+        "reason": "non applicabile a 'c' (languages=['java', 'python', 'javascript'])"
+      },
+      {
+        "rule_id": "CWE-197",
+        "reason": "non applicabile a 'c' (languages=['java'])"
+      },
+      {
+        "rule_id": "CWE-209-ERROR-DETAILS-TO-CLIENT",
+        "reason": "non applicabile a 'c' (languages=['java', 'python', 'javascript'])"
+      },
+      {
+        "rule_id": "CWE-209-ERROR-DETAILS-TO-CONSOLE",
+        "reason": "non applicabile a 'c' (languages=['java', 'python', 'javascript'])"
+      },
+      {
+        "rule_id": "CWE-347-JWT-NO-VERIFY",
+        "reason": "non applicabile a 'c' (languages=['python'])"
+      },
+      {
+        "rule_id": "CWE-400-UNCONTROLLED-RESOURCE-CONSUMPTION",
+        "reason": "non applicabile a 'c' (languages=['python', 'java', 'javascript'])"
+      },
+      {
+        "rule_id": "CWE-434-UNRESTRICTED-FILE-UPLOAD",
+        "reason": "non applicabile a 'c' (languages=['java', 'python', 'javascript'])"
+      },
+      {
+        "rule_id": "CWE-502-DESERIALIZATION",
+        "reason": "non applicabile a 'c' (languages=['python', 'java', 'javascript'])"
+      },
+      {
+        "rule_id": "CWE-502-JACKSON-UNSAFE-DESERIALIZATION",
+        "reason": "non applicabile a 'c' (languages=['java'])"
+      },
+      {
+        "rule_id": "CWE-601-OPEN-REDIRECT",
+        "reason": "non applicabile a 'c' (languages=['java', 'python', 'javascript'])"
+      },
+      {
+        "rule_id": "CWE-611-XXE-TAINT",
+        "reason": "non applicabile a 'c' (languages=['javascript', 'python'])"
+      },
+      {
+        "rule_id": "UNCHECKED-CAST",
+        "reason": "non applicabile a 'c' (languages=['java'])"
+      },
+      {
+        "rule_id": "CWE-770-UNCONTROLLED-RESOURCE-ALLOCATION",
+        "reason": "non applicabile a 'c' (languages=['java', 'python', 'javascript'])"
+      },
+      {
+        "rule_id": "CWE-918-XSLT-SSRF",
+        "reason": "non applicabile a 'c' (languages=['python'])"
+      },
+      {
+        "rule_id": "CWE-943-NOSQL-INJECTION",
+        "reason": "non applicabile a 'c' (languages=['javascript'])"
+      },
+      {
+        "rule_id": "CWE-1327-UNRESTRICTED-BIND-ADDRESS",
+        "reason": "non applicabile a 'c' (languages=['python'])"
+      },
+      {
+        "rule_id": "CWE-1333-REGEX-DOS",
+        "reason": "non applicabile a 'c' (languages=['javascript', 'python'])"
+      }
+    ]
+  }
+}

@@ -1,0 +1,1066 @@
+{
+  "summary": {
+    "units_analyzed": 48,
+    "units_failed": 0,
+    "files_failed": 0,
+    "vulnerable_files": 32,
+    "total_findings": 39,
+    "categories_count": {
+      "CWE-22": 4,
+      "CWE-369": 1,
+      "CWE-78": 5,
+      "CWE-601": 5,
+      "CWE-1333": 6,
+      "CWE-79": 3,
+      "CWE-611": 4,
+      "CWE-400": 2,
+      "CWE-89": 3,
+      "CWE-502": 3,
+      "CWE-327": 3,
+      "CWE-326": 3
+    }
+  },
+  "errors": [],
+  "details": [
+    {
+      "source_file": "testcode/benchmark_test_00001.py",
+      "xml_source": "flask_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-22-PATH-TRAVERSAL",
+        "CWE-369-DIVIDE-BY-ZERO-TAINT"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-22",
+        "CWE-369"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "testcode/benchmark_test_00001.py",
+          "line": "30:5",
+          "snippet": "os.unlink(checked_path)",
+          "tainted_variable": "checked_path"
+        },
+        {
+          "rule_id": "CWE-369-DIVIDE-BY-ZERO-TAINT",
+          "vulnerabilities": [
+            "CWE-369"
+          ],
+          "source_file": "testcode/benchmark_test_00001.py",
+          "line": "26:5",
+          "snippet": "candidate = (base / data).resolve()",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00002.py",
+      "xml_source": "flask_2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/benchmark_test_00003.py",
+      "xml_source": "flask_2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/benchmark_test_00004.py",
+      "xml_source": "flask_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-78-OS-CMD-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-78"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-78-OS-CMD-INJECTION",
+          "vulnerabilities": [
+            "CWE-78"
+          ],
+          "source_file": "testcode/benchmark_test_00004.py",
+          "line": "24:5",
+          "snippet": "subprocess.run(['echo', data], shell=False)",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00006.py",
+      "xml_source": "flask_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-22-PATH-TRAVERSAL"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-22"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "testcode/benchmark_test_00006.py",
+          "line": "28:5",
+          "snippet": "os.unlink('/var/app/data/' + str(data))",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00007.py",
+      "xml_source": "flask_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-1333-REGEX-DOS",
+        "CWE-601-OPEN-REDIRECT"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-1333",
+        "CWE-601"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-601-OPEN-REDIRECT",
+          "vulnerabilities": [
+            "CWE-601"
+          ],
+          "source_file": "testcode/benchmark_test_00007.py",
+          "line": "34:5",
+          "snippet": "return redirect(str(target_url))",
+          "tainted_variable": "target_url"
+        },
+        {
+          "rule_id": "CWE-1333-REGEX-DOS",
+          "vulnerabilities": [
+            "CWE-1333"
+          ],
+          "source_file": "testcode/benchmark_test_00007.py",
+          "line": "31:8",
+          "snippet": "not re.fullmatch(\"^(api\\\\.prod\\\\.internal|cdn\\\\.pycdn\\\\.io)$\", parsed.hostname or '')",
+          "tainted_variable": "parsed"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00010.py",
+      "xml_source": "flask_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-22-PATH-TRAVERSAL"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-22"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "testcode/benchmark_test_00010.py",
+          "line": "29:15",
+          "snippet": "checked_path",
+          "tainted_variable": "checked_path"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00011.py",
+      "xml_source": "flask_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-79-CROSS-SITE-SCRIPTING"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-79"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "testcode/benchmark_test_00011.py",
+          "line": "25:5",
+          "snippet": "return '<div>' + str(data) + '</div>'",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00015.py",
+      "xml_source": "flask_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-78-OS-CMD-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-78"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-78-OS-CMD-INJECTION",
+          "vulnerabilities": [
+            "CWE-78"
+          ],
+          "source_file": "testcode/benchmark_test_00015.py",
+          "line": "24:5",
+          "snippet": "subprocess.run('echo ' + str(env_value), shell=True)",
+          "tainted_variable": "env_value"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00016.py",
+      "xml_source": "flask_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-611-XXE"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-611"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-611-XXE",
+          "vulnerabilities": [
+            "CWE-611"
+          ],
+          "source_file": "testcode/benchmark_test_00016.py",
+          "line": "25:15",
+          "snippet": "etree.XMLParser(resolve_entities=True, no_network=False)"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00017.py",
+      "xml_source": "flask_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-601-OPEN-REDIRECT"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-601"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-601-OPEN-REDIRECT",
+          "vulnerabilities": [
+            "CWE-601"
+          ],
+          "source_file": "testcode/benchmark_test_00017.py",
+          "line": "32:5",
+          "snippet": "return redirect(str(data))",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00020.py",
+      "xml_source": "flask_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-1333-REGEX-DOS",
+        "CWE-601-OPEN-REDIRECT"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-1333",
+        "CWE-601"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-601-OPEN-REDIRECT",
+          "vulnerabilities": [
+            "CWE-601"
+          ],
+          "source_file": "testcode/benchmark_test_00020.py",
+          "line": "30:5",
+          "snippet": "return redirect(str(target_url))",
+          "tainted_variable": "target_url"
+        },
+        {
+          "rule_id": "CWE-1333-REGEX-DOS",
+          "vulnerabilities": [
+            "CWE-1333"
+          ],
+          "source_file": "testcode/benchmark_test_00020.py",
+          "line": "27:8",
+          "snippet": "not re.fullmatch(\"^(api\\\\.prod\\\\.internal|cdn\\\\.pycdn\\\\.io)$\", parsed.hostname or '')",
+          "tainted_variable": "parsed"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00022.py",
+      "xml_source": "flask_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-22-PATH-TRAVERSAL"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-22"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "testcode/benchmark_test_00022.py",
+          "line": "31:5",
+          "snippet": "os.unlink('/var/app/data/' + str(data))",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00024.py",
+      "xml_source": "flask_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-400-UNCONTROLLED-LOOP-BOUND"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-400"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-400-UNCONTROLLED-LOOP-BOUND",
+          "vulnerabilities": [
+            "CWE-400"
+          ],
+          "source_file": "testcode/benchmark_test_00024.py",
+          "line": "24:9",
+          "snippet": "token in str(user_id).split(',')",
+          "tainted_variable": "user_id"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00025.py",
+      "xml_source": "flask_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-601-OPEN-REDIRECT"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-601"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-601-OPEN-REDIRECT",
+          "vulnerabilities": [
+            "CWE-601"
+          ],
+          "source_file": "testcode/benchmark_test_00025.py",
+          "line": "25:5",
+          "snippet": "return redirect(str(data))",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00026.py",
+      "xml_source": "flask_2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/benchmark_test_00028.py",
+      "xml_source": "flask_2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/benchmark_test_00031.py",
+      "xml_source": "flask_2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/benchmark_test_00034.py",
+      "xml_source": "flask_2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/benchmark_test_00036.py",
+      "xml_source": "flask_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-1333-REGEX-DOS"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-1333"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-1333-REGEX-DOS",
+          "vulnerabilities": [
+            "CWE-1333"
+          ],
+          "source_file": "testcode/benchmark_test_00036.py",
+          "line": "25:8",
+          "snippet": "not re.fullmatch(\"^[a-zA-Z0-9_.#\\\\-]+$\", data)",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00037.py",
+      "xml_source": "flask_2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/benchmark_test_00038.py",
+      "xml_source": "flask_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-400-UNCONTROLLED-LOOP-BOUND",
+        "CWE-89-SQLI"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-400",
+        "CWE-89"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-89-SQLI",
+          "vulnerabilities": [
+            "CWE-89"
+          ],
+          "source_file": "testcode/benchmark_test_00038.py",
+          "line": "28:5",
+          "snippet": "db.execute(\"SELECT * FROM users WHERE id = '\" + str(data) + \"'\")",
+          "tainted_variable": "data"
+        },
+        {
+          "rule_id": "CWE-400-UNCONTROLLED-LOOP-BOUND",
+          "vulnerabilities": [
+            "CWE-400"
+          ],
+          "source_file": "testcode/benchmark_test_00038.py",
+          "line": "25:9",
+          "snippet": "token in str(api_value).split(',')",
+          "tainted_variable": "api_value"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00041.py",
+      "xml_source": "flask_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-78-OS-CMD-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-78"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-78-OS-CMD-INJECTION",
+          "vulnerabilities": [
+            "CWE-78"
+          ],
+          "source_file": "testcode/benchmark_test_00041.py",
+          "line": "25:5",
+          "snippet": "subprocess.run('echo ' + str(data), shell=True)",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00042.py",
+      "xml_source": "flask_2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/benchmark_test_00046.py",
+      "xml_source": "flask_2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/benchmark_test_00047.py",
+      "xml_source": "flask_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-78-OS-CMD-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-78"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-78-OS-CMD-INJECTION",
+          "vulnerabilities": [
+            "CWE-78"
+          ],
+          "source_file": "testcode/benchmark_test_00047.py",
+          "line": "24:5",
+          "snippet": "subprocess.run(['echo', data], shell=False)",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00048.py",
+      "xml_source": "flask_2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/benchmark_test_00049.py",
+      "xml_source": "flask_2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/benchmark_test_00051.py",
+      "xml_source": "flask_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-611-XXE"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-611"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-611-XXE",
+          "vulnerabilities": [
+            "CWE-611"
+          ],
+          "source_file": "testcode/benchmark_test_00051.py",
+          "line": "25:15",
+          "snippet": "etree.XMLParser(resolve_entities=True, no_network=False)"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00053.py",
+      "xml_source": "flask_2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/benchmark_test_00055.py",
+      "xml_source": "flask_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-89-SQLI"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-89"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-89-SQLI",
+          "vulnerabilities": [
+            "CWE-89"
+          ],
+          "source_file": "testcode/benchmark_test_00055.py",
+          "line": "23:5",
+          "snippet": "db.execute(\"SELECT * FROM users WHERE id = '\" + str(header_value) + \"'\")",
+          "tainted_variable": "header_value"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00056.py",
+      "xml_source": "flask_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-1333-REGEX-DOS",
+        "CWE-601-OPEN-REDIRECT"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-1333",
+        "CWE-601"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-601-OPEN-REDIRECT",
+          "vulnerabilities": [
+            "CWE-601"
+          ],
+          "source_file": "testcode/benchmark_test_00056.py",
+          "line": "30:5",
+          "snippet": "return redirect(str(target_url))",
+          "tainted_variable": "target_url"
+        },
+        {
+          "rule_id": "CWE-1333-REGEX-DOS",
+          "vulnerabilities": [
+            "CWE-1333"
+          ],
+          "source_file": "testcode/benchmark_test_00056.py",
+          "line": "27:8",
+          "snippet": "not re.fullmatch(\"^(api\\\\.prod\\\\.internal|cdn\\\\.pycdn\\\\.io)$\", parsed.hostname or '')",
+          "tainted_variable": "parsed"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00062.py",
+      "xml_source": "flask_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-502-DESERIALIZATION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-502"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-502-DESERIALIZATION",
+          "vulnerabilities": [
+            "CWE-502"
+          ],
+          "source_file": "testcode/benchmark_test_00062.py",
+          "line": "32:5",
+          "snippet": "yaml.load(data, Loader=yaml.UnsafeLoader)"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00063.py",
+      "xml_source": "flask_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-1333-REGEX-DOS",
+        "CWE-79-CROSS-SITE-SCRIPTING"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-1333",
+        "CWE-79"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "testcode/benchmark_test_00063.py",
+          "line": "27:5",
+          "snippet": "return '<div>' + str(processed) + '</div>'",
+          "tainted_variable": "processed"
+        },
+        {
+          "rule_id": "CWE-1333-REGEX-DOS",
+          "vulnerabilities": [
+            "CWE-1333"
+          ],
+          "source_file": "testcode/benchmark_test_00063.py",
+          "line": "24:8",
+          "snippet": "not re.fullmatch(\"^(asc|desc|name|created)$\", str(data))",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00066.py",
+      "xml_source": "flask_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-BROKEN-CRYPTO-ALGORITHM"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-326",
+        "CWE-327"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-BROKEN-CRYPTO-ALGORITHM",
+          "vulnerabilities": [
+            "CWE-327",
+            "CWE-326"
+          ],
+          "source_file": "testcode/benchmark_test_00066.py",
+          "line": "32:18",
+          "snippet": "DES.new(_des_key, DES.MODE_ECB)"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00068.py",
+      "xml_source": "flask_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-BROKEN-CRYPTO-ALGORITHM"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-326",
+        "CWE-327"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-BROKEN-CRYPTO-ALGORITHM",
+          "vulnerabilities": [
+            "CWE-327",
+            "CWE-326"
+          ],
+          "source_file": "testcode/benchmark_test_00068.py",
+          "line": "33:18",
+          "snippet": "DES.new(_des_key, DES.MODE_ECB)"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00072.py",
+      "xml_source": "flask_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-502-DESERIALIZATION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-502"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-502-DESERIALIZATION",
+          "vulnerabilities": [
+            "CWE-502"
+          ],
+          "source_file": "testcode/benchmark_test_00072.py",
+          "line": "29:5",
+          "snippet": "pickle.loads(base64.b64decode(data))"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00073.py",
+      "xml_source": "flask_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-1333-REGEX-DOS"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-1333"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-1333-REGEX-DOS",
+          "vulnerabilities": [
+            "CWE-1333"
+          ],
+          "source_file": "testcode/benchmark_test_00073.py",
+          "line": "27:8",
+          "snippet": "not re.fullmatch(\"^[a-zA-Z0-9 _.%\\\\-]+$\", data)",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00074.py",
+      "xml_source": "flask_2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/benchmark_test_00075.py",
+      "xml_source": "flask_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-611-XXE",
+        "CWE-611-XXE-TAINT"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-611"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-611-XXE",
+          "vulnerabilities": [
+            "CWE-611"
+          ],
+          "source_file": "testcode/benchmark_test_00075.py",
+          "line": "28:15",
+          "snippet": "etree.XMLParser(resolve_entities=True, no_network=False)"
+        },
+        {
+          "rule_id": "CWE-611-XXE-TAINT",
+          "vulnerabilities": [
+            "CWE-611"
+          ],
+          "source_file": "testcode/benchmark_test_00075.py",
+          "line": "29:5",
+          "snippet": "etree.fromstring(str(data).encode(), _parser)",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00077.py",
+      "xml_source": "flask_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-89-SQLI"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-89"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-89-SQLI",
+          "vulnerabilities": [
+            "CWE-89"
+          ],
+          "source_file": "testcode/benchmark_test_00077.py",
+          "line": "24:5",
+          "snippet": "db.execute(\"SELECT * FROM users WHERE id = '\" + str(data) + \"'\")",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00086.py",
+      "xml_source": "flask_2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/benchmark_test_00087.py",
+      "xml_source": "flask_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-BROKEN-CRYPTO-ALGORITHM"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-326",
+        "CWE-327"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-BROKEN-CRYPTO-ALGORITHM",
+          "vulnerabilities": [
+            "CWE-327",
+            "CWE-326"
+          ],
+          "source_file": "testcode/benchmark_test_00087.py",
+          "line": "28:18",
+          "snippet": "DES.new(_des_key, DES.MODE_ECB)"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00089.py",
+      "xml_source": "flask_2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/benchmark_test_00090.py",
+      "xml_source": "flask_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-502-DESERIALIZATION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-502"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-502-DESERIALIZATION",
+          "vulnerabilities": [
+            "CWE-502"
+          ],
+          "source_file": "testcode/benchmark_test_00090.py",
+          "line": "25:5",
+          "snippet": "yaml.load(data, Loader=yaml.UnsafeLoader)"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00094.py",
+      "xml_source": "flask_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-78-OS-CMD-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-78"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-78-OS-CMD-INJECTION",
+          "vulnerabilities": [
+            "CWE-78"
+          ],
+          "source_file": "testcode/benchmark_test_00094.py",
+          "line": "30:5",
+          "snippet": "subprocess.run('echo ' + str(data), shell=True)",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00096.py",
+      "xml_source": "flask_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-79-CROSS-SITE-SCRIPTING"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-79"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "testcode/benchmark_test_00096.py",
+          "line": "24:5",
+          "snippet": "return '<div>' + str(data) + '</div>'",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00098.py",
+      "xml_source": "flask_2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    }
+  ],
+  "rules_skipped": {
+    "python": [
+      {
+        "rule_id": "CWE-120-BUFFER-OVERFLOW",
+        "reason": "non applicabile a 'python' (languages=['c'])"
+      },
+      {
+        "rule_id": "CWE-129-IMPROPER-ARRAY-INDEX-VALIDATION",
+        "reason": "non applicabile a 'python' (languages=['c', 'java'])"
+      },
+      {
+        "rule_id": "CWE-129-ARRAY-SIZE-VALIDATION",
+        "reason": "non applicabile a 'python' (languages=['c', 'java'])"
+      },
+      {
+        "rule_id": "Numeric Truncation Error",
+        "reason": "non applicabile a 'python' (languages=['java'])"
+      },
+      {
+        "rule_id": "CWE-400-UNCONTROLLED-SLEEP-C",
+        "reason": "non applicabile a 'python' (languages=['c'])"
+      },
+      {
+        "rule_id": "CWE-415-416-MEMORY-MISUSE-AFTER-FREE",
+        "reason": "non applicabile a 'python' (languages=['c'])"
+      },
+      {
+        "rule_id": "CWE-476-NULL-POINTER-DEREFERENCE",
+        "reason": "non applicabile a 'python' (languages=['c', 'java'])"
+      },
+      {
+        "rule_id": "CWE-502-JACKSON-UNSAFE-DESERIALIZATION",
+        "reason": "non applicabile a 'python' (languages=['java'])"
+      },
+      {
+        "rule_id": "CWE-611-XXE-KWARGS",
+        "reason": "non applicabile a 'python' (languages=['javascript'])"
+      },
+      {
+        "rule_id": "UNCHECKED-CAST",
+        "reason": "non applicabile a 'python' (languages=['java'])"
+      },
+      {
+        "rule_id": "CWE-943-NOSQL-INJECTION",
+        "reason": "non applicabile a 'python' (languages=['javascript'])"
+      }
+    ]
+  }
+}

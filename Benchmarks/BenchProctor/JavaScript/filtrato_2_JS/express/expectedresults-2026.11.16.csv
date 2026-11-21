@@ -1,0 +1,32 @@
+# test name, category, real vulnerability, CWE
+# language=javascript framework=express shape=standalone
+BenchmarkTest00002,securecookie,false,614
+BenchmarkTest00008,redirect,false,601
+BenchmarkTest00014,deserial,false,502
+BenchmarkTest00017,securecookie,true,614
+BenchmarkTest00018,securecookie,true,614
+BenchmarkTest00027,weakcipher,false,327
+BenchmarkTest00030,deserial,false,502
+BenchmarkTest00037,weakcipher,true,327
+BenchmarkTest00040,xxe,false,611
+BenchmarkTest00041,deserial,true,502
+BenchmarkTest00043,securecookie,true,614
+BenchmarkTest00049,weakcipher,true,327
+BenchmarkTest00053,weakcipher,false,327
+BenchmarkTest00062,securecookie,false,614
+BenchmarkTest00064,redirect,true,601
+BenchmarkTest00065,deserial,true,502
+BenchmarkTest00072,redirect,false,601
+BenchmarkTest00075,xxe,false,611
+BenchmarkTest00076,xxe,true,611
+BenchmarkTest00080,redirect,false,601
+BenchmarkTest00081,xxe,true,611
+BenchmarkTest00084,xxe,false,611
+BenchmarkTest00087,xxe,true,611
+BenchmarkTest00089,redirect,true,601
+BenchmarkTest00090,weakcipher,true,327
+BenchmarkTest00092,weakcipher,false,327
+BenchmarkTest00097,redirect,true,601
+BenchmarkTest00099,deserial,true,502
+BenchmarkTest00101,deserial,false,502
+BenchmarkTest00108,securecookie,false,614

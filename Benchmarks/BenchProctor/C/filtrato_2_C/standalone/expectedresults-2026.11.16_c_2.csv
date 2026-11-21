@@ -1,0 +1,32 @@
+# test name, category, real vulnerability, CWE
+# language=c framework=standalone shape=standalone
+BenchmarkTest00002,ldapi,true,90
+BenchmarkTest00005,xpathi,true,643
+BenchmarkTest00014,weakhash,false,328
+BenchmarkTest00016,null_deref,false,476
+BenchmarkTest00020,xxe,true,611
+BenchmarkTest00021,null_deref,false,476
+BenchmarkTest00024,null_deref,true,476
+BenchmarkTest00029,weakhash,true,328
+BenchmarkTest00039,xpathi,true,643
+BenchmarkTest00044,xxe,false,611
+BenchmarkTest00045,ldapi,true,90
+BenchmarkTest00046,ldapi,false,90
+BenchmarkTest00047,xpathi,false,643
+BenchmarkTest00050,ldapi,true,90
+BenchmarkTest00051,xpathi,false,643
+BenchmarkTest00052,xpathi,true,643
+BenchmarkTest00055,weakhash,true,328
+BenchmarkTest00061,xxe,true,611
+BenchmarkTest00062,xxe,false,611
+BenchmarkTest00064,weakhash,false,328
+BenchmarkTest00071,weakhash,false,328
+BenchmarkTest00074,weakhash,true,328
+BenchmarkTest00075,ldapi,false,90
+BenchmarkTest00080,null_deref,true,476
+BenchmarkTest00082,xxe,true,611
+BenchmarkTest00084,xxe,false,611
+BenchmarkTest00088,ldapi,false,90
+BenchmarkTest00089,xpathi,false,643
+BenchmarkTest00092,null_deref,true,476
+BenchmarkTest00093,null_deref,false,476

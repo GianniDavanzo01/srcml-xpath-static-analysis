@@ -1,0 +1,32 @@
+# test name, category, real vulnerability, CWE
+# language=java framework=spring shape=standalone
+BenchmarkTest00001,null_deref,true,476
+BenchmarkTest00002,ssrf,true,918
+BenchmarkTest00006,ldapi,true,90
+BenchmarkTest00012,ssrf,false,918
+BenchmarkTest00015,ldapi,false,90
+BenchmarkTest00016,weakcipher,false,327
+BenchmarkTest00018,ldapi,true,90
+BenchmarkTest00021,null_deref,false,476
+BenchmarkTest00028,ldapi,false,90
+BenchmarkTest00030,weakcipher,false,327
+BenchmarkTest00034,ldapi,false,90
+BenchmarkTest00036,codeinj,false,94
+BenchmarkTest00040,ssrf,false,918
+BenchmarkTest00043,weakcipher,true,327
+BenchmarkTest00047,null_deref,false,476
+BenchmarkTest00050,weakcipher,false,327
+BenchmarkTest00057,weakcipher,true,327
+BenchmarkTest00070,null_deref,true,476
+BenchmarkTest00071,ssrf,false,918
+BenchmarkTest00073,ldapi,true,90
+BenchmarkTest00074,ssrf,true,918
+BenchmarkTest00079,codeinj,false,94
+BenchmarkTest00083,weakcipher,true,327
+BenchmarkTest00084,null_deref,false,476
+BenchmarkTest00086,codeinj,true,94
+BenchmarkTest00091,codeinj,false,94
+BenchmarkTest00097,ssrf,true,918
+BenchmarkTest00101,codeinj,true,94
+BenchmarkTest00102,codeinj,true,94
+BenchmarkTest00104,null_deref,true,476

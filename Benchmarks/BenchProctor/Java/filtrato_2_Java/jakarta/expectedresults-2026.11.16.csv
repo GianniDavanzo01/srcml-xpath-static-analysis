@@ -1,0 +1,32 @@
+# test name, category, real vulnerability, CWE
+# language=java framework=jakarta shape=standalone
+BenchmarkTest00004,ssrf,true,918
+BenchmarkTest00005,ssrf,false,918
+BenchmarkTest00015,ldapi,false,90
+BenchmarkTest00020,weakcipher,false,327
+BenchmarkTest00022,codeinj,false,94
+BenchmarkTest00026,weakcipher,false,327
+BenchmarkTest00027,codeinj,true,94
+BenchmarkTest00029,weakcipher,true,327
+BenchmarkTest00032,ldapi,true,90
+BenchmarkTest00035,ssrf,true,918
+BenchmarkTest00040,codeinj,false,94
+BenchmarkTest00041,null_deref,false,476
+BenchmarkTest00046,codeinj,true,94
+BenchmarkTest00050,codeinj,false,94
+BenchmarkTest00052,codeinj,true,94
+BenchmarkTest00057,ssrf,false,918
+BenchmarkTest00059,ldapi,true,90
+BenchmarkTest00060,null_deref,true,476
+BenchmarkTest00066,null_deref,true,476
+BenchmarkTest00068,ssrf,true,918
+BenchmarkTest00069,weakcipher,true,327
+BenchmarkTest00070,null_deref,false,476
+BenchmarkTest00071,weakcipher,false,327
+BenchmarkTest00073,ldapi,false,90
+BenchmarkTest00078,ldapi,true,90
+BenchmarkTest00096,ssrf,false,918
+BenchmarkTest00101,ldapi,false,90
+BenchmarkTest00102,null_deref,true,476
+BenchmarkTest00103,weakcipher,true,327
+BenchmarkTest00108,null_deref,false,476

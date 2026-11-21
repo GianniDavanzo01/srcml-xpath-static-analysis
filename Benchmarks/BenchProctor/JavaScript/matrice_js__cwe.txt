@@ -1,0 +1,18 @@
+=== javascript (express & koa) | mode=cwe | valutati 132/132 test ===
+categoria            CWE     N    TP    FN    FP    TN   prec recall     F1
+---------------------------------------------------------------------------
+pathtraver            22    12     4     2     0     6  1.000  0.667  0.800
+cmdi                  78    12     6     0     0     6  1.000  1.000  1.000
+xss                   79    12     4     2     2     4  0.667  0.667  0.667
+sqli                  89    12     4     2     2     4  0.667  0.667  0.667
+codeinj               94    12     6     0     0     6  1.000  1.000  1.000
+weakcipher           327    12     6     0     0     6  1.000  1.000  1.000
+deserial             502    12     6     0     0     6  1.000  1.000  1.000
+redirect             601    12     4     2     0     6  1.000  0.667  0.800
+xxe                  611    12     6     0     0     6  1.000  1.000  1.000
+securecookie         614    12     6     0     0     6  1.000  1.000  1.000
+ssrf                 918    12     6     0     2     4  0.750  1.000  0.857
+---------------------------------------------------------------------------
+TOTALE (micro)             132    58     8     6    60  0.906  0.879  0.892
+MEDIA (macro)                                           0.917  0.879  0.890
+  [INFO] 9 test con finding di CWE diverso da quello atteso (ignorati in mode=cwe)

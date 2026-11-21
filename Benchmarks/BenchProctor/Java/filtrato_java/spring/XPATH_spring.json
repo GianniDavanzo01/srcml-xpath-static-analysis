@@ -1,0 +1,907 @@
+{
+  "summary": {
+    "units_analyzed": 36,
+    "units_failed": 0,
+    "files_failed": 0,
+    "vulnerable_files": 27,
+    "total_findings": 37,
+    "categories_count": {
+      "CWE-79": 4,
+      "CWE-601": 6,
+      "CWE-918": 3,
+      "CWE-89": 4,
+      "CWE-703": 7,
+      "CWE-614": 3,
+      "CWE-22": 3,
+      "CWE-502": 3,
+      "CWE-113": 2,
+      "CWE-400": 1,
+      "CWE-129": 1
+    }
+  },
+  "errors": [],
+  "details": [
+    {
+      "source_file": "testcode/BenchmarkTest00007.java",
+      "xml_source": "spring_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-79-CROSS-SITE-SCRIPTING"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-79"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "testcode/BenchmarkTest00007.java",
+          "line": "31:9",
+          "snippet": "response.getWriter().print(deserialized);",
+          "tainted_variable": "deserialized"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/BenchmarkTest00008.java",
+      "xml_source": "spring_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-601-OPEN-REDIRECT",
+        "CWE-918-SSRF"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-601",
+        "CWE-918"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-601-OPEN-REDIRECT",
+          "vulnerabilities": [
+            "CWE-601"
+          ],
+          "source_file": "testcode/BenchmarkTest00008.java",
+          "line": "36:9",
+          "snippet": "response.sendRedirect(targetUrl);",
+          "tainted_variable": "targetUrl"
+        },
+        {
+          "rule_id": "CWE-918-SSRF",
+          "vulnerabilities": [
+            "CWE-918"
+          ],
+          "source_file": "testcode/BenchmarkTest00008.java",
+          "line": "32:9",
+          "snippet": "java.net.URI parsed = java.net.URI.create(data);",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/BenchmarkTest00009.java",
+      "xml_source": "spring_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-703-IMPROPER-EXCEPTION-HANDLING",
+        "CWE-89-SQLI"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-703",
+        "CWE-89"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-89-SQLI",
+          "vulnerabilities": [
+            "CWE-89"
+          ],
+          "source_file": "testcode/BenchmarkTest00009.java",
+          "line": "46:13",
+          "snippet": "stmt.executeQuery(\"SELECT * FROM users WHERE id = '\" + data + \"'\");",
+          "tainted_variable": "data"
+        },
+        {
+          "rule_id": "CWE-703-IMPROPER-EXCEPTION-HANDLING",
+          "vulnerabilities": [
+            "CWE-703"
+          ],
+          "source_file": "testcode/BenchmarkTest00009.java",
+          "line": "38:11",
+          "snippet": "catch (java.sql.SQLException ignored) {}"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/BenchmarkTest00010.java",
+      "xml_source": "spring_2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/BenchmarkTest00013.java",
+      "xml_source": "spring_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-614-SENSITIVE-COOKIE-INSECURE"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-614"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-614-SENSITIVE-COOKIE-INSECURE",
+          "vulnerabilities": [
+            "CWE-614"
+          ],
+          "source_file": "testcode/BenchmarkTest00013.java",
+          "line": "30:9",
+          "snippet": "response.addHeader(\"Set-Cookie\", \"session=\" + setCookieValue + \"; Path=/; HttpOnly; SameSite=Strict\")"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/BenchmarkTest00017.java",
+      "xml_source": "spring_2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/BenchmarkTest00023.java",
+      "xml_source": "spring_2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/BenchmarkTest00025.java",
+      "xml_source": "spring_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-703-IMPROPER-EXCEPTION-HANDLING",
+        "CWE-89-SQLI"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-703",
+        "CWE-89"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-89-SQLI",
+          "vulnerabilities": [
+            "CWE-89"
+          ],
+          "source_file": "testcode/BenchmarkTest00025.java",
+          "line": "37:41",
+          "snippet": "sql",
+          "tainted_variable": "sql"
+        },
+        {
+          "rule_id": "CWE-703-IMPROPER-EXCEPTION-HANDLING",
+          "vulnerabilities": [
+            "CWE-703"
+          ],
+          "source_file": "testcode/BenchmarkTest00025.java",
+          "line": "33:11",
+          "snippet": "catch (java.sql.SQLException ignored) {}"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/BenchmarkTest00029.java",
+      "xml_source": "spring_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-22-PATH-TRAVERSAL"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-22"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "testcode/BenchmarkTest00029.java",
+          "line": "31:9",
+          "snippet": "Files.write(Paths.get(\"/var/uploads/\" + data), \"data\".getBytes());",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/BenchmarkTest00031.java",
+      "xml_source": "spring_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-113-HTTP-RESPONSE-SPLITTING",
+        "CWE-502-JACKSON-UNSAFE-DESERIALIZATION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-113",
+        "CWE-502"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "CWE-502-JACKSON-UNSAFE-DESERIALIZATION",
+          "vulnerabilities": [
+            "CWE-502"
+          ],
+          "source_file": "testcode/BenchmarkTest00031.java",
+          "line": "30:33",
+          "snippet": "objectMapper.readValue(data, Object.class)"
+        },
+        {
+          "rule_id": "CWE-113-HTTP-RESPONSE-SPLITTING",
+          "vulnerabilities": [
+            "CWE-113"
+          ],
+          "source_file": "testcode/BenchmarkTest00031.java",
+          "line": "31:52",
+          "snippet": "polymorphicObj != null ?",
+          "tainted_variable": "polymorphicObj"
+        },
+        {
+          "rule_id": "CWE-113-HTTP-RESPONSE-SPLITTING",
+          "vulnerabilities": [
+            "CWE-113"
+          ],
+          "source_file": "testcode/BenchmarkTest00031.java",
+          "line": "31:9",
+          "snippet": "response.setHeader(\"X-Deserialized-Class\", polymorphicObj != null ? polymorphicObj.getClass().getName() : \"null\");",
+          "tainted_variable": "polymorphicObj"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/BenchmarkTest00033.java",
+      "xml_source": "spring_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-703-IMPROPER-EXCEPTION-HANDLING"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-703"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-703-IMPROPER-EXCEPTION-HANDLING",
+          "vulnerabilities": [
+            "CWE-703"
+          ],
+          "source_file": "testcode/BenchmarkTest00033.java",
+          "line": "31:11",
+          "snippet": "catch (java.sql.SQLException ignored) {}"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/BenchmarkTest00037.java",
+      "xml_source": "spring_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-703-IMPROPER-EXCEPTION-HANDLING"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-703"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-703-IMPROPER-EXCEPTION-HANDLING",
+          "vulnerabilities": [
+            "CWE-703"
+          ],
+          "source_file": "testcode/BenchmarkTest00037.java",
+          "line": "38:11",
+          "snippet": "catch (java.sql.SQLException ignored) {}"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/BenchmarkTest00041.java",
+      "xml_source": "spring_2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/BenchmarkTest00044.java",
+      "xml_source": "spring_2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/BenchmarkTest00045.java",
+      "xml_source": "spring_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-601-OPEN-REDIRECT"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-601"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-601-OPEN-REDIRECT",
+          "vulnerabilities": [
+            "CWE-601"
+          ],
+          "source_file": "testcode/BenchmarkTest00045.java",
+          "line": "27:9",
+          "snippet": "response.sendRedirect(data);",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/BenchmarkTest00051.java",
+      "xml_source": "spring_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-22-PATH-TRAVERSAL"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-22"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "testcode/BenchmarkTest00051.java",
+          "line": "30:9",
+          "snippet": "Files.delete(Paths.get(\"/var/app/data/\" + data));",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/BenchmarkTest00052.java",
+      "xml_source": "spring_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-22-PATH-TRAVERSAL"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-22"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "testcode/BenchmarkTest00052.java",
+          "line": "28:9",
+          "snippet": "Files.delete(Paths.get(\"/var/app/data/\" + data));",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/BenchmarkTest00053.java",
+      "xml_source": "spring_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-601-OPEN-REDIRECT",
+        "CWE-918-SSRF"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-601",
+        "CWE-918"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-601-OPEN-REDIRECT",
+          "vulnerabilities": [
+            "CWE-601"
+          ],
+          "source_file": "testcode/BenchmarkTest00053.java",
+          "line": "30:9",
+          "snippet": "response.sendRedirect(targetUrl);",
+          "tainted_variable": "targetUrl"
+        },
+        {
+          "rule_id": "CWE-918-SSRF",
+          "vulnerabilities": [
+            "CWE-918"
+          ],
+          "source_file": "testcode/BenchmarkTest00053.java",
+          "line": "26:9",
+          "snippet": "java.net.URI parsed = java.net.URI.create(data);",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/BenchmarkTest00055.java",
+      "xml_source": "spring_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-601-OPEN-REDIRECT"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-601"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-601-OPEN-REDIRECT",
+          "vulnerabilities": [
+            "CWE-601"
+          ],
+          "source_file": "testcode/BenchmarkTest00055.java",
+          "line": "28:9",
+          "snippet": "response.sendRedirect(data);",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/BenchmarkTest00058.java",
+      "xml_source": "spring_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-79-CROSS-SITE-SCRIPTING"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-79"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "testcode/BenchmarkTest00058.java",
+          "line": "28:9",
+          "snippet": "response.getWriter().print(\"<div>\" + data + \"</div>\");",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/BenchmarkTest00062.java",
+      "xml_source": "spring_2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/BenchmarkTest00063.java",
+      "xml_source": "spring_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-614-SENSITIVE-COOKIE-INSECURE"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-614"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-614-SENSITIVE-COOKIE-INSECURE",
+          "vulnerabilities": [
+            "CWE-614"
+          ],
+          "source_file": "testcode/BenchmarkTest00063.java",
+          "line": "31:9",
+          "snippet": "response.addHeader(\"Set-Cookie\", \"session=\" + cookieValue + \"; Path=/; HttpOnly; SameSite=Strict\")"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/BenchmarkTest00064.java",
+      "xml_source": "spring_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-79-CROSS-SITE-SCRIPTING"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-79"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "testcode/BenchmarkTest00064.java",
+          "line": "37:9",
+          "snippet": "response.getWriter().print(deserialized);",
+          "tainted_variable": "deserialized"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/BenchmarkTest00066.java",
+      "xml_source": "spring_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-703-IMPROPER-EXCEPTION-HANDLING",
+        "CWE-89-SQLI"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-703",
+        "CWE-89"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-89-SQLI",
+          "vulnerabilities": [
+            "CWE-89"
+          ],
+          "source_file": "testcode/BenchmarkTest00066.java",
+          "line": "37:41",
+          "snippet": "sql",
+          "tainted_variable": "sql"
+        },
+        {
+          "rule_id": "CWE-703-IMPROPER-EXCEPTION-HANDLING",
+          "vulnerabilities": [
+            "CWE-703"
+          ],
+          "source_file": "testcode/BenchmarkTest00066.java",
+          "line": "33:11",
+          "snippet": "catch (java.sql.SQLException ignored) {}"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/BenchmarkTest00072.java",
+      "xml_source": "spring_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-400-UNCONTROLLED-LOOP-BOUND"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-400"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-400-UNCONTROLLED-LOOP-BOUND",
+          "vulnerabilities": [
+            "CWE-400"
+          ],
+          "source_file": "testcode/BenchmarkTest00072.java",
+          "line": "30:13",
+          "snippet": "(String token : userId.split(\",\"))",
+          "tainted_variable": "userId"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/BenchmarkTest00075.java",
+      "xml_source": "spring_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-601-OPEN-REDIRECT"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-601"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-601-OPEN-REDIRECT",
+          "vulnerabilities": [
+            "CWE-601"
+          ],
+          "source_file": "testcode/BenchmarkTest00075.java",
+          "line": "25:9",
+          "snippet": "response.sendRedirect(fieldValue);",
+          "tainted_variable": "fieldValue"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/BenchmarkTest00080.java",
+      "xml_source": "spring_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-502-DESERIALIZATION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-502"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-502-DESERIALIZATION",
+          "vulnerabilities": [
+            "CWE-502"
+          ],
+          "source_file": "testcode/BenchmarkTest00080.java",
+          "line": "36:22",
+          "snippet": "yaml.load(data)"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/BenchmarkTest00082.java",
+      "xml_source": "spring_2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/BenchmarkTest00087.java",
+      "xml_source": "spring_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-129-ARRAY-SIZE-VALIDATION",
+        "CWE-703-IMPROPER-EXCEPTION-HANDLING"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-129",
+        "CWE-703"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-129-ARRAY-SIZE-VALIDATION",
+          "vulnerabilities": [
+            "CWE-129"
+          ],
+          "source_file": "testcode/BenchmarkTest00087.java",
+          "line": "37:9",
+          "snippet": "byte[] hexBytes = new byte[headerValue.length() / 2];",
+          "tainted_variable": "headerValue"
+        },
+        {
+          "rule_id": "CWE-703-IMPROPER-EXCEPTION-HANDLING",
+          "vulnerabilities": [
+            "CWE-703"
+          ],
+          "source_file": "testcode/BenchmarkTest00087.java",
+          "line": "31:11",
+          "snippet": "catch (java.sql.SQLException ignored) {}"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/BenchmarkTest00090.java",
+      "xml_source": "spring_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-703-IMPROPER-EXCEPTION-HANDLING",
+        "CWE-89-SQLI"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-703",
+        "CWE-89"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-89-SQLI",
+          "vulnerabilities": [
+            "CWE-89"
+          ],
+          "source_file": "testcode/BenchmarkTest00090.java",
+          "line": "35:41",
+          "snippet": "sql",
+          "tainted_variable": "sql"
+        },
+        {
+          "rule_id": "CWE-703-IMPROPER-EXCEPTION-HANDLING",
+          "vulnerabilities": [
+            "CWE-703"
+          ],
+          "source_file": "testcode/BenchmarkTest00090.java",
+          "line": "31:11",
+          "snippet": "catch (java.sql.SQLException ignored) {}"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/BenchmarkTest00093.java",
+      "xml_source": "spring_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-614-SENSITIVE-COOKIE-INSECURE"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-614"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-614-SENSITIVE-COOKIE-INSECURE",
+          "vulnerabilities": [
+            "CWE-614"
+          ],
+          "source_file": "testcode/BenchmarkTest00093.java",
+          "line": "30:9",
+          "snippet": "response.addHeader(\"Set-Cookie\", \"session=\" + cookieValue + \"; Path=/; HttpOnly; SameSite=Strict\")"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/BenchmarkTest00094.java",
+      "xml_source": "spring_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-601-OPEN-REDIRECT",
+        "CWE-918-SSRF"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-601",
+        "CWE-918"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-601-OPEN-REDIRECT",
+          "vulnerabilities": [
+            "CWE-601"
+          ],
+          "source_file": "testcode/BenchmarkTest00094.java",
+          "line": "39:9",
+          "snippet": "response.sendRedirect(targetUrl);",
+          "tainted_variable": "targetUrl"
+        },
+        {
+          "rule_id": "CWE-918-SSRF",
+          "vulnerabilities": [
+            "CWE-918"
+          ],
+          "source_file": "testcode/BenchmarkTest00094.java",
+          "line": "35:9",
+          "snippet": "java.net.URI parsed = java.net.URI.create(data);",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/BenchmarkTest00096.java",
+      "xml_source": "spring_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-502-DESERIALIZATION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-502"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-502-DESERIALIZATION",
+          "vulnerabilities": [
+            "CWE-502"
+          ],
+          "source_file": "testcode/BenchmarkTest00096.java",
+          "line": "31:26",
+          "snippet": "ois.readObject()"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/BenchmarkTest00098.java",
+      "xml_source": "spring_2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/BenchmarkTest00103.java",
+      "xml_source": "spring_2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-79-CROSS-SITE-SCRIPTING"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-79"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "testcode/BenchmarkTest00103.java",
+          "line": "28:9",
+          "snippet": "response.getWriter().print(\"<div>\" + data + \"</div>\");",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/BenchmarkTest00108.java",
+      "xml_source": "spring_2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    }
+  ],
+  "rules_skipped": {
+    "java": [
+      {
+        "rule_id": "CWE-120-BUFFER-OVERFLOW",
+        "reason": "non applicabile a 'java' (languages=['c'])"
+      },
+      {
+        "rule_id": "CWE-276-INCORRECT-DEFAULT-PERMISSIONS",
+        "reason": "non applicabile a 'java' (languages=['c', 'python', 'javascript'])"
+      },
+      {
+        "rule_id": "CWE-347-JWT-NO-VERIFY",
+        "reason": "non applicabile a 'java' (languages=['python'])"
+      },
+      {
+        "rule_id": "CWE-400-UNCONTROLLED-SLEEP-C",
+        "reason": "non applicabile a 'java' (languages=['c'])"
+      },
+      {
+        "rule_id": "CWE-415-416-MEMORY-MISUSE-AFTER-FREE",
+        "reason": "non applicabile a 'java' (languages=['c'])"
+      },
+      {
+        "rule_id": "CWE-611-XXE-KWARGS",
+        "reason": "non applicabile a 'java' (languages=['javascript'])"
+      },
+      {
+        "rule_id": "CWE-611-XXE-TAINT",
+        "reason": "non applicabile a 'java' (languages=['javascript', 'python'])"
+      },
+      {
+        "rule_id": "CWE-918-XSLT-SSRF",
+        "reason": "non applicabile a 'java' (languages=['python'])"
+      },
+      {
+        "rule_id": "CWE-943-NOSQL-INJECTION",
+        "reason": "non applicabile a 'java' (languages=['javascript'])"
+      },
+      {
+        "rule_id": "CWE-1327-UNRESTRICTED-BIND-ADDRESS",
+        "reason": "non applicabile a 'java' (languages=['python'])"
+      },
+      {
+        "rule_id": "CWE-1333-REGEX-DOS",
+        "reason": "non applicabile a 'java' (languages=['javascript', 'python'])"
+      }
+    ]
+  }
+}

@@ -1,0 +1,32 @@
+# test name, category, real vulnerability, CWE
+# language=python framework=flask shape=standalone
+BenchmarkTest00012,codeinj,false,94
+BenchmarkTest00013,securecookie,true,614
+BenchmarkTest00018,securecookie,true,614
+BenchmarkTest00019,weakhash,true,328
+BenchmarkTest00021,ldapi,false,90
+BenchmarkTest00023,ssrf,true,918
+BenchmarkTest00033,codeinj,false,94
+BenchmarkTest00040,ssrf,false,918
+BenchmarkTest00044,securecookie,false,614
+BenchmarkTest00045,securecookie,false,614
+BenchmarkTest00054,ldapi,true,90
+BenchmarkTest00057,ldapi,true,90
+BenchmarkTest00059,weakhash,false,328
+BenchmarkTest00060,codeinj,true,94
+BenchmarkTest00064,ldapi,true,90
+BenchmarkTest00069,ldapi,false,90
+BenchmarkTest00070,weakhash,false,328
+BenchmarkTest00071,securecookie,false,614
+BenchmarkTest00078,securecookie,true,614
+BenchmarkTest00079,codeinj,true,94
+BenchmarkTest00080,ssrf,false,918
+BenchmarkTest00081,ssrf,true,918
+BenchmarkTest00088,codeinj,true,94
+BenchmarkTest00091,codeinj,false,94
+BenchmarkTest00093,weakhash,true,328
+BenchmarkTest00095,weakhash,true,328
+BenchmarkTest00099,weakhash,false,328
+BenchmarkTest00101,ldapi,false,90
+BenchmarkTest00102,ssrf,true,918
+BenchmarkTest00108,ssrf,false,918

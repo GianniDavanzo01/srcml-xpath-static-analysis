@@ -1,0 +1,725 @@
+{
+  "summary": {
+    "units_analyzed": 30,
+    "units_failed": 0,
+    "files_failed": 0,
+    "vulnerable_files": 19,
+    "total_findings": 27,
+    "categories_count": {
+      "CWE-95": 2,
+      "CWE-94": 2,
+      "CWE-614": 3,
+      "CWE-400": 1,
+      "CWE-328": 3,
+      "CWE-90": 2,
+      "CWE-918": 11,
+      "CWE-1333": 5
+    }
+  },
+  "errors": [],
+  "details": [
+    {
+      "source_file": "testcode/benchmark_test_00002.py",
+      "xml_source": "proctor_py2_fastapi2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "EVAL-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-94",
+        "CWE-95"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "EVAL-INJECTION",
+          "vulnerabilities": [
+            "CWE-95",
+            "CWE-94"
+          ],
+          "source_file": "testcode/benchmark_test_00002.py",
+          "line": "29:5",
+          "snippet": "eval(str(data))",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00004.py",
+      "xml_source": "proctor_py2_fastapi2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-400-UNCONTROLLED-LOOP-BOUND",
+        "CWE-614-SENSITIVE-COOKIE-INSECURE"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-400",
+        "CWE-614"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-614-SENSITIVE-COOKIE-INSECURE",
+          "vulnerabilities": [
+            "CWE-614"
+          ],
+          "source_file": "testcode/benchmark_test_00004.py",
+          "line": "29:5",
+          "snippet": "resp.set_cookie('session', str(data), httponly=True, samesite='Strict')"
+        },
+        {
+          "rule_id": "CWE-400-UNCONTROLLED-LOOP-BOUND",
+          "vulnerabilities": [
+            "CWE-400"
+          ],
+          "source_file": "testcode/benchmark_test_00004.py",
+          "line": "25:9",
+          "snippet": "token in str(cookie_value).split(',')",
+          "tainted_variable": "cookie_value"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00016.py",
+      "xml_source": "proctor_py2_fastapi2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/benchmark_test_00019.py",
+      "xml_source": "proctor_py2_fastapi2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-328-WEAK-HASH-FUNCTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-328"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-328-WEAK-HASH-FUNCTION",
+          "vulnerabilities": [
+            "CWE-328"
+          ],
+          "source_file": "testcode/benchmark_test_00019.py",
+          "line": "25:14",
+          "snippet": "hashlib.md5(str(upload_name).encode())"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00020.py",
+      "xml_source": "proctor_py2_fastapi2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-614-SENSITIVE-COOKIE-INSECURE"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-614"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-614-SENSITIVE-COOKIE-INSECURE",
+          "vulnerabilities": [
+            "CWE-614"
+          ],
+          "source_file": "testcode/benchmark_test_00020.py",
+          "line": "26:5",
+          "snippet": "resp.set_cookie('session', str(data), httponly=True, samesite='Strict')"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00022.py",
+      "xml_source": "proctor_py2_fastapi2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-90-LDAP-INJECTION",
+        "CWE-918-SSRF"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-90",
+        "CWE-918"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-90-LDAP-INJECTION",
+          "vulnerabilities": [
+            "CWE-90"
+          ],
+          "source_file": "testcode/benchmark_test_00022.py",
+          "line": "32:5",
+          "snippet": "conn.search_s('dc=example,dc=com', ldap.SCOPE_SUBTREE, '(uid=' + str(data) + ')')",
+          "tainted_variable": "data"
+        },
+        {
+          "rule_id": "CWE-918-SSRF",
+          "vulnerabilities": [
+            "CWE-918"
+          ],
+          "source_file": "testcode/benchmark_test_00022.py",
+          "line": "31:5",
+          "snippet": "conn = ldap.initialize(os.environ.get('LDAP_URL', 'ldap://directory:1389'))",
+          "tainted_variable": "os.environ.get",
+          "source_kind": "inline-call"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00027.py",
+      "xml_source": "proctor_py2_fastapi2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/benchmark_test_00032.py",
+      "xml_source": "proctor_py2_fastapi2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-328-WEAK-HASH-FUNCTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-328"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-328-WEAK-HASH-FUNCTION",
+          "vulnerabilities": [
+            "CWE-328"
+          ],
+          "source_file": "testcode/benchmark_test_00032.py",
+          "line": "30:14",
+          "snippet": "hashlib.md5(str(data).encode())"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00035.py",
+      "xml_source": "proctor_py2_fastapi2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "EVAL-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-94",
+        "CWE-95"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "EVAL-INJECTION",
+          "vulnerabilities": [
+            "CWE-95",
+            "CWE-94"
+          ],
+          "source_file": "testcode/benchmark_test_00035.py",
+          "line": "32:5",
+          "snippet": "eval(str(data))",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00037.py",
+      "xml_source": "proctor_py2_fastapi2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-614-SENSITIVE-COOKIE-INSECURE"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-614"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-614-SENSITIVE-COOKIE-INSECURE",
+          "vulnerabilities": [
+            "CWE-614"
+          ],
+          "source_file": "testcode/benchmark_test_00037.py",
+          "line": "26:5",
+          "snippet": "resp.set_cookie('session', str(data), httponly=True, samesite='Strict')"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00039.py",
+      "xml_source": "proctor_py2_fastapi2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/benchmark_test_00042.py",
+      "xml_source": "proctor_py2_fastapi2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-1333-REGEX-DOS",
+        "CWE-918-SSRF"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-1333",
+        "CWE-918"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-918-SSRF",
+          "vulnerabilities": [
+            "CWE-918"
+          ],
+          "source_file": "testcode/benchmark_test_00042.py",
+          "line": "31:5",
+          "snippet": "conn = ldap.initialize(os.environ.get('LDAP_URL', 'ldap://directory:1389'))",
+          "tainted_variable": "os.environ.get",
+          "source_kind": "inline-call"
+        },
+        {
+          "rule_id": "CWE-1333-REGEX-DOS",
+          "vulnerabilities": [
+            "CWE-1333"
+          ],
+          "source_file": "testcode/benchmark_test_00042.py",
+          "line": "28:8",
+          "snippet": "not re.fullmatch(\"^[a-zA-Z0-9 _.#%\\\\-]+$\", data)",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00044.py",
+      "xml_source": "proctor_py2_fastapi2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-918-SSRF"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-918"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-918-SSRF",
+          "vulnerabilities": [
+            "CWE-918"
+          ],
+          "source_file": "testcode/benchmark_test_00044.py",
+          "line": "28:5",
+          "snippet": "conn = ldap.initialize(os.environ.get('LDAP_URL', 'ldap://directory:1389'))",
+          "tainted_variable": "os.environ.get",
+          "source_kind": "inline-call"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00055.py",
+      "xml_source": "proctor_py2_fastapi2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-1333-REGEX-DOS",
+        "CWE-918-SSRF"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-1333",
+        "CWE-918"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-918-SSRF",
+          "vulnerabilities": [
+            "CWE-918"
+          ],
+          "source_file": "testcode/benchmark_test_00055.py",
+          "line": "36:5",
+          "snippet": "conn = ldap.initialize(os.environ.get('LDAP_URL', 'ldap://directory:1389'))",
+          "tainted_variable": "os.environ.get",
+          "source_kind": "inline-call"
+        },
+        {
+          "rule_id": "CWE-1333-REGEX-DOS",
+          "vulnerabilities": [
+            "CWE-1333"
+          ],
+          "source_file": "testcode/benchmark_test_00055.py",
+          "line": "33:8",
+          "snippet": "not re.fullmatch(\"^[a-zA-Z0-9 _.#%\\\\-]+$\", data)",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00056.py",
+      "xml_source": "proctor_py2_fastapi2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/benchmark_test_00065.py",
+      "xml_source": "proctor_py2_fastapi2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-90-LDAP-INJECTION",
+        "CWE-918-SSRF"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-90",
+        "CWE-918"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-90-LDAP-INJECTION",
+          "vulnerabilities": [
+            "CWE-90"
+          ],
+          "source_file": "testcode/benchmark_test_00065.py",
+          "line": "28:5",
+          "snippet": "conn.search_s('dc=example,dc=com', ldap.SCOPE_SUBTREE, '(uid=' + str(data) + ')')",
+          "tainted_variable": "data"
+        },
+        {
+          "rule_id": "CWE-918-SSRF",
+          "vulnerabilities": [
+            "CWE-918"
+          ],
+          "source_file": "testcode/benchmark_test_00065.py",
+          "line": "27:5",
+          "snippet": "conn = ldap.initialize(os.environ.get('LDAP_URL', 'ldap://directory:1389'))",
+          "tainted_variable": "os.environ.get",
+          "source_kind": "inline-call"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00066.py",
+      "xml_source": "proctor_py2_fastapi2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-1333-REGEX-DOS",
+        "CWE-918-SSRF"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-1333",
+        "CWE-918"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-918-SSRF",
+          "vulnerabilities": [
+            "CWE-918"
+          ],
+          "source_file": "testcode/benchmark_test_00066.py",
+          "line": "36:5",
+          "snippet": "s = socket.create_connection((str(target_url), 80))",
+          "tainted_variable": "target_url"
+        },
+        {
+          "rule_id": "CWE-1333-REGEX-DOS",
+          "vulnerabilities": [
+            "CWE-1333"
+          ],
+          "source_file": "testcode/benchmark_test_00066.py",
+          "line": "33:8",
+          "snippet": "re.match(\"^(0\\\\.|10\\\\.|127\\\\.|169\\\\.254\\\\.|192\\\\.168\\\\.|172\\\\.(1[6-9]|2[0-9]|3[01])\\\\.|::1$|::[fF]{4}:(0\\\\.|10\\\\.|127\\\\.|169\\\\.254\\\\.|192\\\\.…",
+          "tainted_variable": "resolved"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00067.py",
+      "xml_source": "proctor_py2_fastapi2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-918-SSRF"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-918"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-918-SSRF",
+          "vulnerabilities": [
+            "CWE-918"
+          ],
+          "source_file": "testcode/benchmark_test_00067.py",
+          "line": "26:5",
+          "snippet": "requests.get(str(data))",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00073.py",
+      "xml_source": "proctor_py2_fastapi2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/benchmark_test_00076.py",
+      "xml_source": "proctor_py2_fastapi2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-1333-REGEX-DOS",
+        "CWE-918-SSRF"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-1333",
+        "CWE-918"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-918-SSRF",
+          "vulnerabilities": [
+            "CWE-918"
+          ],
+          "source_file": "testcode/benchmark_test_00076.py",
+          "line": "32:5",
+          "snippet": "conn = ldap.initialize(os.environ.get('LDAP_URL', 'ldap://directory:1389'))",
+          "tainted_variable": "os.environ.get",
+          "source_kind": "inline-call"
+        },
+        {
+          "rule_id": "CWE-1333-REGEX-DOS",
+          "vulnerabilities": [
+            "CWE-1333"
+          ],
+          "source_file": "testcode/benchmark_test_00076.py",
+          "line": "29:8",
+          "snippet": "not re.fullmatch(\"^[a-zA-Z0-9 _.#%\\\\-]+$\", data)",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00080.py",
+      "xml_source": "proctor_py2_fastapi2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/benchmark_test_00084.py",
+      "xml_source": "proctor_py2_fastapi2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-918-SSRF"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-918"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-918-SSRF",
+          "vulnerabilities": [
+            "CWE-918"
+          ],
+          "source_file": "testcode/benchmark_test_00084.py",
+          "line": "27:5",
+          "snippet": "requests.get(str(data))",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00085.py",
+      "xml_source": "proctor_py2_fastapi2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/benchmark_test_00086.py",
+      "xml_source": "proctor_py2_fastapi2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-1333-REGEX-DOS",
+        "CWE-918-SSRF"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-1333",
+        "CWE-918"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-918-SSRF",
+          "vulnerabilities": [
+            "CWE-918"
+          ],
+          "source_file": "testcode/benchmark_test_00086.py",
+          "line": "33:5",
+          "snippet": "s = socket.create_connection((str(target_url), 80))",
+          "tainted_variable": "target_url"
+        },
+        {
+          "rule_id": "CWE-1333-REGEX-DOS",
+          "vulnerabilities": [
+            "CWE-1333"
+          ],
+          "source_file": "testcode/benchmark_test_00086.py",
+          "line": "30:8",
+          "snippet": "not re.fullmatch(\"^(api\\\\.prod\\\\.internal|cdn\\\\.pycdn\\\\.io)$\", parsed.hostname or '')",
+          "tainted_variable": "parsed"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00088.py",
+      "xml_source": "proctor_py2_fastapi2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-328-WEAK-HASH-FUNCTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-328"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-328-WEAK-HASH-FUNCTION",
+          "vulnerabilities": [
+            "CWE-328"
+          ],
+          "source_file": "testcode/benchmark_test_00088.py",
+          "line": "32:14",
+          "snippet": "hashlib.md5(str(data).encode())"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00095.py",
+      "xml_source": "proctor_py2_fastapi2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/benchmark_test_00098.py",
+      "xml_source": "proctor_py2_fastapi2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/benchmark_test_00102.py",
+      "xml_source": "proctor_py2_fastapi2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "testcode/benchmark_test_00103.py",
+      "xml_source": "proctor_py2_fastapi2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-918-SSRF"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-918"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-918-SSRF",
+          "vulnerabilities": [
+            "CWE-918"
+          ],
+          "source_file": "testcode/benchmark_test_00103.py",
+          "line": "26:5",
+          "snippet": "requests.get(str(data))",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "testcode/benchmark_test_00105.py",
+      "xml_source": "proctor_py2_fastapi2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    }
+  ],
+  "rules_skipped": {
+    "python": [
+      {
+        "rule_id": "CWE-120-BUFFER-OVERFLOW",
+        "reason": "non applicabile a 'python' (languages=['c'])"
+      },
+      {
+        "rule_id": "CWE-129-IMPROPER-ARRAY-INDEX-VALIDATION",
+        "reason": "non applicabile a 'python' (languages=['c', 'java'])"
+      },
+      {
+        "rule_id": "CWE-129-ARRAY-SIZE-VALIDATION",
+        "reason": "non applicabile a 'python' (languages=['c', 'java'])"
+      },
+      {
+        "rule_id": "Numeric Truncation Error",
+        "reason": "non applicabile a 'python' (languages=['java'])"
+      },
+      {
+        "rule_id": "CWE-400-UNCONTROLLED-SLEEP-C",
+        "reason": "non applicabile a 'python' (languages=['c'])"
+      },
+      {
+        "rule_id": "CWE-415-416-MEMORY-MISUSE-AFTER-FREE",
+        "reason": "non applicabile a 'python' (languages=['c'])"
+      },
+      {
+        "rule_id": "CWE-476-NULL-POINTER-DEREFERENCE",
+        "reason": "non applicabile a 'python' (languages=['c', 'java'])"
+      },
+      {
+        "rule_id": "CWE-502-JACKSON-UNSAFE-DESERIALIZATION",
+        "reason": "non applicabile a 'python' (languages=['java'])"
+      },
+      {
+        "rule_id": "CWE-611-XXE-KWARGS",
+        "reason": "non applicabile a 'python' (languages=['javascript'])"
+      },
+      {
+        "rule_id": "UNCHECKED-CAST",
+        "reason": "non applicabile a 'python' (languages=['java'])"
+      },
+      {
+        "rule_id": "CWE-943-NOSQL-INJECTION",
+        "reason": "non applicabile a 'python' (languages=['javascript'])"
+      }
+    ]
+  }
+}

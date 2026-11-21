@@ -1,0 +1,32 @@
+# test name, category, real vulnerability, CWE
+# language=python framework=fastapi shape=standalone
+BenchmarkTest00002,codeinj,true,94
+BenchmarkTest00004,securecookie,true,614
+BenchmarkTest00016,weakhash,false,328
+BenchmarkTest00019,weakhash,true,328
+BenchmarkTest00020,securecookie,true,614
+BenchmarkTest00022,ldapi,true,90
+BenchmarkTest00027,ssrf,false,918
+BenchmarkTest00032,weakhash,true,328
+BenchmarkTest00035,codeinj,true,94
+BenchmarkTest00037,securecookie,true,614
+BenchmarkTest00039,securecookie,false,614
+BenchmarkTest00042,ldapi,false,90
+BenchmarkTest00044,ldapi,true,90
+BenchmarkTest00055,ldapi,false,90
+BenchmarkTest00056,codeinj,false,94
+BenchmarkTest00065,ldapi,true,90
+BenchmarkTest00066,ssrf,false,918
+BenchmarkTest00067,ssrf,true,918
+BenchmarkTest00073,codeinj,true,94
+BenchmarkTest00076,ldapi,false,90
+BenchmarkTest00080,weakhash,false,328
+BenchmarkTest00084,ssrf,true,918
+BenchmarkTest00085,securecookie,false,614
+BenchmarkTest00086,ssrf,false,918
+BenchmarkTest00088,weakhash,true,328
+BenchmarkTest00095,codeinj,false,94
+BenchmarkTest00098,weakhash,false,328
+BenchmarkTest00102,securecookie,false,614
+BenchmarkTest00103,ssrf,true,918
+BenchmarkTest00105,codeinj,false,94
