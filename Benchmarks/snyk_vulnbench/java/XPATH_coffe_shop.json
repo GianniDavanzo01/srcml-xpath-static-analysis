@@ -1,0 +1,630 @@
+{
+  "summary": {
+    "units_analyzed": 43,
+    "units_failed": 0,
+    "files_failed": 0,
+    "vulnerable_files": 8,
+    "total_findings": 13,
+    "categories_count": {
+      "CWE-117": 2,
+      "CWE-79": 2,
+      "CWE-22": 3,
+      "CWE-770": 1,
+      "CWE-476": 1,
+      "CWE-502": 1,
+      "CWE-89": 1,
+      "CWE-326": 2,
+      "CWE-327": 1
+    }
+  },
+  "errors": [],
+  "details": [
+    {
+      "source_file": "java/nl/scottjohnson/coffeeshop/api/ApiController.java",
+      "xml_source": "coffe_shop.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "java/nl/scottjohnson/coffeeshop/config/AuthenticationFailureListener.java",
+      "xml_source": "coffe_shop.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-117-LOG-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-117"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-117-LOG-INJECTION",
+          "vulnerabilities": [
+            "CWE-117"
+          ],
+          "source_file": "java/nl/scottjohnson/coffeeshop/config/AuthenticationFailureListener.java",
+          "line": "24:9",
+          "snippet": "logger.error(\"Failed login for username: {}\", e.getAuthentication().getName());",
+          "tainted_variable": "e"
+        }
+      ]
+    },
+    {
+      "source_file": "java/nl/scottjohnson/coffeeshop/config/ResourceConfig.java",
+      "xml_source": "coffe_shop.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "java/nl/scottjohnson/coffeeshop/config/SecurityConfig.java",
+      "xml_source": "coffe_shop.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "java/nl/scottjohnson/coffeeshop/controller/HomeController.java",
+      "xml_source": "coffe_shop.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "java/nl/scottjohnson/coffeeshop/controller/LoginController.java",
+      "xml_source": "coffe_shop.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "java/nl/scottjohnson/coffeeshop/controller/OrderController.java",
+      "xml_source": "coffe_shop.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "java/nl/scottjohnson/coffeeshop/controller/PersonController.java",
+      "xml_source": "coffe_shop.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "java/nl/scottjohnson/coffeeshop/controller/ProductController.java",
+      "xml_source": "coffe_shop.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-79-CROSS-SITE-SCRIPTING"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-79"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "java/nl/scottjohnson/coffeeshop/controller/ProductController.java",
+          "line": "91:9",
+          "snippet": "writer.write(\"<div class=\\\"panel-heading\\\"><h1>\"+ param + \"</h1></div>\");",
+          "tainted_variable": "param"
+        },
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "java/nl/scottjohnson/coffeeshop/controller/ProductController.java",
+          "line": "101:9",
+          "snippet": "writer.write(String.format(output, prod.getDescription(), prod.getProductType(), prod.getPrice()));",
+          "tainted_variable": "prod"
+        }
+      ]
+    },
+    {
+      "source_file": "java/nl/scottjohnson/coffeeshop/controller/ProfileController.java",
+      "xml_source": "coffe_shop.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "java/nl/scottjohnson/coffeeshop/controller/RegisterController.java",
+      "xml_source": "coffe_shop.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "java/nl/scottjohnson/coffeeshop/controller/UploadController.java",
+      "xml_source": "coffe_shop.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-22-PATH-TRAVERSAL",
+        "CWE-770-UNCONTROLLED-RESOURCE-ALLOCATION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-22",
+        "CWE-770"
+      ],
+      "findings_count": 4,
+      "findings": [
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "java/nl/scottjohnson/coffeeshop/controller/UploadController.java",
+          "line": "33:9",
+          "snippet": "var fileNameAndPath = Paths.get(UPLOAD_DIRECTORY, name);",
+          "tainted_variable": "UPLOAD_DIRECTORY"
+        },
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "java/nl/scottjohnson/coffeeshop/controller/UploadController.java",
+          "line": "33:9",
+          "snippet": "var fileNameAndPath = Paths.get(UPLOAD_DIRECTORY, name);",
+          "tainted_variable": "name"
+        },
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "java/nl/scottjohnson/coffeeshop/controller/UploadController.java",
+          "line": "34:9",
+          "snippet": "Files.write(fileNameAndPath, file.getBytes());",
+          "tainted_variable": "fileNameAndPath"
+        },
+        {
+          "rule_id": "CWE-770-UNCONTROLLED-RESOURCE-ALLOCATION",
+          "vulnerabilities": [
+            "CWE-770"
+          ],
+          "source_file": "java/nl/scottjohnson/coffeeshop/controller/UploadController.java",
+          "line": "34:9",
+          "snippet": "Files.write(fileNameAndPath, file.getBytes());",
+          "tainted_variable": "file"
+        }
+      ]
+    },
+    {
+      "source_file": "java/nl/scottjohnson/coffeeshop/domain/Order.java",
+      "xml_source": "coffe_shop.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "java/nl/scottjohnson/coffeeshop/domain/OrderLine.java",
+      "xml_source": "coffe_shop.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "java/nl/scottjohnson/coffeeshop/domain/Person.java",
+      "xml_source": "coffe_shop.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "java/nl/scottjohnson/coffeeshop/domain/Product.java",
+      "xml_source": "coffe_shop.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "java/nl/scottjohnson/coffeeshop/domain/ProductType.java",
+      "xml_source": "coffe_shop.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "java/nl/scottjohnson/coffeeshop/domain/Role.java",
+      "xml_source": "coffe_shop.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "java/nl/scottjohnson/coffeeshop/exception/EmailTakenException.java",
+      "xml_source": "coffe_shop.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "java/nl/scottjohnson/coffeeshop/exception/HttpClientErrorException.java",
+      "xml_source": "coffe_shop.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "java/nl/scottjohnson/coffeeshop/exception/HttpNotFoundErrorException.java",
+      "xml_source": "coffe_shop.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "java/nl/scottjohnson/coffeeshop/exception/UsernameTakenException.java",
+      "xml_source": "coffe_shop.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "java/nl/scottjohnson/coffeeshop/export/ExportOrder.java",
+      "xml_source": "coffe_shop.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "java/nl/scottjohnson/coffeeshop/export/ExportOrderConvertor.java",
+      "xml_source": "coffe_shop.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "java/nl/scottjohnson/coffeeshop/export/ExportOrderLine.java",
+      "xml_source": "coffe_shop.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "java/nl/scottjohnson/coffeeshop/export/XML2OrderParser.java",
+      "xml_source": "coffe_shop.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "java/nl/scottjohnson/coffeeshop/export/XMLExporter.java",
+      "xml_source": "coffe_shop.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "java/nl/scottjohnson/coffeeshop/export/XMLParser.java",
+      "xml_source": "coffe_shop.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-476-NULL-POINTER-DEREFERENCE"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-476"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-476-NULL-POINTER-DEREFERENCE",
+          "vulnerabilities": [
+            "CWE-476"
+          ],
+          "source_file": "java/nl/scottjohnson/coffeeshop/export/XMLParser.java",
+          "line": "96:21",
+          "snippet": "order.getOrderLines().add(orderLine);",
+          "tainted_variable": "order"
+        }
+      ]
+    },
+    {
+      "source_file": "java/nl/scottjohnson/coffeeshop/export/YamlImportExport.java",
+      "xml_source": "coffe_shop.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-502-DESERIALIZATION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-502"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-502-DESERIALIZATION",
+          "vulnerabilities": [
+            "CWE-502"
+          ],
+          "source_file": "java/nl/scottjohnson/coffeeshop/export/YamlImportExport.java",
+          "line": "34:36",
+          "snippet": "yaml.load(inputStream)"
+        }
+      ]
+    },
+    {
+      "source_file": "java/nl/scottjohnson/coffeeshop/formatter/ProductFormatter.java",
+      "xml_source": "coffe_shop.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "java/nl/scottjohnson/coffeeshop/gadget/Command.java",
+      "xml_source": "coffe_shop.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "java/nl/scottjohnson/coffeeshop/gadget/Gadget.java",
+      "xml_source": "coffe_shop.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "java/nl/scottjohnson/coffeeshop/repository/OrderRepository.java",
+      "xml_source": "coffe_shop.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "java/nl/scottjohnson/coffeeshop/repository/PersonRepository.java",
+      "xml_source": "coffe_shop.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "java/nl/scottjohnson/coffeeshop/repository/ProductRepository.java",
+      "xml_source": "coffe_shop.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "java/nl/scottjohnson/coffeeshop/repository/SearchRepository.java",
+      "xml_source": "coffe_shop.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-89-SQLI"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-89"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-89-SQLI",
+          "vulnerabilities": [
+            "CWE-89"
+          ],
+          "source_file": "java/nl/scottjohnson/coffeeshop/repository/SearchRepository.java",
+          "line": "25:9",
+          "snippet": "var resultList = (List<Product>) em.createNativeQuery(query, Product.class).getResultList();",
+          "tainted_variable": "query"
+        }
+      ]
+    },
+    {
+      "source_file": "java/nl/scottjohnson/coffeeshop/service/CustomUserDetailsService.java",
+      "xml_source": "coffe_shop.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "java/nl/scottjohnson/coffeeshop/service/EncryptionServiceDes.java",
+      "xml_source": "coffe_shop.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-326-INADEQUATE-ENCRYPTION",
+        "CWE-BROKEN-CRYPTO-ALGORITHM"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-326",
+        "CWE-327"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-326-INADEQUATE-ENCRYPTION",
+          "vulnerabilities": [
+            "CWE-326"
+          ],
+          "source_file": "java/nl/scottjohnson/coffeeshop/service/EncryptionServiceDes.java",
+          "line": "23:13",
+          "snippet": "keyGenerator.init(56, new SecureRandom())"
+        },
+        {
+          "rule_id": "CWE-BROKEN-CRYPTO-ALGORITHM",
+          "vulnerabilities": [
+            "CWE-327",
+            "CWE-326"
+          ],
+          "source_file": "java/nl/scottjohnson/coffeeshop/service/EncryptionServiceDes.java",
+          "line": "25:22",
+          "snippet": "Cipher.getInstance(\"DES/ECB/PKCS5Padding\")"
+        }
+      ]
+    },
+    {
+      "source_file": "java/nl/scottjohnson/coffeeshop/service/OrderService.java",
+      "xml_source": "coffe_shop.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "java/nl/scottjohnson/coffeeshop/service/PersonService.java",
+      "xml_source": "coffe_shop.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "java/nl/scottjohnson/coffeeshop/service/ProductService.java",
+      "xml_source": "coffe_shop.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "java/nl/scottjohnson/coffeeshop/CoffeeShopApplication.java",
+      "xml_source": "coffe_shop.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "java/nl/scottjohnson/coffeeshop/Filler.java",
+      "xml_source": "coffe_shop.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-117-LOG-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-117"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-117-LOG-INJECTION",
+          "vulnerabilities": [
+            "CWE-117"
+          ],
+          "source_file": "java/nl/scottjohnson/coffeeshop/Filler.java",
+          "line": "121:13",
+          "snippet": "System.out.println(\"Skip product creation [\"+prod.getProductName()+\"] (possible duplicate name)\");",
+          "tainted_variable": "prod"
+        }
+      ]
+    }
+  ],
+  "rules_skipped": {
+    "java": [
+      {
+        "rule_id": "CWE-120-BUFFER-OVERFLOW",
+        "reason": "non applicabile a 'java' (languages=['c'])"
+      },
+      {
+        "rule_id": "CWE-276-INCORRECT-DEFAULT-PERMISSIONS",
+        "reason": "non applicabile a 'java' (languages=['c', 'python', 'javascript'])"
+      },
+      {
+        "rule_id": "CWE-347-JWT-NO-VERIFY",
+        "reason": "non applicabile a 'java' (languages=['python'])"
+      },
+      {
+        "rule_id": "CWE-400-UNCONTROLLED-SLEEP-C",
+        "reason": "non applicabile a 'java' (languages=['c'])"
+      },
+      {
+        "rule_id": "CWE-415-416-MEMORY-MISUSE-AFTER-FREE",
+        "reason": "non applicabile a 'java' (languages=['c'])"
+      },
+      {
+        "rule_id": "CWE-611-XXE-KWARGS",
+        "reason": "non applicabile a 'java' (languages=['javascript'])"
+      },
+      {
+        "rule_id": "CWE-611-XXE-TAINT",
+        "reason": "non applicabile a 'java' (languages=['javascript', 'python'])"
+      },
+      {
+        "rule_id": "CWE-918-XSLT-SSRF",
+        "reason": "non applicabile a 'java' (languages=['python'])"
+      },
+      {
+        "rule_id": "CWE-943-NOSQL-INJECTION",
+        "reason": "non applicabile a 'java' (languages=['javascript'])"
+      },
+      {
+        "rule_id": "CWE-1327-UNRESTRICTED-BIND-ADDRESS",
+        "reason": "non applicabile a 'java' (languages=['python'])"
+      },
+      {
+        "rule_id": "CWE-1333-REGEX-DOS",
+        "reason": "non applicabile a 'java' (languages=['javascript', 'python'])"
+      }
+    ]
+  }
+}

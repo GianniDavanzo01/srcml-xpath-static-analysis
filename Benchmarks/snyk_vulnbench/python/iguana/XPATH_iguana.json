@@ -1,0 +1,2409 @@
+{
+  "summary": {
+    "units_analyzed": 151,
+    "units_failed": 0,
+    "files_failed": 0,
+    "vulnerable_files": 32,
+    "total_findings": 78,
+    "categories_count": {
+      "CWE-259": 6,
+      "CWE-617": 2,
+      "CWE-703": 7,
+      "CWE-595": 8,
+      "CWE-321": 4,
+      "CWE-798": 2,
+      "CWE-1071": 7,
+      "CWE-643": 1,
+      "CWE-1333": 7,
+      "CWE-78": 1,
+      "CWE-200": 2,
+      "CWE-209": 2,
+      "CWE-400": 4,
+      "CWE-79": 13,
+      "CWE-89": 1,
+      "CWE-95": 1,
+      "CWE-94": 1,
+      "CWE-22": 7,
+      "CWE-601": 2,
+      "CWE-338": 1,
+      "CWE-770": 2
+    }
+  },
+  "errors": [],
+  "details": [
+    {
+      "source_file": "app-project-iguana\\project\\src\\api\\admin.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\api\\apps.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\api\\custom_jwt_auth.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-259-HARDCODED-PASSWORD"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-259"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-259-HARDCODED-PASSWORD",
+          "vulnerabilities": [
+            "CWE-259"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\api\\custom_jwt_auth.py",
+          "line": "35:1",
+          "snippet": "PASSWORD_HASH_CLAIM = \"user_valid\""
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\api\\filter.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\api\\models.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\api\\permissions.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\api\\serializer.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\api\\serializer_fields.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-617-REACHABLE-ASSERTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-617"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-617-REACHABLE-ASSERTION",
+          "vulnerabilities": [
+            "CWE-617"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\api\\serializer_fields.py",
+          "line": "200:16",
+          "snippet": "len(self.lookup_fields) == len(self.lookup_url_kwargs)",
+          "tainted_variable": "self.lookup_fields"
+        },
+        {
+          "rule_id": "CWE-617-REACHABLE-ASSERTION",
+          "vulnerabilities": [
+            "CWE-617"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\api\\serializer_fields.py",
+          "line": "200:16",
+          "snippet": "len(self.lookup_fields) == len(self.lookup_url_kwargs)",
+          "tainted_variable": "self.lookup_url_kwargs"
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\api\\urls.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\api\\views.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\archive\\apps.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\archive\\urls.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\archive\\views.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\backlog\\apps.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\backlog\\urls.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\backlog\\views.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\common\\apps.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\common\\celery.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\common\\models.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\common\\tasks.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-703-IMPROPER-EXCEPTION-HANDLING"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-703"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-703-IMPROPER-EXCEPTION-HANDLING",
+          "vulnerabilities": [
+            "CWE-703"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\common\\tasks.py",
+          "line": "77:5",
+          "snippet": "except (TypeError, json.JSONDecodeError): # already set to default value pass"
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\common\\urls.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\common\\validators.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-595-COMPARISON-OF-OBJECT-REFERENCES"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-595"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-595-COMPARISON-OF-OBJECT-REFERENCES",
+          "vulnerabilities": [
+            "CWE-595"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\common\\validators.py",
+          "line": "31:20",
+          "snippet": "type(value) is datetime.date",
+          "operand_types": [
+            null,
+            null
+          ]
+        },
+        {
+          "rule_id": "CWE-595-COMPARISON-OF-OBJECT-REFERENCES",
+          "vulnerabilities": [
+            "CWE-595"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\common\\validators.py",
+          "line": "36:22",
+          "snippet": "type(value) is datetime.datetime",
+          "operand_types": [
+            null,
+            null
+          ]
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\common\\views.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\common\\widgets.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-321-HARDCODED-CRYPTO-KEY"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-321"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "CWE-321-HARDCODED-CRYPTO-KEY",
+          "vulnerabilities": [
+            "CWE-321"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\common\\widgets.py",
+          "line": "66:5",
+          "snippet": "display_format_key = 'DATE_FORMAT'"
+        },
+        {
+          "rule_id": "CWE-321-HARDCODED-CRYPTO-KEY",
+          "vulnerabilities": [
+            "CWE-321"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\common\\widgets.py",
+          "line": "125:5",
+          "snippet": "display_format_key = 'SHORT_DATETIME_FORMAT'"
+        },
+        {
+          "rule_id": "CWE-321-HARDCODED-CRYPTO-KEY",
+          "vulnerabilities": [
+            "CWE-321"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\common\\widgets.py",
+          "line": "129:5",
+          "snippet": "display_format_key = 'DATE_FORMAT'"
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\common\\wsgi.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\common\\settings\\common.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\common\\settings\\global_conf.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\common\\settings\\local_conf.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-798-HARDCODED-CREDENTIALS"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-798"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-798-HARDCODED-CREDENTIALS",
+          "vulnerabilities": [
+            "CWE-798"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\common\\settings\\local_conf.py",
+          "line": "91:1",
+          "snippet": "SLACK_SECRET = \"foo\""
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\common\\templatetags\\breadcrumbs.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-1071-EMPTY-CODE-BLOCK",
+        "CWE-703-IMPROPER-EXCEPTION-HANDLING"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-1071",
+        "CWE-703"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-703-IMPROPER-EXCEPTION-HANDLING",
+          "vulnerabilities": [
+            "CWE-703"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\common\\templatetags\\breadcrumbs.py",
+          "line": "54:9",
+          "snippet": "except Http404: pass"
+        },
+        {
+          "rule_id": "CWE-1071-EMPTY-CODE-BLOCK",
+          "vulnerabilities": [
+            "CWE-1071"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\common\\templatetags\\breadcrumbs.py",
+          "line": "60:17",
+          "snippet": "if label: pass"
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\common\\templatetags\\class_name.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\common\\templatetags\\dict_access.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\common\\templatetags\\markdownify.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\common\\templatetags\\user_preference.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\discussion\\apps.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\discussion\\models.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\discussion\\signals.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-1071-EMPTY-CODE-BLOCK",
+        "CWE-1333-REGEX-DOS",
+        "CWE-643-XPATH-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-1071",
+        "CWE-1333",
+        "CWE-643"
+      ],
+      "findings_count": 4,
+      "findings": [
+        {
+          "rule_id": "CWE-643-XPATH-INJECTION",
+          "vulnerabilities": [
+            "CWE-643"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\discussion\\signals.py",
+          "line": "35:5",
+          "snippet": "mentions = re.findall(r\"@\\w+\", instance.text)",
+          "tainted_variable": "instance"
+        },
+        {
+          "rule_id": "CWE-1071-EMPTY-CODE-BLOCK",
+          "vulnerabilities": [
+            "CWE-1071"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\discussion\\signals.py",
+          "line": "93:17",
+          "snippet": "if prev_noti_type: continue"
+        },
+        {
+          "rule_id": "CWE-1071-EMPTY-CODE-BLOCK",
+          "vulnerabilities": [
+            "CWE-1071"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\discussion\\signals.py",
+          "line": "110:17",
+          "snippet": "if prev_noti_type: continue"
+        },
+        {
+          "rule_id": "CWE-1333-REGEX-DOS",
+          "vulnerabilities": [
+            "CWE-1333"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\discussion\\signals.py",
+          "line": "35:5",
+          "snippet": "mentions = re.findall(r\"@\\w+\", instance.text)",
+          "tainted_variable": "instance"
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\discussion\\urls.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\discussion\\views.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\event\\apps.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\event\\signals.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\gitintegration\\admin.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\gitintegration\\apps.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\gitintegration\\forms.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\gitintegration\\frontend.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-1071-EMPTY-CODE-BLOCK",
+        "CWE-1333-REGEX-DOS",
+        "CWE-703-IMPROPER-EXCEPTION-HANDLING",
+        "CWE-78-OS-CMD-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-1071",
+        "CWE-1333",
+        "CWE-703",
+        "CWE-78"
+      ],
+      "findings_count": 7,
+      "findings": [
+        {
+          "rule_id": "CWE-78-OS-CMD-INJECTION",
+          "vulnerabilities": [
+            "CWE-78"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\gitintegration\\frontend.py",
+          "line": "45:9",
+          "snippet": "return subprocess.check_output('git ls-remote ' + url, shell=True, stderr=subprocess.STDOUT).decode()",
+          "tainted_variable": "url"
+        },
+        {
+          "rule_id": "CWE-703-IMPROPER-EXCEPTION-HANDLING",
+          "vulnerabilities": [
+            "CWE-703"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\gitintegration\\frontend.py",
+          "line": "126:13",
+          "snippet": "except IntegrityError: # this might happen if a commit is imported multiple times, just ignore this continue"
+        },
+        {
+          "rule_id": "CWE-703-IMPROPER-EXCEPTION-HANDLING",
+          "vulnerabilities": [
+            "CWE-703"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\gitintegration\\frontend.py",
+          "line": "142:13",
+          "snippet": "except KeyError: # nothing to do here, commit simply has no tags pass"
+        },
+        {
+          "rule_id": "CWE-1071-EMPTY-CODE-BLOCK",
+          "vulnerabilities": [
+            "CWE-1071"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\gitintegration\\frontend.py",
+          "line": "98:13",
+          "snippet": "if issue_describer is None: continue"
+        },
+        {
+          "rule_id": "CWE-1071-EMPTY-CODE-BLOCK",
+          "vulnerabilities": [
+            "CWE-1071"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\gitintegration\\frontend.py",
+          "line": "105:13",
+          "snippet": "if matching_issues.count() != 1: # we have zero or more matching issues => ignore commit continue"
+        },
+        {
+          "rule_id": "CWE-1333-REGEX-DOS",
+          "vulnerabilities": [
+            "CWE-1333"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\gitintegration\\frontend.py",
+          "line": "96:13",
+          "snippet": "issue_describer = re.match(\"^\" + repository.project.name_short + r\"-\\d+ \", c.message)",
+          "tainted_variable": "repository"
+        },
+        {
+          "rule_id": "CWE-1333-REGEX-DOS",
+          "vulnerabilities": [
+            "CWE-1333"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\gitintegration\\frontend.py",
+          "line": "96:13",
+          "snippet": "issue_describer = re.match(\"^\" + repository.project.name_short + r\"-\\d+ \", c.message)",
+          "tainted_variable": "c"
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\gitintegration\\models.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\gitintegration\\urls.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\gitintegration\\views.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-ERROR-DETAILS-TO-CLIENT"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-200",
+        "CWE-209"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-ERROR-DETAILS-TO-CLIENT",
+          "vulnerabilities": [
+            "CWE-200",
+            "CWE-209"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\gitintegration\\views.py",
+          "line": "126:13",
+          "snippet": "return JsonResponse({'ok': False, 'error': str(e)})",
+          "tainted_variable": "e"
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\image_strip\\image_strip.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\integration\\admin.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\integration\\apps.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\integration\\models.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\integration\\urls.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\integration\\views.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\invite_users\\apps.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\invite_users\\forms.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\invite_users\\urls.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\invite_users\\views.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-400-UNCONTROLLED-LOOP-BOUND"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-400"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-400-UNCONTROLLED-LOOP-BOUND",
+          "vulnerabilities": [
+            "CWE-400"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\invite_users\\views.py",
+          "line": "86:17",
+          "snippet": "f in formset",
+          "tainted_variable": "formset"
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\issue\\admin.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\issue\\apps.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\issue\\autocomplete.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-79-CROSS-SITE-SCRIPTING"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-79"
+      ],
+      "findings_count": 5,
+      "findings": [
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\issue\\autocomplete.py",
+          "line": "42:13",
+          "snippet": "return '<span class=\"glyphicon glyphicon-arrow-up red\"></span>'\\ '<span style=\"padding-left: .5em\">%s</span>' % result[1]",
+          "tainted_variable": "result"
+        },
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\issue\\autocomplete.py",
+          "line": "45:13",
+          "snippet": "return '<span class=\"glyphicon glyphicon-arrow-up gly-rotate-45 red\"></span>'\\ '<span style=\"padding-left: .5em\">%s</span>' % result[1]",
+          "tainted_variable": "result"
+        },
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\issue\\autocomplete.py",
+          "line": "48:13",
+          "snippet": "return '<span class=\"glyphicon glyphicon-arrow-up gly-rotate-90 yellow\"></span>'\\ '<span style=\"padding-left: .5em\">%s</span>' % result[1]",
+          "tainted_variable": "result"
+        },
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\issue\\autocomplete.py",
+          "line": "51:13",
+          "snippet": "return '<span class=\"glyphicon glyphicon-arrow-up gly-rotate-145 green\"></span>'\\ '<span style=\"padding-left: .5em\">%s</span>' % result[1]",
+          "tainted_variable": "result"
+        },
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\issue\\autocomplete.py",
+          "line": "54:13",
+          "snippet": "return '<span class=\"glyphicon glyphicon-arrow-up gly-rotate-180 green\"></span>'\\ '<span style=\"padding-left: .5em\">%s</span>' % result[1]",
+          "tainted_variable": "result"
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\issue\\forms.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\issue\\models.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\issue\\search.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-89-SQLI"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-89"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-89-SQLI",
+          "vulnerabilities": [
+            "CWE-89"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\issue\\search.py",
+          "line": "19:9",
+          "snippet": "cursor.execute(query)",
+          "tainted_variable": "query"
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\issue\\signals.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\issue\\urls.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\issue\\views.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "EVAL-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-94",
+        "CWE-95"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "EVAL-INJECTION",
+          "vulnerabilities": [
+            "CWE-95",
+            "CWE-94"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\issue\\views.py",
+          "line": "440:16",
+          "snippet": "eval(expr, {}, context)",
+          "tainted_variable": "expr"
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\issue\\templatetags\\markdown_data.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\kanbancol\\admin.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\kanbancol\\apps.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\kanbancol\\forms.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-595-COMPARISON-OF-OBJECT-REFERENCES"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-595"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-595-COMPARISON-OF-OBJECT-REFERENCES",
+          "vulnerabilities": [
+            "CWE-595"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\kanbancol\\forms.py",
+          "line": "46:52",
+          "snippet": "position is not obj.position",
+          "operand_types": [
+            null,
+            null
+          ]
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\kanbancol\\models.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\kanbancol\\signals.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\kanbancol\\urls.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\kanbancol\\views.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\landing_page\\actstream_util.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\landing_page\\apps.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\landing_page\\handler.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\landing_page\\signals.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\landing_page\\urls.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\landing_page\\views.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\lib\\activity_permissions.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\lib\\csrf_update.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-1333-REGEX-DOS"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-1333"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-1333-REGEX-DOS",
+          "vulnerabilities": [
+            "CWE-1333"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\lib\\csrf_update.py",
+          "line": "40:13",
+          "snippet": "response.content = re.sub(regex, replace, content)",
+          "tainted_variable": "content"
+        },
+        {
+          "rule_id": "CWE-1333-REGEX-DOS",
+          "vulnerabilities": [
+            "CWE-1333"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\lib\\csrf_update.py",
+          "line": "40:13",
+          "snippet": "response.content = re.sub(regex, replace, content)",
+          "tainted_variable": "replace"
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\lib\\custom_model.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\lib\\manage_settings.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-1071-EMPTY-CODE-BLOCK",
+        "CWE-321-HARDCODED-CRYPTO-KEY",
+        "CWE-798-HARDCODED-CREDENTIALS"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-1071",
+        "CWE-321",
+        "CWE-798"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "CWE-321-HARDCODED-CRYPTO-KEY",
+          "vulnerabilities": [
+            "CWE-321"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\lib\\manage_settings.py",
+          "line": "73:12",
+          "snippet": "global_settings[\"django\"][\"required_settings\"][\"SECRET_KEY\"] == \"#### Change ME!!! ####\" or \\ override"
+        },
+        {
+          "rule_id": "CWE-798-HARDCODED-CREDENTIALS",
+          "vulnerabilities": [
+            "CWE-798"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\lib\\manage_settings.py",
+          "line": "73:12",
+          "snippet": "global_settings[\"django\"][\"required_settings\"][\"SECRET_KEY\"] == \"#### Change ME!!! ####\" or \\ override"
+        },
+        {
+          "rule_id": "CWE-1071-EMPTY-CODE-BLOCK",
+          "vulnerabilities": [
+            "CWE-1071"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\lib\\manage_settings.py",
+          "line": "112:13",
+          "snippet": "if not setting: continue"
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\lib\\monkey_patches.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\lib\\multiform.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\lib\\rattr.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-595-COMPARISON-OF-OBJECT-REFERENCES"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-595"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-595-COMPARISON-OF-OBJECT-REFERENCES",
+          "vulnerabilities": [
+            "CWE-595"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\lib\\rattr.py",
+          "line": "36:16",
+          "snippet": "default is sentinel",
+          "operand_types": [
+            null,
+            "object"
+          ]
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\lib\\show_more_mixin.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\lib\\singleton.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\lib\\timezone_middleware.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\lib\\user_language.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\olea\\apps.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\olea\\lexer.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\olea\\parser.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-595-COMPARISON-OF-OBJECT-REFERENCES"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-595"
+      ],
+      "findings_count": 4,
+      "findings": [
+        {
+          "rule_id": "CWE-595-COMPARISON-OF-OBJECT-REFERENCES",
+          "vulnerabilities": [
+            "CWE-595"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\olea\\parser.py",
+          "line": "114:30",
+          "snippet": "type(issue_to_change) is Issue",
+          "operand_types": [
+            null,
+            null
+          ]
+        },
+        {
+          "rule_id": "CWE-595-COMPARISON-OF-OBJECT-REFERENCES",
+          "vulnerabilities": [
+            "CWE-595"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\olea\\parser.py",
+          "line": "146:30",
+          "snippet": "type(issue_to_change) is Issue",
+          "operand_types": [
+            null,
+            null
+          ]
+        },
+        {
+          "rule_id": "CWE-595-COMPARISON-OF-OBJECT-REFERENCES",
+          "vulnerabilities": [
+            "CWE-595"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\olea\\parser.py",
+          "line": "172:30",
+          "snippet": "type(issue_to_change) is Issue",
+          "operand_types": [
+            null,
+            null
+          ]
+        },
+        {
+          "rule_id": "CWE-595-COMPARISON-OF-OBJECT-REFERENCES",
+          "vulnerabilities": [
+            "CWE-595"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\olea\\parser.py",
+          "line": "245:30",
+          "snippet": "type(issue_to_change) is Issue",
+          "operand_types": [
+            null,
+            null
+          ]
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\olea\\urls.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\olea\\views.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-ERROR-DETAILS-TO-CLIENT"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-200",
+        "CWE-209"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-ERROR-DETAILS-TO-CLIENT",
+          "vulnerabilities": [
+            "CWE-200",
+            "CWE-209"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\olea\\views.py",
+          "line": "54:13",
+          "snippet": "messages.add_message(request, messages.ERROR, _(\"An error occurred when processing your request\") + \": \" + str(e))",
+          "tainted_variable": "e"
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\project\\admin.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\project\\apps.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\project\\autocomplete.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-79-CROSS-SITE-SCRIPTING"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-79"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\project\\autocomplete.py",
+          "line": "62:9",
+          "snippet": "return '<img src=\"{}\" width=\"25\"><span style=\"padding-left: .5em\">{}</span></img>'.format(result.avatar.url, result.username)",
+          "tainted_variable": "result"
+        },
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\project\\autocomplete.py",
+          "line": "137:9",
+          "snippet": "return \"\"\"<div class=\"issue-tag\" style=\"background: #{}; color: #{};\" title=\"{}\"> {}</div>\"\"\".format(bleach.clean(result.color), result.font…",
+          "tainted_variable": "result"
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\project\\export.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-22-PATH-TRAVERSAL"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-22"
+      ],
+      "findings_count": 5,
+      "findings": [
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\project\\export.py",
+          "line": "12:5",
+          "snippet": "directory = os.path.join(EXPORTS_DIR, str(project_id))",
+          "tainted_variable": "project_id"
+        },
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\project\\export.py",
+          "line": "20:5",
+          "snippet": "path = os.path.join(EXPORTS_DIR, str(project_id), filename)",
+          "tainted_variable": "project_id"
+        },
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\project\\export.py",
+          "line": "20:5",
+          "snippet": "path = os.path.join(EXPORTS_DIR, str(project_id), filename)",
+          "tainted_variable": "filename"
+        },
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\project\\export.py",
+          "line": "15:28",
+          "snippet": "directory",
+          "tainted_variable": "directory"
+        },
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\project\\export.py",
+          "line": "21:15",
+          "snippet": "path",
+          "tainted_variable": "path"
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\project\\forms.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\project\\models.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\project\\urls.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\project\\views.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-79-CROSS-SITE-SCRIPTING"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-79"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\project\\views.py",
+          "line": "130:9",
+          "snippet": "return HttpResponse(content, content_type='text/csv')",
+          "tainted_variable": "content"
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\search\\admin.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\search\\apps.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\search\\autocomplete.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\search\\fieldcheckings.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\search\\forms.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\search\\frontend.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\search\\lexer.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\search\\models.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\search\\parser.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\search\\urls.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\search\\views.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-1333-REGEX-DOS",
+        "CWE-400-UNCONTROLLED-LOOP-BOUND"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-1333",
+        "CWE-400"
+      ],
+      "findings_count": 5,
+      "findings": [
+        {
+          "rule_id": "CWE-400-UNCONTROLLED-LOOP-BOUND",
+          "vulnerabilities": [
+            "CWE-400"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\search\\views.py",
+          "line": "144:13",
+          "snippet": "title, url, model, rel_project in result",
+          "tainted_variable": "result"
+        },
+        {
+          "rule_id": "CWE-400-UNCONTROLLED-LOOP-BOUND",
+          "vulnerabilities": [
+            "CWE-400"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\search\\views.py",
+          "line": "164:29",
+          "snippet": "x in result",
+          "tainted_variable": "result"
+        },
+        {
+          "rule_id": "CWE-400-UNCONTROLLED-LOOP-BOUND",
+          "vulnerabilities": [
+            "CWE-400"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\search\\views.py",
+          "line": "169:29",
+          "snippet": "x in result",
+          "tainted_variable": "result"
+        },
+        {
+          "rule_id": "CWE-1333-REGEX-DOS",
+          "vulnerabilities": [
+            "CWE-1333"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\search\\views.py",
+          "line": "67:9",
+          "snippet": "matches = bool(re.match(pattern, sample))",
+          "tainted_variable": "pattern"
+        },
+        {
+          "rule_id": "CWE-1333-REGEX-DOS",
+          "vulnerabilities": [
+            "CWE-1333"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\search\\views.py",
+          "line": "67:9",
+          "snippet": "matches = bool(re.match(pattern, sample))",
+          "tainted_variable": "sample"
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\sprint\\admin.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\sprint\\apps.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\sprint\\forms.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\sprint\\models.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\sprint\\urls.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\sprint\\views.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-601-OPEN-REDIRECT"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-601"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-601-OPEN-REDIRECT",
+          "vulnerabilities": [
+            "CWE-601"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\sprint\\views.py",
+          "line": "127:13",
+          "snippet": "return redirect(reverse('backlog:backlog', kwargs={'project': self.kwargs.get('project'), 'sqn_s': sprint.seqnum }))",
+          "tainted_variable": "sprint"
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\tag\\admin.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\tag\\apps.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\tag\\forms.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\tag\\models.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-338-WEAK-PRNG"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-338"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-338-WEAK-PRNG",
+          "vulnerabilities": [
+            "CWE-338"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\tag\\models.py",
+          "line": "87:22",
+          "snippet": "random.choice(list(pool))"
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\tag\\signals.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\tag\\urls.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\tag\\views.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-601-OPEN-REDIRECT",
+        "CWE-79-CROSS-SITE-SCRIPTING"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-601",
+        "CWE-79"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\tag\\views.py",
+          "line": "70:13",
+          "snippet": "return HttpResponse(form.errors.as_json(), status=500, content_type='application/json')",
+          "tainted_variable": "form"
+        },
+        {
+          "rule_id": "CWE-601-OPEN-REDIRECT",
+          "vulnerabilities": [
+            "CWE-601"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\tag\\views.py",
+          "line": "67:13",
+          "snippet": "return HttpResponseRedirect(reverse('tag:tag', kwargs={'project': self.kwargs.get('project')}), {'form': form})",
+          "tainted_variable": "form"
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\timelog\\admin.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\timelog\\apps.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\timelog\\forms.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\timelog\\json.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-1071-EMPTY-CODE-BLOCK",
+        "CWE-79-CROSS-SITE-SCRIPTING"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-1071",
+        "CWE-79"
+      ],
+      "findings_count": 5,
+      "findings": [
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\timelog\\json.py",
+          "line": "173:5",
+          "snippet": "return HttpResponse(resp, content_type='application/json')",
+          "tainted_variable": "resp"
+        },
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\timelog\\json.py",
+          "line": "213:5",
+          "snippet": "return HttpResponse(resp, content_type='application/json')",
+          "tainted_variable": "resp"
+        },
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\timelog\\json.py",
+          "line": "264:5",
+          "snippet": "return HttpResponse(resp, content_type='application/json')",
+          "tainted_variable": "resp"
+        },
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\timelog\\json.py",
+          "line": "347:5",
+          "snippet": "return HttpResponse(json.dumps(result), content_type='application/json')",
+          "tainted_variable": "result"
+        },
+        {
+          "rule_id": "CWE-1071-EMPTY-CODE-BLOCK",
+          "vulnerabilities": [
+            "CWE-1071"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\timelog\\json.py",
+          "line": "284:13",
+          "snippet": "elif el.date() > date_to.date(): continue"
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\timelog\\models.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\timelog\\urls.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\timelog\\validators.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\timelog\\views.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\timelog\\widgets.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\timelog\\templatetags\\filter.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-703-IMPROPER-EXCEPTION-HANDLING"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-703"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-703-IMPROPER-EXCEPTION-HANDLING",
+          "vulnerabilities": [
+            "CWE-703"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\timelog\\templatetags\\filter.py",
+          "line": "245:13",
+          "snippet": "except Exception: # Wrong data structure, qdict remains empty. pass"
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\user_management\\admin.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\user_management\\apps.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\user_management\\auth_backend.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\user_management\\forms.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\user_management\\generate_activation_token.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\user_management\\models.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\user_management\\urls.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\user_management\\views.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-770-UNCONTROLLED-RESOURCE-ALLOCATION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-770"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-770-UNCONTROLLED-RESOURCE-ALLOCATION",
+          "vulnerabilities": [
+            "CWE-770"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\user_management\\views.py",
+          "line": "111:13",
+          "snippet": "new_user = form.save(commit=False)",
+          "tainted_variable": "form"
+        },
+        {
+          "rule_id": "CWE-770-UNCONTROLLED-RESOURCE-ALLOCATION",
+          "vulnerabilities": [
+            "CWE-770"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\user_management\\views.py",
+          "line": "114:13",
+          "snippet": "new_user.save()",
+          "tainted_variable": "new_user"
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\user_profile\\apps.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\user_profile\\forms.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-22-PATH-TRAVERSAL",
+        "CWE-259-HARDCODED-PASSWORD"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-22",
+        "CWE-259"
+      ],
+      "findings_count": 7,
+      "findings": [
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\user_profile\\forms.py",
+          "line": "94:9",
+          "snippet": "old_avatar_filepath = os.path.join(MEDIA_ROOT, kwargs.pop('old_avatar_name'))",
+          "tainted_variable": "kwargs"
+        },
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\user_profile\\forms.py",
+          "line": "102:13",
+          "snippet": "os.path.exists(old_avatar_filepath) and os.remove(old_avatar_filepath)",
+          "tainted_variable": "old_avatar_filepath"
+        },
+        {
+          "rule_id": "CWE-259-HARDCODED-PASSWORD",
+          "vulnerabilities": [
+            "CWE-259"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\user_profile\\forms.py",
+          "line": "172:12",
+          "snippet": "n_pw2 == \"\""
+        },
+        {
+          "rule_id": "CWE-259-HARDCODED-PASSWORD",
+          "vulnerabilities": [
+            "CWE-259"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\user_profile\\forms.py",
+          "line": "201:16",
+          "snippet": "o_pw == \"\""
+        },
+        {
+          "rule_id": "CWE-259-HARDCODED-PASSWORD",
+          "vulnerabilities": [
+            "CWE-259"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\user_profile\\forms.py",
+          "line": "207:18",
+          "snippet": "n_pw1 == \"\" or n_pw2 == \"\""
+        },
+        {
+          "rule_id": "CWE-259-HARDCODED-PASSWORD",
+          "vulnerabilities": [
+            "CWE-259"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\user_profile\\forms.py",
+          "line": "207:18",
+          "snippet": "n_pw1 == \"\" or n_pw2 == \"\""
+        },
+        {
+          "rule_id": "CWE-259-HARDCODED-PASSWORD",
+          "vulnerabilities": [
+            "CWE-259"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\user_profile\\forms.py",
+          "line": "225:16",
+          "snippet": "'new_password1' in cleaned_data and cleaned_data['new_password1'] == ''"
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\user_profile\\urls.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\user_profile\\views.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-703-IMPROPER-EXCEPTION-HANDLING"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-703"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-703-IMPROPER-EXCEPTION-HANDLING",
+          "vulnerabilities": [
+            "CWE-703"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\user_profile\\views.py",
+          "line": "82:9",
+          "snippet": "except (TypeError, json.JSONDecodeError): # currently no settings for property, this is okay pass"
+        },
+        {
+          "rule_id": "CWE-703-IMPROPER-EXCEPTION-HANDLING",
+          "vulnerabilities": [
+            "CWE-703"
+          ],
+          "source_file": "app-project-iguana\\project\\src\\user_profile\\views.py",
+          "line": "150:9",
+          "snippet": "except (TypeError, json.JSONDecodeError): pass"
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-iguana\\project\\src\\user_profile\\widgets.py",
+      "xml_source": "project_iguana2.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    }
+  ],
+  "rules_skipped": {
+    "python": [
+      {
+        "rule_id": "CWE-120-BUFFER-OVERFLOW",
+        "reason": "non applicabile a 'python' (languages=['c'])"
+      },
+      {
+        "rule_id": "CWE-129-IMPROPER-ARRAY-INDEX-VALIDATION",
+        "reason": "non applicabile a 'python' (languages=['c', 'java'])"
+      },
+      {
+        "rule_id": "CWE-129-ARRAY-SIZE-VALIDATION",
+        "reason": "non applicabile a 'python' (languages=['c', 'java'])"
+      },
+      {
+        "rule_id": "Numeric Truncation Error",
+        "reason": "non applicabile a 'python' (languages=['java'])"
+      },
+      {
+        "rule_id": "CWE-400-UNCONTROLLED-SLEEP-C",
+        "reason": "non applicabile a 'python' (languages=['c'])"
+      },
+      {
+        "rule_id": "CWE-415-416-MEMORY-MISUSE-AFTER-FREE",
+        "reason": "non applicabile a 'python' (languages=['c'])"
+      },
+      {
+        "rule_id": "CWE-476-NULL-POINTER-DEREFERENCE",
+        "reason": "non applicabile a 'python' (languages=['c', 'java'])"
+      },
+      {
+        "rule_id": "CWE-502-JACKSON-UNSAFE-DESERIALIZATION",
+        "reason": "non applicabile a 'python' (languages=['java'])"
+      },
+      {
+        "rule_id": "CWE-611-XXE-KWARGS",
+        "reason": "non applicabile a 'python' (languages=['javascript'])"
+      },
+      {
+        "rule_id": "UNCHECKED-CAST",
+        "reason": "non applicabile a 'python' (languages=['java'])"
+      },
+      {
+        "rule_id": "CWE-943-NOSQL-INJECTION",
+        "reason": "non applicabile a 'python' (languages=['javascript'])"
+      }
+    ]
+  }
+}

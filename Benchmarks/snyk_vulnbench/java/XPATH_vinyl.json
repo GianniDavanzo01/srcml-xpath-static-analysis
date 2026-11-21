@@ -1,0 +1,234 @@
+{
+  "summary": {
+    "units_analyzed": 8,
+    "units_failed": 0,
+    "files_failed": 0,
+    "vulnerable_files": 2,
+    "total_findings": 8,
+    "categories_count": {
+      "CWE-502": 1,
+      "CWE-22": 4,
+      "CWE-79": 1,
+      "CWE-770": 1,
+      "CWE-89": 1
+    }
+  },
+  "errors": [],
+  "details": [
+    {
+      "source_file": "java/io/acme/engineering/vynil_marketplace/config/DataLoader.java",
+      "xml_source": "vinyl.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "java/io/acme/engineering/vynil_marketplace/config/WebConfig.java",
+      "xml_source": "vinyl.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "java/io/acme/engineering/vynil_marketplace/controller/VinylApiController.java",
+      "xml_source": "vinyl.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-22-PATH-TRAVERSAL",
+        "CWE-502-DESERIALIZATION",
+        "CWE-770-UNCONTROLLED-RESOURCE-ALLOCATION",
+        "CWE-79-CROSS-SITE-SCRIPTING"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-22",
+        "CWE-502",
+        "CWE-770",
+        "CWE-79"
+      ],
+      "findings_count": 7,
+      "findings": [
+        {
+          "rule_id": "CWE-502-DESERIALIZATION",
+          "vulnerabilities": [
+            "CWE-502"
+          ],
+          "source_file": "java/io/acme/engineering/vynil_marketplace/controller/VinylApiController.java",
+          "line": "88:28",
+          "snippet": "objectInputStream.readObject()"
+        },
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "java/io/acme/engineering/vynil_marketplace/controller/VinylApiController.java",
+          "line": "127:17",
+          "snippet": "var filePath = uploadPath.resolve(filename);",
+          "tainted_variable": "filename"
+        },
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "java/io/acme/engineering/vynil_marketplace/controller/VinylApiController.java",
+          "line": "128:17",
+          "snippet": "Files.copy(image.getInputStream(), filePath);",
+          "tainted_variable": "filePath"
+        },
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "java/io/acme/engineering/vynil_marketplace/controller/VinylApiController.java",
+          "line": "166:17",
+          "snippet": "var filePath = uploadPath.resolve(filename);",
+          "tainted_variable": "filename"
+        },
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "java/io/acme/engineering/vynil_marketplace/controller/VinylApiController.java",
+          "line": "167:17",
+          "snippet": "Files.copy(image.getInputStream(), filePath);",
+          "tainted_variable": "filePath"
+        },
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "java/io/acme/engineering/vynil_marketplace/controller/VinylApiController.java",
+          "line": "136:9",
+          "snippet": "return ResponseEntity.ok(saved);",
+          "tainted_variable": "saved"
+        },
+        {
+          "rule_id": "CWE-770-UNCONTROLLED-RESOURCE-ALLOCATION",
+          "vulnerabilities": [
+            "CWE-770"
+          ],
+          "source_file": "java/io/acme/engineering/vynil_marketplace/controller/VinylApiController.java",
+          "line": "86:57",
+          "snippet": "file.getBytes",
+          "tainted_variable": "file"
+        }
+      ]
+    },
+    {
+      "source_file": "java/io/acme/engineering/vynil_marketplace/controller/VinylController.java",
+      "xml_source": "vinyl.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "java/io/acme/engineering/vynil_marketplace/domain/Vinyl.java",
+      "xml_source": "vinyl.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "java/io/acme/engineering/vynil_marketplace/repository/VinylRepository.java",
+      "xml_source": "vinyl.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "java/io/acme/engineering/vynil_marketplace/service/VinylService.java",
+      "xml_source": "vinyl.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-89-SQLI"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-89"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-89-SQLI",
+          "vulnerabilities": [
+            "CWE-89"
+          ],
+          "source_file": "java/io/acme/engineering/vynil_marketplace/service/VinylService.java",
+          "line": "41:9",
+          "snippet": "return entityManager.createNativeQuery(sql, Vinyl.class).getResultList();",
+          "tainted_variable": "sql"
+        }
+      ]
+    },
+    {
+      "source_file": "java/io/acme/engineering/vynil_marketplace/VinylMarketplaceApplication.java",
+      "xml_source": "vinyl.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    }
+  ],
+  "rules_skipped": {
+    "java": [
+      {
+        "rule_id": "CWE-120-BUFFER-OVERFLOW",
+        "reason": "non applicabile a 'java' (languages=['c'])"
+      },
+      {
+        "rule_id": "CWE-276-INCORRECT-DEFAULT-PERMISSIONS",
+        "reason": "non applicabile a 'java' (languages=['c', 'python', 'javascript'])"
+      },
+      {
+        "rule_id": "CWE-347-JWT-NO-VERIFY",
+        "reason": "non applicabile a 'java' (languages=['python'])"
+      },
+      {
+        "rule_id": "CWE-400-UNCONTROLLED-SLEEP-C",
+        "reason": "non applicabile a 'java' (languages=['c'])"
+      },
+      {
+        "rule_id": "CWE-415-416-MEMORY-MISUSE-AFTER-FREE",
+        "reason": "non applicabile a 'java' (languages=['c'])"
+      },
+      {
+        "rule_id": "CWE-611-XXE-KWARGS",
+        "reason": "non applicabile a 'java' (languages=['javascript'])"
+      },
+      {
+        "rule_id": "CWE-611-XXE-TAINT",
+        "reason": "non applicabile a 'java' (languages=['javascript', 'python'])"
+      },
+      {
+        "rule_id": "CWE-918-XSLT-SSRF",
+        "reason": "non applicabile a 'java' (languages=['python'])"
+      },
+      {
+        "rule_id": "CWE-943-NOSQL-INJECTION",
+        "reason": "non applicabile a 'java' (languages=['javascript'])"
+      },
+      {
+        "rule_id": "CWE-1327-UNRESTRICTED-BIND-ADDRESS",
+        "reason": "non applicabile a 'java' (languages=['python'])"
+      },
+      {
+        "rule_id": "CWE-1333-REGEX-DOS",
+        "reason": "non applicabile a 'java' (languages=['javascript', 'python'])"
+      }
+    ]
+  }
+}

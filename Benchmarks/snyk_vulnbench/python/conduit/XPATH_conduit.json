@@ -1,0 +1,529 @@
+{
+  "summary": {
+    "units_analyzed": 26,
+    "units_failed": 0,
+    "files_failed": 0,
+    "vulnerable_files": 8,
+    "total_findings": 17,
+    "categories_count": {
+      "CWE-78": 2,
+      "CWE-134": 2,
+      "CWE-321": 1,
+      "CWE-22": 5,
+      "CWE-89": 1,
+      "CWE-502": 1,
+      "CWE-79": 1,
+      "CWE-95": 1,
+      "CWE-94": 1,
+      "CWE-595": 2,
+      "CWE-918": 1
+    }
+  },
+  "errors": [],
+  "details": [
+    {
+      "source_file": "app-project-conduit/project/autoapp.py",
+      "xml_source": "project_conduit.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-conduit/project/conduit/app.py",
+      "xml_source": "project_conduit.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-conduit/project/conduit/commands.py",
+      "xml_source": "project_conduit.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-134-FORMAT-STRING-INJECTION",
+        "CWE-78-OS-CMD-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-134",
+        "CWE-78"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "CWE-78-OS-CMD-INJECTION",
+          "vulnerabilities": [
+            "CWE-78"
+          ],
+          "source_file": "app-project-conduit/project/conduit/commands.py",
+          "line": "41:9",
+          "snippet": "rv = call(command_line)",
+          "tainted_variable": "command_line"
+        },
+        {
+          "rule_id": "CWE-134-FORMAT-STRING-INJECTION",
+          "vulnerabilities": [
+            "CWE-134"
+          ],
+          "source_file": "app-project-conduit/project/conduit/commands.py",
+          "line": "119:5",
+          "snippet": "click.echo(str_template.format(*column_headers[:column_length]))",
+          "tainted_variable": "str_template"
+        },
+        {
+          "rule_id": "CWE-134-FORMAT-STRING-INJECTION",
+          "vulnerabilities": [
+            "CWE-134"
+          ],
+          "source_file": "app-project-conduit/project/conduit/commands.py",
+          "line": "123:9",
+          "snippet": "click.echo(str_template.format(*row[:column_length]))",
+          "tainted_variable": "str_template"
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-conduit/project/conduit/compat.py",
+      "xml_source": "project_conduit.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-conduit/project/conduit/database.py",
+      "xml_source": "project_conduit.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-conduit/project/conduit/exceptions.py",
+      "xml_source": "project_conduit.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-conduit/project/conduit/extensions.py",
+      "xml_source": "project_conduit.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-conduit/project/conduit/settings.py",
+      "xml_source": "project_conduit.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-321-HARDCODED-CRYPTO-KEY"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-321"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-321-HARDCODED-CRYPTO-KEY",
+          "vulnerabilities": [
+            "CWE-321"
+          ],
+          "source_file": "app-project-conduit/project/conduit/settings.py",
+          "line": "17:5",
+          "snippet": "JWT_AUTH_USERNAME_KEY = 'email'"
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-conduit/project/conduit/utils.py",
+      "xml_source": "project_conduit.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-conduit/project/conduit/__init__.py",
+      "xml_source": "project_conduit.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-conduit/project/conduit/articles/export.py",
+      "xml_source": "project_conduit.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-22-PATH-TRAVERSAL"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-22"
+      ],
+      "findings_count": 5,
+      "findings": [
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "app-project-conduit/project/conduit/articles/export.py",
+          "line": "10:5",
+          "snippet": "directory = os.path.join(EXPORTS_DIR, slug)",
+          "tainted_variable": "slug"
+        },
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "app-project-conduit/project/conduit/articles/export.py",
+          "line": "18:5",
+          "snippet": "path = os.path.join(EXPORTS_DIR, slug, filename)",
+          "tainted_variable": "slug"
+        },
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "app-project-conduit/project/conduit/articles/export.py",
+          "line": "18:5",
+          "snippet": "path = os.path.join(EXPORTS_DIR, slug, filename)",
+          "tainted_variable": "filename"
+        },
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "app-project-conduit/project/conduit/articles/export.py",
+          "line": "13:28",
+          "snippet": "directory",
+          "tainted_variable": "directory"
+        },
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "app-project-conduit/project/conduit/articles/export.py",
+          "line": "19:15",
+          "snippet": "path",
+          "tainted_variable": "path"
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-conduit/project/conduit/articles/models.py",
+      "xml_source": "project_conduit.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-conduit/project/conduit/articles/pdf.py",
+      "xml_source": "project_conduit.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-78-OS-CMD-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-78"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-78-OS-CMD-INJECTION",
+          "vulnerabilities": [
+            "CWE-78"
+          ],
+          "source_file": "app-project-conduit/project/conduit/articles/pdf.py",
+          "line": "16:5",
+          "snippet": "process = subprocess.Popen(command, shell=True, stdin=subprocess.PIPE)",
+          "tainted_variable": "command"
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-conduit/project/conduit/articles/search.py",
+      "xml_source": "project_conduit.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-89-SQLI"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-89"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-89-SQLI",
+          "vulnerabilities": [
+            "CWE-89"
+          ],
+          "source_file": "app-project-conduit/project/conduit/articles/search.py",
+          "line": "19:5",
+          "snippet": "return db.session.execute(query).fetchall()",
+          "tainted_variable": "query"
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-conduit/project/conduit/articles/serializers.py",
+      "xml_source": "project_conduit.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-conduit/project/conduit/articles/views.py",
+      "xml_source": "project_conduit.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-502-DESERIALIZATION",
+        "CWE-79-CROSS-SITE-SCRIPTING",
+        "EVAL-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-502",
+        "CWE-79",
+        "CWE-94",
+        "CWE-95"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "CWE-502-DESERIALIZATION",
+          "vulnerabilities": [
+            "CWE-502"
+          ],
+          "source_file": "app-project-conduit/project/conduit/articles/views.py",
+          "line": "229:13",
+          "snippet": "pickle.loads(base64.urlsafe_b64decode(token))"
+        },
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "app-project-conduit/project/conduit/articles/views.py",
+          "line": "198:5",
+          "snippet": "return Response(content, mimetype='text/markdown')",
+          "tainted_variable": "content"
+        },
+        {
+          "rule_id": "EVAL-INJECTION",
+          "vulnerabilities": [
+            "CWE-95",
+            "CWE-94"
+          ],
+          "source_file": "app-project-conduit/project/conduit/articles/views.py",
+          "line": "244:12",
+          "snippet": "eval(expression, {}, context)",
+          "tainted_variable": "expression"
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-conduit/project/conduit/articles/__init__.py",
+      "xml_source": "project_conduit.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-conduit/project/conduit/profile/models.py",
+      "xml_source": "project_conduit.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-595-COMPARISON-OF-OBJECT-REFERENCES"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-595"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-595-COMPARISON-OF-OBJECT-REFERENCES",
+          "vulnerabilities": [
+            "CWE-595"
+          ],
+          "source_file": "app-project-conduit/project/conduit/profile/models.py",
+          "line": "34:17",
+          "snippet": "self is not profile",
+          "operand_types": [
+            null,
+            null
+          ]
+        },
+        {
+          "rule_id": "CWE-595-COMPARISON-OF-OBJECT-REFERENCES",
+          "vulnerabilities": [
+            "CWE-595"
+          ],
+          "source_file": "app-project-conduit/project/conduit/profile/models.py",
+          "line": "40:17",
+          "snippet": "self is not profile",
+          "operand_types": [
+            null,
+            null
+          ]
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-conduit/project/conduit/profile/serializers.py",
+      "xml_source": "project_conduit.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-conduit/project/conduit/profile/views.py",
+      "xml_source": "project_conduit.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-conduit/project/conduit/profile/__init__.py",
+      "xml_source": "project_conduit.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-conduit/project/conduit/user/avatar.py",
+      "xml_source": "project_conduit.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-918-SSRF"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-918"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-918-SSRF",
+          "vulnerabilities": [
+            "CWE-918"
+          ],
+          "source_file": "app-project-conduit/project/conduit/user/avatar.py",
+          "line": "8:5",
+          "snippet": "response = requests.get(url, timeout=5)",
+          "tainted_variable": "url"
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-conduit/project/conduit/user/models.py",
+      "xml_source": "project_conduit.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-conduit/project/conduit/user/serializers.py",
+      "xml_source": "project_conduit.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-conduit/project/conduit/user/views.py",
+      "xml_source": "project_conduit.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-conduit/project/conduit/user/__init__.py",
+      "xml_source": "project_conduit.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    }
+  ],
+  "rules_skipped": {
+    "python": [
+      {
+        "rule_id": "CWE-120-BUFFER-OVERFLOW",
+        "reason": "non applicabile a 'python' (languages=['c'])"
+      },
+      {
+        "rule_id": "CWE-129-IMPROPER-ARRAY-INDEX-VALIDATION",
+        "reason": "non applicabile a 'python' (languages=['c', 'java'])"
+      },
+      {
+        "rule_id": "CWE-129-ARRAY-SIZE-VALIDATION",
+        "reason": "non applicabile a 'python' (languages=['c', 'java'])"
+      },
+      {
+        "rule_id": "Numeric Truncation Error",
+        "reason": "non applicabile a 'python' (languages=['java'])"
+      },
+      {
+        "rule_id": "CWE-400-UNCONTROLLED-SLEEP-C",
+        "reason": "non applicabile a 'python' (languages=['c'])"
+      },
+      {
+        "rule_id": "CWE-415-416-MEMORY-MISUSE-AFTER-FREE",
+        "reason": "non applicabile a 'python' (languages=['c'])"
+      },
+      {
+        "rule_id": "CWE-476-NULL-POINTER-DEREFERENCE",
+        "reason": "non applicabile a 'python' (languages=['c', 'java'])"
+      },
+      {
+        "rule_id": "CWE-502-JACKSON-UNSAFE-DESERIALIZATION",
+        "reason": "non applicabile a 'python' (languages=['java'])"
+      },
+      {
+        "rule_id": "CWE-611-XXE-KWARGS",
+        "reason": "non applicabile a 'python' (languages=['javascript'])"
+      },
+      {
+        "rule_id": "UNCHECKED-CAST",
+        "reason": "non applicabile a 'python' (languages=['java'])"
+      },
+      {
+        "rule_id": "CWE-943-NOSQL-INJECTION",
+        "reason": "non applicabile a 'python' (languages=['javascript'])"
+      }
+    ]
+  }
+}

@@ -1,0 +1,17 @@
+=== VulnBench 2.0 | language=Java | app=2 (risultati_java_coffeshop, risultati_java_vinyl) ===
+categoria                  CWE   N  TP  FN  FP   TN   prec  recall     F1
+-------------------------------------------------------------------------
+path-traversal              22   3   3   0   0  n/d  1,000   1,000  1,000
+xss                         79   5   2   3   1  n/d  0,667   0,400  0,500
+sql-injection               89   2   2   0   0  n/d  1,000   1,000  1,000
+insecure-deserialization   502   1   1   0   1  n/d  0,500   1,000  0,667
+template-injection        1336   1   0   1   0  n/d  0,000   0,000  0,000
+-------------------------------------------------------------------------
+TOTALE (micro)                  12   8   4   2  n/d  0,800   0,667  0,727
+MEDIA (macro)                                        0,633   0,680  0,633
+  [INFO] Fuori tassonomia (esclusi): 7 finding
+
+=== RIEPILOGO PER LINGUAGGIO ===
+Linguaggio  App   N  TP  FN  FP*  P*(mic)  R(mic)  F1*(mic)  P*(mac)  R(mac)  F1*(mac)  OOT
+-------------------------------------------------------------------------------------------
+Java          2  12   8   4    2    0,800   0,667     0,727    0,633   0,680     0,633    7

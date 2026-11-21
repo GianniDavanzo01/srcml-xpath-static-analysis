@@ -1,0 +1,474 @@
+{
+  "summary": {
+    "units_analyzed": 20,
+    "units_failed": 0,
+    "files_failed": 0,
+    "vulnerable_files": 6,
+    "total_findings": 19,
+    "categories_count": {
+      "CWE-259": 2,
+      "CWE-78": 2,
+      "CWE-502": 2,
+      "CWE-601": 4,
+      "CWE-22": 6,
+      "CWE-614": 1,
+      "CWE-79": 2
+    }
+  },
+  "errors": [],
+  "details": [
+    {
+      "source_file": "app-project-flask-bones/project/serve.py",
+      "xml_source": "project_flask_bones.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-flask-bones/project/tests.py",
+      "xml_source": "project_flask_bones.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-259-HARDCODED-PASSWORD"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-259"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-259-HARDCODED-PASSWORD",
+          "vulnerabilities": [
+            "CWE-259"
+          ],
+          "source_file": "app-project-flask-bones/project/tests.py",
+          "line": "11:1",
+          "snippet": "admin_password = 'test123'"
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-flask-bones/project/app/assets.py",
+      "xml_source": "project_flask_bones.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-flask-bones/project/app/commands.py",
+      "xml_source": "project_flask_bones.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-259-HARDCODED-PASSWORD"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-259"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-259-HARDCODED-PASSWORD",
+          "vulnerabilities": [
+            "CWE-259"
+          ],
+          "source_file": "app-project-flask-bones/project/app/commands.py",
+          "line": "26:13",
+          "snippet": "password='test123'"
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-flask-bones/project/app/config.py",
+      "xml_source": "project_flask_bones.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-flask-bones/project/app/database.py",
+      "xml_source": "project_flask_bones.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-flask-bones/project/app/extensions.py",
+      "xml_source": "project_flask_bones.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-flask-bones/project/app/jobs.py",
+      "xml_source": "project_flask_bones.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-flask-bones/project/app/utils.py",
+      "xml_source": "project_flask_bones.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-78-OS-CMD-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-78"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-78-OS-CMD-INJECTION",
+          "vulnerabilities": [
+            "CWE-78"
+          ],
+          "source_file": "app-project-flask-bones/project/app/utils.py",
+          "line": "18:5",
+          "snippet": "return subprocess.check_output('ping -c 1 ' + host, shell=True).decode()",
+          "tainted_variable": "host"
+        },
+        {
+          "rule_id": "CWE-78-OS-CMD-INJECTION",
+          "vulnerabilities": [
+            "CWE-78"
+          ],
+          "source_file": "app-project-flask-bones/project/app/utils.py",
+          "line": "23:5",
+          "snippet": "return subprocess.check_output('host ' + host, shell=True).decode()",
+          "tainted_variable": "host"
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-flask-bones/project/app/__init__.py",
+      "xml_source": "project_flask_bones.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-flask-bones/project/app/auth/forms.py",
+      "xml_source": "project_flask_bones.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-flask-bones/project/app/auth/views.py",
+      "xml_source": "project_flask_bones.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-502-DESERIALIZATION",
+        "CWE-601-OPEN-REDIRECT"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-502",
+        "CWE-601"
+      ],
+      "findings_count": 4,
+      "findings": [
+        {
+          "rule_id": "CWE-502-DESERIALIZATION",
+          "vulnerabilities": [
+            "CWE-502"
+          ],
+          "source_file": "app-project-flask-bones/project/app/auth/views.py",
+          "line": "67:17",
+          "snippet": "pickle.loads(base64.urlsafe_b64decode(draft_token))"
+        },
+        {
+          "rule_id": "CWE-601-OPEN-REDIRECT",
+          "vulnerabilities": [
+            "CWE-601"
+          ],
+          "source_file": "app-project-flask-bones/project/app/auth/views.py",
+          "line": "60:5",
+          "snippet": "return redirect(url_for('auth.register', draft=token))",
+          "tainted_variable": "token"
+        },
+        {
+          "rule_id": "CWE-601-OPEN-REDIRECT",
+          "vulnerabilities": [
+            "CWE-601"
+          ],
+          "source_file": "app-project-flask-bones/project/app/auth/views.py",
+          "line": "36:9",
+          "snippet": "return redirect(request.args.get('next') or url_for('index'))",
+          "tainted_variable": "flask.request.args.get",
+          "source_kind": "inline-call"
+        },
+        {
+          "rule_id": "CWE-601-OPEN-REDIRECT",
+          "vulnerabilities": [
+            "CWE-601"
+          ],
+          "source_file": "app-project-flask-bones/project/app/auth/views.py",
+          "line": "120:9",
+          "snippet": "return redirect(request.args.get('next') or url_for('auth.login'))",
+          "tainted_variable": "flask.request.args.get",
+          "source_kind": "inline-call"
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-flask-bones/project/app/auth/__init__.py",
+      "xml_source": "project_flask_bones.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-flask-bones/project/app/user/forms.py",
+      "xml_source": "project_flask_bones.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-flask-bones/project/app/user/models.py",
+      "xml_source": "project_flask_bones.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-flask-bones/project/app/user/reports.py",
+      "xml_source": "project_flask_bones.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-22-PATH-TRAVERSAL"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-22"
+      ],
+      "findings_count": 6,
+      "findings": [
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "app-project-flask-bones/project/app/user/reports.py",
+          "line": "8:5",
+          "snippet": "path = os.path.join(REPORTS_DIR, username, name)",
+          "tainted_variable": "username"
+        },
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "app-project-flask-bones/project/app/user/reports.py",
+          "line": "8:5",
+          "snippet": "path = os.path.join(REPORTS_DIR, username, name)",
+          "tainted_variable": "name"
+        },
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "app-project-flask-bones/project/app/user/reports.py",
+          "line": "15:5",
+          "snippet": "path = os.path.join(REPORTS_DIR, str(user_id), name)",
+          "tainted_variable": "user_id"
+        },
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "app-project-flask-bones/project/app/user/reports.py",
+          "line": "15:5",
+          "snippet": "path = os.path.join(REPORTS_DIR, str(user_id), name)",
+          "tainted_variable": "name"
+        },
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "app-project-flask-bones/project/app/user/reports.py",
+          "line": "9:15",
+          "snippet": "path",
+          "tainted_variable": "path"
+        },
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "app-project-flask-bones/project/app/user/reports.py",
+          "line": "16:15",
+          "snippet": "path",
+          "tainted_variable": "path"
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-flask-bones/project/app/user/views.py",
+      "xml_source": "project_flask_bones.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-502-DESERIALIZATION",
+        "CWE-601-OPEN-REDIRECT",
+        "CWE-614-SENSITIVE-COOKIE-INSECURE",
+        "CWE-79-CROSS-SITE-SCRIPTING"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-502",
+        "CWE-601",
+        "CWE-614",
+        "CWE-79"
+      ],
+      "findings_count": 5,
+      "findings": [
+        {
+          "rule_id": "CWE-502-DESERIALIZATION",
+          "vulnerabilities": [
+            "CWE-502"
+          ],
+          "source_file": "app-project-flask-bones/project/app/user/views.py",
+          "line": "25:21",
+          "snippet": "pickle.loads(base64.b64decode(prefs_cookie))"
+        },
+        {
+          "rule_id": "CWE-614-SENSITIVE-COOKIE-INSECURE",
+          "vulnerabilities": [
+            "CWE-614"
+          ],
+          "source_file": "app-project-flask-bones/project/app/user/views.py",
+          "line": "49:5",
+          "snippet": "response.set_cookie( 'list_prefs', base64.b64encode(pickle.dumps(new_prefs)).decode() )"
+        },
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "app-project-flask-bones/project/app/user/views.py",
+          "line": "83:5",
+          "snippet": "return Response(content, mimetype='text/csv')",
+          "tainted_variable": "content"
+        },
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "app-project-flask-bones/project/app/user/views.py",
+          "line": "93:5",
+          "snippet": "return Response(content, mimetype='text/csv')",
+          "tainted_variable": "content"
+        },
+        {
+          "rule_id": "CWE-601-OPEN-REDIRECT",
+          "vulnerabilities": [
+            "CWE-601"
+          ],
+          "source_file": "app-project-flask-bones/project/app/user/views.py",
+          "line": "74:5",
+          "snippet": "return redirect(url_for('.edit', id=id))",
+          "tainted_variable": "id"
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-flask-bones/project/app/user/__init__.py",
+      "xml_source": "project_flask_bones.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-flask-bones/project/migrations/env.py",
+      "xml_source": "project_flask_bones.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-flask-bones/project/migrations/versions/1fb7c6da302_.py",
+      "xml_source": "project_flask_bones.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    }
+  ],
+  "rules_skipped": {
+    "python": [
+      {
+        "rule_id": "CWE-120-BUFFER-OVERFLOW",
+        "reason": "non applicabile a 'python' (languages=['c'])"
+      },
+      {
+        "rule_id": "CWE-129-IMPROPER-ARRAY-INDEX-VALIDATION",
+        "reason": "non applicabile a 'python' (languages=['c', 'java'])"
+      },
+      {
+        "rule_id": "CWE-129-ARRAY-SIZE-VALIDATION",
+        "reason": "non applicabile a 'python' (languages=['c', 'java'])"
+      },
+      {
+        "rule_id": "Numeric Truncation Error",
+        "reason": "non applicabile a 'python' (languages=['java'])"
+      },
+      {
+        "rule_id": "CWE-400-UNCONTROLLED-SLEEP-C",
+        "reason": "non applicabile a 'python' (languages=['c'])"
+      },
+      {
+        "rule_id": "CWE-415-416-MEMORY-MISUSE-AFTER-FREE",
+        "reason": "non applicabile a 'python' (languages=['c'])"
+      },
+      {
+        "rule_id": "CWE-476-NULL-POINTER-DEREFERENCE",
+        "reason": "non applicabile a 'python' (languages=['c', 'java'])"
+      },
+      {
+        "rule_id": "CWE-502-JACKSON-UNSAFE-DESERIALIZATION",
+        "reason": "non applicabile a 'python' (languages=['java'])"
+      },
+      {
+        "rule_id": "CWE-611-XXE-KWARGS",
+        "reason": "non applicabile a 'python' (languages=['javascript'])"
+      },
+      {
+        "rule_id": "UNCHECKED-CAST",
+        "reason": "non applicabile a 'python' (languages=['java'])"
+      },
+      {
+        "rule_id": "CWE-943-NOSQL-INJECTION",
+        "reason": "non applicabile a 'python' (languages=['javascript'])"
+      }
+    ]
+  }
+}

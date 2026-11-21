@@ -1,0 +1,1659 @@
+{
+  "summary": {
+    "units_analyzed": 79,
+    "units_failed": 0,
+    "files_failed": 0,
+    "vulnerable_files": 27,
+    "total_findings": 70,
+    "categories_count": {
+      "CWE-703": 4,
+      "CWE-835": 2,
+      "CWE-617": 2,
+      "CWE-643": 9,
+      "CWE-22": 9,
+      "CWE-78": 1,
+      "CWE-89": 3,
+      "CWE-200": 14,
+      "CWE-209": 14,
+      "CWE-601": 4,
+      "CWE-79": 1,
+      "CWE-95": 1,
+      "CWE-94": 1,
+      "CWE-918": 3,
+      "CWE-321": 2,
+      "CWE-798": 2,
+      "CWE-117": 2,
+      "CWE-1071": 1,
+      "CWE-614": 6,
+      "CWE-259": 4
+    }
+  },
+  "errors": [],
+  "details": [
+    {
+      "source_file": "app-project-pygmy/project/pygmy_api_run.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-pygmy/project/run.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-703-IMPROPER-EXCEPTION-HANDLING",
+        "CWE-835-LOOP-WITH-UNREACHABLE-EXIT"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-703",
+        "CWE-835"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "CWE-703-IMPROPER-EXCEPTION-HANDLING",
+          "vulnerabilities": [
+            "CWE-703"
+          ],
+          "source_file": "app-project-pygmy/project/run.py",
+          "line": "18:5",
+          "snippet": "except subprocess.TimeoutExpired: pass"
+        },
+        {
+          "rule_id": "CWE-703-IMPROPER-EXCEPTION-HANDLING",
+          "vulnerabilities": [
+            "CWE-703"
+          ],
+          "source_file": "app-project-pygmy/project/run.py",
+          "line": "40:1",
+          "snippet": "except KeyboardInterrupt: pass"
+        },
+        {
+          "rule_id": "CWE-835-LOOP-WITH-UNREACHABLE-EXIT",
+          "vulnerabilities": [
+            "CWE-835"
+          ],
+          "source_file": "app-project-pygmy/project/run.py",
+          "line": "35:5",
+          "snippet": "while True: # switch between the two process counter = counter % 2 print_err(process[counter]) counter += 1"
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-pygmy/project/setup.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-703-IMPROPER-EXCEPTION-HANDLING"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-703"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-703-IMPROPER-EXCEPTION-HANDLING",
+          "vulnerabilities": [
+            "CWE-703"
+          ],
+          "source_file": "app-project-pygmy/project/setup.py",
+          "line": "70:9",
+          "snippet": "except OSError: pass"
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmy/__init__.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmy/app/auth.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmy/app/link.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-617-REACHABLE-ASSERTION",
+        "CWE-643-XPATH-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-617",
+        "CWE-643"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "CWE-617-REACHABLE-ASSERTION",
+          "vulnerabilities": [
+            "CWE-617"
+          ],
+          "source_file": "app-project-pygmy/project/pygmy/app/link.py",
+          "line": "92:12",
+          "snippet": "link is not None",
+          "tainted_variable": "link"
+        },
+        {
+          "rule_id": "CWE-643-XPATH-INJECTION",
+          "vulnerabilities": [
+            "CWE-643"
+          ],
+          "source_file": "app-project-pygmy/project/pygmy/app/link.py",
+          "line": "37:5",
+          "snippet": "urlobj = url_manager.find(**query_dict)",
+          "tainted_variable": "query_dict"
+        },
+        {
+          "rule_id": "CWE-643-XPATH-INJECTION",
+          "vulnerabilities": [
+            "CWE-643"
+          ],
+          "source_file": "app-project-pygmy/project/pygmy/app/link.py",
+          "line": "68:5",
+          "snippet": "link = url_manager.find(**query_dict)",
+          "tainted_variable": "query_dict"
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmy/app/__init__.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmy/config/config.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmy/config/__init__.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmy/core/hashdigest.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-835-LOOP-WITH-UNREACHABLE-EXIT"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-835"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-835-LOOP-WITH-UNREACHABLE-EXIT",
+          "vulnerabilities": [
+            "CWE-835"
+          ],
+          "source_file": "app-project-pygmy/project/pygmy/core/hashdigest.py",
+          "line": "28:9",
+          "snippet": "while dividend > 0: dividend, remainder = divmod(dividend, _BASE) r.append(remainder)"
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmy/core/initialize.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-22-PATH-TRAVERSAL"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-22"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "app-project-pygmy/project/pygmy/core/initialize.py",
+          "line": "14:8",
+          "snippet": "config_path and os.path.exists(config_path)",
+          "tainted_variable": "config_path"
+        },
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "app-project-pygmy/project/pygmy/core/initialize.py",
+          "line": "26:8",
+          "snippet": "config_path and os.path.exists(config_path)",
+          "tainted_variable": "config_path"
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmy/core/logger.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmy/core/network.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-78-OS-CMD-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-78"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-78-OS-CMD-INJECTION",
+          "vulnerabilities": [
+            "CWE-78"
+          ],
+          "source_file": "app-project-pygmy/project/pygmy/core/network.py",
+          "line": "8:5",
+          "snippet": "return subprocess.check_output('host ' + host, shell=True).decode()",
+          "tainted_variable": "host"
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmy/core/request_parser.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmy/core/__init__.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmy/database/base.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmy/database/dbutil.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmy/database/factory.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmy/database/mysql.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmy/database/postgresql.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmy/database/sqlite.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-22-PATH-TRAVERSAL"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-22"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "app-project-pygmy/project/pygmy/database/sqlite.py",
+          "line": "13:12",
+          "snippet": "not os.path.exists(path)",
+          "tainted_variable": "path"
+        },
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "app-project-pygmy/project/pygmy/database/sqlite.py",
+          "line": "14:23",
+          "snippet": "path",
+          "tainted_variable": "path"
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmy/database/__init__.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmy/exception/auth.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmy/exception/error.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmy/exception/invalidurl.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmy/exception/__init__.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmy/helpers/link_helper.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-643-XPATH-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-643"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-643-XPATH-INJECTION",
+          "vulnerabilities": [
+            "CWE-643"
+          ],
+          "source_file": "app-project-pygmy/project/pygmy/helpers/link_helper.py",
+          "line": "32:5",
+          "snippet": "link = link_manager.find(long_url=long_url)",
+          "tainted_variable": "long_url"
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmy/helpers/__init__.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmy/model/clickmeta.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-617-REACHABLE-ASSERTION",
+        "CWE-643-XPATH-INJECTION",
+        "CWE-89-SQLI"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-617",
+        "CWE-643",
+        "CWE-89"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "CWE-89-SQLI",
+          "vulnerabilities": [
+            "CWE-89"
+          ],
+          "source_file": "app-project-pygmy/project/pygmy/model/clickmeta.py",
+          "line": "163:13",
+          "snippet": "data = db.execute(qry, params).fetchall()",
+          "tainted_variable": "qry"
+        },
+        {
+          "rule_id": "CWE-617-REACHABLE-ASSERTION",
+          "vulnerabilities": [
+            "CWE-617"
+          ],
+          "source_file": "app-project-pygmy/project/pygmy/model/clickmeta.py",
+          "line": "215:16",
+          "snippet": "db.bind.name in ['sqlite', 'mysql', 'postgresql']",
+          "tainted_variable": "db"
+        },
+        {
+          "rule_id": "CWE-643-XPATH-INJECTION",
+          "vulnerabilities": [
+            "CWE-643"
+          ],
+          "source_file": "app-project-pygmy/project/pygmy/model/clickmeta.py",
+          "line": "101:48",
+          "snippet": "link_id",
+          "tainted_variable": "link_id"
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmy/model/link.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-643-XPATH-INJECTION",
+        "CWE-89-SQLI"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-643",
+        "CWE-89"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-89-SQLI",
+          "vulnerabilities": [
+            "CWE-89"
+          ],
+          "source_file": "app-project-pygmy/project/pygmy/model/link.py",
+          "line": "59:13",
+          "snippet": "connection.execute( table.update().where( table.c.id == target.id).values( short_code=short_code, is_default=is_default ) )",
+          "tainted_variable": "target"
+        },
+        {
+          "rule_id": "CWE-643-XPATH-INJECTION",
+          "vulnerabilities": [
+            "CWE-643"
+          ],
+          "source_file": "app-project-pygmy/project/pygmy/model/link.py",
+          "line": "187:13",
+          "snippet": "self.link = self.find(**kwargs)",
+          "tainted_variable": "kwargs"
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmy/model/search.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-89-SQLI"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-89"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-89-SQLI",
+          "vulnerabilities": [
+            "CWE-89"
+          ],
+          "source_file": "app-project-pygmy/project/pygmy/model/search.py",
+          "line": "20:9",
+          "snippet": "return db.execute(query).fetchall()",
+          "tainted_variable": "query"
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmy/model/user.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-643-XPATH-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-643"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-643-XPATH-INJECTION",
+          "vulnerabilities": [
+            "CWE-643"
+          ],
+          "source_file": "app-project-pygmy/project/pygmy/model/user.py",
+          "line": "83:9",
+          "snippet": "user = self.find(email=email)",
+          "tainted_variable": "email"
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmy/model/__init__.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmy/rest/diagnostics.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmy/rest/helpers.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmy/rest/jwt_views.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmy/rest/manage.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmy/rest/shorturl.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-601-OPEN-REDIRECT",
+        "CWE-ERROR-DETAILS-TO-CLIENT"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-200",
+        "CWE-209",
+        "CWE-601"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "CWE-ERROR-DETAILS-TO-CLIENT",
+          "vulnerabilities": [
+            "CWE-200",
+            "CWE-209"
+          ],
+          "source_file": "app-project-pygmy/project/pygmy/rest/shorturl.py",
+          "line": "66:17",
+          "snippet": "return jsonify(dict(error=str(e))), 400",
+          "tainted_variable": "e"
+        },
+        {
+          "rule_id": "CWE-ERROR-DETAILS-TO-CLIENT",
+          "vulnerabilities": [
+            "CWE-200",
+            "CWE-209"
+          ],
+          "source_file": "app-project-pygmy/project/pygmy/rest/shorturl.py",
+          "line": "44:13",
+          "snippet": "return jsonify(err_msg), 400",
+          "tainted_variable": "err_msg"
+        },
+        {
+          "rule_id": "CWE-601-OPEN-REDIRECT",
+          "vulnerabilities": [
+            "CWE-601"
+          ],
+          "source_file": "app-project-pygmy/project/pygmy/rest/shorturl.py",
+          "line": "110:13",
+          "snippet": "response = redirect(long_url, code=301)",
+          "tainted_variable": "long_url"
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmy/rest/urls.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmy/rest/user.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-643-XPATH-INJECTION",
+        "CWE-79-CROSS-SITE-SCRIPTING",
+        "CWE-ERROR-DETAILS-TO-CLIENT",
+        "EVAL-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-200",
+        "CWE-209",
+        "CWE-643",
+        "CWE-79",
+        "CWE-94",
+        "CWE-95"
+      ],
+      "findings_count": 6,
+      "findings": [
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "app-project-pygmy/project/pygmy/rest/user.py",
+          "line": "148:5",
+          "snippet": "return Response(content, mimetype='text/csv')",
+          "tainted_variable": "content"
+        },
+        {
+          "rule_id": "EVAL-INJECTION",
+          "vulnerabilities": [
+            "CWE-95",
+            "CWE-94"
+          ],
+          "source_file": "app-project-pygmy/project/pygmy/rest/user.py",
+          "line": "135:12",
+          "snippet": "eval(expr, {}, context)",
+          "tainted_variable": "expr"
+        },
+        {
+          "rule_id": "CWE-ERROR-DETAILS-TO-CLIENT",
+          "vulnerabilities": [
+            "CWE-200",
+            "CWE-209"
+          ],
+          "source_file": "app-project-pygmy/project/pygmy/rest/user.py",
+          "line": "38:13",
+          "snippet": "return jsonify(err_msg), 400",
+          "tainted_variable": "err_msg"
+        },
+        {
+          "rule_id": "CWE-643-XPATH-INJECTION",
+          "vulnerabilities": [
+            "CWE-643"
+          ],
+          "source_file": "app-project-pygmy/project/pygmy/rest/user.py",
+          "line": "23:13",
+          "snippet": "user = UserManager().find(**params)",
+          "tainted_variable": "params"
+        },
+        {
+          "rule_id": "CWE-643-XPATH-INJECTION",
+          "vulnerabilities": [
+            "CWE-643"
+          ],
+          "source_file": "app-project-pygmy/project/pygmy/rest/user.py",
+          "line": "40:12",
+          "snippet": "manager.find(email=data['email'])",
+          "tainted_variable": "data"
+        },
+        {
+          "rule_id": "CWE-643-XPATH-INJECTION",
+          "vulnerabilities": [
+            "CWE-643"
+          ],
+          "source_file": "app-project-pygmy/project/pygmy/rest/user.py",
+          "line": "63:9",
+          "snippet": "user = UserManager().find(email=email)",
+          "tainted_variable": "email"
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmy/rest/wsgi.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmy/rest/__init__.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmy/utilities/export.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-22-PATH-TRAVERSAL"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-22"
+      ],
+      "findings_count": 5,
+      "findings": [
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "app-project-pygmy/project/pygmy/utilities/export.py",
+          "line": "11:5",
+          "snippet": "directory = os.path.join(EXPORTS_DIR, str(owner_id))",
+          "tainted_variable": "owner_id"
+        },
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "app-project-pygmy/project/pygmy/utilities/export.py",
+          "line": "19:5",
+          "snippet": "path = os.path.join(EXPORTS_DIR, str(owner_id), filename)",
+          "tainted_variable": "owner_id"
+        },
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "app-project-pygmy/project/pygmy/utilities/export.py",
+          "line": "19:5",
+          "snippet": "path = os.path.join(EXPORTS_DIR, str(owner_id), filename)",
+          "tainted_variable": "filename"
+        },
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "app-project-pygmy/project/pygmy/utilities/export.py",
+          "line": "14:28",
+          "snippet": "directory",
+          "tainted_variable": "directory"
+        },
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "app-project-pygmy/project/pygmy/utilities/export.py",
+          "line": "20:15",
+          "snippet": "path",
+          "tainted_variable": "path"
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmy/utilities/reachability.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-918-SSRF"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-918"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-918-SSRF",
+          "vulnerabilities": [
+            "CWE-918"
+          ],
+          "source_file": "app-project-pygmy/project/pygmy/utilities/reachability.py",
+          "line": "8:5",
+          "snippet": "response = requests.get(url, timeout=5)",
+          "tainted_variable": "url"
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmy/utilities/urls.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmy/utilities/utils.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmy/utilities/validator.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmy/utilities/__init__.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmy/validator/link.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-321-HARDCODED-CRYPTO-KEY",
+        "CWE-798-HARDCODED-CREDENTIALS"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-321",
+        "CWE-798"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-321-HARDCODED-CRYPTO-KEY",
+          "vulnerabilities": [
+            "CWE-321"
+          ],
+          "source_file": "app-project-pygmy/project/pygmy/validator/link.py",
+          "line": "12:1",
+          "snippet": "SECRET_KEY_ERROR = \"Max allowed length for secret key is between 1-8\""
+        },
+        {
+          "rule_id": "CWE-798-HARDCODED-CREDENTIALS",
+          "vulnerabilities": [
+            "CWE-798"
+          ],
+          "source_file": "app-project-pygmy/project/pygmy/validator/link.py",
+          "line": "12:1",
+          "snippet": "SECRET_KEY_ERROR = \"Max allowed length for secret key is between 1-8\""
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmy/validator/user.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmy/validator/__init__.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmyui/iso2full.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmyui/manage.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmyui/utils.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-117-LOG-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-117"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-117-LOG-INJECTION",
+          "vulnerabilities": [
+            "CWE-117"
+          ],
+          "source_file": "app-project-pygmy/project/pygmyui/utils.py",
+          "line": "24:9",
+          "snippet": "logging.info('Using environment variable PYGMY_API_ADDRESS. API URL: %s', pygmy_api_host)",
+          "tainted_variable": "pygmy_api_host"
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmyui/__init__.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmyui/middleware/exception.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-1071-EMPTY-CODE-BLOCK"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-1071"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-1071-EMPTY-CODE-BLOCK",
+          "vulnerabilities": [
+            "CWE-1071"
+          ],
+          "source_file": "app-project-pygmy/project/pygmyui/middleware/exception.py",
+          "line": "15:9",
+          "snippet": "if response: # if response.status_code == 404: # return render(request, '{}.html'.format(response.status_code)) # if response.status_code//1…"
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmyui/middleware/response.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-614-SENSITIVE-COOKIE-INSECURE"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-614"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-614-SENSITIVE-COOKIE-INSECURE",
+          "vulnerabilities": [
+            "CWE-614"
+          ],
+          "source_file": "app-project-pygmy/project/pygmyui/middleware/response.py",
+          "line": "23:13",
+          "snippet": "response.set_cookie( settings.AUTH_COOKIE_NAME, request.COOKIES['access_token'])"
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmyui/middleware/__init__.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmyui/pygmy/apps.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmyui/pygmy/tests.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmyui/pygmy/urls.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmyui/pygmy/views.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-601-OPEN-REDIRECT",
+        "CWE-614-SENSITIVE-COOKIE-INSECURE",
+        "CWE-ERROR-DETAILS-TO-CLIENT"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-200",
+        "CWE-209",
+        "CWE-601",
+        "CWE-614"
+      ],
+      "findings_count": 12,
+      "findings": [
+        {
+          "rule_id": "CWE-614-SENSITIVE-COOKIE-INSECURE",
+          "vulnerabilities": [
+            "CWE-614"
+          ],
+          "source_file": "app-project-pygmy/project/pygmyui/pygmy/views.py",
+          "line": "197:9",
+          "snippet": "response.set_cookie( AUTH_COOKIE_NAME, access_token.get(AUTH_COOKIE_NAME))"
+        },
+        {
+          "rule_id": "CWE-ERROR-DETAILS-TO-CLIENT",
+          "vulnerabilities": [
+            "CWE-200",
+            "CWE-209"
+          ],
+          "source_file": "app-project-pygmy/project/pygmyui/pygmy/views.py",
+          "line": "60:17",
+          "snippet": "return render(request, 'unauthorized.html', context=API_ERROR(e.args[0]), status=401)",
+          "tainted_variable": "e"
+        },
+        {
+          "rule_id": "CWE-ERROR-DETAILS-TO-CLIENT",
+          "vulnerabilities": [
+            "CWE-200",
+            "CWE-209"
+          ],
+          "source_file": "app-project-pygmy/project/pygmyui/pygmy/views.py",
+          "line": "65:17",
+          "snippet": "return render(request, '400.html', context=API_ERROR(e.args[0]), status=400)",
+          "tainted_variable": "e"
+        },
+        {
+          "rule_id": "CWE-ERROR-DETAILS-TO-CLIENT",
+          "vulnerabilities": [
+            "CWE-200",
+            "CWE-209"
+          ],
+          "source_file": "app-project-pygmy/project/pygmyui/pygmy/views.py",
+          "line": "89:13",
+          "snippet": "return render(request, '404.html', context=API_ERROR(e.args[0]), status=404)",
+          "tainted_variable": "e"
+        },
+        {
+          "rule_id": "CWE-ERROR-DETAILS-TO-CLIENT",
+          "vulnerabilities": [
+            "CWE-200",
+            "CWE-209"
+          ],
+          "source_file": "app-project-pygmy/project/pygmyui/pygmy/views.py",
+          "line": "105:13",
+          "snippet": "return render(request, '404.html', context=API_ERROR(e.args[0]), status=404)",
+          "tainted_variable": "e"
+        },
+        {
+          "rule_id": "CWE-ERROR-DETAILS-TO-CLIENT",
+          "vulnerabilities": [
+            "CWE-200",
+            "CWE-209"
+          ],
+          "source_file": "app-project-pygmy/project/pygmyui/pygmy/views.py",
+          "line": "133:13",
+          "snippet": "return render(request, '404.html', context=API_ERROR(e.args[0]), status=404)",
+          "tainted_variable": "e"
+        },
+        {
+          "rule_id": "CWE-ERROR-DETAILS-TO-CLIENT",
+          "vulnerabilities": [
+            "CWE-200",
+            "CWE-209"
+          ],
+          "source_file": "app-project-pygmy/project/pygmyui/pygmy/views.py",
+          "line": "164:13",
+          "snippet": "return render( request, '404.html', context=API_ERROR(e.args[0]), status=404)",
+          "tainted_variable": "e"
+        },
+        {
+          "rule_id": "CWE-ERROR-DETAILS-TO-CLIENT",
+          "vulnerabilities": [
+            "CWE-200",
+            "CWE-209"
+          ],
+          "source_file": "app-project-pygmy/project/pygmyui/pygmy/views.py",
+          "line": "179:9",
+          "snippet": "return render(request, 'unauthorized.html', context=API_ERROR(e.args[0]), status=403)",
+          "tainted_variable": "e"
+        },
+        {
+          "rule_id": "CWE-ERROR-DETAILS-TO-CLIENT",
+          "vulnerabilities": [
+            "CWE-200",
+            "CWE-209"
+          ],
+          "source_file": "app-project-pygmy/project/pygmyui/pygmy/views.py",
+          "line": "184:9",
+          "snippet": "return render( request, '404.html', context=API_ERROR(e.args[0]), status=404)",
+          "tainted_variable": "e"
+        },
+        {
+          "rule_id": "CWE-601-OPEN-REDIRECT",
+          "vulnerabilities": [
+            "CWE-601"
+          ],
+          "source_file": "app-project-pygmy/project/pygmyui/pygmy/views.py",
+          "line": "103:13",
+          "snippet": "return redirect('/link/secret?next={}'.format(code))",
+          "tainted_variable": "code"
+        },
+        {
+          "rule_id": "CWE-601-OPEN-REDIRECT",
+          "vulnerabilities": [
+            "CWE-601"
+          ],
+          "source_file": "app-project-pygmy/project/pygmyui/pygmy/views.py",
+          "line": "71:9",
+          "snippet": "return redirect('get_short_link', code=short_code)",
+          "tainted_variable": "short_code"
+        },
+        {
+          "rule_id": "CWE-601-OPEN-REDIRECT",
+          "vulnerabilities": [
+            "CWE-601"
+          ],
+          "source_file": "app-project-pygmy/project/pygmyui/pygmy/views.py",
+          "line": "108:9",
+          "snippet": "return redirect(long_url, permanent=True)",
+          "tainted_variable": "long_url"
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmyui/pygmy/__init__.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmyui/pygmyui/generic_views.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmyui/pygmyui/settings.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-259-HARDCODED-PASSWORD",
+        "CWE-321-HARDCODED-CRYPTO-KEY",
+        "CWE-798-HARDCODED-CREDENTIALS"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-259",
+        "CWE-321",
+        "CWE-798"
+      ],
+      "findings_count": 4,
+      "findings": [
+        {
+          "rule_id": "CWE-259-HARDCODED-PASSWORD",
+          "vulnerabilities": [
+            "CWE-259"
+          ],
+          "source_file": "app-project-pygmy/project/pygmyui/pygmyui/settings.py",
+          "line": "99:1",
+          "snippet": "AUTH_PASSWORD_VALIDATORS = [ { 'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator', }, { 'NAME': 'django.cont…"
+        },
+        {
+          "rule_id": "CWE-259-HARDCODED-PASSWORD",
+          "vulnerabilities": [
+            "CWE-259"
+          ],
+          "source_file": "app-project-pygmy/project/pygmyui/pygmyui/settings.py",
+          "line": "151:1",
+          "snippet": "PYGMY_API_PASSWORD = 'admin'"
+        },
+        {
+          "rule_id": "CWE-321-HARDCODED-CRYPTO-KEY",
+          "vulnerabilities": [
+            "CWE-321"
+          ],
+          "source_file": "app-project-pygmy/project/pygmyui/pygmyui/settings.py",
+          "line": "24:1",
+          "snippet": "SECRET_KEY = 'fd(9^fy^sa$$g&a)lknmol!m6@w52h=46r(%-=%elcim9ycc1f'"
+        },
+        {
+          "rule_id": "CWE-798-HARDCODED-CREDENTIALS",
+          "vulnerabilities": [
+            "CWE-798"
+          ],
+          "source_file": "app-project-pygmy/project/pygmyui/pygmyui/settings.py",
+          "line": "24:1",
+          "snippet": "SECRET_KEY = 'fd(9^fy^sa$$g&a)lknmol!m6@w52h=46r(%-=%elcim9ycc1f'"
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmyui/pygmyui/settings_tests.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-259-HARDCODED-PASSWORD"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-259"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-259-HARDCODED-PASSWORD",
+          "vulnerabilities": [
+            "CWE-259"
+          ],
+          "source_file": "app-project-pygmy/project/pygmyui/pygmyui/settings_tests.py",
+          "line": "8:1",
+          "snippet": "PYGMY_API_PASSWORD = 'admin'"
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmyui/pygmyui/urls.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmyui/pygmyui/wsgi.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmyui/pygmyui/__init__.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmyui/restclient/base.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-117-LOG-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-117"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-117-LOG-INJECTION",
+          "vulnerabilities": [
+            "CWE-117"
+          ],
+          "source_file": "app-project-pygmy/project/pygmyui/restclient/base.py",
+          "line": "114:13",
+          "snippet": "logger.debug('Reveived error response: %s', response.text)",
+          "tainted_variable": "response"
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmyui/restclient/errors.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmyui/restclient/error_msg.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-703-IMPROPER-EXCEPTION-HANDLING"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-703"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-703-IMPROPER-EXCEPTION-HANDLING",
+          "vulnerabilities": [
+            "CWE-703"
+          ],
+          "source_file": "app-project-pygmy/project/pygmyui/restclient/error_msg.py",
+          "line": "14:13",
+          "snippet": "except json.decoder.JSONDecodeError: pass"
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmyui/restclient/pygmy.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-918-SSRF"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-918"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-918-SSRF",
+          "vulnerabilities": [
+            "CWE-918"
+          ],
+          "source_file": "app-project-pygmy/project/pygmyui/restclient/pygmy.py",
+          "line": "181:9",
+          "snippet": "r = requests.get(self.rest_url + user_path, headers=headers)",
+          "tainted_variable": "headers"
+        },
+        {
+          "rule_id": "CWE-918-SSRF",
+          "vulnerabilities": [
+            "CWE-918"
+          ],
+          "source_file": "app-project-pygmy/project/pygmyui/restclient/pygmy.py",
+          "line": "126:9",
+          "snippet": "r = requests.get(self.rest_url + url_path, headers=self.header)",
+          "tainted_variable": "url_path"
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmyui/restclient/__init__.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmyui/user_auth/apps.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmyui/user_auth/tests.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmyui/user_auth/urls.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmyui/user_auth/views.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-259-HARDCODED-PASSWORD",
+        "CWE-614-SENSITIVE-COOKIE-INSECURE",
+        "CWE-ERROR-DETAILS-TO-CLIENT"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-200",
+        "CWE-209",
+        "CWE-259",
+        "CWE-614"
+      ],
+      "findings_count": 8,
+      "findings": [
+        {
+          "rule_id": "CWE-614-SENSITIVE-COOKIE-INSECURE",
+          "vulnerabilities": [
+            "CWE-614"
+          ],
+          "source_file": "app-project-pygmy/project/pygmyui/user_auth/views.py",
+          "line": "63:18",
+          "snippet": "response.set_cookie( k, v, expires=expires)"
+        },
+        {
+          "rule_id": "CWE-614-SENSITIVE-COOKIE-INSECURE",
+          "vulnerabilities": [
+            "CWE-614"
+          ],
+          "source_file": "app-project-pygmy/project/pygmyui/user_auth/views.py",
+          "line": "66:13",
+          "snippet": "response.set_cookie(AUTH_COOKIE_NAME, user_obj['access_token'])"
+        },
+        {
+          "rule_id": "CWE-614-SENSITIVE-COOKIE-INSECURE",
+          "vulnerabilities": [
+            "CWE-614"
+          ],
+          "source_file": "app-project-pygmy/project/pygmyui/user_auth/views.py",
+          "line": "106:14",
+          "snippet": "response.set_cookie( k, v, expires=expires)"
+        },
+        {
+          "rule_id": "CWE-614-SENSITIVE-COOKIE-INSECURE",
+          "vulnerabilities": [
+            "CWE-614"
+          ],
+          "source_file": "app-project-pygmy/project/pygmyui/user_auth/views.py",
+          "line": "109:9",
+          "snippet": "response.set_cookie(AUTH_COOKIE_NAME, user_obj['access_token'])"
+        },
+        {
+          "rule_id": "CWE-ERROR-DETAILS-TO-CLIENT",
+          "vulnerabilities": [
+            "CWE-200",
+            "CWE-209"
+          ],
+          "source_file": "app-project-pygmy/project/pygmyui/user_auth/views.py",
+          "line": "56:17",
+          "snippet": "return render(request, 'unauthorized.html', context=API_ERROR(e.args[0]), status=400)",
+          "tainted_variable": "e"
+        },
+        {
+          "rule_id": "CWE-ERROR-DETAILS-TO-CLIENT",
+          "vulnerabilities": [
+            "CWE-200",
+            "CWE-209"
+          ],
+          "source_file": "app-project-pygmy/project/pygmyui/user_auth/views.py",
+          "line": "59:17",
+          "snippet": "return render(request, '404.html', context=API_ERROR(e.args[0]), status=404)",
+          "tainted_variable": "e"
+        },
+        {
+          "rule_id": "CWE-ERROR-DETAILS-TO-CLIENT",
+          "vulnerabilities": [
+            "CWE-200",
+            "CWE-209"
+          ],
+          "source_file": "app-project-pygmy/project/pygmyui/user_auth/views.py",
+          "line": "102:13",
+          "snippet": "return render(request, '400.html', context=API_ERROR(e.args[0]), status=400)",
+          "tainted_variable": "e"
+        },
+        {
+          "rule_id": "CWE-259-HARDCODED-PASSWORD",
+          "vulnerabilities": [
+            "CWE-259"
+          ],
+          "source_file": "app-project-pygmy/project/pygmyui/user_auth/views.py",
+          "line": "38:46",
+          "snippet": "password='Password mismatch'"
+        }
+      ]
+    },
+    {
+      "source_file": "app-project-pygmy/project/pygmyui/user_auth/__init__.py",
+      "xml_source": "projectpygmy.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    }
+  ],
+  "rules_skipped": {
+    "python": [
+      {
+        "rule_id": "CWE-120-BUFFER-OVERFLOW",
+        "reason": "non applicabile a 'python' (languages=['c'])"
+      },
+      {
+        "rule_id": "CWE-129-IMPROPER-ARRAY-INDEX-VALIDATION",
+        "reason": "non applicabile a 'python' (languages=['c', 'java'])"
+      },
+      {
+        "rule_id": "CWE-129-ARRAY-SIZE-VALIDATION",
+        "reason": "non applicabile a 'python' (languages=['c', 'java'])"
+      },
+      {
+        "rule_id": "Numeric Truncation Error",
+        "reason": "non applicabile a 'python' (languages=['java'])"
+      },
+      {
+        "rule_id": "CWE-400-UNCONTROLLED-SLEEP-C",
+        "reason": "non applicabile a 'python' (languages=['c'])"
+      },
+      {
+        "rule_id": "CWE-415-416-MEMORY-MISUSE-AFTER-FREE",
+        "reason": "non applicabile a 'python' (languages=['c'])"
+      },
+      {
+        "rule_id": "CWE-476-NULL-POINTER-DEREFERENCE",
+        "reason": "non applicabile a 'python' (languages=['c', 'java'])"
+      },
+      {
+        "rule_id": "CWE-502-JACKSON-UNSAFE-DESERIALIZATION",
+        "reason": "non applicabile a 'python' (languages=['java'])"
+      },
+      {
+        "rule_id": "CWE-611-XXE-KWARGS",
+        "reason": "non applicabile a 'python' (languages=['javascript'])"
+      },
+      {
+        "rule_id": "UNCHECKED-CAST",
+        "reason": "non applicabile a 'python' (languages=['java'])"
+      },
+      {
+        "rule_id": "CWE-943-NOSQL-INJECTION",
+        "reason": "non applicabile a 'python' (languages=['javascript'])"
+      }
+    ]
+  }
+}
