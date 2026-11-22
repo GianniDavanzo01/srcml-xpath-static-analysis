@@ -1406,7 +1406,8 @@ class JavaAdapter(LanguageAdapter):
         return [
             "*.length", "*.hashCode", "*.isEmpty", "*.equals", "*.compareTo",
             "*.startsWith", "*.endsWith", "*.contains", "*.indexOf", "*.lastIndexOf",
-            "*.parseInt","*.parseLong","*.valueOf"
+            "*.parseInt","*.parseLong", "Integer.valueOf", "Long.valueOf", "Short.valueOf",
+            "Byte.valueOf", "Float.valueOf", "Double.valueOf", "Boolean.valueOf"
         ]
 
     def taint_propagating_calls(self) -> dict:

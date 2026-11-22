@@ -175,10 +175,8 @@ def _sink_call_with_var_arg(uso, spec, fstring_nodes, adapter, imports):
         arg_list = call_node.xpath("./src:argument_list", namespaces=NS)
         if not arg_list:
             continue
-            
 
-        # if uso not in arg_list[0].iter():
-        #     continue
+        
         if arg_list[0] not in uso.iterancestors():
             continue
 
@@ -250,6 +248,8 @@ def _sink_assigned_property(uso, spec, fstring_nodes, adapter, imports):
     target = adapter.resolve_name_text(name_text(lhs[0]), imports, node=lhs[0])
     var_type = adapter.resolve_variable_type(lhs[0], name_text(lhs[0]).split(".")[0], NS)
     target = f"{var_type}.{'.'.join(name_text(lhs[0]).split('.')[1:])}" if var_type else target
+    if "." not in target:
+        return False
     return any(call_matches(target, n, adapter) for n in spec.get("name", []))
 
 
