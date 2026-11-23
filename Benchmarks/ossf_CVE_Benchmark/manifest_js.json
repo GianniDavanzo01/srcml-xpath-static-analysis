@@ -1,0 +1,1295 @@
+[
+  {
+    "cve": "CVE-2016-10735",
+    "primary_cwe": "CWE-79",
+    "cwes": [
+      "CWE-116",
+      "CWE-79"
+    ],
+    "files": [
+      {
+        "orig_file": "js/src/util.js",
+        "pre_path": "ossf_js_supportate/CWE-79/CVE-2016-10735/pre_util.js",
+        "post_path": "ossf_js_supportate/CWE-79/CVE-2016-10735/post_util.js",
+        "lines": [
+          120
+        ]
+      }
+    ]
+  },
+  {
+    "cve": "CVE-2017-0931",
+    "primary_cwe": "CWE-79",
+    "cwes": [
+      "CWE-116",
+      "CWE-79"
+    ],
+    "files": [
+      {
+        "orig_file": "src/html-janitor.js",
+        "pre_path": "ossf_js_supportate/CWE-79/CVE-2017-0931/pre_html-janitor.js",
+        "post_path": "ossf_js_supportate/CWE-79/CVE-2017-0931/post_html-janitor.js",
+        "lines": [
+          43
+        ]
+      }
+    ]
+  },
+  {
+    "cve": "CVE-2017-1000006",
+    "primary_cwe": "CWE-79",
+    "cwes": [
+      "CWE-116",
+      "CWE-20",
+      "CWE-79"
+    ],
+    "files": [
+      {
+        "orig_file": "src/lib/svg_text_utils.js",
+        "pre_path": "ossf_js_supportate/CWE-79/CVE-2017-1000006/pre_svg_text_utils.js",
+        "post_path": "ossf_js_supportate/CWE-79/CVE-2017-1000006/post_svg_text_utils.js",
+        "lines": [
+          270
+        ]
+      }
+    ]
+  },
+  {
+    "cve": "CVE-2017-1000219",
+    "primary_cwe": "CWE-78",
+    "cwes": [
+      "CWE-78",
+      "CWE-88"
+    ],
+    "files": [
+      {
+        "orig_file": "index.js",
+        "pre_path": "ossf_js_supportate/CWE-78/CVE-2017-1000219/pre_index.js",
+        "post_path": "ossf_js_supportate/CWE-78/CVE-2017-1000219/post_index.js",
+        "lines": [
+          82
+        ]
+      }
+    ]
+  },
+  {
+    "cve": "CVE-2017-1001004",
+    "primary_cwe": "CWE-94",
+    "cwes": [
+      "CWE-116",
+      "CWE-79",
+      "CWE-94"
+    ],
+    "files": [
+      {
+        "orig_file": "typed-function.js",
+        "pre_path": "ossf_js_supportate/CWE-94/CVE-2017-1001004/pre_typed-function.js",
+        "post_path": "ossf_js_supportate/CWE-94/CVE-2017-1001004/post_typed-function.js",
+        "lines": [
+          1118
+        ]
+      }
+    ]
+  },
+  {
+    "cve": "CVE-2017-10910",
+    "primary_cwe": "CWE-770",
+    "cwes": [
+      "CWE-770"
+    ],
+    "files": [
+      {
+        "orig_file": "lib/client.js",
+        "pre_path": "ossf_js_supportate/CWE-770/CVE-2017-10910/pre_client.js",
+        "post_path": "ossf_js_supportate/CWE-770/CVE-2017-10910/post_client.js",
+        "lines": [
+          267
+        ]
+      }
+    ]
+  },
+  {
+    "cve": "CVE-2017-15010",
+    "primary_cwe": "CWE-730",
+    "cwes": [
+      "CWE-400",
+      "CWE-730"
+    ],
+    "files": [
+      {
+        "orig_file": "lib/cookie.js",
+        "pre_path": "ossf_js_supportate/CWE-730/CVE-2017-15010/pre_cookie.js",
+        "post_path": "ossf_js_supportate/CWE-730/CVE-2017-15010/post_cookie.js",
+        "lines": [
+          61
+        ]
+      }
+    ]
+  },
+  {
+    "cve": "CVE-2017-16011",
+    "primary_cwe": "CWE-79",
+    "cwes": [
+      "CWE-79"
+    ],
+    "files": [
+      {
+        "orig_file": "src/core.js",
+        "pre_path": "ossf_js_supportate/CWE-79/CVE-2017-16011/pre_core.js",
+        "post_path": "ossf_js_supportate/CWE-79/CVE-2017-16011/post_core.js",
+        "lines": [
+          52
+        ]
+      }
+    ]
+  },
+  {
+    "cve": "CVE-2017-16014",
+    "primary_cwe": "CWE-730",
+    "cwes": [
+      "CWE-730"
+    ],
+    "files": [
+      {
+        "orig_file": "lib/node-http-proxy.js",
+        "pre_path": "ossf_js_supportate/CWE-730/CVE-2017-16014/pre_node-http-proxy.js",
+        "post_path": "ossf_js_supportate/CWE-730/CVE-2017-16014/post_node-http-proxy.js",
+        "lines": [
+          225
+        ]
+      }
+    ]
+  },
+  {
+    "cve": "CVE-2017-16018",
+    "primary_cwe": "CWE-79",
+    "cwes": [
+      "CWE-116",
+      "CWE-79"
+    ],
+    "files": [
+      {
+        "orig_file": "lib/server.js",
+        "pre_path": "ossf_js_supportate/CWE-79/CVE-2017-16018/pre_server.js",
+        "post_path": "ossf_js_supportate/CWE-79/CVE-2017-16018/post_server.js",
+        "lines": [
+          202
+        ]
+      }
+    ]
+  },
+  {
+    "cve": "CVE-2017-16023",
+    "primary_cwe": "CWE-730",
+    "cwes": [
+      "CWE-400",
+      "CWE-730"
+    ],
+    "files": [
+      {
+        "orig_file": "index.js",
+        "pre_path": "ossf_js_supportate/CWE-730/CVE-2017-16023/pre_index.js",
+        "post_path": "ossf_js_supportate/CWE-730/CVE-2017-16023/post_index.js",
+        "lines": [
+          8
+        ]
+      }
+    ]
+  },
+  {
+    "cve": "CVE-2017-16026",
+    "primary_cwe": "CWE-770",
+    "cwes": [
+      "CWE-770"
+    ],
+    "files": [
+      {
+        "orig_file": "lib/multipart.js",
+        "pre_path": "ossf_js_supportate/CWE-770/CVE-2017-16026/pre_multipart.js",
+        "post_path": "ossf_js_supportate/CWE-770/CVE-2017-16026/post_multipart.js",
+        "lines": [
+          71
+        ]
+      }
+    ]
+  },
+  {
+    "cve": "CVE-2017-16028",
+    "primary_cwe": "CWE-338",
+    "cwes": [
+      "CWE-338"
+    ],
+    "files": [
+      {
+        "orig_file": "index.js",
+        "pre_path": "ossf_js_supportate/CWE-338/CVE-2017-16028/pre_index.js",
+        "post_path": "ossf_js_supportate/CWE-338/CVE-2017-16028/post_index.js",
+        "lines": [
+          81
+        ]
+      }
+    ]
+  },
+  {
+    "cve": "CVE-2017-16029",
+    "primary_cwe": "CWE-22",
+    "cwes": [
+      "CWE-22",
+      "CWE-23",
+      "CWE-36",
+      "CWE-73",
+      "CWE-99"
+    ],
+    "files": [
+      {
+        "orig_file": "lib/routes/statics.js",
+        "pre_path": "ossf_js_supportate/CWE-22/CVE-2017-16029/pre_statics.js",
+        "post_path": "ossf_js_supportate/CWE-22/CVE-2017-16029/post_statics.js",
+        "lines": [
+          31
+        ]
+      }
+    ]
+  },
+  {
+    "cve": "CVE-2017-16030",
+    "primary_cwe": "CWE-730",
+    "cwes": [
+      "CWE-400",
+      "CWE-730"
+    ],
+    "files": [
+      {
+        "orig_file": "lib/regexps.js",
+        "pre_path": "ossf_js_supportate/CWE-730/CVE-2017-16030/pre_regexps.js",
+        "post_path": "ossf_js_supportate/CWE-730/CVE-2017-16030/post_regexps.js",
+        "lines": [
+          887
+        ]
+      }
+    ]
+  },
+  {
+    "cve": "CVE-2017-16031",
+    "primary_cwe": "CWE-338",
+    "cwes": [
+      "CWE-338"
+    ],
+    "files": [
+      {
+        "orig_file": "lib/manager.js",
+        "pre_path": "ossf_js_supportate/CWE-338/CVE-2017-16031/pre_manager.js",
+        "post_path": "ossf_js_supportate/CWE-338/CVE-2017-16031/post_manager.js",
+        "lines": [
+          755
+        ]
+      }
+    ]
+  },
+  {
+    "cve": "CVE-2017-16034",
+    "primary_cwe": "CWE-78",
+    "cwes": [
+      "CWE-78",
+      "CWE-88"
+    ],
+    "files": [
+      {
+        "orig_file": "lib/stats.js",
+        "pre_path": "ossf_js_supportate/CWE-78/CVE-2017-16034/pre_stats.js",
+        "post_path": "ossf_js_supportate/CWE-78/CVE-2017-16034/post_stats.js",
+        "lines": [
+          103
+        ]
+      }
+    ]
+  },
+  {
+    "cve": "CVE-2017-16042",
+    "primary_cwe": "CWE-78",
+    "cwes": [
+      "CWE-78",
+      "CWE-88"
+    ],
+    "files": [
+      {
+        "orig_file": "lib/growl.js",
+        "pre_path": "ossf_js_supportate/CWE-78/CVE-2017-16042/pre_growl.js",
+        "post_path": "ossf_js_supportate/CWE-78/CVE-2017-16042/post_growl.js",
+        "lines": [
+          289
+        ]
+      }
+    ]
+  },
+  {
+    "cve": "CVE-2017-16043",
+    "primary_cwe": "CWE-79",
+    "cwes": [
+      "CWE-116",
+      "CWE-79"
+    ],
+    "files": [
+      {
+        "orig_file": "client/js/shout.js",
+        "pre_path": "ossf_js_supportate/CWE-79/CVE-2017-16043/pre_shout.js",
+        "post_path": "ossf_js_supportate/CWE-79/CVE-2017-16043/post_shout.js",
+        "lines": [
+          318
+        ]
+      }
+    ]
+  },
+  {
+    "cve": "CVE-2017-16083",
+    "primary_cwe": "CWE-22",
+    "cwes": [
+      "CWE-22",
+      "CWE-23",
+      "CWE-36",
+      "CWE-73",
+      "CWE-99"
+    ],
+    "files": [
+      {
+        "orig_file": "lib/router.js",
+        "pre_path": "ossf_js_supportate/CWE-22/CVE-2017-16083/pre_router.js",
+        "post_path": "ossf_js_supportate/CWE-22/CVE-2017-16083/post_router.js",
+        "lines": [
+          734
+        ]
+      }
+    ]
+  },
+  {
+    "cve": "CVE-2017-16084",
+    "primary_cwe": "CWE-22",
+    "cwes": [
+      "CWE-22",
+      "CWE-23",
+      "CWE-36",
+      "CWE-73",
+      "CWE-99"
+    ],
+    "files": [
+      {
+        "orig_file": "server.js",
+        "pre_path": "ossf_js_supportate/CWE-22/CVE-2017-16084/pre_server.js",
+        "post_path": "ossf_js_supportate/CWE-22/CVE-2017-16084/post_server.js",
+        "lines": [
+          88
+        ]
+      }
+    ]
+  },
+  {
+    "cve": "CVE-2017-16098",
+    "primary_cwe": "CWE-730",
+    "cwes": [
+      "CWE-400",
+      "CWE-730"
+    ],
+    "files": [
+      {
+        "orig_file": "index.js",
+        "pre_path": "ossf_js_supportate/CWE-730/CVE-2017-16098/pre_index.js",
+        "post_path": "ossf_js_supportate/CWE-730/CVE-2017-16098/post_index.js",
+        "lines": [
+          44
+        ]
+      }
+    ]
+  },
+  {
+    "cve": "CVE-2017-16100",
+    "primary_cwe": "CWE-78",
+    "cwes": [
+      "CWE-78",
+      "CWE-88"
+    ],
+    "files": [
+      {
+        "orig_file": "lib/dns-sync.js",
+        "pre_path": "ossf_js_supportate/CWE-78/CVE-2017-16100/pre_dns-sync.js",
+        "post_path": "ossf_js_supportate/CWE-78/CVE-2017-16100/post_dns-sync.js",
+        "lines": [
+          21
+        ]
+      }
+    ]
+  },
+  {
+    "cve": "CVE-2017-16107",
+    "primary_cwe": "CWE-22",
+    "cwes": [
+      "CWE-22",
+      "CWE-23",
+      "CWE-36",
+      "CWE-73",
+      "CWE-99"
+    ],
+    "files": [
+      {
+        "orig_file": "server.js",
+        "pre_path": "ossf_js_supportate/CWE-22/CVE-2017-16107/pre_server.js",
+        "post_path": "ossf_js_supportate/CWE-22/CVE-2017-16107/post_server.js",
+        "lines": [
+          9
+        ]
+      }
+    ]
+  },
+  {
+    "cve": "CVE-2017-16114",
+    "primary_cwe": "CWE-730",
+    "cwes": [
+      "CWE-400",
+      "CWE-730"
+    ],
+    "files": [
+      {
+        "orig_file": "lib/marked.js",
+        "pre_path": "ossf_js_supportate/CWE-730/CVE-2017-16114/pre_marked.js",
+        "post_path": "ossf_js_supportate/CWE-730/CVE-2017-16114/post_marked.js",
+        "lines": [
+          459
+        ]
+      }
+    ]
+  },
+  {
+    "cve": "CVE-2017-16117",
+    "primary_cwe": "CWE-730",
+    "cwes": [
+      "CWE-400",
+      "CWE-730"
+    ],
+    "files": [
+      {
+        "orig_file": "slug.js",
+        "pre_path": "ossf_js_supportate/CWE-730/CVE-2017-16117/pre_slug.js",
+        "post_path": "ossf_js_supportate/CWE-730/CVE-2017-16117/post_slug.js",
+        "lines": [
+          64
+        ]
+      }
+    ]
+  },
+  {
+    "cve": "CVE-2017-16118",
+    "primary_cwe": "CWE-730",
+    "cwes": [
+      "CWE-400",
+      "CWE-730"
+    ],
+    "files": [
+      {
+        "orig_file": "index.js",
+        "pre_path": "ossf_js_supportate/CWE-730/CVE-2017-16118/pre_index.js",
+        "post_path": "ossf_js_supportate/CWE-730/CVE-2017-16118/post_index.js",
+        "lines": [
+          14
+        ]
+      }
+    ]
+  },
+  {
+    "cve": "CVE-2017-16119",
+    "primary_cwe": "CWE-730",
+    "cwes": [
+      "CWE-400",
+      "CWE-730"
+    ],
+    "files": [
+      {
+        "orig_file": "index.js",
+        "pre_path": "ossf_js_supportate/CWE-730/CVE-2017-16119/pre_index.js",
+        "post_path": "ossf_js_supportate/CWE-730/CVE-2017-16119/post_index.js",
+        "lines": [
+          22
+        ]
+      }
+    ]
+  },
+  {
+    "cve": "CVE-2017-16136",
+    "primary_cwe": "CWE-730",
+    "cwes": [
+      "CWE-400",
+      "CWE-730"
+    ],
+    "files": [
+      {
+        "orig_file": "index.js",
+        "pre_path": "ossf_js_supportate/CWE-730/CVE-2017-16136/pre_index.js",
+        "post_path": "ossf_js_supportate/CWE-730/CVE-2017-16136/post_index.js",
+        "lines": [
+          120
+        ]
+      }
+    ]
+  },
+  {
+    "cve": "CVE-2017-16224",
+    "primary_cwe": "CWE-601",
+    "cwes": [
+      "CWE-601"
+    ],
+    "files": [
+      {
+        "orig_file": "st.js",
+        "pre_path": "ossf_js_supportate/CWE-601/CVE-2017-16224/pre_st.js",
+        "post_path": "ossf_js_supportate/CWE-601/CVE-2017-16224/post_st.js",
+        "lines": [
+          351
+        ]
+      }
+    ]
+  },
+  {
+    "cve": "CVE-2017-16226",
+    "primary_cwe": "CWE-94",
+    "cwes": [
+      "CWE-20",
+      "CWE-94"
+    ],
+    "files": [
+      {
+        "orig_file": "index.js",
+        "pre_path": "ossf_js_supportate/CWE-94/CVE-2017-16226/pre_index.js",
+        "post_path": "ossf_js_supportate/CWE-94/CVE-2017-16226/post_index.js",
+        "lines": [
+          118
+        ]
+      }
+    ]
+  },
+  {
+    "cve": "CVE-2017-16877",
+    "primary_cwe": "CWE-22",
+    "cwes": [
+      "CWE-22",
+      "CWE-23",
+      "CWE-36",
+      "CWE-73",
+      "CWE-99"
+    ],
+    "files": [
+      {
+        "orig_file": "server/render.js",
+        "pre_path": "ossf_js_supportate/CWE-22/CVE-2017-16877/pre_render.js",
+        "post_path": "ossf_js_supportate/CWE-22/CVE-2017-16877/post_render.js",
+        "lines": [
+          218
+        ]
+      }
+    ]
+  },
+  {
+    "cve": "CVE-2017-18352",
+    "primary_cwe": "CWE-79",
+    "cwes": [
+      "CWE-116",
+      "CWE-79"
+    ],
+    "files": [
+      {
+        "orig_file": "src/main.js",
+        "pre_path": "ossf_js_supportate/CWE-79/CVE-2017-18352/pre_main.js",
+        "post_path": "ossf_js_supportate/CWE-79/CVE-2017-18352/post_main.js",
+        "lines": [
+          106
+        ]
+      }
+    ]
+  },
+  {
+    "cve": "CVE-2017-18353",
+    "primary_cwe": "CWE-79",
+    "cwes": [
+      "CWE-116",
+      "CWE-79"
+    ],
+    "files": [
+      {
+        "orig_file": "src/main.js",
+        "pre_path": "ossf_js_supportate/CWE-79/CVE-2017-18353/pre_main.js",
+        "post_path": "ossf_js_supportate/CWE-79/CVE-2017-18353/post_main.js",
+        "lines": [
+          130
+        ]
+      }
+    ]
+  },
+  {
+    "cve": "CVE-2017-18354",
+    "primary_cwe": "CWE-918",
+    "cwes": [
+      "CWE-918"
+    ],
+    "files": [
+      {
+        "orig_file": "src/renderer.js",
+        "pre_path": "ossf_js_supportate/CWE-918/CVE-2017-18354/pre_renderer.js",
+        "post_path": "ossf_js_supportate/CWE-918/CVE-2017-18354/post_renderer.js",
+        "lines": [
+          75
+        ]
+      }
+    ]
+  },
+  {
+    "cve": "CVE-2017-18635",
+    "primary_cwe": "CWE-79",
+    "cwes": [
+      "CWE-116",
+      "CWE-79"
+    ],
+    "files": [
+      {
+        "orig_file": "app/ui.js",
+        "pre_path": "ossf_js_supportate/CWE-79/CVE-2017-18635/pre_ui.js",
+        "post_path": "ossf_js_supportate/CWE-79/CVE-2017-18635/post_ui.js",
+        "lines": [
+          534
+        ]
+      }
+    ]
+  },
+  {
+    "cve": "CVE-2017-5954",
+    "primary_cwe": "CWE-94",
+    "cwes": [
+      "CWE-116",
+      "CWE-79",
+      "CWE-94"
+    ],
+    "files": [
+      {
+        "orig_file": "lib/deserialize.js",
+        "pre_path": "ossf_js_supportate/CWE-94/CVE-2017-5954/pre_deserialize.js",
+        "post_path": "ossf_js_supportate/CWE-94/CVE-2017-5954/post_deserialize.js",
+        "lines": [
+          28
+        ]
+      }
+    ]
+  },
+  {
+    "cve": "CVE-2018-1000086",
+    "primary_cwe": "CWE-79",
+    "cwes": [
+      "CWE-116",
+      "CWE-601",
+      "CWE-79"
+    ],
+    "files": [
+      {
+        "orig_file": "src/pym.js",
+        "pre_path": "ossf_js_supportate/CWE-79/CVE-2018-1000086/pre_pym.js",
+        "post_path": "ossf_js_supportate/CWE-79/CVE-2018-1000086/post_pym.js",
+        "lines": [
+          569
+        ]
+      }
+    ]
+  },
+  {
+    "cve": "CVE-2018-1000620",
+    "primary_cwe": "CWE-327",
+    "cwes": [
+      "CWE-327"
+    ],
+    "files": [
+      {
+        "orig_file": "lib/index.js",
+        "pre_path": "ossf_js_supportate/CWE-327/CVE-2018-1000620/pre_index.js",
+        "post_path": "ossf_js_supportate/CWE-327/CVE-2018-1000620/post_index.js",
+        "lines": [
+          32
+        ]
+      }
+    ]
+  },
+  {
+    "cve": "CVE-2018-1002203",
+    "primary_cwe": "CWE-22",
+    "cwes": [
+      "CWE-22"
+    ],
+    "files": [
+      {
+        "orig_file": "lib/extract.js",
+        "pre_path": "ossf_js_supportate/CWE-22/CVE-2018-1002203/pre_extract.js",
+        "post_path": "ossf_js_supportate/CWE-22/CVE-2018-1002203/post_extract.js",
+        "lines": [
+          21
+        ]
+      }
+    ]
+  },
+  {
+    "cve": "CVE-2018-1002204",
+    "primary_cwe": "CWE-22",
+    "cwes": [
+      "CWE-22"
+    ],
+    "files": [
+      {
+        "orig_file": "util/utils.js",
+        "pre_path": "ossf_js_supportate/CWE-22/CVE-2018-1002204/pre_utils.js",
+        "post_path": "ossf_js_supportate/CWE-22/CVE-2018-1002204/post_utils.js",
+        "lines": [
+          109
+        ]
+      }
+    ]
+  },
+  {
+    "cve": "CVE-2018-11798",
+    "primary_cwe": "CWE-22",
+    "cwes": [
+      "CWE-22",
+      "CWE-23",
+      "CWE-36",
+      "CWE-73",
+      "CWE-99"
+    ],
+    "files": [
+      {
+        "orig_file": "lib/nodejs/lib/thrift/web_server.js",
+        "pre_path": "ossf_js_supportate/CWE-22/CVE-2018-11798/pre_web_server.js",
+        "post_path": "ossf_js_supportate/CWE-22/CVE-2018-11798/post_web_server.js",
+        "lines": [
+          419
+        ]
+      }
+    ]
+  },
+  {
+    "cve": "CVE-2018-13797",
+    "primary_cwe": "CWE-78",
+    "cwes": [
+      "CWE-78",
+      "CWE-88"
+    ],
+    "files": [
+      {
+        "orig_file": "lib/linux.js",
+        "pre_path": "ossf_js_supportate/CWE-78/CVE-2018-13797/pre_linux.js",
+        "post_path": "ossf_js_supportate/CWE-78/CVE-2018-13797/post_linux.js",
+        "lines": [
+          4
+        ]
+      }
+    ]
+  },
+  {
+    "cve": "CVE-2018-16460",
+    "primary_cwe": "CWE-78",
+    "cwes": [
+      "CWE-78",
+      "CWE-88"
+    ],
+    "files": [
+      {
+        "orig_file": "lib/index.js",
+        "pre_path": "ossf_js_supportate/CWE-78/CVE-2018-16460/pre_index.js",
+        "post_path": "ossf_js_supportate/CWE-78/CVE-2018-16460/post_index.js",
+        "lines": [
+          8
+        ]
+      }
+    ]
+  },
+  {
+    "cve": "CVE-2018-16461",
+    "primary_cwe": "CWE-78",
+    "cwes": [
+      "CWE-78",
+      "CWE-88"
+    ],
+    "files": [
+      {
+        "orig_file": "lib/classes/tools.js",
+        "pre_path": "ossf_js_supportate/CWE-78/CVE-2018-16461/pre_tools.js",
+        "post_path": "ossf_js_supportate/CWE-78/CVE-2018-16461/post_tools.js",
+        "lines": [
+          114
+        ]
+      }
+    ]
+  },
+  {
+    "cve": "CVE-2018-16462",
+    "primary_cwe": "CWE-78",
+    "cwes": [
+      "CWE-78",
+      "CWE-88"
+    ],
+    "files": [
+      {
+        "orig_file": "index.js",
+        "pre_path": "ossf_js_supportate/CWE-78/CVE-2018-16462/pre_index.js",
+        "post_path": "ossf_js_supportate/CWE-78/CVE-2018-16462/post_index.js",
+        "lines": [
+          54
+        ]
+      }
+    ]
+  },
+  {
+    "cve": "CVE-2018-16472",
+    "primary_cwe": "CWE-400",
+    "cwes": [
+      "CWE-250",
+      "CWE-400"
+    ],
+    "files": [
+      {
+        "orig_file": "lib/index.js",
+        "pre_path": "ossf_js_supportate/CWE-400/CVE-2018-16472/pre_index.js",
+        "post_path": "ossf_js_supportate/CWE-400/CVE-2018-16472/post_index.js",
+        "lines": [
+          39
+        ]
+      }
+    ]
+  },
+  {
+    "cve": "CVE-2018-16478",
+    "primary_cwe": "CWE-22",
+    "cwes": [
+      "CWE-22",
+      "CWE-23",
+      "CWE-36",
+      "CWE-73",
+      "CWE-99"
+    ],
+    "files": [
+      {
+        "orig_file": "simplehttpserver/simplehttpserver.js",
+        "pre_path": "ossf_js_supportate/CWE-22/CVE-2018-16478/pre_simplehttpserver.js",
+        "post_path": "ossf_js_supportate/CWE-22/CVE-2018-16478/post_simplehttpserver.js",
+        "lines": [
+          76
+        ]
+      }
+    ]
+  },
+  {
+    "cve": "CVE-2018-16485",
+    "primary_cwe": "CWE-22",
+    "cwes": [
+      "CWE-22",
+      "CWE-23",
+      "CWE-36",
+      "CWE-73",
+      "CWE-99"
+    ],
+    "files": [
+      {
+        "orig_file": "lib/index.js",
+        "pre_path": "ossf_js_supportate/CWE-22/CVE-2018-16485/pre_index.js",
+        "post_path": "ossf_js_supportate/CWE-22/CVE-2018-16485/post_index.js",
+        "lines": [
+          11
+        ]
+      }
+    ]
+  },
+  {
+    "cve": "CVE-2018-16487",
+    "primary_cwe": "CWE-78",
+    "cwes": [
+      "CWE-400",
+      "CWE-78",
+      "CWE-79",
+      "CWE-915",
+      "CWE-94"
+    ],
+    "files": [
+      {
+        "orig_file": "lodash.js",
+        "pre_path": "ossf_js_supportate/CWE-78/CVE-2018-16487/pre_lodash.js",
+        "post_path": "ossf_js_supportate/CWE-78/CVE-2018-16487/post_lodash.js",
+        "lines": [
+          2573
+        ]
+      }
+    ]
+  },
+  {
+    "cve": "CVE-2018-16489",
+    "primary_cwe": "CWE-78",
+    "cwes": [
+      "CWE-400",
+      "CWE-78",
+      "CWE-79",
+      "CWE-915",
+      "CWE-94"
+    ],
+    "files": [
+      {
+        "orig_file": "packages/object-extend/index.js",
+        "pre_path": "ossf_js_supportate/CWE-78/CVE-2018-16489/pre_index.js",
+        "post_path": "ossf_js_supportate/CWE-78/CVE-2018-16489/post_index.js",
+        "lines": [
+          50
+        ]
+      }
+    ]
+  },
+  {
+    "cve": "CVE-2018-18282",
+    "primary_cwe": "CWE-94",
+    "cwes": [
+      "CWE-116",
+      "CWE-79",
+      "CWE-94"
+    ],
+    "files": [
+      {
+        "orig_file": "server/document.js",
+        "pre_path": "ossf_js_supportate/CWE-94/CVE-2018-18282/pre_document.js",
+        "post_path": "ossf_js_supportate/CWE-94/CVE-2018-18282/post_document.js",
+        "lines": [
+          190
+        ]
+      }
+    ]
+  },
+  {
+    "cve": "CVE-2018-3736",
+    "primary_cwe": "CWE-770",
+    "cwes": [
+      "CWE-770"
+    ],
+    "files": [
+      {
+        "orig_file": "index.js",
+        "pre_path": "ossf_js_supportate/CWE-770/CVE-2018-3736/pre_index.js",
+        "post_path": "ossf_js_supportate/CWE-770/CVE-2018-3736/post_index.js",
+        "lines": [
+          207
+        ]
+      }
+    ]
+  },
+  {
+    "cve": "CVE-2018-3743",
+    "primary_cwe": "CWE-601",
+    "cwes": [
+      "CWE-601"
+    ],
+    "files": [
+      {
+        "orig_file": "bin/hekto.js",
+        "pre_path": "ossf_js_supportate/CWE-601/CVE-2018-3743/pre_hekto.js",
+        "post_path": "ossf_js_supportate/CWE-601/CVE-2018-3743/post_hekto.js",
+        "lines": [
+          187
+        ]
+      }
+    ]
+  },
+  {
+    "cve": "CVE-2018-3770",
+    "primary_cwe": "CWE-94",
+    "cwes": [
+      "CWE-94"
+    ],
+    "files": [
+      {
+        "orig_file": "index.js",
+        "pre_path": "ossf_js_supportate/CWE-94/CVE-2018-3770/pre_index.js",
+        "post_path": "ossf_js_supportate/CWE-94/CVE-2018-3770/post_index.js",
+        "lines": [
+          57
+        ]
+      }
+    ]
+  },
+  {
+    "cve": "CVE-2018-3783",
+    "primary_cwe": "CWE-89",
+    "cwes": [
+      "CWE-89"
+    ],
+    "files": [
+      {
+        "orig_file": "server/apps/routes/auth.js",
+        "pre_path": "ossf_js_supportate/CWE-89/CVE-2018-3783/pre_auth.js",
+        "post_path": "ossf_js_supportate/CWE-89/CVE-2018-3783/post_auth.js",
+        "lines": [
+          80
+        ]
+      }
+    ]
+  },
+  {
+    "cve": "CVE-2018-6333",
+    "primary_cwe": "CWE-601",
+    "cwes": [
+      "CWE-601"
+    ],
+    "files": [
+      {
+        "orig_file": "pkg/nuclide-hhvm/lib/main.js",
+        "pre_path": "ossf_js_supportate/CWE-601/CVE-2018-6333/pre_main.js",
+        "post_path": "ossf_js_supportate/CWE-601/CVE-2018-6333/post_main.js",
+        "lines": [
+          129
+        ]
+      }
+    ]
+  },
+  {
+    "cve": "CVE-2019-10744",
+    "primary_cwe": "CWE-94",
+    "cwes": [
+      "CWE-116",
+      "CWE-79",
+      "CWE-94"
+    ],
+    "files": [
+      {
+        "orig_file": "lodash.js",
+        "pre_path": "ossf_js_supportate/CWE-94/CVE-2019-10744/pre_lodash.js",
+        "post_path": "ossf_js_supportate/CWE-94/CVE-2019-10744/post_lodash.js",
+        "lines": [
+          6608
+        ]
+      }
+    ]
+  },
+  {
+    "cve": "CVE-2019-10758",
+    "primary_cwe": "CWE-94",
+    "cwes": [
+      "CWE-116",
+      "CWE-79",
+      "CWE-94"
+    ],
+    "files": [
+      {
+        "orig_file": "lib/bson.js",
+        "pre_path": "ossf_js_supportate/CWE-94/CVE-2019-10758/pre_bson.js",
+        "post_path": "ossf_js_supportate/CWE-94/CVE-2019-10758/post_bson.js",
+        "lines": [
+          60
+        ]
+      }
+    ]
+  },
+  {
+    "cve": "CVE-2019-10759",
+    "primary_cwe": "CWE-94",
+    "cwes": [
+      "CWE-94"
+    ],
+    "files": [
+      {
+        "orig_file": "src/browser.js",
+        "pre_path": "ossf_js_supportate/CWE-94/CVE-2019-10759/pre_browser.js",
+        "post_path": "ossf_js_supportate/CWE-94/CVE-2019-10759/post_browser.js",
+        "lines": [
+          49
+        ]
+      }
+    ]
+  },
+  {
+    "cve": "CVE-2019-10761",
+    "primary_cwe": "CWE-94",
+    "cwes": [
+      "CWE-74",
+      "CWE-94"
+    ],
+    "files": [
+      {
+        "orig_file": "lib/contextify.js",
+        "pre_path": "ossf_js_supportate/CWE-94/CVE-2019-10761/pre_contextify.js",
+        "post_path": "ossf_js_supportate/CWE-94/CVE-2019-10761/post_contextify.js",
+        "lines": [
+          332
+        ]
+      }
+    ]
+  },
+  {
+    "cve": "CVE-2019-15657",
+    "primary_cwe": "CWE-94",
+    "cwes": [
+      "CWE-94"
+    ],
+    "files": [
+      {
+        "orig_file": "src/get-static-value.js",
+        "pre_path": "ossf_js_supportate/CWE-94/CVE-2019-15657/pre_get-static-value.js",
+        "post_path": "ossf_js_supportate/CWE-94/CVE-2019-15657/post_get-static-value.js",
+        "lines": [
+          179
+        ]
+      }
+    ]
+  },
+  {
+    "cve": "CVE-2019-15658",
+    "primary_cwe": "CWE-89",
+    "cwes": [
+      "CWE-89"
+    ],
+    "files": [
+      {
+        "orig_file": "index.js",
+        "pre_path": "ossf_js_supportate/CWE-89/CVE-2019-15658/pre_index.js",
+        "post_path": "ossf_js_supportate/CWE-89/CVE-2019-15658/post_index.js",
+        "lines": [
+          170
+        ]
+      }
+    ]
+  },
+  {
+    "cve": "CVE-2019-18818",
+    "primary_cwe": "CWE-89",
+    "cwes": [
+      "CWE-89"
+    ],
+    "files": [
+      {
+        "orig_file": "packages/strapi-admin/controllers/Auth.js",
+        "pre_path": "ossf_js_supportate/CWE-89/CVE-2019-18818/pre_Auth.js",
+        "post_path": "ossf_js_supportate/CWE-89/CVE-2019-18818/post_Auth.js",
+        "lines": [
+          253
+        ]
+      }
+    ]
+  },
+  {
+    "cve": "CVE-2020-15152",
+    "primary_cwe": "CWE-918",
+    "cwes": [
+      "CWE-918"
+    ],
+    "files": [
+      {
+        "orig_file": "src/connector/active.js",
+        "pre_path": "ossf_js_supportate/CWE-918/CVE-2020-15152/pre_active.js",
+        "post_path": "ossf_js_supportate/CWE-918/CVE-2020-15152/post_active.js",
+        "lines": [
+          32
+        ]
+      }
+    ]
+  },
+  {
+    "cve": "CVE-2020-5251",
+    "primary_cwe": "CWE-89",
+    "cwes": [
+      "CWE-89"
+    ],
+    "files": [
+      {
+        "orig_file": "src/RestQuery.js",
+        "pre_path": "ossf_js_supportate/CWE-89/CVE-2020-5251/pre_RestQuery.js",
+        "post_path": "ossf_js_supportate/CWE-89/CVE-2020-5251/post_RestQuery.js",
+        "lines": [
+          667
+        ]
+      }
+    ]
+  },
+  {
+    "cve": "CVE-2020-7660",
+    "primary_cwe": "CWE-502",
+    "cwes": [
+      "CWE-502"
+    ],
+    "files": [
+      {
+        "orig_file": "index.js",
+        "pre_path": "ossf_js_supportate/CWE-502/CVE-2020-7660/pre_index.js",
+        "post_path": "ossf_js_supportate/CWE-502/CVE-2020-7660/post_index.js",
+        "lines": [
+          10
+        ]
+      }
+    ]
+  },
+  {
+    "cve": "CVE-2020-8135",
+    "primary_cwe": "CWE-601",
+    "cwes": [
+      "CWE-601"
+    ],
+    "files": [
+      {
+        "orig_file": "packages/@uppy/companion/src/server/helpers/utils.js",
+        "pre_path": "ossf_js_supportate/CWE-601/CVE-2020-8135/pre_utils.js",
+        "post_path": "ossf_js_supportate/CWE-601/CVE-2020-8135/post_utils.js",
+        "lines": [
+          73
+        ]
+      }
+    ]
+  },
+  {
+    "cve": "CVE-2020-8192",
+    "primary_cwe": "CWE-770",
+    "cwes": [
+      "CWE-770"
+    ],
+    "files": [
+      {
+        "orig_file": "lib/validation.js",
+        "pre_path": "ossf_js_supportate/CWE-770/CVE-2020-8192/pre_validation.js",
+        "post_path": "ossf_js_supportate/CWE-770/CVE-2020-8192/post_validation.js",
+        "lines": [
+          37
+        ]
+      }
+    ]
+  },
+  {
+    "cve": "CVE-2020-8205",
+    "primary_cwe": "CWE-918",
+    "cwes": [
+      "CWE-918"
+    ],
+    "files": [
+      {
+        "orig_file": "packages/@uppy/companion/src/server/controllers/url.js",
+        "pre_path": "ossf_js_supportate/CWE-918/CVE-2020-8205/pre_url.js",
+        "post_path": "ossf_js_supportate/CWE-918/CVE-2020-8205/post_url.js",
+        "lines": [
+          120
+        ]
+      }
+    ]
+  },
+  {
+    "cve": "CVE-2021-23364",
+    "primary_cwe": "CWE-400",
+    "cwes": [
+      "CWE-400"
+    ],
+    "files": [
+      {
+        "orig_file": "index.js",
+        "pre_path": "ossf_js_supportate/CWE-400/CVE-2021-23364/pre_index.js",
+        "post_path": "ossf_js_supportate/CWE-400/CVE-2021-23364/post_index.js",
+        "lines": [
+          802,
+          827,
+          855,
+          890,
+          921,
+          925
+        ]
+      }
+    ]
+  }
+]

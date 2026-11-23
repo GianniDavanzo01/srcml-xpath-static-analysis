@@ -1,0 +1,5599 @@
+{
+  "summary": {
+    "units_analyzed": 98,
+    "units_failed": 0,
+    "files_failed": 0,
+    "vulnerable_files": 77,
+    "total_findings": 406,
+    "categories_count": {
+      "CWE-338": 10,
+      "CWE-477": 79,
+      "CWE-328": 2,
+      "CWE-113": 10,
+      "CWE-22": 37,
+      "CWE-319": 6,
+      "CWE-79": 50,
+      "CWE-117": 53,
+      "CWE-835": 12,
+      "CWE-252": 7,
+      "CWE-321": 5,
+      "CWE-1333": 26,
+      "CWE-601": 8,
+      "CWE-918": 6,
+      "CWE-78": 15,
+      "CWE-400": 8,
+      "CWE-481": 2,
+      "CWE-200": 18,
+      "CWE-209": 18,
+      "CWE-943": 13,
+      "CWE-614": 6,
+      "CWE-617": 4,
+      "CWE-89": 8,
+      "CWE-259": 1,
+      "CWE-798": 1,
+      "CWE-95": 9,
+      "CWE-94": 9,
+      "CWE-703": 10
+    }
+  },
+  "errors": [],
+  "details": [
+    {
+      "source_file": "ossf_js_supportate/CWE-22/CVE-2017-16029/post_statics.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-113-HTTP-RESPONSE-SPLITTING",
+        "CWE-328-WEAK-HASH-FUNCTION",
+        "CWE-338-WEAK-PRNG",
+        "CWE-477-OBSOLETE-FUNCTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-113",
+        "CWE-328",
+        "CWE-338",
+        "CWE-477"
+      ],
+      "findings_count": 6,
+      "findings": [
+        {
+          "rule_id": "CWE-338-WEAK-PRNG",
+          "vulnerabilities": [
+            "CWE-338"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2017-16029/post_statics.js",
+          "line": "19:15",
+          "snippet": "Math.random()"
+        },
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2017-16029/post_statics.js",
+          "line": "25:20",
+          "snippet": "url.parse(req.url)"
+        },
+        {
+          "rule_id": "CWE-328-WEAK-HASH-FUNCTION",
+          "vulnerabilities": [
+            "CWE-328"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2017-16029/post_statics.js",
+          "line": "39:24",
+          "snippet": "crypto.createHash('md5')"
+        },
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2017-16029/post_statics.js",
+          "line": "39:60",
+          "snippet": "Buffer([ _seed, filePath, (stat.ctime && stat.ctime.getTime()) ].join(''))"
+        },
+        {
+          "rule_id": "CWE-338-WEAK-PRNG",
+          "vulnerabilities": [
+            "CWE-338"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2017-16029/post_statics.js",
+          "line": "97:13",
+          "snippet": "Math.random()"
+        },
+        {
+          "rule_id": "CWE-113-HTTP-RESPONSE-SPLITTING",
+          "vulnerabilities": [
+            "CWE-113"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2017-16029/post_statics.js",
+          "line": "51:7",
+          "snippet": "res.setHeader('ETag', eTag);",
+          "tainted_variable": "eTag"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-22/CVE-2017-16029/pre_statics.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-113-HTTP-RESPONSE-SPLITTING",
+        "CWE-22-PATH-TRAVERSAL",
+        "CWE-328-WEAK-HASH-FUNCTION",
+        "CWE-338-WEAK-PRNG",
+        "CWE-477-OBSOLETE-FUNCTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-113",
+        "CWE-22",
+        "CWE-328",
+        "CWE-338",
+        "CWE-477"
+      ],
+      "findings_count": 8,
+      "findings": [
+        {
+          "rule_id": "CWE-338-WEAK-PRNG",
+          "vulnerabilities": [
+            "CWE-338"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2017-16029/pre_statics.js",
+          "line": "19:15",
+          "snippet": "Math.random()"
+        },
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2017-16029/pre_statics.js",
+          "line": "25:20",
+          "snippet": "url.parse(req.url)"
+        },
+        {
+          "rule_id": "CWE-328-WEAK-HASH-FUNCTION",
+          "vulnerabilities": [
+            "CWE-328"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2017-16029/pre_statics.js",
+          "line": "37:24",
+          "snippet": "crypto.createHash('md5')"
+        },
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2017-16029/pre_statics.js",
+          "line": "37:60",
+          "snippet": "Buffer([ _seed, filePath, (stat.ctime && stat.ctime.getTime()) ].join(''))"
+        },
+        {
+          "rule_id": "CWE-338-WEAK-PRNG",
+          "vulnerabilities": [
+            "CWE-338"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2017-16029/pre_statics.js",
+          "line": "95:13",
+          "snippet": "Math.random()"
+        },
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2017-16029/pre_statics.js",
+          "line": "31:5",
+          "snippet": "fs.stat(filePath, function(err, stat) { if(err) { return next(err); } // ETag hash var uniqueHash = crypto.createHash('md5').update(new Buff…",
+          "tainted_variable": "filePath"
+        },
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2017-16029/pre_statics.js",
+          "line": "60:7",
+          "snippet": "var readStream = fs.createReadStream(filePath);",
+          "tainted_variable": "filePath"
+        },
+        {
+          "rule_id": "CWE-113-HTTP-RESPONSE-SPLITTING",
+          "vulnerabilities": [
+            "CWE-113"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2017-16029/pre_statics.js",
+          "line": "49:7",
+          "snippet": "res.setHeader('ETag', eTag);",
+          "tainted_variable": "eTag"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-22/CVE-2017-16084/post_server.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-113-HTTP-RESPONSE-SPLITTING",
+        "CWE-117-LOG-INJECTION",
+        "CWE-22-PATH-TRAVERSAL",
+        "CWE-319-CLEARTEXT-TRANSMISSION",
+        "CWE-477-OBSOLETE-FUNCTION",
+        "CWE-79-CROSS-SITE-SCRIPTING"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-113",
+        "CWE-117",
+        "CWE-22",
+        "CWE-319",
+        "CWE-477",
+        "CWE-79"
+      ],
+      "findings_count": 10,
+      "findings": [
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2017-16084/post_server.js",
+          "line": "31:27",
+          "snippet": "urlHelpers.parse(request.url)"
+        },
+        {
+          "rule_id": "CWE-319-CLEARTEXT-TRANSMISSION",
+          "vulnerabilities": [
+            "CWE-319"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2017-16084/post_server.js",
+          "line": "110:14",
+          "snippet": "http.createServer(router)"
+        },
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2017-16084/post_server.js",
+          "line": "95:9",
+          "snippet": "fs.stat(path, function(error, info){ if(error){ serverError(response, error); return; } if(info.isDirectory()){ serveDir(request, response, …",
+          "tainted_variable": "path"
+        },
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2017-16084/post_server.js",
+          "line": "37:13",
+          "snippet": "return '<a href=\"' + currentPath + (currentPath === '/' ? '' : '/') + fileName + '?view\">' + fileName + '</a>';",
+          "tainted_variable": "currentPath"
+        },
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2017-16084/post_server.js",
+          "line": "37:49",
+          "snippet": "currentPath === '/' ?",
+          "tainted_variable": "currentPath"
+        },
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2017-16084/post_server.js",
+          "line": "54:9",
+          "snippet": "response.end( '<style>html, body{margin:0;background:black;}video{height:100%;width:100%}</style>' + '<video src=\"' + urlBits[0] + '\" autopl…",
+          "tainted_variable": "urlBits"
+        },
+        {
+          "rule_id": "CWE-113-HTTP-RESPONSE-SPLITTING",
+          "vulnerabilities": [
+            "CWE-113"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2017-16084/post_server.js",
+          "line": "77:9",
+          "snippet": "response.writeHead(206, { 'Content-Range': 'bytes ' + start + '-' + end + '/' + total, 'Accept-Ranges': 'bytes', 'Content-Length': chunksize…",
+          "tainted_variable": "contentType"
+        },
+        {
+          "rule_id": "CWE-113-HTTP-RESPONSE-SPLITTING",
+          "vulnerabilities": [
+            "CWE-113"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2017-16084/post_server.js",
+          "line": "80:9",
+          "snippet": "response.writeHead(200, { 'Content-Length': total, 'Content-Type': contentType });",
+          "tainted_variable": "contentType"
+        },
+        {
+          "rule_id": "CWE-117-LOG-INJECTION",
+          "vulnerabilities": [
+            "CWE-117"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2017-16084/post_server.js",
+          "line": "19:5",
+          "snippet": "console.log(error);",
+          "tainted_variable": "error"
+        },
+        {
+          "rule_id": "CWE-117-LOG-INJECTION",
+          "vulnerabilities": [
+            "CWE-117"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2017-16084/post_server.js",
+          "line": "116:1",
+          "snippet": "console.log('serving ' + __dirname + ' on ' + port);",
+          "tainted_variable": "port"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-22/CVE-2017-16084/pre_server.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-113-HTTP-RESPONSE-SPLITTING",
+        "CWE-117-LOG-INJECTION",
+        "CWE-22-PATH-TRAVERSAL",
+        "CWE-319-CLEARTEXT-TRANSMISSION",
+        "CWE-477-OBSOLETE-FUNCTION",
+        "CWE-79-CROSS-SITE-SCRIPTING"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-113",
+        "CWE-117",
+        "CWE-22",
+        "CWE-319",
+        "CWE-477",
+        "CWE-79"
+      ],
+      "findings_count": 10,
+      "findings": [
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2017-16084/pre_server.js",
+          "line": "31:27",
+          "snippet": "urlHelpers.parse(request.url)"
+        },
+        {
+          "rule_id": "CWE-319-CLEARTEXT-TRANSMISSION",
+          "vulnerabilities": [
+            "CWE-319"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2017-16084/pre_server.js",
+          "line": "103:14",
+          "snippet": "http.createServer(router)"
+        },
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2017-16084/pre_server.js",
+          "line": "88:9",
+          "snippet": "fs.stat(path, function(error, info){ if(error){ serverError(response, error); return; } if(info.isDirectory()){ serveDir(request, response, …",
+          "tainted_variable": "path"
+        },
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2017-16084/pre_server.js",
+          "line": "37:13",
+          "snippet": "return '<a href=\"' + currentPath + (currentPath === '/' ? '' : '/') + fileName + '?view\">' + fileName + '</a>';",
+          "tainted_variable": "currentPath"
+        },
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2017-16084/pre_server.js",
+          "line": "37:49",
+          "snippet": "currentPath === '/' ?",
+          "tainted_variable": "currentPath"
+        },
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2017-16084/pre_server.js",
+          "line": "54:9",
+          "snippet": "response.end( '<style>html, body{margin:0;background:black;}video{height:100%;width:100%}</style>' + '<video src=\"' + urlBits[0] + '\" autopl…",
+          "tainted_variable": "urlBits"
+        },
+        {
+          "rule_id": "CWE-113-HTTP-RESPONSE-SPLITTING",
+          "vulnerabilities": [
+            "CWE-113"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2017-16084/pre_server.js",
+          "line": "77:9",
+          "snippet": "response.writeHead(206, { 'Content-Range': 'bytes ' + start + '-' + end + '/' + total, 'Accept-Ranges': 'bytes', 'Content-Length': chunksize…",
+          "tainted_variable": "contentType"
+        },
+        {
+          "rule_id": "CWE-113-HTTP-RESPONSE-SPLITTING",
+          "vulnerabilities": [
+            "CWE-113"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2017-16084/pre_server.js",
+          "line": "80:9",
+          "snippet": "response.writeHead(200, { 'Content-Length': total, 'Content-Type': contentType });",
+          "tainted_variable": "contentType"
+        },
+        {
+          "rule_id": "CWE-117-LOG-INJECTION",
+          "vulnerabilities": [
+            "CWE-117"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2017-16084/pre_server.js",
+          "line": "19:5",
+          "snippet": "console.log(error);",
+          "tainted_variable": "error"
+        },
+        {
+          "rule_id": "CWE-117-LOG-INJECTION",
+          "vulnerabilities": [
+            "CWE-117"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2017-16084/pre_server.js",
+          "line": "109:1",
+          "snippet": "console.log('serving ' + __dirname + ' on ' + port);",
+          "tainted_variable": "port"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-22/CVE-2017-16107/post_server.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-117-LOG-INJECTION",
+        "CWE-319-CLEARTEXT-TRANSMISSION",
+        "CWE-79-CROSS-SITE-SCRIPTING"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-117",
+        "CWE-319",
+        "CWE-79"
+      ],
+      "findings_count": 4,
+      "findings": [
+        {
+          "rule_id": "CWE-319-CLEARTEXT-TRANSMISSION",
+          "vulnerabilities": [
+            "CWE-319"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2017-16107/post_server.js",
+          "line": "8:35",
+          "snippet": "createServer(function(req,res){ console.log('Serving: %s',req.url); var rs = fs.createReadStream(__dirname+path.normalize(req.url).replace(/…"
+        },
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2017-16107/post_server.js",
+          "line": "18:25",
+          "snippet": "res.end(e+'');",
+          "tainted_variable": "e"
+        },
+        {
+          "rule_id": "CWE-117-LOG-INJECTION",
+          "vulnerabilities": [
+            "CWE-117"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2017-16107/post_server.js",
+          "line": "37:17",
+          "snippet": "console.log('Sent: %s', data);",
+          "tainted_variable": "data"
+        },
+        {
+          "rule_id": "CWE-117-LOG-INJECTION",
+          "vulnerabilities": [
+            "CWE-117"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2017-16107/post_server.js",
+          "line": "9:17",
+          "snippet": "console.log('Serving: %s',req.url);",
+          "tainted_variable": "Express.Request.url",
+          "source_kind": "inline-name"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-22/CVE-2017-16107/pre_server.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-117-LOG-INJECTION",
+        "CWE-22-PATH-TRAVERSAL",
+        "CWE-319-CLEARTEXT-TRANSMISSION",
+        "CWE-79-CROSS-SITE-SCRIPTING"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-117",
+        "CWE-22",
+        "CWE-319",
+        "CWE-79"
+      ],
+      "findings_count": 5,
+      "findings": [
+        {
+          "rule_id": "CWE-319-CLEARTEXT-TRANSMISSION",
+          "vulnerabilities": [
+            "CWE-319"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2017-16107/pre_server.js",
+          "line": "7:35",
+          "snippet": "createServer(function(req,res){ console.log('Serving: %s',req.url); var rs = fs.createReadStream(__dirname+req.url,{ flags: 'r', autoClose: …"
+        },
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2017-16107/pre_server.js",
+          "line": "9:17",
+          "snippet": "var rs = fs.createReadStream(__dirname+req.url,{ flags: 'r', autoClose: true });",
+          "tainted_variable": "Express.Request.url",
+          "source_kind": "inline-name"
+        },
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2017-16107/pre_server.js",
+          "line": "17:25",
+          "snippet": "res.end(e+'');",
+          "tainted_variable": "e"
+        },
+        {
+          "rule_id": "CWE-117-LOG-INJECTION",
+          "vulnerabilities": [
+            "CWE-117"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2017-16107/pre_server.js",
+          "line": "36:17",
+          "snippet": "console.log('Sent: %s', data);",
+          "tainted_variable": "data"
+        },
+        {
+          "rule_id": "CWE-117-LOG-INJECTION",
+          "vulnerabilities": [
+            "CWE-117"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2017-16107/pre_server.js",
+          "line": "8:17",
+          "snippet": "console.log('Serving: %s',req.url);",
+          "tainted_variable": "Express.Request.url",
+          "source_kind": "inline-name"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-22/CVE-2017-16877/post_render.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-79-CROSS-SITE-SCRIPTING"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-79"
+      ],
+      "findings_count": 5,
+      "findings": [
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2017-16877/post_render.js",
+          "line": "139:5",
+          "snippet": "res.end(` window.__NEXT_REGISTER_PAGE('${page}', function() { var error = new Error('Page does not exist: ${page}') error.statusCode = 404 r…",
+          "tainted_variable": "page"
+        },
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2017-16877/post_render.js",
+          "line": "156:3",
+          "snippet": "res.end(` window.__NEXT_REGISTER_PAGE('${page}', function() { var error = ${JSON.stringify(errorJson)} return { error: error } }) `)",
+          "tainted_variable": "page"
+        },
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2017-16877/post_render.js",
+          "line": "192:11",
+          "snippet": "method === 'HEAD' ?",
+          "tainted_variable": "method"
+        },
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2017-16877/post_render.js",
+          "line": "156:3",
+          "snippet": "res.end(` window.__NEXT_REGISTER_PAGE('${page}', function() { var error = ${JSON.stringify(errorJson)} return { error: error } }) `)",
+          "tainted_variable": "errorJson"
+        },
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2017-16877/post_render.js",
+          "line": "192:3",
+          "snippet": "res.end(method === 'HEAD' ? null : json)",
+          "tainted_variable": "json"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-22/CVE-2017-16877/pre_render.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-79-CROSS-SITE-SCRIPTING"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-79"
+      ],
+      "findings_count": 5,
+      "findings": [
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2017-16877/pre_render.js",
+          "line": "139:5",
+          "snippet": "res.end(` window.__NEXT_REGISTER_PAGE('${page}', function() { var error = new Error('Page does not exist: ${page}') error.statusCode = 404 r…",
+          "tainted_variable": "page"
+        },
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2017-16877/pre_render.js",
+          "line": "156:3",
+          "snippet": "res.end(` window.__NEXT_REGISTER_PAGE('${page}', function() { var error = ${JSON.stringify(errorJson)} return { error: error } }) `)",
+          "tainted_variable": "page"
+        },
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2017-16877/pre_render.js",
+          "line": "192:11",
+          "snippet": "method === 'HEAD' ?",
+          "tainted_variable": "method"
+        },
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2017-16877/pre_render.js",
+          "line": "156:3",
+          "snippet": "res.end(` window.__NEXT_REGISTER_PAGE('${page}', function() { var error = ${JSON.stringify(errorJson)} return { error: error } }) `)",
+          "tainted_variable": "errorJson"
+        },
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2017-16877/pre_render.js",
+          "line": "192:3",
+          "snippet": "res.end(method === 'HEAD' ? null : json)",
+          "tainted_variable": "json"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-22/CVE-2018-1002203/post_extract.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-22/CVE-2018-1002203/pre_extract.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-22/CVE-2018-1002204/post_utils.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-477-OBSOLETE-FUNCTION",
+        "CWE-835-LOOP-WITH-UNREACHABLE-EXIT"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-477",
+        "CWE-835"
+      ],
+      "findings_count": 6,
+      "findings": [
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2018-1002204/post_utils.js",
+          "line": "18:26",
+          "snippet": "name.substr(-1,1)"
+        },
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2018-1002204/post_utils.js",
+          "line": "58:27",
+          "snippet": "Buffer(buf)"
+        },
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2018-1002204/post_utils.js",
+          "line": "60:25",
+          "snippet": "Buffer(4)"
+        },
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2018-1002204/post_utils.js",
+          "line": "193:32",
+          "snippet": "Buffer(0)"
+        },
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2018-1002204/post_utils.js",
+          "line": "195:28",
+          "snippet": "Buffer(input, 'utf8')"
+        },
+        {
+          "rule_id": "CWE-835-LOOP-WITH-UNREACHABLE-EXIT",
+          "vulnerabilities": [
+            "CWE-835"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2018-1002204/post_utils.js",
+          "line": "74:13",
+          "snippet": "while(--len >= 0) c1 = crcTable[(c1 ^ buf[off++]) & 0xff] ^ (c1 >>> 8);"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-22/CVE-2018-1002204/pre_utils.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-477-OBSOLETE-FUNCTION",
+        "CWE-835-LOOP-WITH-UNREACHABLE-EXIT"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-477",
+        "CWE-835"
+      ],
+      "findings_count": 6,
+      "findings": [
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2018-1002204/pre_utils.js",
+          "line": "18:26",
+          "snippet": "name.substr(-1,1)"
+        },
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2018-1002204/pre_utils.js",
+          "line": "58:27",
+          "snippet": "Buffer(buf)"
+        },
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2018-1002204/pre_utils.js",
+          "line": "60:25",
+          "snippet": "Buffer(4)"
+        },
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2018-1002204/pre_utils.js",
+          "line": "193:32",
+          "snippet": "Buffer(0)"
+        },
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2018-1002204/pre_utils.js",
+          "line": "195:28",
+          "snippet": "Buffer(input, 'utf8')"
+        },
+        {
+          "rule_id": "CWE-835-LOOP-WITH-UNREACHABLE-EXIT",
+          "vulnerabilities": [
+            "CWE-835"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2018-1002204/pre_utils.js",
+          "line": "74:13",
+          "snippet": "while(--len >= 0) c1 = crcTable[(c1 ^ buf[off++]) & 0xff] ^ (c1 >>> 8);"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-22/CVE-2018-16478/post_simplehttpserver.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-22-PATH-TRAVERSAL",
+        "CWE-477-OBSOLETE-FUNCTION",
+        "CWE-79-CROSS-SITE-SCRIPTING"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-22",
+        "CWE-477",
+        "CWE-79"
+      ],
+      "findings_count": 6,
+      "findings": [
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2018-16478/post_simplehttpserver.js",
+          "line": "58:20",
+          "snippet": "url.parse(req.url)"
+        },
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2018-16478/post_simplehttpserver.js",
+          "line": "80:5",
+          "snippet": "fs.stat(pathname, function(err, stat) { // Check if path is directory if ( !stat || !stat.isDirectory() ) return res.sendStatus(404); // che…",
+          "tainted_variable": "pathname"
+        },
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2018-16478/post_simplehttpserver.js",
+          "line": "95:17",
+          "snippet": "fs.readdir(pathname, function(err, list) { if ( err ) return res.send(404); return directoryHTML( res, req.url, pathname, list ); });",
+          "tainted_variable": "pathname"
+        },
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2018-16478/post_simplehttpserver.js",
+          "line": "86:9",
+          "snippet": "fs.stat(indexpath, function(err, stat) { if ( stat && stat.isFile() ) { // index.html was found, serve that send(res, indexpath) .pipe(res);…",
+          "tainted_variable": "indexpath"
+        },
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2018-16478/post_simplehttpserver.js",
+          "line": "124:9",
+          "snippet": "res.send('<!DOCTYPE html>' + '<html>\\n' + '<title>Directory listing for '+htmlsafe(urldir)+'</title>\\n' + '<body>\\n' + '<h2>Directory listin…",
+          "tainted_variable": "urldir"
+        },
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2018-16478/post_simplehttpserver.js",
+          "line": "124:9",
+          "snippet": "res.send('<!DOCTYPE html>' + '<html>\\n' + '<title>Directory listing for '+htmlsafe(urldir)+'</title>\\n' + '<body>\\n' + '<h2>Directory listin…",
+          "tainted_variable": "list"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-22/CVE-2018-16478/pre_simplehttpserver.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-22-PATH-TRAVERSAL",
+        "CWE-477-OBSOLETE-FUNCTION",
+        "CWE-79-CROSS-SITE-SCRIPTING"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-22",
+        "CWE-477",
+        "CWE-79"
+      ],
+      "findings_count": 6,
+      "findings": [
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2018-16478/pre_simplehttpserver.js",
+          "line": "58:19",
+          "snippet": "url.parse(req.url)"
+        },
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2018-16478/pre_simplehttpserver.js",
+          "line": "61:5",
+          "snippet": "fs.stat(pathname, function(err, stat) { // Check if path is directory if ( !stat || !stat.isDirectory() ) return res.sendStatus(404); // che…",
+          "tainted_variable": "pathname"
+        },
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2018-16478/pre_simplehttpserver.js",
+          "line": "76:16",
+          "snippet": "fs.readdir(pathname, function(err, list) { if ( err ) return res.send(404); return directoryHTML( res, req.url, pathname, list ); });",
+          "tainted_variable": "pathname"
+        },
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2018-16478/pre_simplehttpserver.js",
+          "line": "67:9",
+          "snippet": "fs.stat(indexpath, function(err, stat) { if ( stat && stat.isFile() ) { // index.html was found, serve that send(res, indexpath) .pipe(res);…",
+          "tainted_variable": "indexpath"
+        },
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2018-16478/pre_simplehttpserver.js",
+          "line": "105:9",
+          "snippet": "res.send('<!DOCTYPE html>' + '<html>\\n' + '<title>Directory listing for '+htmlsafe(urldir)+'</title>\\n' + '<body>\\n' + '<h2>Directory listin…",
+          "tainted_variable": "urldir"
+        },
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2018-16478/pre_simplehttpserver.js",
+          "line": "105:9",
+          "snippet": "res.send('<!DOCTYPE html>' + '<html>\\n' + '<title>Directory listing for '+htmlsafe(urldir)+'</title>\\n' + '<body>\\n' + '<h2>Directory listin…",
+          "tainted_variable": "list"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-22/CVE-2018-16485/post_index.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-117-LOG-INJECTION",
+        "CWE-22-PATH-TRAVERSAL",
+        "CWE-319-CLEARTEXT-TRANSMISSION",
+        "CWE-79-CROSS-SITE-SCRIPTING"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-117",
+        "CWE-22",
+        "CWE-319",
+        "CWE-79"
+      ],
+      "findings_count": 8,
+      "findings": [
+        {
+          "rule_id": "CWE-319-CLEARTEXT-TRANSMISSION",
+          "vulnerabilities": [
+            "CWE-319"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2018-16485/post_index.js",
+          "line": "9:18",
+          "snippet": "http.createServer(function (req, res) { var requestPath = path.join(rootPath, req.url); var targetPath; if(!utils.allowPath(requestPath, roo…"
+        },
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2018-16485/post_index.js",
+          "line": "21:17",
+          "snippet": "res.end(fs.readFileSync(targetPath))",
+          "tainted_variable": "targetPath"
+        },
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2018-16485/post_index.js",
+          "line": "23:17",
+          "snippet": "fs.readdir(targetPath, function (error, list) { if (error) { console.log(error); res.end(error.toString()) } var dirs = []; var files = []; …",
+          "tainted_variable": "targetPath"
+        },
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2018-16485/post_index.js",
+          "line": "21:17",
+          "snippet": "res.end(fs.readFileSync(targetPath))",
+          "tainted_variable": "targetPath"
+        },
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2018-16485/post_index.js",
+          "line": "39:21",
+          "snippet": "res.write(utils.render(req.url, dirs, files));",
+          "tainted_variable": "Express.Request.url",
+          "source_kind": "inline-name"
+        },
+        {
+          "rule_id": "CWE-117-LOG-INJECTION",
+          "vulnerabilities": [
+            "CWE-117"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2018-16485/post_index.js",
+          "line": "71:17",
+          "snippet": "console.log(val);",
+          "tainted_variable": "val"
+        },
+        {
+          "rule_id": "CWE-117-LOG-INJECTION",
+          "vulnerabilities": [
+            "CWE-117"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2018-16485/post_index.js",
+          "line": "73:17",
+          "snippet": "console.log(prev + val);",
+          "tainted_variable": "val"
+        },
+        {
+          "rule_id": "CWE-117-LOG-INJECTION",
+          "vulnerabilities": [
+            "CWE-117"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2018-16485/post_index.js",
+          "line": "78:9",
+          "snippet": "console.log(e);",
+          "tainted_variable": "e"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-22/CVE-2018-16485/pre_index.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-117-LOG-INJECTION",
+        "CWE-22-PATH-TRAVERSAL",
+        "CWE-319-CLEARTEXT-TRANSMISSION",
+        "CWE-79-CROSS-SITE-SCRIPTING"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-117",
+        "CWE-22",
+        "CWE-319",
+        "CWE-79"
+      ],
+      "findings_count": 8,
+      "findings": [
+        {
+          "rule_id": "CWE-319-CLEARTEXT-TRANSMISSION",
+          "vulnerabilities": [
+            "CWE-319"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2018-16485/pre_index.js",
+          "line": "9:18",
+          "snippet": "http.createServer(function (req, res) { var targetPath = path.join(rootPath, req.url); if (fs.existsSync(targetPath)) { var targetType = fs.…"
+        },
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2018-16485/pre_index.js",
+          "line": "14:17",
+          "snippet": "res.end(fs.readFileSync(targetPath))",
+          "tainted_variable": "targetPath"
+        },
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2018-16485/pre_index.js",
+          "line": "16:17",
+          "snippet": "fs.readdir(targetPath, function (error, list) { if (error) { console.log(error); res.end(error.toString()) } var dirs = []; var files = []; …",
+          "tainted_variable": "targetPath"
+        },
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2018-16485/pre_index.js",
+          "line": "14:17",
+          "snippet": "res.end(fs.readFileSync(targetPath))",
+          "tainted_variable": "targetPath"
+        },
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2018-16485/pre_index.js",
+          "line": "32:21",
+          "snippet": "res.write(utils.render(req.url, dirs, files));",
+          "tainted_variable": "Express.Request.url",
+          "source_kind": "inline-name"
+        },
+        {
+          "rule_id": "CWE-117-LOG-INJECTION",
+          "vulnerabilities": [
+            "CWE-117"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2018-16485/pre_index.js",
+          "line": "64:17",
+          "snippet": "console.log(val);",
+          "tainted_variable": "val"
+        },
+        {
+          "rule_id": "CWE-117-LOG-INJECTION",
+          "vulnerabilities": [
+            "CWE-117"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2018-16485/pre_index.js",
+          "line": "66:17",
+          "snippet": "console.log(prev + val);",
+          "tainted_variable": "val"
+        },
+        {
+          "rule_id": "CWE-117-LOG-INJECTION",
+          "vulnerabilities": [
+            "CWE-117"
+          ],
+          "source_file": "ossf_js_supportate/CWE-22/CVE-2018-16485/pre_index.js",
+          "line": "71:9",
+          "snippet": "console.log(e);",
+          "tainted_variable": "e"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-327/CVE-2018-1000620/post_index.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-327/CVE-2018-1000620/pre_index.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-338/CVE-2017-16028/post_index.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-338/CVE-2017-16028/pre_index.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-338-WEAK-PRNG"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-338"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-338-WEAK-PRNG",
+          "vulnerabilities": [
+            "CWE-338"
+          ],
+          "source_file": "ossf_js_supportate/CWE-338/CVE-2017-16028/pre_index.js",
+          "line": "81:33",
+          "snippet": "Math.random()"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-400/CVE-2018-16472/post_index.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-400/CVE-2018-16472/pre_index.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-502/CVE-2020-7660/post_index.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-1333-REGEX-DOS",
+        "CWE-252-UNCHECKED-RETURN-VALUE",
+        "CWE-321-HARDCODED-CRYPTO-KEY",
+        "CWE-477-OBSOLETE-FUNCTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-1333",
+        "CWE-252",
+        "CWE-321",
+        "CWE-477"
+      ],
+      "findings_count": 7,
+      "findings": [
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-502/CVE-2020-7660/post_index.js",
+          "line": "142:17",
+          "snippet": "serializedFn.substr(0, argsStartsAt)"
+        },
+        {
+          "rule_id": "CWE-252-UNCHECKED-RETURN-VALUE",
+          "vulnerabilities": [
+            "CWE-252"
+          ],
+          "source_file": "ossf_js_supportate/CWE-502/CVE-2020-7660/post_index.js",
+          "line": "143:10",
+          "snippet": "trim()"
+        },
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-502/CVE-2020-7660/post_index.js",
+          "line": "155:15",
+          "snippet": "serializedFn.substr(argsStartsAt)"
+        },
+        {
+          "rule_id": "CWE-321-HARDCODED-CRYPTO-KEY",
+          "vulnerabilities": [
+            "CWE-321"
+          ],
+          "source_file": "ossf_js_supportate/CWE-502/CVE-2020-7660/post_index.js",
+          "line": "49:12",
+          "snippet": "(typeof obj[key] === \"function\")"
+        },
+        {
+          "rule_id": "CWE-1333-REGEX-DOS",
+          "vulnerabilities": [
+            "CWE-1333"
+          ],
+          "source_file": "ossf_js_supportate/CWE-502/CVE-2020-7660/post_index.js",
+          "line": "127:10",
+          "snippet": "(IS_NATIVE_CODE_REGEXP.test(serializedFn))",
+          "tainted_variable": "serializedFn"
+        },
+        {
+          "rule_id": "CWE-1333-REGEX-DOS",
+          "vulnerabilities": [
+            "CWE-1333"
+          ],
+          "source_file": "ossf_js_supportate/CWE-502/CVE-2020-7660/post_index.js",
+          "line": "132:9",
+          "snippet": "(IS_PURE_FUNCTION.test(serializedFn))",
+          "tainted_variable": "serializedFn"
+        },
+        {
+          "rule_id": "CWE-1333-REGEX-DOS",
+          "vulnerabilities": [
+            "CWE-1333"
+          ],
+          "source_file": "ossf_js_supportate/CWE-502/CVE-2020-7660/post_index.js",
+          "line": "137:9",
+          "snippet": "(IS_ARROW_FUNCTION.test(serializedFn))",
+          "tainted_variable": "serializedFn"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-502/CVE-2020-7660/pre_index.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-1333-REGEX-DOS",
+        "CWE-252-UNCHECKED-RETURN-VALUE",
+        "CWE-321-HARDCODED-CRYPTO-KEY",
+        "CWE-338-WEAK-PRNG",
+        "CWE-477-OBSOLETE-FUNCTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-1333",
+        "CWE-252",
+        "CWE-321",
+        "CWE-338",
+        "CWE-477"
+      ],
+      "findings_count": 8,
+      "findings": [
+        {
+          "rule_id": "CWE-338-WEAK-PRNG",
+          "vulnerabilities": [
+            "CWE-338"
+          ],
+          "source_file": "ossf_js_supportate/CWE-502/CVE-2020-7660/pre_index.js",
+          "line": "10:38",
+          "snippet": "Math.random()"
+        },
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-502/CVE-2020-7660/pre_index.js",
+          "line": "130:17",
+          "snippet": "serializedFn.substr(0, argsStartsAt)"
+        },
+        {
+          "rule_id": "CWE-252-UNCHECKED-RETURN-VALUE",
+          "vulnerabilities": [
+            "CWE-252"
+          ],
+          "source_file": "ossf_js_supportate/CWE-502/CVE-2020-7660/pre_index.js",
+          "line": "131:10",
+          "snippet": "trim()"
+        },
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-502/CVE-2020-7660/pre_index.js",
+          "line": "143:15",
+          "snippet": "serializedFn.substr(argsStartsAt)"
+        },
+        {
+          "rule_id": "CWE-321-HARDCODED-CRYPTO-KEY",
+          "vulnerabilities": [
+            "CWE-321"
+          ],
+          "source_file": "ossf_js_supportate/CWE-502/CVE-2020-7660/pre_index.js",
+          "line": "37:12",
+          "snippet": "(typeof obj[key] === \"function\")"
+        },
+        {
+          "rule_id": "CWE-1333-REGEX-DOS",
+          "vulnerabilities": [
+            "CWE-1333"
+          ],
+          "source_file": "ossf_js_supportate/CWE-502/CVE-2020-7660/pre_index.js",
+          "line": "115:10",
+          "snippet": "(IS_NATIVE_CODE_REGEXP.test(serializedFn))",
+          "tainted_variable": "serializedFn"
+        },
+        {
+          "rule_id": "CWE-1333-REGEX-DOS",
+          "vulnerabilities": [
+            "CWE-1333"
+          ],
+          "source_file": "ossf_js_supportate/CWE-502/CVE-2020-7660/pre_index.js",
+          "line": "120:9",
+          "snippet": "(IS_PURE_FUNCTION.test(serializedFn))",
+          "tainted_variable": "serializedFn"
+        },
+        {
+          "rule_id": "CWE-1333-REGEX-DOS",
+          "vulnerabilities": [
+            "CWE-1333"
+          ],
+          "source_file": "ossf_js_supportate/CWE-502/CVE-2020-7660/pre_index.js",
+          "line": "125:9",
+          "snippet": "(IS_ARROW_FUNCTION.test(serializedFn))",
+          "tainted_variable": "serializedFn"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-601/CVE-2017-16224/post_st.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-117-LOG-INJECTION",
+        "CWE-22-PATH-TRAVERSAL",
+        "CWE-477-OBSOLETE-FUNCTION",
+        "CWE-79-CROSS-SITE-SCRIPTING"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-117",
+        "CWE-22",
+        "CWE-477",
+        "CWE-79"
+      ],
+      "findings_count": 11,
+      "findings": [
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-601/CVE-2017-16224/post_st.js",
+          "line": "169:11",
+          "snippet": "url.parse(u)"
+        },
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-601/CVE-2017-16224/post_st.js",
+          "line": "201:7",
+          "snippet": "u.substr(this.url.length)"
+        },
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-601/CVE-2017-16224/post_st.js",
+          "line": "216:22",
+          "snippet": "p.substr(this.path.length)"
+        },
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-601/CVE-2017-16224/post_st.js",
+          "line": "481:13",
+          "snippet": "p.substr(this.path.length)"
+        },
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "ossf_js_supportate/CWE-601/CVE-2017-16224/post_st.js",
+          "line": "409:3",
+          "snippet": "var stream = fs.createReadStream(p, streamOpt)",
+          "tainted_variable": "p"
+        },
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "ossf_js_supportate/CWE-601/CVE-2017-16224/post_st.js",
+          "line": "336:3",
+          "snippet": "res.end(http.STATUS_CODES[res.statusCode] + '\\n')",
+          "tainted_variable": "res"
+        },
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "ossf_js_supportate/CWE-601/CVE-2017-16224/post_st.js",
+          "line": "355:5",
+          "snippet": "res.end('Moved: ' + req.sturl + '/')",
+          "tainted_variable": "req"
+        },
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "ossf_js_supportate/CWE-601/CVE-2017-16224/post_st.js",
+          "line": "336:3",
+          "snippet": "res.end(http.STATUS_CODES[res.statusCode] + '\\n')",
+          "tainted_variable": "res.statusCode"
+        },
+        {
+          "rule_id": "CWE-117-LOG-INJECTION",
+          "vulnerabilities": [
+            "CWE-117"
+          ],
+          "source_file": "ossf_js_supportate/CWE-601/CVE-2017-16224/post_st.js",
+          "line": "424:5",
+          "snippet": "console.error('Error serving %s fd=%d\\n%s', p, fd, e.stack || e.message)",
+          "tainted_variable": "p"
+        },
+        {
+          "rule_id": "CWE-117-LOG-INJECTION",
+          "vulnerabilities": [
+            "CWE-117"
+          ],
+          "source_file": "ossf_js_supportate/CWE-601/CVE-2017-16224/post_st.js",
+          "line": "424:5",
+          "snippet": "console.error('Error serving %s fd=%d\\n%s', p, fd, e.stack || e.message)",
+          "tainted_variable": "fd"
+        },
+        {
+          "rule_id": "CWE-117-LOG-INJECTION",
+          "vulnerabilities": [
+            "CWE-117"
+          ],
+          "source_file": "ossf_js_supportate/CWE-601/CVE-2017-16224/post_st.js",
+          "line": "424:5",
+          "snippet": "console.error('Error serving %s fd=%d\\n%s', p, fd, e.stack || e.message)",
+          "tainted_variable": "e"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-601/CVE-2017-16224/pre_st.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-117-LOG-INJECTION",
+        "CWE-22-PATH-TRAVERSAL",
+        "CWE-477-OBSOLETE-FUNCTION",
+        "CWE-79-CROSS-SITE-SCRIPTING"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-117",
+        "CWE-22",
+        "CWE-477",
+        "CWE-79"
+      ],
+      "findings_count": 12,
+      "findings": [
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-601/CVE-2017-16224/pre_st.js",
+          "line": "169:11",
+          "snippet": "url.parse(u)"
+        },
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-601/CVE-2017-16224/pre_st.js",
+          "line": "202:7",
+          "snippet": "u.substr(this.url.length)"
+        },
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-601/CVE-2017-16224/pre_st.js",
+          "line": "213:22",
+          "snippet": "p.substr(this.path.length)"
+        },
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-601/CVE-2017-16224/pre_st.js",
+          "line": "226:17",
+          "snippet": "url.parse(req.url)"
+        },
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-601/CVE-2017-16224/pre_st.js",
+          "line": "478:13",
+          "snippet": "p.substr(this.path.length)"
+        },
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "ossf_js_supportate/CWE-601/CVE-2017-16224/pre_st.js",
+          "line": "406:3",
+          "snippet": "var stream = fs.createReadStream(p, streamOpt)",
+          "tainted_variable": "p"
+        },
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "ossf_js_supportate/CWE-601/CVE-2017-16224/pre_st.js",
+          "line": "333:3",
+          "snippet": "res.end(http.STATUS_CODES[res.statusCode] + '\\n')",
+          "tainted_variable": "res"
+        },
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "ossf_js_supportate/CWE-601/CVE-2017-16224/pre_st.js",
+          "line": "352:5",
+          "snippet": "res.end('Moved: ' + req.sturl + '/')",
+          "tainted_variable": "req"
+        },
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "ossf_js_supportate/CWE-601/CVE-2017-16224/pre_st.js",
+          "line": "333:3",
+          "snippet": "res.end(http.STATUS_CODES[res.statusCode] + '\\n')",
+          "tainted_variable": "res.statusCode"
+        },
+        {
+          "rule_id": "CWE-117-LOG-INJECTION",
+          "vulnerabilities": [
+            "CWE-117"
+          ],
+          "source_file": "ossf_js_supportate/CWE-601/CVE-2017-16224/pre_st.js",
+          "line": "421:5",
+          "snippet": "console.error('Error serving %s fd=%d\\n%s', p, fd, e.stack || e.message)",
+          "tainted_variable": "p"
+        },
+        {
+          "rule_id": "CWE-117-LOG-INJECTION",
+          "vulnerabilities": [
+            "CWE-117"
+          ],
+          "source_file": "ossf_js_supportate/CWE-601/CVE-2017-16224/pre_st.js",
+          "line": "421:5",
+          "snippet": "console.error('Error serving %s fd=%d\\n%s', p, fd, e.stack || e.message)",
+          "tainted_variable": "fd"
+        },
+        {
+          "rule_id": "CWE-117-LOG-INJECTION",
+          "vulnerabilities": [
+            "CWE-117"
+          ],
+          "source_file": "ossf_js_supportate/CWE-601/CVE-2017-16224/pre_st.js",
+          "line": "421:5",
+          "snippet": "console.error('Error serving %s fd=%d\\n%s', p, fd, e.stack || e.message)",
+          "tainted_variable": "e"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-601/CVE-2018-3743/post_hekto.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-117-LOG-INJECTION",
+        "CWE-22-PATH-TRAVERSAL",
+        "CWE-477-OBSOLETE-FUNCTION",
+        "CWE-601-OPEN-REDIRECT"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-117",
+        "CWE-22",
+        "CWE-477",
+        "CWE-601"
+      ],
+      "findings_count": 15,
+      "findings": [
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-601/CVE-2018-3743/post_hekto.js",
+          "line": "43:8",
+          "snippet": "str.substr(-1)"
+        },
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-601/CVE-2018-3743/post_hekto.js",
+          "line": "44:16",
+          "snippet": "str.substr(0, str.length - 1)"
+        },
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "ossf_js_supportate/CWE-601/CVE-2018-3743/post_hekto.js",
+          "line": "125:13",
+          "snippet": "this.body = fs.createReadStream(file);",
+          "tainted_variable": "file"
+        },
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "ossf_js_supportate/CWE-601/CVE-2018-3743/post_hekto.js",
+          "line": "147:11",
+          "snippet": "this.body = fs.createReadStream(file);",
+          "tainted_variable": "file"
+        },
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "ossf_js_supportate/CWE-601/CVE-2018-3743/post_hekto.js",
+          "line": "150:11",
+          "snippet": "this.body = fs.createReadStream(file);",
+          "tainted_variable": "file"
+        },
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "ossf_js_supportate/CWE-601/CVE-2018-3743/post_hekto.js",
+          "line": "161:11",
+          "snippet": "this.body = fs.createReadStream(file);",
+          "tainted_variable": "file"
+        },
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "ossf_js_supportate/CWE-601/CVE-2018-3743/post_hekto.js",
+          "line": "203:9",
+          "snippet": "this.body = fs.createReadStream(file.slice(0, -1) + '.html');",
+          "tainted_variable": "file"
+        },
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "ossf_js_supportate/CWE-601/CVE-2018-3743/post_hekto.js",
+          "line": "132:13",
+          "snippet": "this.body = fs.createReadStream(_404);",
+          "tainted_variable": "_404"
+        },
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "ossf_js_supportate/CWE-601/CVE-2018-3743/post_hekto.js",
+          "line": "171:11",
+          "snippet": "this.body = fs.createReadStream(_404);",
+          "tainted_variable": "_404"
+        },
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "ossf_js_supportate/CWE-601/CVE-2018-3743/post_hekto.js",
+          "line": "214:11",
+          "snippet": "this.body = fs.createReadStream(_404);",
+          "tainted_variable": "_404"
+        },
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "ossf_js_supportate/CWE-601/CVE-2018-3743/post_hekto.js",
+          "line": "185:11",
+          "snippet": "this.body = fs.createReadStream(_200);",
+          "tainted_variable": "_200"
+        },
+        {
+          "rule_id": "CWE-117-LOG-INJECTION",
+          "vulnerabilities": [
+            "CWE-117"
+          ],
+          "source_file": "ossf_js_supportate/CWE-601/CVE-2018-3743/post_hekto.js",
+          "line": "225:3",
+          "snippet": "console.log('Serving on port ' + port);",
+          "tainted_variable": "port"
+        },
+        {
+          "rule_id": "CWE-601-OPEN-REDIRECT",
+          "vulnerabilities": [
+            "CWE-601"
+          ],
+          "source_file": "ossf_js_supportate/CWE-601/CVE-2018-3743/post_hekto.js",
+          "line": "120:13",
+          "snippet": "this.redirect(this.request.url + '/' + query);",
+          "tainted_variable": "this.request.url",
+          "source_kind": "inline-name"
+        },
+        {
+          "rule_id": "CWE-601-OPEN-REDIRECT",
+          "vulnerabilities": [
+            "CWE-601"
+          ],
+          "source_file": "ossf_js_supportate/CWE-601/CVE-2018-3743/post_hekto.js",
+          "line": "181:11",
+          "snippet": "this.redirect(this.request.url + '/' + query);",
+          "tainted_variable": "this.request.url",
+          "source_kind": "inline-name"
+        },
+        {
+          "rule_id": "CWE-601-OPEN-REDIRECT",
+          "vulnerabilities": [
+            "CWE-601"
+          ],
+          "source_file": "ossf_js_supportate/CWE-601/CVE-2018-3743/post_hekto.js",
+          "line": "194:9",
+          "snippet": "this.redirect(this.request.origin + stripTrailingSlash(this.request.url) + '/' + query);",
+          "tainted_variable": "this.request.url",
+          "source_kind": "inline-name"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-601/CVE-2018-3743/pre_hekto.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-117-LOG-INJECTION",
+        "CWE-22-PATH-TRAVERSAL",
+        "CWE-601-OPEN-REDIRECT"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-117",
+        "CWE-22",
+        "CWE-601"
+      ],
+      "findings_count": 13,
+      "findings": [
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "ossf_js_supportate/CWE-601/CVE-2018-3743/pre_hekto.js",
+          "line": "118:13",
+          "snippet": "this.body = fs.createReadStream(file);",
+          "tainted_variable": "file"
+        },
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "ossf_js_supportate/CWE-601/CVE-2018-3743/pre_hekto.js",
+          "line": "140:11",
+          "snippet": "this.body = fs.createReadStream(file);",
+          "tainted_variable": "file"
+        },
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "ossf_js_supportate/CWE-601/CVE-2018-3743/pre_hekto.js",
+          "line": "143:11",
+          "snippet": "this.body = fs.createReadStream(file);",
+          "tainted_variable": "file"
+        },
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "ossf_js_supportate/CWE-601/CVE-2018-3743/pre_hekto.js",
+          "line": "154:11",
+          "snippet": "this.body = fs.createReadStream(file);",
+          "tainted_variable": "file"
+        },
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "ossf_js_supportate/CWE-601/CVE-2018-3743/pre_hekto.js",
+          "line": "196:9",
+          "snippet": "this.body = fs.createReadStream(file.slice(0, -1) + '.html');",
+          "tainted_variable": "file"
+        },
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "ossf_js_supportate/CWE-601/CVE-2018-3743/pre_hekto.js",
+          "line": "125:13",
+          "snippet": "this.body = fs.createReadStream(_404);",
+          "tainted_variable": "_404"
+        },
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "ossf_js_supportate/CWE-601/CVE-2018-3743/pre_hekto.js",
+          "line": "164:11",
+          "snippet": "this.body = fs.createReadStream(_404);",
+          "tainted_variable": "_404"
+        },
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "ossf_js_supportate/CWE-601/CVE-2018-3743/pre_hekto.js",
+          "line": "207:11",
+          "snippet": "this.body = fs.createReadStream(_404);",
+          "tainted_variable": "_404"
+        },
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "ossf_js_supportate/CWE-601/CVE-2018-3743/pre_hekto.js",
+          "line": "178:11",
+          "snippet": "this.body = fs.createReadStream(_200);",
+          "tainted_variable": "_200"
+        },
+        {
+          "rule_id": "CWE-117-LOG-INJECTION",
+          "vulnerabilities": [
+            "CWE-117"
+          ],
+          "source_file": "ossf_js_supportate/CWE-601/CVE-2018-3743/pre_hekto.js",
+          "line": "218:3",
+          "snippet": "console.log('Serving on port ' + port);",
+          "tainted_variable": "port"
+        },
+        {
+          "rule_id": "CWE-601-OPEN-REDIRECT",
+          "vulnerabilities": [
+            "CWE-601"
+          ],
+          "source_file": "ossf_js_supportate/CWE-601/CVE-2018-3743/pre_hekto.js",
+          "line": "113:13",
+          "snippet": "this.redirect(this.request.url + '/' + query);",
+          "tainted_variable": "this.request.url",
+          "source_kind": "inline-name"
+        },
+        {
+          "rule_id": "CWE-601-OPEN-REDIRECT",
+          "vulnerabilities": [
+            "CWE-601"
+          ],
+          "source_file": "ossf_js_supportate/CWE-601/CVE-2018-3743/pre_hekto.js",
+          "line": "174:11",
+          "snippet": "this.redirect(this.request.url + '/' + query);",
+          "tainted_variable": "this.request.url",
+          "source_kind": "inline-name"
+        },
+        {
+          "rule_id": "CWE-601-OPEN-REDIRECT",
+          "vulnerabilities": [
+            "CWE-601"
+          ],
+          "source_file": "ossf_js_supportate/CWE-601/CVE-2018-3743/pre_hekto.js",
+          "line": "187:9",
+          "snippet": "this.redirect(this.request.url + '/' + query);",
+          "tainted_variable": "this.request.url",
+          "source_kind": "inline-name"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-601/CVE-2018-6333/post_main.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-601/CVE-2018-6333/pre_main.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-601/CVE-2020-8135/post_utils.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-1333-REGEX-DOS",
+        "CWE-477-OBSOLETE-FUNCTION",
+        "CWE-918-SSRF"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-1333",
+        "CWE-477",
+        "CWE-918"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-601/CVE-2020-8135/post_utils.js",
+          "line": "54:51",
+          "snippet": "urlParser.parse(url)"
+        },
+        {
+          "rule_id": "CWE-918-SSRF",
+          "vulnerabilities": [
+            "CWE-918"
+          ],
+          "source_file": "ossf_js_supportate/CWE-601/CVE-2020-8135/post_utils.js",
+          "line": "73:5",
+          "snippet": "request(opts, (err, response, body) => { if (err) { reject(err) } else { resolve({ type: response.headers['content-type'], size: parseInt(re…",
+          "tainted_variable": "opts"
+        },
+        {
+          "rule_id": "CWE-1333-REGEX-DOS",
+          "vulnerabilities": [
+            "CWE-1333"
+          ],
+          "source_file": "ossf_js_supportate/CWE-601/CVE-2020-8135/post_utils.js",
+          "line": "14:5",
+          "snippet": "return value === i || (new RegExp(i)).test(value)",
+          "tainted_variable": "i"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-601/CVE-2020-8135/pre_utils.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-1333-REGEX-DOS",
+        "CWE-477-OBSOLETE-FUNCTION",
+        "CWE-918-SSRF"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-1333",
+        "CWE-477",
+        "CWE-918"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-601/CVE-2020-8135/pre_utils.js",
+          "line": "54:51",
+          "snippet": "urlParser.parse(url)"
+        },
+        {
+          "rule_id": "CWE-918-SSRF",
+          "vulnerabilities": [
+            "CWE-918"
+          ],
+          "source_file": "ossf_js_supportate/CWE-601/CVE-2020-8135/pre_utils.js",
+          "line": "73:5",
+          "snippet": "request(opts, (err, response, body) => { if (err) { reject(err) } else { resolve({ type: response.headers['content-type'], size: parseInt(re…",
+          "tainted_variable": "opts"
+        },
+        {
+          "rule_id": "CWE-1333-REGEX-DOS",
+          "vulnerabilities": [
+            "CWE-1333"
+          ],
+          "source_file": "ossf_js_supportate/CWE-601/CVE-2020-8135/pre_utils.js",
+          "line": "14:5",
+          "snippet": "return value === i || (new RegExp(i)).test(value)",
+          "tainted_variable": "i"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-730/CVE-2017-16023/post_index.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-252-UNCHECKED-RETURN-VALUE"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-252"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-252-UNCHECKED-RETURN-VALUE",
+          "vulnerabilities": [
+            "CWE-252"
+          ],
+          "source_file": "ossf_js_supportate/CWE-730/CVE-2017-16023/post_index.js",
+          "line": "15:42",
+          "snippet": "toLowerCase()"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-730/CVE-2017-16023/pre_index.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-1333-REGEX-DOS",
+        "CWE-252-UNCHECKED-RETURN-VALUE"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-1333",
+        "CWE-252"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-252-UNCHECKED-RETURN-VALUE",
+          "vulnerabilities": [
+            "CWE-252"
+          ],
+          "source_file": "ossf_js_supportate/CWE-730/CVE-2017-16023/pre_index.js",
+          "line": "9:42",
+          "snippet": "toLowerCase()"
+        },
+        {
+          "rule_id": "CWE-1333-REGEX-DOS",
+          "vulnerabilities": [
+            "CWE-1333"
+          ],
+          "source_file": "ossf_js_supportate/CWE-730/CVE-2017-16023/pre_index.js",
+          "line": "8:41",
+          "snippet": ".replace(new RegExp('(' + sep + '[A-Z])([A-Z])', 'g'), '$1' + sep + '$2')",
+          "tainted_variable": "sep"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-730/CVE-2017-16098/post_index.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-1333-REGEX-DOS"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-1333"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-1333-REGEX-DOS",
+          "vulnerabilities": [
+            "CWE-1333"
+          ],
+          "source_file": "ossf_js_supportate/CWE-730/CVE-2017-16098/post_index.js",
+          "line": "44:5",
+          "snippet": "matchs = CHARTSET_RE.exec(contentType);",
+          "tainted_variable": "contentType"
+        },
+        {
+          "rule_id": "CWE-1333-REGEX-DOS",
+          "vulnerabilities": [
+            "CWE-1333"
+          ],
+          "source_file": "ossf_js_supportate/CWE-730/CVE-2017-16098/post_index.js",
+          "line": "49:5",
+          "snippet": "matchs = CHARTSET_RE.exec(contentType);",
+          "tainted_variable": "contentType"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-730/CVE-2017-16098/pre_index.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-1333-REGEX-DOS"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-1333"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-1333-REGEX-DOS",
+          "vulnerabilities": [
+            "CWE-1333"
+          ],
+          "source_file": "ossf_js_supportate/CWE-730/CVE-2017-16098/pre_index.js",
+          "line": "44:5",
+          "snippet": "matchs = CHARTSET_RE.exec(contentType);",
+          "tainted_variable": "contentType"
+        },
+        {
+          "rule_id": "CWE-1333-REGEX-DOS",
+          "vulnerabilities": [
+            "CWE-1333"
+          ],
+          "source_file": "ossf_js_supportate/CWE-730/CVE-2017-16098/pre_index.js",
+          "line": "49:5",
+          "snippet": "matchs = CHARTSET_RE.exec(contentType);",
+          "tainted_variable": "contentType"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-730/CVE-2017-16114/post_marked.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-1333-REGEX-DOS",
+        "CWE-252-UNCHECKED-RETURN-VALUE",
+        "CWE-338-WEAK-PRNG",
+        "CWE-477-OBSOLETE-FUNCTION",
+        "CWE-835-LOOP-WITH-UNREACHABLE-EXIT"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-1333",
+        "CWE-252",
+        "CWE-338",
+        "CWE-477",
+        "CWE-835"
+      ],
+      "findings_count": 21,
+      "findings": [
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-730/CVE-2017-16114/post_marked.js",
+          "line": "586:16",
+          "snippet": "escape(cap[1])"
+        },
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-730/CVE-2017-16114/post_marked.js",
+          "line": "596:14",
+          "snippet": "escape(cap[1])"
+        },
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-730/CVE-2017-16114/post_marked.js",
+          "line": "613:13",
+          "snippet": "escape(cap[0])"
+        },
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-730/CVE-2017-16114/post_marked.js",
+          "line": "664:37",
+          "snippet": "escape(cap[2], true)"
+        },
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-730/CVE-2017-16114/post_marked.js",
+          "line": "685:33",
+          "snippet": "escape(this.smartypants(cap[0]))"
+        },
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-730/CVE-2017-16114/post_marked.js",
+          "line": "703:14",
+          "snippet": "escape(link.href)"
+        },
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-730/CVE-2017-16114/post_marked.js",
+          "line": "704:28",
+          "snippet": "escape(link.title)"
+        },
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-730/CVE-2017-16114/post_marked.js",
+          "line": "708:40",
+          "snippet": "escape(cap[1])"
+        },
+        {
+          "rule_id": "CWE-338-WEAK-PRNG",
+          "vulnerabilities": [
+            "CWE-338"
+          ],
+          "source_file": "ossf_js_supportate/CWE-730/CVE-2017-16114/post_marked.js",
+          "line": "747:9",
+          "snippet": "Math.random()"
+        },
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-730/CVE-2017-16114/post_marked.js",
+          "line": "775:27",
+          "snippet": "escape(code, true)"
+        },
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-730/CVE-2017-16114/post_marked.js",
+          "line": "781:7",
+          "snippet": "escape(lang, true)"
+        },
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-730/CVE-2017-16114/post_marked.js",
+          "line": "783:25",
+          "snippet": "escape(code, true)"
+        },
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-730/CVE-2017-16114/post_marked.js",
+          "line": "872:37",
+          "snippet": "unescape(href)"
+        },
+        {
+          "rule_id": "CWE-252-UNCHECKED-RETURN-VALUE",
+          "vulnerabilities": [
+            "CWE-252"
+          ],
+          "source_file": "ossf_js_supportate/CWE-730/CVE-2017-16114/post_marked.js",
+          "line": "874:10",
+          "snippet": "toLowerCase()"
+        },
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-730/CVE-2017-16114/post_marked.js",
+          "line": "1223:11",
+          "snippet": "escape(e.message + '', true)"
+        },
+        {
+          "rule_id": "CWE-835-LOOP-WITH-UNREACHABLE-EXIT",
+          "vulnerabilities": [
+            "CWE-835"
+          ],
+          "source_file": "ossf_js_supportate/CWE-730/CVE-2017-16114/post_marked.js",
+          "line": "964:3",
+          "snippet": "while (this.peek().type === 'text') { body += '\\n' + this.next().text; }"
+        },
+        {
+          "rule_id": "CWE-835-LOOP-WITH-UNREACHABLE-EXIT",
+          "vulnerabilities": [
+            "CWE-835"
+          ],
+          "source_file": "ossf_js_supportate/CWE-730/CVE-2017-16114/post_marked.js",
+          "line": "1032:7",
+          "snippet": "while (this.next().type !== 'blockquote_end') { body += this.tok(); }"
+        },
+        {
+          "rule_id": "CWE-835-LOOP-WITH-UNREACHABLE-EXIT",
+          "vulnerabilities": [
+            "CWE-835"
+          ],
+          "source_file": "ossf_js_supportate/CWE-730/CVE-2017-16114/post_marked.js",
+          "line": "1042:7",
+          "snippet": "while (this.next().type !== 'list_end') { body += this.tok(); }"
+        },
+        {
+          "rule_id": "CWE-835-LOOP-WITH-UNREACHABLE-EXIT",
+          "vulnerabilities": [
+            "CWE-835"
+          ],
+          "source_file": "ossf_js_supportate/CWE-730/CVE-2017-16114/post_marked.js",
+          "line": "1051:7",
+          "snippet": "while (this.next().type !== 'list_item_end') { body += this.token.type === 'text' ? this.parseText() : this.tok(); }"
+        },
+        {
+          "rule_id": "CWE-835-LOOP-WITH-UNREACHABLE-EXIT",
+          "vulnerabilities": [
+            "CWE-835"
+          ],
+          "source_file": "ossf_js_supportate/CWE-730/CVE-2017-16114/post_marked.js",
+          "line": "1062:7",
+          "snippet": "while (this.next().type !== 'list_item_end') { body += this.tok(); }"
+        },
+        {
+          "rule_id": "CWE-1333-REGEX-DOS",
+          "vulnerabilities": [
+            "CWE-1333"
+          ],
+          "source_file": "ossf_js_supportate/CWE-730/CVE-2017-16114/post_marked.js",
+          "line": "1113:16",
+          "snippet": "return new RegExp(regex, opt);",
+          "tainted_variable": "regex"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-730/CVE-2017-16114/pre_marked.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-1333-REGEX-DOS",
+        "CWE-252-UNCHECKED-RETURN-VALUE",
+        "CWE-338-WEAK-PRNG",
+        "CWE-477-OBSOLETE-FUNCTION",
+        "CWE-835-LOOP-WITH-UNREACHABLE-EXIT"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-1333",
+        "CWE-252",
+        "CWE-338",
+        "CWE-477",
+        "CWE-835"
+      ],
+      "findings_count": 21,
+      "findings": [
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-730/CVE-2017-16114/pre_marked.js",
+          "line": "586:16",
+          "snippet": "escape(cap[1])"
+        },
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-730/CVE-2017-16114/pre_marked.js",
+          "line": "596:14",
+          "snippet": "escape(cap[1])"
+        },
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-730/CVE-2017-16114/pre_marked.js",
+          "line": "613:13",
+          "snippet": "escape(cap[0])"
+        },
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-730/CVE-2017-16114/pre_marked.js",
+          "line": "664:37",
+          "snippet": "escape(cap[2], true)"
+        },
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-730/CVE-2017-16114/pre_marked.js",
+          "line": "685:33",
+          "snippet": "escape(this.smartypants(cap[0]))"
+        },
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-730/CVE-2017-16114/pre_marked.js",
+          "line": "703:14",
+          "snippet": "escape(link.href)"
+        },
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-730/CVE-2017-16114/pre_marked.js",
+          "line": "704:28",
+          "snippet": "escape(link.title)"
+        },
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-730/CVE-2017-16114/pre_marked.js",
+          "line": "708:40",
+          "snippet": "escape(cap[1])"
+        },
+        {
+          "rule_id": "CWE-338-WEAK-PRNG",
+          "vulnerabilities": [
+            "CWE-338"
+          ],
+          "source_file": "ossf_js_supportate/CWE-730/CVE-2017-16114/pre_marked.js",
+          "line": "747:9",
+          "snippet": "Math.random()"
+        },
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-730/CVE-2017-16114/pre_marked.js",
+          "line": "775:27",
+          "snippet": "escape(code, true)"
+        },
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-730/CVE-2017-16114/pre_marked.js",
+          "line": "781:7",
+          "snippet": "escape(lang, true)"
+        },
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-730/CVE-2017-16114/pre_marked.js",
+          "line": "783:25",
+          "snippet": "escape(code, true)"
+        },
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-730/CVE-2017-16114/pre_marked.js",
+          "line": "872:37",
+          "snippet": "unescape(href)"
+        },
+        {
+          "rule_id": "CWE-252-UNCHECKED-RETURN-VALUE",
+          "vulnerabilities": [
+            "CWE-252"
+          ],
+          "source_file": "ossf_js_supportate/CWE-730/CVE-2017-16114/pre_marked.js",
+          "line": "874:10",
+          "snippet": "toLowerCase()"
+        },
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-730/CVE-2017-16114/pre_marked.js",
+          "line": "1223:11",
+          "snippet": "escape(e.message + '', true)"
+        },
+        {
+          "rule_id": "CWE-835-LOOP-WITH-UNREACHABLE-EXIT",
+          "vulnerabilities": [
+            "CWE-835"
+          ],
+          "source_file": "ossf_js_supportate/CWE-730/CVE-2017-16114/pre_marked.js",
+          "line": "964:3",
+          "snippet": "while (this.peek().type === 'text') { body += '\\n' + this.next().text; }"
+        },
+        {
+          "rule_id": "CWE-835-LOOP-WITH-UNREACHABLE-EXIT",
+          "vulnerabilities": [
+            "CWE-835"
+          ],
+          "source_file": "ossf_js_supportate/CWE-730/CVE-2017-16114/pre_marked.js",
+          "line": "1032:7",
+          "snippet": "while (this.next().type !== 'blockquote_end') { body += this.tok(); }"
+        },
+        {
+          "rule_id": "CWE-835-LOOP-WITH-UNREACHABLE-EXIT",
+          "vulnerabilities": [
+            "CWE-835"
+          ],
+          "source_file": "ossf_js_supportate/CWE-730/CVE-2017-16114/pre_marked.js",
+          "line": "1042:7",
+          "snippet": "while (this.next().type !== 'list_end') { body += this.tok(); }"
+        },
+        {
+          "rule_id": "CWE-835-LOOP-WITH-UNREACHABLE-EXIT",
+          "vulnerabilities": [
+            "CWE-835"
+          ],
+          "source_file": "ossf_js_supportate/CWE-730/CVE-2017-16114/pre_marked.js",
+          "line": "1051:7",
+          "snippet": "while (this.next().type !== 'list_item_end') { body += this.token.type === 'text' ? this.parseText() : this.tok(); }"
+        },
+        {
+          "rule_id": "CWE-835-LOOP-WITH-UNREACHABLE-EXIT",
+          "vulnerabilities": [
+            "CWE-835"
+          ],
+          "source_file": "ossf_js_supportate/CWE-730/CVE-2017-16114/pre_marked.js",
+          "line": "1062:7",
+          "snippet": "while (this.next().type !== 'list_item_end') { body += this.tok(); }"
+        },
+        {
+          "rule_id": "CWE-1333-REGEX-DOS",
+          "vulnerabilities": [
+            "CWE-1333"
+          ],
+          "source_file": "ossf_js_supportate/CWE-730/CVE-2017-16114/pre_marked.js",
+          "line": "1113:16",
+          "snippet": "return new RegExp(regex, opt);",
+          "tainted_variable": "regex"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-730/CVE-2017-16118/post_index.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-730/CVE-2017-16118/pre_index.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-730/CVE-2017-16119/post_index.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-1333-REGEX-DOS"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-1333"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-1333-REGEX-DOS",
+          "vulnerabilities": [
+            "CWE-1333"
+          ],
+          "source_file": "ossf_js_supportate/CWE-730/CVE-2017-16119/post_index.js",
+          "line": "47:6",
+          "snippet": "(cacheControl && CACHE_CONTROL_NO_CACHE_REGEXP.test(cacheControl))",
+          "tainted_variable": "cacheControl"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-730/CVE-2017-16119/pre_index.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-1333-REGEX-DOS"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-1333"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-1333-REGEX-DOS",
+          "vulnerabilities": [
+            "CWE-1333"
+          ],
+          "source_file": "ossf_js_supportate/CWE-730/CVE-2017-16119/pre_index.js",
+          "line": "54:6",
+          "snippet": "(cacheControl && CACHE_CONTROL_NO_CACHE_REGEXP.test(cacheControl))",
+          "tainted_variable": "cacheControl"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-730/CVE-2017-16136/post_index.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-477-OBSOLETE-FUNCTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-477"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-730/CVE-2017-16136/post_index.js",
+          "line": "88:7",
+          "snippet": "str.substr(0, 2)"
+        },
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-730/CVE-2017-16136/post_index.js",
+          "line": "131:9",
+          "snippet": "header.substr(0, index)"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-730/CVE-2017-16136/pre_index.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-477-OBSOLETE-FUNCTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-477"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-730/CVE-2017-16136/pre_index.js",
+          "line": "88:7",
+          "snippet": "str.substr(0, 2)"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-770/CVE-2017-16026/post_multipart.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-321-HARDCODED-CRYPTO-KEY",
+        "CWE-477-OBSOLETE-FUNCTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-321",
+        "CWE-477"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-770/CVE-2017-16026/post_multipart.js",
+          "line": "74:56",
+          "snippet": "Buffer(part)"
+        },
+        {
+          "rule_id": "CWE-321-HARDCODED-CRYPTO-KEY",
+          "vulnerabilities": [
+            "CWE-321"
+          ],
+          "source_file": "ossf_js_supportate/CWE-770/CVE-2017-16026/post_multipart.js",
+          "line": "84:10",
+          "snippet": "(key === 'body')"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-770/CVE-2017-16026/pre_multipart.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-321-HARDCODED-CRYPTO-KEY",
+        "CWE-477-OBSOLETE-FUNCTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-321",
+        "CWE-477"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-770/CVE-2017-16026/pre_multipart.js",
+          "line": "71:56",
+          "snippet": "Buffer(part)"
+        },
+        {
+          "rule_id": "CWE-321-HARDCODED-CRYPTO-KEY",
+          "vulnerabilities": [
+            "CWE-321"
+          ],
+          "source_file": "ossf_js_supportate/CWE-770/CVE-2017-16026/pre_multipart.js",
+          "line": "81:10",
+          "snippet": "(key === 'body')"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-770/CVE-2018-3736/post_index.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-477-OBSOLETE-FUNCTION",
+        "CWE-918-SSRF"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-477",
+        "CWE-918"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-770/CVE-2018-3736/post_index.js",
+          "line": "27:39",
+          "snippet": "url.parse(opts)"
+        },
+        {
+          "rule_id": "CWE-918-SSRF",
+          "vulnerabilities": [
+            "CWE-918"
+          ],
+          "source_file": "ossf_js_supportate/CWE-770/CVE-2018-3736/post_index.js",
+          "line": "153:9",
+          "snippet": "sock = tls.connect(opts);",
+          "tainted_variable": "opts"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-770/CVE-2018-3736/pre_index.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-477-OBSOLETE-FUNCTION",
+        "CWE-918-SSRF"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-477",
+        "CWE-918"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-770/CVE-2018-3736/pre_index.js",
+          "line": "27:39",
+          "snippet": "url.parse(opts)"
+        },
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-770/CVE-2018-3736/pre_index.js",
+          "line": "207:22",
+          "snippet": "Buffer(proxy.auth)"
+        },
+        {
+          "rule_id": "CWE-918-SSRF",
+          "vulnerabilities": [
+            "CWE-918"
+          ],
+          "source_file": "ossf_js_supportate/CWE-770/CVE-2018-3736/pre_index.js",
+          "line": "153:9",
+          "snippet": "sock = tls.connect(opts);",
+          "tainted_variable": "opts"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-770/CVE-2020-8192/post_validation.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-770/CVE-2020-8192/pre_validation.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-78/CVE-2017-16034/post_stats.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-117-LOG-INJECTION",
+        "CWE-477-OBSOLETE-FUNCTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-117",
+        "CWE-477"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-78/CVE-2017-16034/post_stats.js",
+          "line": "56:15",
+          "snippet": "infos.substr(index + 2)"
+        },
+        {
+          "rule_id": "CWE-117-LOG-INJECTION",
+          "vulnerabilities": [
+            "CWE-117"
+          ],
+          "source_file": "ossf_js_supportate/CWE-78/CVE-2017-16034/post_stats.js",
+          "line": "143:7",
+          "snippet": "console.error('[pidusage] Command \"wmic ' + args + '\" failed with error %s', err)",
+          "tainted_variable": "args"
+        },
+        {
+          "rule_id": "CWE-117-LOG-INJECTION",
+          "vulnerabilities": [
+            "CWE-117"
+          ],
+          "source_file": "ossf_js_supportate/CWE-78/CVE-2017-16034/post_stats.js",
+          "line": "143:7",
+          "snippet": "console.error('[pidusage] Command \"wmic ' + args + '\" failed with error %s', err)",
+          "tainted_variable": "err"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-78/CVE-2017-16034/pre_stats.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-117-LOG-INJECTION",
+        "CWE-477-OBSOLETE-FUNCTION",
+        "CWE-78-OS-CMD-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-117",
+        "CWE-477",
+        "CWE-78"
+      ],
+      "findings_count": 4,
+      "findings": [
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-78/CVE-2017-16034/pre_stats.js",
+          "line": "53:15",
+          "snippet": "infos.substr(index + 2)"
+        },
+        {
+          "rule_id": "CWE-78-OS-CMD-INJECTION",
+          "vulnerabilities": [
+            "CWE-78"
+          ],
+          "source_file": "ossf_js_supportate/CWE-78/CVE-2017-16034/pre_stats.js",
+          "line": "103:5",
+          "snippet": "exec(cmd + pid, function(err, stdout, stderr) { if(err) return done(err, null) stdout = stdout.split(os.EOL)[1] stdout = stdout.replace(/^\\s…",
+          "tainted_variable": "pid"
+        },
+        {
+          "rule_id": "CWE-117-LOG-INJECTION",
+          "vulnerabilities": [
+            "CWE-117"
+          ],
+          "source_file": "ossf_js_supportate/CWE-78/CVE-2017-16034/pre_stats.js",
+          "line": "139:7",
+          "snippet": "console.error('[pidusage] Command \"wmic ' + args + '\" failed with error %s', err)",
+          "tainted_variable": "args"
+        },
+        {
+          "rule_id": "CWE-117-LOG-INJECTION",
+          "vulnerabilities": [
+            "CWE-117"
+          ],
+          "source_file": "ossf_js_supportate/CWE-78/CVE-2017-16034/pre_stats.js",
+          "line": "139:7",
+          "snippet": "console.error('[pidusage] Command \"wmic ' + args + '\" failed with error %s', err)",
+          "tainted_variable": "err"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-78/CVE-2017-16042/post_growl.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-400-UNCONTROLLED-LOOP-BOUND",
+        "CWE-477-OBSOLETE-FUNCTION",
+        "CWE-481-ASSIGNMENT-INSTEAD-OF-COMPARISON",
+        "CWE-78-OS-CMD-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-400",
+        "CWE-477",
+        "CWE-481",
+        "CWE-78"
+      ],
+      "findings_count": 5,
+      "findings": [
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-78/CVE-2017-16042/post_growl.js",
+          "line": "185:45",
+          "snippet": "substr(1)"
+        },
+        {
+          "rule_id": "CWE-78-OS-CMD-INJECTION",
+          "vulnerabilities": [
+            "CWE-78"
+          ],
+          "source_file": "ossf_js_supportate/CWE-78/CVE-2017-16042/post_growl.js",
+          "line": "288:3",
+          "snippet": "spawn(cmd_to_exec, args);",
+          "tainted_variable": "cmd_to_exec"
+        },
+        {
+          "rule_id": "CWE-400-UNCONTROLLED-LOOP-BOUND",
+          "vulnerabilities": [
+            "CWE-400"
+          ],
+          "source_file": "ossf_js_supportate/CWE-78/CVE-2017-16042/post_growl.js",
+          "line": "18:7",
+          "snippet": "(var i = 0, len = paths.length; i < len; ++i)",
+          "tainted_variable": "paths"
+        },
+        {
+          "rule_id": "CWE-400-UNCONTROLLED-LOOP-BOUND",
+          "vulnerabilities": [
+            "CWE-400"
+          ],
+          "source_file": "ossf_js_supportate/CWE-78/CVE-2017-16042/post_growl.js",
+          "line": "18:39",
+          "snippet": "i < len;",
+          "tainted_variable": "len"
+        },
+        {
+          "rule_id": "CWE-481-ASSIGNMENT-INSTEAD-OF-COMPARISON",
+          "vulnerabilities": [
+            "CWE-481"
+          ],
+          "source_file": "ossf_js_supportate/CWE-78/CVE-2017-16042/post_growl.js",
+          "line": "182:7",
+          "snippet": "image = options.image"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-78/CVE-2017-16042/pre_growl.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-400-UNCONTROLLED-LOOP-BOUND",
+        "CWE-477-OBSOLETE-FUNCTION",
+        "CWE-481-ASSIGNMENT-INSTEAD-OF-COMPARISON",
+        "CWE-78-OS-CMD-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-400",
+        "CWE-477",
+        "CWE-481",
+        "CWE-78"
+      ],
+      "findings_count": 5,
+      "findings": [
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-78/CVE-2017-16042/pre_growl.js",
+          "line": "186:45",
+          "snippet": "substr(1)"
+        },
+        {
+          "rule_id": "CWE-78-OS-CMD-INJECTION",
+          "vulnerabilities": [
+            "CWE-78"
+          ],
+          "source_file": "ossf_js_supportate/CWE-78/CVE-2017-16042/pre_growl.js",
+          "line": "289:3",
+          "snippet": "exec(args.join(' '), fn);",
+          "tainted_variable": "args"
+        },
+        {
+          "rule_id": "CWE-400-UNCONTROLLED-LOOP-BOUND",
+          "vulnerabilities": [
+            "CWE-400"
+          ],
+          "source_file": "ossf_js_supportate/CWE-78/CVE-2017-16042/pre_growl.js",
+          "line": "19:7",
+          "snippet": "(var i = 0, len = paths.length; i < len; ++i)",
+          "tainted_variable": "paths"
+        },
+        {
+          "rule_id": "CWE-400-UNCONTROLLED-LOOP-BOUND",
+          "vulnerabilities": [
+            "CWE-400"
+          ],
+          "source_file": "ossf_js_supportate/CWE-78/CVE-2017-16042/pre_growl.js",
+          "line": "19:39",
+          "snippet": "i < len;",
+          "tainted_variable": "len"
+        },
+        {
+          "rule_id": "CWE-481-ASSIGNMENT-INSTEAD-OF-COMPARISON",
+          "vulnerabilities": [
+            "CWE-481"
+          ],
+          "source_file": "ossf_js_supportate/CWE-78/CVE-2017-16042/pre_growl.js",
+          "line": "183:7",
+          "snippet": "image = options.image"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-78/CVE-2017-16100/post_dns-sync.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-117-LOG-INJECTION",
+        "CWE-1333-REGEX-DOS",
+        "CWE-78-OS-CMD-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-117",
+        "CWE-1333",
+        "CWE-78"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "CWE-78-OS-CMD-INJECTION",
+          "vulnerabilities": [
+            "CWE-78"
+          ],
+          "source_file": "ossf_js_supportate/CWE-78/CVE-2017-16100/post_dns-sync.js",
+          "line": "33:9",
+          "snippet": "response = shell.exec(cmd, {silent: true});",
+          "tainted_variable": "cmd"
+        },
+        {
+          "rule_id": "CWE-117-LOG-INJECTION",
+          "vulnerabilities": [
+            "CWE-117"
+          ],
+          "source_file": "ossf_js_supportate/CWE-78/CVE-2017-16100/post_dns-sync.js",
+          "line": "25:13",
+          "snippet": "console.error('Invalid hostname:', hostname);",
+          "tainted_variable": "hostname"
+        },
+        {
+          "rule_id": "CWE-1333-REGEX-DOS",
+          "vulnerabilities": [
+            "CWE-1333"
+          ],
+          "source_file": "ossf_js_supportate/CWE-78/CVE-2017-16100/post_dns-sync.js",
+          "line": "13:5",
+          "snippet": "return ValidHostnameRegex.test(hostname);",
+          "tainted_variable": "hostname"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-78/CVE-2017-16100/pre_dns-sync.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-78-OS-CMD-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-78"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-78-OS-CMD-INJECTION",
+          "vulnerabilities": [
+            "CWE-78"
+          ],
+          "source_file": "ossf_js_supportate/CWE-78/CVE-2017-16100/pre_dns-sync.js",
+          "line": "21:9",
+          "snippet": "response = shell.exec(cmd, {silent: true});",
+          "tainted_variable": "cmd"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-78/CVE-2018-13797/post_linux.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-78/CVE-2018-13797/pre_linux.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-78-OS-CMD-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-78"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-78-OS-CMD-INJECTION",
+          "vulnerabilities": [
+            "CWE-78"
+          ],
+          "source_file": "ossf_js_supportate/CWE-78/CVE-2018-13797/pre_linux.js",
+          "line": "4:5",
+          "snippet": "exec(\"cat /sys/class/net/\" + iface + \"/address\", function (err, out) { if (err) { callback(err, null); return; } callback(null, out.trim().t…",
+          "tainted_variable": "iface"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-78/CVE-2018-16460/post_index.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-252-UNCHECKED-RETURN-VALUE"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-252"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-252-UNCHECKED-RETURN-VALUE",
+          "vulnerabilities": [
+            "CWE-252"
+          ],
+          "source_file": "ossf_js_supportate/CWE-78/CVE-2018-16460/post_index.js",
+          "line": "140:18",
+          "snippet": "trim()"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-78/CVE-2018-16460/pre_index.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-78-OS-CMD-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-78"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-78-OS-CMD-INJECTION",
+          "vulnerabilities": [
+            "CWE-78"
+          ],
+          "source_file": "ossf_js_supportate/CWE-78/CVE-2018-16460/pre_index.js",
+          "line": "8:9",
+          "snippet": "cp.exec('ps ' + args, function(err, stdout, stderr) { stdout = stdout.toString('utf8'); stderr = stderr.toString('utf8'); if (err || stderr)…",
+          "tainted_variable": "args"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-78/CVE-2018-16461/post_tools.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-117-LOG-INJECTION",
+        "CWE-78-OS-CMD-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-117",
+        "CWE-78"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-78-OS-CMD-INJECTION",
+          "vulnerabilities": [
+            "CWE-78"
+          ],
+          "source_file": "ossf_js_supportate/CWE-78/CVE-2018-16461/post_tools.js",
+          "line": "126:9",
+          "snippet": "const execute = proc(cmd, args);",
+          "tainted_variable": "cmd"
+        },
+        {
+          "rule_id": "CWE-117-LOG-INJECTION",
+          "vulnerabilities": [
+            "CWE-117"
+          ],
+          "source_file": "ossf_js_supportate/CWE-78/CVE-2018-16461/post_tools.js",
+          "line": "123:11",
+          "snippet": "console.log(`Running: ${cmd}`);",
+          "tainted_variable": "cmd"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-78/CVE-2018-16461/pre_tools.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-117-LOG-INJECTION",
+        "CWE-78-OS-CMD-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-117",
+        "CWE-78"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-78-OS-CMD-INJECTION",
+          "vulnerabilities": [
+            "CWE-78"
+          ],
+          "source_file": "ossf_js_supportate/CWE-78/CVE-2018-16461/pre_tools.js",
+          "line": "114:9",
+          "snippet": "const execute = proc(cmd, (err, stdout, stderr) => { if (err) return reporting.reports(opts, err, callback); });",
+          "tainted_variable": "cmd"
+        },
+        {
+          "rule_id": "CWE-117-LOG-INJECTION",
+          "vulnerabilities": [
+            "CWE-117"
+          ],
+          "source_file": "ossf_js_supportate/CWE-78/CVE-2018-16461/pre_tools.js",
+          "line": "110:11",
+          "snippet": "console.log(`Running: ${cmd}`);",
+          "tainted_variable": "cmd"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-78/CVE-2018-16462/post_index.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-117-LOG-INJECTION",
+        "CWE-22-PATH-TRAVERSAL",
+        "CWE-78-OS-CMD-INJECTION",
+        "CWE-ERROR-DETAILS-TO-CONSOLE"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-117",
+        "CWE-200",
+        "CWE-209",
+        "CWE-22",
+        "CWE-78"
+      ],
+      "findings_count": 9,
+      "findings": [
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "ossf_js_supportate/CWE-78/CVE-2018-16462/post_index.js",
+          "line": "38:17",
+          "snippet": "const getAllFiles = dir => fs.readdirSync(dir).reduce((files, file) => { const name = path.join(dir, file); const isDirectory = fs.statSync(…",
+          "tainted_variable": "dir"
+        },
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "ossf_js_supportate/CWE-78/CVE-2018-16462/post_index.js",
+          "line": "41:33",
+          "snippet": "const isDirectory = fs.statSync(name).isDirectory();",
+          "tainted_variable": "name"
+        },
+        {
+          "rule_id": "CWE-78-OS-CMD-INJECTION",
+          "vulnerabilities": [
+            "CWE-78"
+          ],
+          "source_file": "ossf_js_supportate/CWE-78/CVE-2018-16462/post_index.js",
+          "line": "74:33",
+          "snippet": "const childProcess = spawnSync( opts.sqlclPath, // Sqlcl path spawnOpts, { encoding: 'utf8' } );",
+          "tainted_variable": "opts"
+        },
+        {
+          "rule_id": "CWE-117-LOG-INJECTION",
+          "vulnerabilities": [
+            "CWE-117"
+          ],
+          "source_file": "ossf_js_supportate/CWE-78/CVE-2018-16462/post_index.js",
+          "line": "52:49",
+          "snippet": "console.log(`Uploading to ${opts.appID} - Theme Files...`);",
+          "tainted_variable": "opts"
+        },
+        {
+          "rule_id": "CWE-117-LOG-INJECTION",
+          "vulnerabilities": [
+            "CWE-117"
+          ],
+          "source_file": "ossf_js_supportate/CWE-78/CVE-2018-16462/post_index.js",
+          "line": "55:49",
+          "snippet": "console.log(`Uploading to ${opts.appID} - Workspace Files...`);",
+          "tainted_variable": "opts"
+        },
+        {
+          "rule_id": "CWE-117-LOG-INJECTION",
+          "vulnerabilities": [
+            "CWE-117"
+          ],
+          "source_file": "ossf_js_supportate/CWE-78/CVE-2018-16462/post_index.js",
+          "line": "58:49",
+          "snippet": "console.log(`Uploading to ${opts.appID} - ${opts.pluginName} - Plugin Files...`);",
+          "tainted_variable": "opts"
+        },
+        {
+          "rule_id": "CWE-117-LOG-INJECTION",
+          "vulnerabilities": [
+            "CWE-117"
+          ],
+          "source_file": "ossf_js_supportate/CWE-78/CVE-2018-16462/post_index.js",
+          "line": "61:49",
+          "snippet": "console.log(`Uploading to ${opts.appID} - Application Static Files...`);",
+          "tainted_variable": "opts"
+        },
+        {
+          "rule_id": "CWE-117-LOG-INJECTION",
+          "vulnerabilities": [
+            "CWE-117"
+          ],
+          "source_file": "ossf_js_supportate/CWE-78/CVE-2018-16462/post_index.js",
+          "line": "81:33",
+          "snippet": "console.log(childProcess.stdout);",
+          "tainted_variable": "childProcess"
+        },
+        {
+          "rule_id": "CWE-ERROR-DETAILS-TO-CONSOLE",
+          "vulnerabilities": [
+            "CWE-200",
+            "CWE-209"
+          ],
+          "source_file": "ossf_js_supportate/CWE-78/CVE-2018-16462/post_index.js",
+          "line": "84:33",
+          "snippet": "console.error(err);",
+          "tainted_variable": "err"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-78/CVE-2018-16462/pre_index.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-117-LOG-INJECTION",
+        "CWE-78-OS-CMD-INJECTION",
+        "CWE-ERROR-DETAILS-TO-CONSOLE"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-117",
+        "CWE-200",
+        "CWE-209",
+        "CWE-78"
+      ],
+      "findings_count": 7,
+      "findings": [
+        {
+          "rule_id": "CWE-78-OS-CMD-INJECTION",
+          "vulnerabilities": [
+            "CWE-78"
+          ],
+          "source_file": "ossf_js_supportate/CWE-78/CVE-2018-16462/pre_index.js",
+          "line": "54:25",
+          "snippet": "const childProcess = execSync( '\"' + opts.sqlclPath + '\"' + // Sqlcl path ' ' + opts.connectString + // Connect string (user/pass@server:por…",
+          "tainted_variable": "opts"
+        },
+        {
+          "rule_id": "CWE-117-LOG-INJECTION",
+          "vulnerabilities": [
+            "CWE-117"
+          ],
+          "source_file": "ossf_js_supportate/CWE-78/CVE-2018-16462/pre_index.js",
+          "line": "42:41",
+          "snippet": "console.log(`Uploading to ${opts.appID} - Theme Files...`);",
+          "tainted_variable": "opts"
+        },
+        {
+          "rule_id": "CWE-117-LOG-INJECTION",
+          "vulnerabilities": [
+            "CWE-117"
+          ],
+          "source_file": "ossf_js_supportate/CWE-78/CVE-2018-16462/pre_index.js",
+          "line": "45:41",
+          "snippet": "console.log(`Uploading to ${opts.appID} - Workspace Files...`);",
+          "tainted_variable": "opts"
+        },
+        {
+          "rule_id": "CWE-117-LOG-INJECTION",
+          "vulnerabilities": [
+            "CWE-117"
+          ],
+          "source_file": "ossf_js_supportate/CWE-78/CVE-2018-16462/pre_index.js",
+          "line": "48:41",
+          "snippet": "console.log(`Uploading to ${opts.appID} - ${opts.pluginName} - Plugin Files...`);",
+          "tainted_variable": "opts"
+        },
+        {
+          "rule_id": "CWE-117-LOG-INJECTION",
+          "vulnerabilities": [
+            "CWE-117"
+          ],
+          "source_file": "ossf_js_supportate/CWE-78/CVE-2018-16462/pre_index.js",
+          "line": "51:41",
+          "snippet": "console.log(`Uploading to ${opts.appID} - Application Static Files...`);",
+          "tainted_variable": "opts"
+        },
+        {
+          "rule_id": "CWE-117-LOG-INJECTION",
+          "vulnerabilities": [
+            "CWE-117"
+          ],
+          "source_file": "ossf_js_supportate/CWE-78/CVE-2018-16462/pre_index.js",
+          "line": "68:25",
+          "snippet": "console.log(childProcess);",
+          "tainted_variable": "childProcess"
+        },
+        {
+          "rule_id": "CWE-ERROR-DETAILS-TO-CONSOLE",
+          "vulnerabilities": [
+            "CWE-200",
+            "CWE-209"
+          ],
+          "source_file": "ossf_js_supportate/CWE-78/CVE-2018-16462/pre_index.js",
+          "line": "74:25",
+          "snippet": "console.error(err);",
+          "tainted_variable": "err"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-78/CVE-2018-16489/post_index.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-78/CVE-2018-16489/pre_index.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-79/CVE-2016-10735/post_util.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-1333-REGEX-DOS",
+        "CWE-338-WEAK-PRNG",
+        "CWE-943-NOSQL-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-1333",
+        "CWE-338",
+        "CWE-943"
+      ],
+      "findings_count": 4,
+      "findings": [
+        {
+          "rule_id": "CWE-338-WEAK-PRNG",
+          "vulnerabilities": [
+            "CWE-338"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2016-10735/post_util.js",
+          "line": "108:22",
+          "snippet": "Math.random()"
+        },
+        {
+          "rule_id": "CWE-943-NOSQL-INJECTION",
+          "vulnerabilities": [
+            "CWE-943"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2016-10735/post_util.js",
+          "line": "120:9",
+          "snippet": "const $selector = $(document).find(selector)",
+          "tainted_variable": "selector"
+        },
+        {
+          "rule_id": "CWE-1333-REGEX-DOS",
+          "vulnerabilities": [
+            "CWE-1333"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2016-10735/post_util.js",
+          "line": "147:14",
+          "snippet": "(!new RegExp(expectedTypes).test(valueType))",
+          "tainted_variable": "expectedTypes"
+        },
+        {
+          "rule_id": "CWE-1333-REGEX-DOS",
+          "vulnerabilities": [
+            "CWE-1333"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2016-10735/post_util.js",
+          "line": "147:14",
+          "snippet": "(!new RegExp(expectedTypes).test(valueType))",
+          "tainted_variable": "valueType"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-79/CVE-2016-10735/pre_util.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-1333-REGEX-DOS",
+        "CWE-338-WEAK-PRNG"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-1333",
+        "CWE-338"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "CWE-338-WEAK-PRNG",
+          "vulnerabilities": [
+            "CWE-338"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2016-10735/pre_util.js",
+          "line": "108:22",
+          "snippet": "Math.random()"
+        },
+        {
+          "rule_id": "CWE-1333-REGEX-DOS",
+          "vulnerabilities": [
+            "CWE-1333"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2016-10735/pre_util.js",
+          "line": "147:14",
+          "snippet": "(!new RegExp(expectedTypes).test(valueType))",
+          "tainted_variable": "expectedTypes"
+        },
+        {
+          "rule_id": "CWE-1333-REGEX-DOS",
+          "vulnerabilities": [
+            "CWE-1333"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2016-10735/pre_util.js",
+          "line": "147:14",
+          "snippet": "(!new RegExp(expectedTypes).test(valueType))",
+          "tainted_variable": "valueType"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-79/CVE-2017-0931/post_html-janitor.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-79-CROSS-SITE-SCRIPTING"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-79"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2017-0931/post_html-janitor.js",
+          "line": "45:5",
+          "snippet": "root.innerHTML = html;",
+          "tainted_variable": "html"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-79/CVE-2017-0931/pre_html-janitor.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-79-CROSS-SITE-SCRIPTING"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-79"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2017-0931/pre_html-janitor.js",
+          "line": "44:5",
+          "snippet": "sandbox.innerHTML = html;",
+          "tainted_variable": "html"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-79/CVE-2017-16043/post_shout.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-614-SENSITIVE-COOKIE-INSECURE",
+        "CWE-79-CROSS-SITE-SCRIPTING"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-614",
+        "CWE-79"
+      ],
+      "findings_count": 4,
+      "findings": [
+        {
+          "rule_id": "CWE-614-SENSITIVE-COOKIE-INSECURE",
+          "vulnerabilities": [
+            "CWE-614"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2017-16043/post_shout.js",
+          "line": "136:25",
+          "snippet": "$.cookie( \"token\", data.token, { expires: expire(30) } )"
+        },
+        {
+          "rule_id": "CWE-614-SENSITIVE-COOKIE-INSECURE",
+          "vulnerabilities": [
+            "CWE-614"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2017-16043/post_shout.js",
+          "line": "353:17",
+          "snippet": "$.cookie( \"settings\", options, { expires: expire(365) } )"
+        },
+        {
+          "rule_id": "CWE-614-SENSITIVE-COOKIE-INSECURE",
+          "vulnerabilities": [
+            "CWE-614"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2017-16043/post_shout.js",
+          "line": "683:25",
+          "snippet": "$.cookie( \"user\", values.user, { expires: expire(30) } )"
+        },
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2017-16043/post_shout.js",
+          "line": "853:25",
+          "snippet": ".html(nick + \":\")",
+          "tainted_variable": "nick"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-79/CVE-2017-16043/pre_shout.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-614-SENSITIVE-COOKIE-INSECURE",
+        "CWE-79-CROSS-SITE-SCRIPTING"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-614",
+        "CWE-79"
+      ],
+      "findings_count": 4,
+      "findings": [
+        {
+          "rule_id": "CWE-614-SENSITIVE-COOKIE-INSECURE",
+          "vulnerabilities": [
+            "CWE-614"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2017-16043/pre_shout.js",
+          "line": "136:25",
+          "snippet": "$.cookie( \"token\", data.token, { expires: expire(30) } )"
+        },
+        {
+          "rule_id": "CWE-614-SENSITIVE-COOKIE-INSECURE",
+          "vulnerabilities": [
+            "CWE-614"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2017-16043/pre_shout.js",
+          "line": "357:17",
+          "snippet": "$.cookie( \"settings\", options, { expires: expire(365) } )"
+        },
+        {
+          "rule_id": "CWE-614-SENSITIVE-COOKIE-INSECURE",
+          "vulnerabilities": [
+            "CWE-614"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2017-16043/pre_shout.js",
+          "line": "687:25",
+          "snippet": "$.cookie( \"user\", values.user, { expires: expire(30) } )"
+        },
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2017-16043/pre_shout.js",
+          "line": "857:25",
+          "snippet": ".html(nick + \":\")",
+          "tainted_variable": "nick"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-79/CVE-2017-18352/post_main.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-113-HTTP-RESPONSE-SPLITTING",
+        "CWE-117-LOG-INJECTION",
+        "CWE-400-UNCONTROLLED-LOOP-BOUND",
+        "CWE-477-OBSOLETE-FUNCTION",
+        "CWE-617-REACHABLE-ASSERTION",
+        "CWE-79-CROSS-SITE-SCRIPTING",
+        "CWE-ERROR-DETAILS-TO-CONSOLE"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-113",
+        "CWE-117",
+        "CWE-200",
+        "CWE-209",
+        "CWE-400",
+        "CWE-477",
+        "CWE-617",
+        "CWE-79"
+      ],
+      "findings_count": 14,
+      "findings": [
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2017-18352/post_main.js",
+          "line": "70:21",
+          "snippet": "url.parse(urlReq)"
+        },
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2017-18352/post_main.js",
+          "line": "125:21",
+          "snippet": "Buffer(result, 'base64')"
+        },
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2017-18352/post_main.js",
+          "line": "108:5",
+          "snippet": "response.status(result.status).send(result.body);",
+          "tainted_variable": "result"
+        },
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2017-18352/post_main.js",
+          "line": "130:5",
+          "snippet": "response.end(img);",
+          "tainted_variable": "img"
+        },
+        {
+          "rule_id": "CWE-113-HTTP-RESPONSE-SPLITTING",
+          "vulnerabilities": [
+            "CWE-113"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2017-18352/post_main.js",
+          "line": "126:5",
+          "snippet": "response.set({ 'Content-Type': 'image/jpeg', 'Content-Length': img.length });",
+          "tainted_variable": "img"
+        },
+        {
+          "rule_id": "CWE-117-LOG-INJECTION",
+          "vulnerabilities": [
+            "CWE-117"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2017-18352/post_main.js",
+          "line": "170:3",
+          "snippet": "console.error(error);",
+          "tainted_variable": "error"
+        },
+        {
+          "rule_id": "CWE-117-LOG-INJECTION",
+          "vulnerabilities": [
+            "CWE-117"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2017-18352/post_main.js",
+          "line": "155:7",
+          "snippet": "console.log('Listening on port', PORT);",
+          "tainted_variable": "PORT"
+        },
+        {
+          "rule_id": "CWE-117-LOG-INJECTION",
+          "vulnerabilities": [
+            "CWE-117"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2017-18352/post_main.js",
+          "line": "124:5",
+          "snippet": "const result = await renderer.captureScreenshot(request.params.url, request.query, config).catch((err) => console.error(err));",
+          "tainted_variable": "err"
+        },
+        {
+          "rule_id": "CWE-ERROR-DETAILS-TO-CONSOLE",
+          "vulnerabilities": [
+            "CWE-200",
+            "CWE-209"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2017-18352/post_main.js",
+          "line": "112:5",
+          "snippet": "console.error(err);",
+          "tainted_variable": "err"
+        },
+        {
+          "rule_id": "CWE-ERROR-DETAILS-TO-CONSOLE",
+          "vulnerabilities": [
+            "CWE-200",
+            "CWE-209"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2017-18352/post_main.js",
+          "line": "134:5",
+          "snippet": "console.error(err);",
+          "tainted_variable": "err"
+        },
+        {
+          "rule_id": "CWE-ERROR-DETAILS-TO-CONSOLE",
+          "vulnerabilities": [
+            "CWE-200",
+            "CWE-209"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2017-18352/post_main.js",
+          "line": "124:5",
+          "snippet": "const result = await renderer.captureScreenshot(request.params.url, request.query, config).catch((err) => console.error(err));",
+          "tainted_variable": "err"
+        },
+        {
+          "rule_id": "CWE-ERROR-DETAILS-TO-CONSOLE",
+          "vulnerabilities": [
+            "CWE-200",
+            "CWE-209"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2017-18352/post_main.js",
+          "line": "160:3",
+          "snippet": "console.error(error);",
+          "tainted_variable": "error"
+        },
+        {
+          "rule_id": "CWE-400-UNCONTROLLED-LOOP-BOUND",
+          "vulnerabilities": [
+            "CWE-400"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2017-18352/post_main.js",
+          "line": "75:19",
+          "snippet": "i < config['renderOnly'].length;",
+          "tainted_variable": "config"
+        },
+        {
+          "rule_id": "CWE-617-REACHABLE-ASSERTION",
+          "vulnerabilities": [
+            "CWE-617"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2017-18352/post_main.js",
+          "line": "43:3",
+          "snippet": "assert(config instanceof Object);",
+          "tainted_variable": "config"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-79/CVE-2017-18352/pre_main.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-113-HTTP-RESPONSE-SPLITTING",
+        "CWE-117-LOG-INJECTION",
+        "CWE-400-UNCONTROLLED-LOOP-BOUND",
+        "CWE-477-OBSOLETE-FUNCTION",
+        "CWE-617-REACHABLE-ASSERTION",
+        "CWE-79-CROSS-SITE-SCRIPTING",
+        "CWE-ERROR-DETAILS-TO-CLIENT",
+        "CWE-ERROR-DETAILS-TO-CONSOLE"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-113",
+        "CWE-117",
+        "CWE-200",
+        "CWE-209",
+        "CWE-400",
+        "CWE-477",
+        "CWE-617",
+        "CWE-79"
+      ],
+      "findings_count": 16,
+      "findings": [
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2017-18352/pre_main.js",
+          "line": "119:21",
+          "snippet": "Buffer(result, 'base64')"
+        },
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2017-18352/pre_main.js",
+          "line": "100:5",
+          "snippet": "response.status(result.status).send(result.body);",
+          "tainted_variable": "result"
+        },
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2017-18352/pre_main.js",
+          "line": "106:5",
+          "snippet": "response.status(400).send(message);",
+          "tainted_variable": "message"
+        },
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2017-18352/pre_main.js",
+          "line": "130:5",
+          "snippet": "response.status(400).send(message);",
+          "tainted_variable": "message"
+        },
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2017-18352/pre_main.js",
+          "line": "124:5",
+          "snippet": "response.end(img);",
+          "tainted_variable": "img"
+        },
+        {
+          "rule_id": "CWE-113-HTTP-RESPONSE-SPLITTING",
+          "vulnerabilities": [
+            "CWE-113"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2017-18352/pre_main.js",
+          "line": "120:5",
+          "snippet": "response.set({ 'Content-Type': 'image/jpeg', 'Content-Length': img.length });",
+          "tainted_variable": "img"
+        },
+        {
+          "rule_id": "CWE-117-LOG-INJECTION",
+          "vulnerabilities": [
+            "CWE-117"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2017-18352/pre_main.js",
+          "line": "167:3",
+          "snippet": "console.error(error);",
+          "tainted_variable": "error"
+        },
+        {
+          "rule_id": "CWE-117-LOG-INJECTION",
+          "vulnerabilities": [
+            "CWE-117"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2017-18352/pre_main.js",
+          "line": "153:7",
+          "snippet": "console.log('Listening on port', port);",
+          "tainted_variable": "port"
+        },
+        {
+          "rule_id": "CWE-117-LOG-INJECTION",
+          "vulnerabilities": [
+            "CWE-117"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2017-18352/pre_main.js",
+          "line": "118:5",
+          "snippet": "const result = await renderer.captureScreenshot(request.params.url, request.query, config).catch((err) => console.error(err));",
+          "tainted_variable": "err"
+        },
+        {
+          "rule_id": "CWE-117-LOG-INJECTION",
+          "vulnerabilities": [
+            "CWE-117"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2017-18352/pre_main.js",
+          "line": "158:3",
+          "snippet": "console.error(error);",
+          "tainted_variable": "error"
+        },
+        {
+          "rule_id": "CWE-ERROR-DETAILS-TO-CLIENT",
+          "vulnerabilities": [
+            "CWE-200",
+            "CWE-209"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2017-18352/pre_main.js",
+          "line": "106:5",
+          "snippet": "response.status(400).send(message);",
+          "tainted_variable": "message"
+        },
+        {
+          "rule_id": "CWE-ERROR-DETAILS-TO-CLIENT",
+          "vulnerabilities": [
+            "CWE-200",
+            "CWE-209"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2017-18352/pre_main.js",
+          "line": "130:5",
+          "snippet": "response.status(400).send(message);",
+          "tainted_variable": "message"
+        },
+        {
+          "rule_id": "CWE-ERROR-DETAILS-TO-CONSOLE",
+          "vulnerabilities": [
+            "CWE-200",
+            "CWE-209"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2017-18352/pre_main.js",
+          "line": "118:5",
+          "snippet": "const result = await renderer.captureScreenshot(request.params.url, request.query, config).catch((err) => console.error(err));",
+          "tainted_variable": "err"
+        },
+        {
+          "rule_id": "CWE-ERROR-DETAILS-TO-CONSOLE",
+          "vulnerabilities": [
+            "CWE-200",
+            "CWE-209"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2017-18352/pre_main.js",
+          "line": "158:3",
+          "snippet": "console.error(error);",
+          "tainted_variable": "error"
+        },
+        {
+          "rule_id": "CWE-400-UNCONTROLLED-LOOP-BOUND",
+          "vulnerabilities": [
+            "CWE-400"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2017-18352/pre_main.js",
+          "line": "68:19",
+          "snippet": "i < config['renderOnly'].length;",
+          "tainted_variable": "config"
+        },
+        {
+          "rule_id": "CWE-617-REACHABLE-ASSERTION",
+          "vulnerabilities": [
+            "CWE-617"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2017-18352/pre_main.js",
+          "line": "38:3",
+          "snippet": "assert(config instanceof Object);",
+          "tainted_variable": "config"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-79/CVE-2017-18353/post_main.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-113-HTTP-RESPONSE-SPLITTING",
+        "CWE-117-LOG-INJECTION",
+        "CWE-400-UNCONTROLLED-LOOP-BOUND",
+        "CWE-477-OBSOLETE-FUNCTION",
+        "CWE-617-REACHABLE-ASSERTION",
+        "CWE-79-CROSS-SITE-SCRIPTING",
+        "CWE-ERROR-DETAILS-TO-CONSOLE"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-113",
+        "CWE-117",
+        "CWE-200",
+        "CWE-209",
+        "CWE-400",
+        "CWE-477",
+        "CWE-617",
+        "CWE-79"
+      ],
+      "findings_count": 14,
+      "findings": [
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2017-18353/post_main.js",
+          "line": "70:21",
+          "snippet": "url.parse(urlReq)"
+        },
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2017-18353/post_main.js",
+          "line": "125:21",
+          "snippet": "Buffer(result, 'base64')"
+        },
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2017-18353/post_main.js",
+          "line": "108:5",
+          "snippet": "response.status(result.status).send(result.body);",
+          "tainted_variable": "result"
+        },
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2017-18353/post_main.js",
+          "line": "130:5",
+          "snippet": "response.end(img);",
+          "tainted_variable": "img"
+        },
+        {
+          "rule_id": "CWE-113-HTTP-RESPONSE-SPLITTING",
+          "vulnerabilities": [
+            "CWE-113"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2017-18353/post_main.js",
+          "line": "126:5",
+          "snippet": "response.set({ 'Content-Type': 'image/jpeg', 'Content-Length': img.length });",
+          "tainted_variable": "img"
+        },
+        {
+          "rule_id": "CWE-117-LOG-INJECTION",
+          "vulnerabilities": [
+            "CWE-117"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2017-18353/post_main.js",
+          "line": "170:3",
+          "snippet": "console.error(error);",
+          "tainted_variable": "error"
+        },
+        {
+          "rule_id": "CWE-117-LOG-INJECTION",
+          "vulnerabilities": [
+            "CWE-117"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2017-18353/post_main.js",
+          "line": "155:7",
+          "snippet": "console.log('Listening on port', PORT);",
+          "tainted_variable": "PORT"
+        },
+        {
+          "rule_id": "CWE-117-LOG-INJECTION",
+          "vulnerabilities": [
+            "CWE-117"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2017-18353/post_main.js",
+          "line": "124:5",
+          "snippet": "const result = await renderer.captureScreenshot(request.params.url, request.query, config).catch((err) => console.error(err));",
+          "tainted_variable": "err"
+        },
+        {
+          "rule_id": "CWE-ERROR-DETAILS-TO-CONSOLE",
+          "vulnerabilities": [
+            "CWE-200",
+            "CWE-209"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2017-18353/post_main.js",
+          "line": "112:5",
+          "snippet": "console.error(err);",
+          "tainted_variable": "err"
+        },
+        {
+          "rule_id": "CWE-ERROR-DETAILS-TO-CONSOLE",
+          "vulnerabilities": [
+            "CWE-200",
+            "CWE-209"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2017-18353/post_main.js",
+          "line": "134:5",
+          "snippet": "console.error(err);",
+          "tainted_variable": "err"
+        },
+        {
+          "rule_id": "CWE-ERROR-DETAILS-TO-CONSOLE",
+          "vulnerabilities": [
+            "CWE-200",
+            "CWE-209"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2017-18353/post_main.js",
+          "line": "124:5",
+          "snippet": "const result = await renderer.captureScreenshot(request.params.url, request.query, config).catch((err) => console.error(err));",
+          "tainted_variable": "err"
+        },
+        {
+          "rule_id": "CWE-ERROR-DETAILS-TO-CONSOLE",
+          "vulnerabilities": [
+            "CWE-200",
+            "CWE-209"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2017-18353/post_main.js",
+          "line": "160:3",
+          "snippet": "console.error(error);",
+          "tainted_variable": "error"
+        },
+        {
+          "rule_id": "CWE-400-UNCONTROLLED-LOOP-BOUND",
+          "vulnerabilities": [
+            "CWE-400"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2017-18353/post_main.js",
+          "line": "75:19",
+          "snippet": "i < config['renderOnly'].length;",
+          "tainted_variable": "config"
+        },
+        {
+          "rule_id": "CWE-617-REACHABLE-ASSERTION",
+          "vulnerabilities": [
+            "CWE-617"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2017-18353/post_main.js",
+          "line": "43:3",
+          "snippet": "assert(config instanceof Object);",
+          "tainted_variable": "config"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-79/CVE-2017-18353/pre_main.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-113-HTTP-RESPONSE-SPLITTING",
+        "CWE-117-LOG-INJECTION",
+        "CWE-400-UNCONTROLLED-LOOP-BOUND",
+        "CWE-477-OBSOLETE-FUNCTION",
+        "CWE-617-REACHABLE-ASSERTION",
+        "CWE-79-CROSS-SITE-SCRIPTING",
+        "CWE-ERROR-DETAILS-TO-CLIENT",
+        "CWE-ERROR-DETAILS-TO-CONSOLE"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-113",
+        "CWE-117",
+        "CWE-200",
+        "CWE-209",
+        "CWE-400",
+        "CWE-477",
+        "CWE-617",
+        "CWE-79"
+      ],
+      "findings_count": 16,
+      "findings": [
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2017-18353/pre_main.js",
+          "line": "119:21",
+          "snippet": "Buffer(result, 'base64')"
+        },
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2017-18353/pre_main.js",
+          "line": "100:5",
+          "snippet": "response.status(result.status).send(result.body);",
+          "tainted_variable": "result"
+        },
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2017-18353/pre_main.js",
+          "line": "106:5",
+          "snippet": "response.status(400).send(message);",
+          "tainted_variable": "message"
+        },
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2017-18353/pre_main.js",
+          "line": "130:5",
+          "snippet": "response.status(400).send(message);",
+          "tainted_variable": "message"
+        },
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2017-18353/pre_main.js",
+          "line": "124:5",
+          "snippet": "response.end(img);",
+          "tainted_variable": "img"
+        },
+        {
+          "rule_id": "CWE-113-HTTP-RESPONSE-SPLITTING",
+          "vulnerabilities": [
+            "CWE-113"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2017-18353/pre_main.js",
+          "line": "120:5",
+          "snippet": "response.set({ 'Content-Type': 'image/jpeg', 'Content-Length': img.length });",
+          "tainted_variable": "img"
+        },
+        {
+          "rule_id": "CWE-117-LOG-INJECTION",
+          "vulnerabilities": [
+            "CWE-117"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2017-18353/pre_main.js",
+          "line": "167:3",
+          "snippet": "console.error(error);",
+          "tainted_variable": "error"
+        },
+        {
+          "rule_id": "CWE-117-LOG-INJECTION",
+          "vulnerabilities": [
+            "CWE-117"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2017-18353/pre_main.js",
+          "line": "153:7",
+          "snippet": "console.log('Listening on port', port);",
+          "tainted_variable": "port"
+        },
+        {
+          "rule_id": "CWE-117-LOG-INJECTION",
+          "vulnerabilities": [
+            "CWE-117"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2017-18353/pre_main.js",
+          "line": "118:5",
+          "snippet": "const result = await renderer.captureScreenshot(request.params.url, request.query, config).catch((err) => console.error(err));",
+          "tainted_variable": "err"
+        },
+        {
+          "rule_id": "CWE-117-LOG-INJECTION",
+          "vulnerabilities": [
+            "CWE-117"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2017-18353/pre_main.js",
+          "line": "158:3",
+          "snippet": "console.error(error);",
+          "tainted_variable": "error"
+        },
+        {
+          "rule_id": "CWE-ERROR-DETAILS-TO-CLIENT",
+          "vulnerabilities": [
+            "CWE-200",
+            "CWE-209"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2017-18353/pre_main.js",
+          "line": "106:5",
+          "snippet": "response.status(400).send(message);",
+          "tainted_variable": "message"
+        },
+        {
+          "rule_id": "CWE-ERROR-DETAILS-TO-CLIENT",
+          "vulnerabilities": [
+            "CWE-200",
+            "CWE-209"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2017-18353/pre_main.js",
+          "line": "130:5",
+          "snippet": "response.status(400).send(message);",
+          "tainted_variable": "message"
+        },
+        {
+          "rule_id": "CWE-ERROR-DETAILS-TO-CONSOLE",
+          "vulnerabilities": [
+            "CWE-200",
+            "CWE-209"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2017-18353/pre_main.js",
+          "line": "118:5",
+          "snippet": "const result = await renderer.captureScreenshot(request.params.url, request.query, config).catch((err) => console.error(err));",
+          "tainted_variable": "err"
+        },
+        {
+          "rule_id": "CWE-ERROR-DETAILS-TO-CONSOLE",
+          "vulnerabilities": [
+            "CWE-200",
+            "CWE-209"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2017-18353/pre_main.js",
+          "line": "158:3",
+          "snippet": "console.error(error);",
+          "tainted_variable": "error"
+        },
+        {
+          "rule_id": "CWE-400-UNCONTROLLED-LOOP-BOUND",
+          "vulnerabilities": [
+            "CWE-400"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2017-18353/pre_main.js",
+          "line": "68:19",
+          "snippet": "i < config['renderOnly'].length;",
+          "tainted_variable": "config"
+        },
+        {
+          "rule_id": "CWE-617-REACHABLE-ASSERTION",
+          "vulnerabilities": [
+            "CWE-617"
+          ],
+          "source_file": "ossf_js_supportate/CWE-79/CVE-2017-18353/pre_main.js",
+          "line": "38:3",
+          "snippet": "assert(config instanceof Object);",
+          "tainted_variable": "config"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-89/CVE-2018-3783/post_auth.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-601-OPEN-REDIRECT",
+        "CWE-943-NOSQL-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-601",
+        "CWE-943"
+      ],
+      "findings_count": 4,
+      "findings": [
+        {
+          "rule_id": "CWE-601-OPEN-REDIRECT",
+          "vulnerabilities": [
+            "CWE-601"
+          ],
+          "source_file": "ossf_js_supportate/CWE-89/CVE-2018-3783/post_auth.js",
+          "line": "112:5",
+          "snippet": "res.redirect(`/admin/sp/${token}`)",
+          "tainted_variable": "token"
+        },
+        {
+          "rule_id": "CWE-943-NOSQL-INJECTION",
+          "vulnerabilities": [
+            "CWE-943"
+          ],
+          "source_file": "ossf_js_supportate/CWE-89/CVE-2018-3783/post_auth.js",
+          "line": "58:5",
+          "snippet": "const user = await User.findOne({ token: token.toString() }).exec()",
+          "tainted_variable": "token"
+        },
+        {
+          "rule_id": "CWE-943-NOSQL-INJECTION",
+          "vulnerabilities": [
+            "CWE-943"
+          ],
+          "source_file": "ossf_js_supportate/CWE-89/CVE-2018-3783/post_auth.js",
+          "line": "80:5",
+          "snippet": "const user = await User.findOne({ email: email.toString() })",
+          "tainted_variable": "email"
+        },
+        {
+          "rule_id": "CWE-943-NOSQL-INJECTION",
+          "vulnerabilities": [
+            "CWE-943"
+          ],
+          "source_file": "ossf_js_supportate/CWE-89/CVE-2018-3783/post_auth.js",
+          "line": "105:5",
+          "snippet": "const user = await User.findOne({ token })",
+          "tainted_variable": "token"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-89/CVE-2018-3783/pre_auth.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-601-OPEN-REDIRECT",
+        "CWE-943-NOSQL-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-601",
+        "CWE-943"
+      ],
+      "findings_count": 4,
+      "findings": [
+        {
+          "rule_id": "CWE-601-OPEN-REDIRECT",
+          "vulnerabilities": [
+            "CWE-601"
+          ],
+          "source_file": "ossf_js_supportate/CWE-89/CVE-2018-3783/pre_auth.js",
+          "line": "112:5",
+          "snippet": "res.redirect(`/admin/sp/${token}`)",
+          "tainted_variable": "token"
+        },
+        {
+          "rule_id": "CWE-943-NOSQL-INJECTION",
+          "vulnerabilities": [
+            "CWE-943"
+          ],
+          "source_file": "ossf_js_supportate/CWE-89/CVE-2018-3783/pre_auth.js",
+          "line": "58:5",
+          "snippet": "const user = await User.findOne({ token }).exec()",
+          "tainted_variable": "token"
+        },
+        {
+          "rule_id": "CWE-943-NOSQL-INJECTION",
+          "vulnerabilities": [
+            "CWE-943"
+          ],
+          "source_file": "ossf_js_supportate/CWE-89/CVE-2018-3783/pre_auth.js",
+          "line": "80:5",
+          "snippet": "const user = await User.findOne({ email })",
+          "tainted_variable": "email"
+        },
+        {
+          "rule_id": "CWE-943-NOSQL-INJECTION",
+          "vulnerabilities": [
+            "CWE-943"
+          ],
+          "source_file": "ossf_js_supportate/CWE-89/CVE-2018-3783/pre_auth.js",
+          "line": "105:5",
+          "snippet": "const user = await User.findOne({ token })",
+          "tainted_variable": "token"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-89/CVE-2019-15658/post_index.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-89-SQLI"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-89"
+      ],
+      "findings_count": 4,
+      "findings": [
+        {
+          "rule_id": "CWE-89-SQLI",
+          "vulnerabilities": [
+            "CWE-89"
+          ],
+          "source_file": "ossf_js_supportate/CWE-89/CVE-2019-15658/post_index.js",
+          "line": "177:7",
+          "snippet": "this.pgPromise.query(query, params || [])",
+          "tainted_variable": "query"
+        },
+        {
+          "rule_id": "CWE-89-SQLI",
+          "vulnerabilities": [
+            "CWE-89"
+          ],
+          "source_file": "ossf_js_supportate/CWE-89/CVE-2019-15658/post_index.js",
+          "line": "181:7",
+          "snippet": "this.pool.query(query, params || [], function (err, res) { if (fn) { fn(err, res && res.rows[0] ? res.rows[0] : false); } });",
+          "tainted_variable": "query"
+        },
+        {
+          "rule_id": "CWE-89-SQLI",
+          "vulnerabilities": [
+            "CWE-89"
+          ],
+          "source_file": "ossf_js_supportate/CWE-89/CVE-2019-15658/post_index.js",
+          "line": "177:7",
+          "snippet": "this.pgPromise.query(query, params || [])",
+          "tainted_variable": "params"
+        },
+        {
+          "rule_id": "CWE-89-SQLI",
+          "vulnerabilities": [
+            "CWE-89"
+          ],
+          "source_file": "ossf_js_supportate/CWE-89/CVE-2019-15658/post_index.js",
+          "line": "181:7",
+          "snippet": "this.pool.query(query, params || [], function (err, res) { if (fn) { fn(err, res && res.rows[0] ? res.rows[0] : false); } });",
+          "tainted_variable": "params"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-89/CVE-2019-15658/pre_index.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-89-SQLI"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-89"
+      ],
+      "findings_count": 4,
+      "findings": [
+        {
+          "rule_id": "CWE-89-SQLI",
+          "vulnerabilities": [
+            "CWE-89"
+          ],
+          "source_file": "ossf_js_supportate/CWE-89/CVE-2019-15658/pre_index.js",
+          "line": "166:7",
+          "snippet": "this.pgPromise.query(query, params || [])",
+          "tainted_variable": "query"
+        },
+        {
+          "rule_id": "CWE-89-SQLI",
+          "vulnerabilities": [
+            "CWE-89"
+          ],
+          "source_file": "ossf_js_supportate/CWE-89/CVE-2019-15658/pre_index.js",
+          "line": "170:7",
+          "snippet": "this.pool.query(query, params || [], function (err, res) { if (fn) { fn(err, res && res.rows[0] ? res.rows[0] : false); } });",
+          "tainted_variable": "query"
+        },
+        {
+          "rule_id": "CWE-89-SQLI",
+          "vulnerabilities": [
+            "CWE-89"
+          ],
+          "source_file": "ossf_js_supportate/CWE-89/CVE-2019-15658/pre_index.js",
+          "line": "166:7",
+          "snippet": "this.pgPromise.query(query, params || [])",
+          "tainted_variable": "params"
+        },
+        {
+          "rule_id": "CWE-89-SQLI",
+          "vulnerabilities": [
+            "CWE-89"
+          ],
+          "source_file": "ossf_js_supportate/CWE-89/CVE-2019-15658/pre_index.js",
+          "line": "170:7",
+          "snippet": "this.pool.query(query, params || [], function (err, res) { if (fn) { fn(err, res && res.rows[0] ? res.rows[0] : false); } });",
+          "tainted_variable": "params"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-89/CVE-2019-18818/post_Auth.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-1333-REGEX-DOS",
+        "CWE-259-HARDCODED-PASSWORD",
+        "CWE-79-CROSS-SITE-SCRIPTING",
+        "CWE-798-HARDCODED-CREDENTIALS",
+        "CWE-943-NOSQL-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-1333",
+        "CWE-259",
+        "CWE-79",
+        "CWE-798",
+        "CWE-943"
+      ],
+      "findings_count": 8,
+      "findings": [
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "ossf_js_supportate/CWE-89/CVE-2019-18818/post_Auth.js",
+          "line": "189:7",
+          "snippet": "ctx.send({ jwt, user: strapi.admin.services.auth.sanitizeUser(admin), });",
+          "tainted_variable": "admin"
+        },
+        {
+          "rule_id": "CWE-259-HARDCODED-PASSWORD",
+          "vulnerabilities": [
+            "CWE-259"
+          ],
+          "source_file": "ossf_js_supportate/CWE-89/CVE-2019-18818/post_Auth.js",
+          "line": "253:18",
+          "snippet": "resetPasswordToken: `${code}`"
+        },
+        {
+          "rule_id": "CWE-798-HARDCODED-CREDENTIALS",
+          "vulnerabilities": [
+            "CWE-798"
+          ],
+          "source_file": "ossf_js_supportate/CWE-89/CVE-2019-18818/post_Auth.js",
+          "line": "253:18",
+          "snippet": "resetPasswordToken: `${code}`"
+        },
+        {
+          "rule_id": "CWE-943-NOSQL-INJECTION",
+          "vulnerabilities": [
+            "CWE-943"
+          ],
+          "source_file": "ossf_js_supportate/CWE-89/CVE-2019-18818/post_Auth.js",
+          "line": "166:5",
+          "snippet": "const admin = await strapi.query('administrator', 'admin').findOne({ email: params.email, });",
+          "tainted_variable": "params"
+        },
+        {
+          "rule_id": "CWE-943-NOSQL-INJECTION",
+          "vulnerabilities": [
+            "CWE-943"
+          ],
+          "source_file": "ossf_js_supportate/CWE-89/CVE-2019-18818/post_Auth.js",
+          "line": "253:7",
+          "snippet": ".findOne({ resetPasswordToken: `${code}` });",
+          "tainted_variable": "code"
+        },
+        {
+          "rule_id": "CWE-943-NOSQL-INJECTION",
+          "vulnerabilities": [
+            "CWE-943"
+          ],
+          "source_file": "ossf_js_supportate/CWE-89/CVE-2019-18818/post_Auth.js",
+          "line": "166:5",
+          "snippet": "const admin = await strapi.query('administrator', 'admin').findOne({ email: params.email, });",
+          "tainted_variable": "params.email"
+        },
+        {
+          "rule_id": "CWE-1333-REGEX-DOS",
+          "vulnerabilities": [
+            "CWE-1333"
+          ],
+          "source_file": "ossf_js_supportate/CWE-89/CVE-2019-18818/post_Auth.js",
+          "line": "47:5",
+          "snippet": "const isEmail = emailRegExp.test(params.identifier);",
+          "tainted_variable": "params"
+        },
+        {
+          "rule_id": "CWE-1333-REGEX-DOS",
+          "vulnerabilities": [
+            "CWE-1333"
+          ],
+          "source_file": "ossf_js_supportate/CWE-89/CVE-2019-18818/post_Auth.js",
+          "line": "128:5",
+          "snippet": "const isEmail = emailRegExp.test(params.email);",
+          "tainted_variable": "params"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-89/CVE-2019-18818/pre_Auth.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-1333-REGEX-DOS",
+        "CWE-79-CROSS-SITE-SCRIPTING",
+        "CWE-943-NOSQL-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-1333",
+        "CWE-79",
+        "CWE-943"
+      ],
+      "findings_count": 6,
+      "findings": [
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "ossf_js_supportate/CWE-89/CVE-2019-18818/pre_Auth.js",
+          "line": "189:7",
+          "snippet": "ctx.send({ jwt, user: strapi.admin.services.auth.sanitizeUser(admin), });",
+          "tainted_variable": "admin"
+        },
+        {
+          "rule_id": "CWE-943-NOSQL-INJECTION",
+          "vulnerabilities": [
+            "CWE-943"
+          ],
+          "source_file": "ossf_js_supportate/CWE-89/CVE-2019-18818/pre_Auth.js",
+          "line": "166:5",
+          "snippet": "const admin = await strapi.query('administrator', 'admin').findOne({ email: params.email, });",
+          "tainted_variable": "params"
+        },
+        {
+          "rule_id": "CWE-943-NOSQL-INJECTION",
+          "vulnerabilities": [
+            "CWE-943"
+          ],
+          "source_file": "ossf_js_supportate/CWE-89/CVE-2019-18818/pre_Auth.js",
+          "line": "253:7",
+          "snippet": ".findOne({ resetPasswordToken: code });",
+          "tainted_variable": "code"
+        },
+        {
+          "rule_id": "CWE-943-NOSQL-INJECTION",
+          "vulnerabilities": [
+            "CWE-943"
+          ],
+          "source_file": "ossf_js_supportate/CWE-89/CVE-2019-18818/pre_Auth.js",
+          "line": "166:5",
+          "snippet": "const admin = await strapi.query('administrator', 'admin').findOne({ email: params.email, });",
+          "tainted_variable": "params.email"
+        },
+        {
+          "rule_id": "CWE-1333-REGEX-DOS",
+          "vulnerabilities": [
+            "CWE-1333"
+          ],
+          "source_file": "ossf_js_supportate/CWE-89/CVE-2019-18818/pre_Auth.js",
+          "line": "47:5",
+          "snippet": "const isEmail = emailRegExp.test(params.identifier);",
+          "tainted_variable": "params"
+        },
+        {
+          "rule_id": "CWE-1333-REGEX-DOS",
+          "vulnerabilities": [
+            "CWE-1333"
+          ],
+          "source_file": "ossf_js_supportate/CWE-89/CVE-2019-18818/pre_Auth.js",
+          "line": "128:5",
+          "snippet": "const isEmail = emailRegExp.test(params.email);",
+          "tainted_variable": "params"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-918/CVE-2020-15152/post_active.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-918/CVE-2020-15152/pre_active.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-918/CVE-2020-8205/post_url.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-918-SSRF"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-918"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-918-SSRF",
+          "vulnerabilities": [
+            "CWE-918"
+          ],
+          "source_file": "ossf_js_supportate/CWE-918/CVE-2020-8205/post_url.js",
+          "line": "122:3",
+          "snippet": "request(opts)",
+          "tainted_variable": "opts"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-918/CVE-2020-8205/pre_url.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-918-SSRF"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-918"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-918-SSRF",
+          "vulnerabilities": [
+            "CWE-918"
+          ],
+          "source_file": "ossf_js_supportate/CWE-918/CVE-2020-8205/pre_url.js",
+          "line": "120:3",
+          "snippet": "request(opts)",
+          "tainted_variable": "opts"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-94/CVE-2017-16226/post_index.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-321-HARDCODED-CRYPTO-KEY",
+        "EVAL-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-321",
+        "CWE-94",
+        "CWE-95"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "EVAL-INJECTION",
+          "vulnerabilities": [
+            "CWE-95",
+            "CWE-94"
+          ],
+          "source_file": "ossf_js_supportate/CWE-94/CVE-2017-16226/post_index.js",
+          "line": "151:13",
+          "snippet": "return Function(keys.join(', '), 'return ' + unparse(node)).apply(null, vals);",
+          "tainted_variable": "node"
+        },
+        {
+          "rule_id": "EVAL-INJECTION",
+          "vulnerabilities": [
+            "CWE-95",
+            "CWE-94"
+          ],
+          "source_file": "ossf_js_supportate/CWE-94/CVE-2017-16226/post_index.js",
+          "line": "151:13",
+          "snippet": "return Function(keys.join(', '), 'return ' + unparse(node)).apply(null, vals);",
+          "tainted_variable": "keys"
+        },
+        {
+          "rule_id": "CWE-321-HARDCODED-CRYPTO-KEY",
+          "vulnerabilities": [
+            "CWE-321"
+          ],
+          "source_file": "ossf_js_supportate/CWE-94/CVE-2017-16226/post_index.js",
+          "line": "135:19",
+          "snippet": "(key.type == 'Identifier')"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-94/CVE-2017-16226/pre_index.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "EVAL-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-94",
+        "CWE-95"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "EVAL-INJECTION",
+          "vulnerabilities": [
+            "CWE-95",
+            "CWE-94"
+          ],
+          "source_file": "ossf_js_supportate/CWE-94/CVE-2017-16226/pre_index.js",
+          "line": "118:13",
+          "snippet": "return Function(keys.join(', '), 'return ' + unparse(node)).apply(null, vals);",
+          "tainted_variable": "node"
+        },
+        {
+          "rule_id": "EVAL-INJECTION",
+          "vulnerabilities": [
+            "CWE-95",
+            "CWE-94"
+          ],
+          "source_file": "ossf_js_supportate/CWE-94/CVE-2017-16226/pre_index.js",
+          "line": "118:13",
+          "snippet": "return Function(keys.join(', '), 'return ' + unparse(node)).apply(null, vals);",
+          "tainted_variable": "keys"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-94/CVE-2017-5954/post_deserialize.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "EVAL-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-94",
+        "CWE-95"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "EVAL-INJECTION",
+          "vulnerabilities": [
+            "CWE-95",
+            "CWE-94"
+          ],
+          "source_file": "ossf_js_supportate/CWE-94/CVE-2017-5954/post_deserialize.js",
+          "line": "34:3",
+          "snippet": "return (new Function('\"use strict\"; return ' + str))()",
+          "tainted_variable": "str"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-94/CVE-2017-5954/pre_deserialize.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "EVAL-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-94",
+        "CWE-95"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "EVAL-INJECTION",
+          "vulnerabilities": [
+            "CWE-95",
+            "CWE-94"
+          ],
+          "source_file": "ossf_js_supportate/CWE-94/CVE-2017-5954/pre_deserialize.js",
+          "line": "28:3",
+          "snippet": "return (new Function('return ' + str))()",
+          "tainted_variable": "str"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-94/CVE-2018-18282/post_document.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-94/CVE-2018-18282/pre_document.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-94/CVE-2018-3770/post_index.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-703-IMPROPER-EXCEPTION-HANDLING",
+        "CWE-78-OS-CMD-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-703",
+        "CWE-78"
+      ],
+      "findings_count": 7,
+      "findings": [
+        {
+          "rule_id": "CWE-78-OS-CMD-INJECTION",
+          "vulnerabilities": [
+            "CWE-78"
+          ],
+          "source_file": "ossf_js_supportate/CWE-94/CVE-2018-3770/post_index.js",
+          "line": "117:9",
+          "snippet": "childProcess.execFile(opts.phantomPath, childArgs, function (err, stdout, stderr) { // if (stdout) console.log(stdout) // if (stderr) consol…",
+          "tainted_variable": "opts"
+        },
+        {
+          "rule_id": "CWE-78-OS-CMD-INJECTION",
+          "vulnerabilities": [
+            "CWE-78"
+          ],
+          "source_file": "ossf_js_supportate/CWE-94/CVE-2018-3770/post_index.js",
+          "line": "117:9",
+          "snippet": "childProcess.execFile(opts.phantomPath, childArgs, function (err, stdout, stderr) { // if (stdout) console.log(stdout) // if (stderr) consol…",
+          "tainted_variable": "opts.phantomPath"
+        },
+        {
+          "rule_id": "CWE-703-IMPROPER-EXCEPTION-HANDLING",
+          "vulnerabilities": [
+            "CWE-703"
+          ],
+          "source_file": "ossf_js_supportate/CWE-94/CVE-2018-3770/post_index.js",
+          "line": "48:15",
+          "snippet": "catch (err) {}"
+        },
+        {
+          "rule_id": "CWE-703-IMPROPER-EXCEPTION-HANDLING",
+          "vulnerabilities": [
+            "CWE-703"
+          ],
+          "source_file": "ossf_js_supportate/CWE-94/CVE-2018-3770/post_index.js",
+          "line": "53:13",
+          "snippet": "catch (err) {}"
+        },
+        {
+          "rule_id": "CWE-703-IMPROPER-EXCEPTION-HANDLING",
+          "vulnerabilities": [
+            "CWE-703"
+          ],
+          "source_file": "ossf_js_supportate/CWE-94/CVE-2018-3770/post_index.js",
+          "line": "68:11",
+          "snippet": "catch (err) {}"
+        },
+        {
+          "rule_id": "CWE-703-IMPROPER-EXCEPTION-HANDLING",
+          "vulnerabilities": [
+            "CWE-703"
+          ],
+          "source_file": "ossf_js_supportate/CWE-94/CVE-2018-3770/post_index.js",
+          "line": "71:11",
+          "snippet": "catch (err) {}"
+        },
+        {
+          "rule_id": "CWE-703-IMPROPER-EXCEPTION-HANDLING",
+          "vulnerabilities": [
+            "CWE-703"
+          ],
+          "source_file": "ossf_js_supportate/CWE-94/CVE-2018-3770/post_index.js",
+          "line": "74:11",
+          "snippet": "catch (err) {}"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-94/CVE-2018-3770/pre_index.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-703-IMPROPER-EXCEPTION-HANDLING",
+        "CWE-78-OS-CMD-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-703",
+        "CWE-78"
+      ],
+      "findings_count": 7,
+      "findings": [
+        {
+          "rule_id": "CWE-78-OS-CMD-INJECTION",
+          "vulnerabilities": [
+            "CWE-78"
+          ],
+          "source_file": "ossf_js_supportate/CWE-94/CVE-2018-3770/pre_index.js",
+          "line": "117:9",
+          "snippet": "childProcess.execFile(opts.phantomPath, childArgs, function (err, stdout, stderr) { // if (stdout) console.log(stdout) // if (stderr) consol…",
+          "tainted_variable": "opts"
+        },
+        {
+          "rule_id": "CWE-78-OS-CMD-INJECTION",
+          "vulnerabilities": [
+            "CWE-78"
+          ],
+          "source_file": "ossf_js_supportate/CWE-94/CVE-2018-3770/pre_index.js",
+          "line": "117:9",
+          "snippet": "childProcess.execFile(opts.phantomPath, childArgs, function (err, stdout, stderr) { // if (stdout) console.log(stdout) // if (stderr) consol…",
+          "tainted_variable": "opts.phantomPath"
+        },
+        {
+          "rule_id": "CWE-703-IMPROPER-EXCEPTION-HANDLING",
+          "vulnerabilities": [
+            "CWE-703"
+          ],
+          "source_file": "ossf_js_supportate/CWE-94/CVE-2018-3770/pre_index.js",
+          "line": "48:15",
+          "snippet": "catch (err) {}"
+        },
+        {
+          "rule_id": "CWE-703-IMPROPER-EXCEPTION-HANDLING",
+          "vulnerabilities": [
+            "CWE-703"
+          ],
+          "source_file": "ossf_js_supportate/CWE-94/CVE-2018-3770/pre_index.js",
+          "line": "53:13",
+          "snippet": "catch (err) {}"
+        },
+        {
+          "rule_id": "CWE-703-IMPROPER-EXCEPTION-HANDLING",
+          "vulnerabilities": [
+            "CWE-703"
+          ],
+          "source_file": "ossf_js_supportate/CWE-94/CVE-2018-3770/pre_index.js",
+          "line": "68:11",
+          "snippet": "catch (err) {}"
+        },
+        {
+          "rule_id": "CWE-703-IMPROPER-EXCEPTION-HANDLING",
+          "vulnerabilities": [
+            "CWE-703"
+          ],
+          "source_file": "ossf_js_supportate/CWE-94/CVE-2018-3770/pre_index.js",
+          "line": "71:11",
+          "snippet": "catch (err) {}"
+        },
+        {
+          "rule_id": "CWE-703-IMPROPER-EXCEPTION-HANDLING",
+          "vulnerabilities": [
+            "CWE-703"
+          ],
+          "source_file": "ossf_js_supportate/CWE-94/CVE-2018-3770/pre_index.js",
+          "line": "74:11",
+          "snippet": "catch (err) {}"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-94/CVE-2019-10758/post_bson.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-94/CVE-2019-10758/pre_bson.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "EVAL-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-94",
+        "CWE-95"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "EVAL-INJECTION",
+          "vulnerabilities": [
+            "CWE-95",
+            "CWE-94"
+          ],
+          "source_file": "ossf_js_supportate/CWE-94/CVE-2019-10758/pre_bson.js",
+          "line": "60:3",
+          "snippet": "vm.runInNewContext('doc = eval((' + string + '));', sandbox);",
+          "tainted_variable": "string"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-94/CVE-2019-10759/post_browser.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "EVAL-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-94",
+        "CWE-95"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "EVAL-INJECTION",
+          "vulnerabilities": [
+            "CWE-95",
+            "CWE-94"
+          ],
+          "source_file": "ossf_js_supportate/CWE-94/CVE-2019-10759/post_browser.js",
+          "line": "49:5",
+          "snippet": "return Function('__context', src).call(null, __context)",
+          "tainted_variable": "src"
+        }
+      ]
+    },
+    {
+      "source_file": "ossf_js_supportate/CWE-94/CVE-2019-10759/pre_browser.js",
+      "xml_source": "ossf_js.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "EVAL-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-94",
+        "CWE-95"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "EVAL-INJECTION",
+          "vulnerabilities": [
+            "CWE-95",
+            "CWE-94"
+          ],
+          "source_file": "ossf_js_supportate/CWE-94/CVE-2019-10759/pre_browser.js",
+          "line": "49:5",
+          "snippet": "return Function('__context', src).call(null, __context)",
+          "tainted_variable": "src"
+        }
+      ]
+    }
+  ],
+  "rules_skipped": {
+    "javascript": [
+      {
+        "rule_id": "CWE-120-BUFFER-OVERFLOW",
+        "reason": "non applicabile a 'javascript' (languages=['c'])"
+      },
+      {
+        "rule_id": "CWE-129-IMPROPER-ARRAY-INDEX-VALIDATION",
+        "reason": "non applicabile a 'javascript' (languages=['c', 'java'])"
+      },
+      {
+        "rule_id": "CWE-129-ARRAY-SIZE-VALIDATION",
+        "reason": "non applicabile a 'javascript' (languages=['c', 'java'])"
+      },
+      {
+        "rule_id": "Numeric Truncation Error",
+        "reason": "non applicabile a 'javascript' (languages=['java'])"
+      },
+      {
+        "rule_id": "CWE-347-JWT-NO-VERIFY",
+        "reason": "non applicabile a 'javascript' (languages=['python'])"
+      },
+      {
+        "rule_id": "CWE-369-DIVIDE-BY-ZERO",
+        "reason": "non applicabile a 'javascript' (languages=['java', 'python', 'c'])"
+      },
+      {
+        "rule_id": "CWE-369-DIVIDE-BY-ZERO-TAINT",
+        "reason": "non applicabile a 'javascript' (languages=['java', 'python', 'c'])"
+      },
+      {
+        "rule_id": "CWE-400-UNCONTROLLED-SLEEP-C",
+        "reason": "non applicabile a 'javascript' (languages=['c'])"
+      },
+      {
+        "rule_id": "CWE-415-416-MEMORY-MISUSE-AFTER-FREE",
+        "reason": "non applicabile a 'javascript' (languages=['c'])"
+      },
+      {
+        "rule_id": "CWE-476-NULL-POINTER-DEREFERENCE",
+        "reason": "non applicabile a 'javascript' (languages=['c', 'java'])"
+      },
+      {
+        "rule_id": "CWE-502-JACKSON-UNSAFE-DESERIALIZATION",
+        "reason": "non applicabile a 'javascript' (languages=['java'])"
+      },
+      {
+        "rule_id": "CWE-611-XXE",
+        "reason": "non applicabile a 'javascript' (languages=['python', 'java', 'c'])"
+      },
+      {
+        "rule_id": "UNCHECKED-CAST",
+        "reason": "non applicabile a 'javascript' (languages=['java'])"
+      },
+      {
+        "rule_id": "CWE-918-XSLT-SSRF",
+        "reason": "non applicabile a 'javascript' (languages=['python'])"
+      },
+      {
+        "rule_id": "CWE-1327-UNRESTRICTED-BIND-ADDRESS",
+        "reason": "non applicabile a 'javascript' (languages=['python'])"
+      }
+    ]
+  }
+}
