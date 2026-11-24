@@ -1,0 +1,3054 @@
+{
+  "summary": {
+    "units_analyzed": 121,
+    "units_failed": 0,
+    "files_failed": 0,
+    "vulnerable_files": 101,
+    "total_findings": 135,
+    "categories_count": {
+      "CWE-502": 5,
+      "CWE-22": 12,
+      "CWE-89": 3,
+      "CWE-117": 4,
+      "CWE-259": 10,
+      "CWE-295": 5,
+      "CWE-614": 1,
+      "CWE-321": 2,
+      "CWE-326": 4,
+      "CWE-338": 5,
+      "CWE-78": 3,
+      "CWE-79": 7,
+      "CWE-477": 1,
+      "CWE-595": 1,
+      "CWE-1327": 1,
+      "CWE-400": 3,
+      "CWE-611": 11,
+      "CWE-770": 3,
+      "CWE-703": 2,
+      "CWE-1333": 5,
+      "CWE-732": 1,
+      "CWE-835": 1,
+      "CWE-95": 4,
+      "CWE-94": 4,
+      "CWE-193": 1,
+      "CWE-918": 4,
+      "CWE-319": 1,
+      "CWE-798": 1,
+      "CWE-617": 1,
+      "CWE-489": 1,
+      "CWE-327": 2,
+      "CWE-377": 2,
+      "CWE-601": 8,
+      "CWE-643": 2,
+      "CWE-252": 2,
+      "CWE-90": 4,
+      "CWE-328": 3,
+      "CWE-916": 1,
+      "CWE-434": 2,
+      "CWE-99": 2,
+      "CWE-113": 4,
+      "CWE-347": 2
+    }
+  },
+  "errors": [],
+  "details": [
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-020\\author_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-22-PATH-TRAVERSAL",
+        "CWE-502-DESERIALIZATION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-22",
+        "CWE-502"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-502-DESERIALIZATION",
+          "vulnerabilities": [
+            "CWE-502"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-020\\author_1.py",
+          "line": "10:16",
+          "snippet": "yaml.load(f, Loader=yaml.BaseLoader)"
+        },
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-020\\author_1.py",
+          "line": "9:15",
+          "snippet": "filename",
+          "tainted_variable": "filename"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-022\\author_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-22-PATH-TRAVERSAL"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-22"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-022\\author_1.py",
+          "line": "13:5",
+          "snippet": "os.remove(fileName)",
+          "tainted_variable": "fileName"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-200\\author_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-117-LOG-INJECTION",
+        "CWE-89-SQLI"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-117",
+        "CWE-89"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-89-SQLI",
+          "vulnerabilities": [
+            "CWE-89"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-200\\author_1.py",
+          "line": "15:13",
+          "snippet": "result = connection.execute(sql)",
+          "tainted_variable": "sql"
+        },
+        {
+          "rule_id": "CWE-117-LOG-INJECTION",
+          "vulnerabilities": [
+            "CWE-117"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-200\\author_1.py",
+          "line": "18:13",
+          "snippet": "logging.error(f\"Unable to retrieve account information from database. Query: {sql}\")",
+          "tainted_variable": "sql"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-252\\author_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-259\\author_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-259-HARDCODED-PASSWORD"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-259"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-259-HARDCODED-PASSWORD",
+          "vulnerabilities": [
+            "CWE-259"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-259\\author_1.py",
+          "line": "5:8",
+          "snippet": "password == \"admin\""
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-295\\author_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-295-IMPROPER-CERTIFICATE-VALIDATION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-295"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-295-IMPROPER-CERTIFICATE-VALIDATION",
+          "vulnerabilities": [
+            "CWE-295"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-295\\author_1.py",
+          "line": "9:5",
+          "snippet": "ctx.check_hostname = False"
+        },
+        {
+          "rule_id": "CWE-295-IMPROPER-CERTIFICATE-VALIDATION",
+          "vulnerabilities": [
+            "CWE-295"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-295\\author_1.py",
+          "line": "10:5",
+          "snippet": "ctx.verify_mode = ssl.CERT_NONE"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-319\\author_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-614-SENSITIVE-COOKIE-INSECURE"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-614"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-614-SENSITIVE-COOKIE-INSECURE",
+          "vulnerabilities": [
+            "CWE-614"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-319\\author_1.py",
+          "line": "29:9",
+          "snippet": "response.set_cookie('sessionID', secrets.token_urlsafe(16))"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-321\\author_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-321-HARDCODED-CRYPTO-KEY"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-321"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-321-HARDCODED-CRYPTO-KEY",
+          "vulnerabilities": [
+            "CWE-321"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-321\\author_1.py",
+          "line": "10:5",
+          "snippet": "key = 'vQF6J15Kuh3Y6ut1Vh247dlVEIpTEbMnWq7lRKjDBaWuWll3VHtEHosToRrelBpMBf5DiD'"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-326\\author_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-326-INADEQUATE-ENCRYPTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-326"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-326-INADEQUATE-ENCRYPTION",
+          "vulnerabilities": [
+            "CWE-326"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-326\\author_1.py",
+          "line": "9:11",
+          "snippet": "RSA.generate(1024)"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-330\\author_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-338-WEAK-PRNG"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-338"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-338-WEAK-PRNG",
+          "vulnerabilities": [
+            "CWE-338"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-330\\author_1.py",
+          "line": "8:12",
+          "snippet": "random.randint(0, 0xFFFFFFFF)"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-331\\author_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-338-WEAK-PRNG"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-338"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-338-WEAK-PRNG",
+          "vulnerabilities": [
+            "CWE-338"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-331\\author_1.py",
+          "line": "9:20",
+          "snippet": "random.choice(string.ascii_letters)"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-367\\author_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-22-PATH-TRAVERSAL"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-22"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-367\\author_1.py",
+          "line": "10:8",
+          "snippet": "os.path.exists(fileName)",
+          "tainted_variable": "fileName"
+        },
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-367\\author_1.py",
+          "line": "11:19",
+          "snippet": "fileName",
+          "tainted_variable": "fileName"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-078\\author_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-78-OS-CMD-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-78"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-78-OS-CMD-INJECTION",
+          "vulnerabilities": [
+            "CWE-78"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-078\\author_1.py",
+          "line": "8:5",
+          "snippet": "subprocess.call([user_input], shell=True)",
+          "tainted_variable": "user_input"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-414\\author_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-425\\author_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-22-PATH-TRAVERSAL",
+        "CWE-79-CROSS-SITE-SCRIPTING"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-22",
+        "CWE-79"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-425\\author_1.py",
+          "line": "12:5",
+          "snippet": "return HttpResponse(open('./static/' + path, 'r').read())",
+          "tainted_variable": "path"
+        },
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-425\\author_1.py",
+          "line": "12:5",
+          "snippet": "return HttpResponse(open('./static/' + path, 'r').read())",
+          "tainted_variable": "path"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-454\\author_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-259-HARDCODED-PASSWORD"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-259"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-259-HARDCODED-PASSWORD",
+          "vulnerabilities": [
+            "CWE-259"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-454\\author_1.py",
+          "line": "11:8",
+          "snippet": "user_name == 'admin' and password == 'admin'"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-477\\author_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-477-OBSOLETE-FUNCTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-477"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-477\\author_1.py",
+          "line": "8:16",
+          "snippet": "time.clock()"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-502\\author_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-522\\author_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-259-HARDCODED-PASSWORD"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-259"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-259-HARDCODED-PASSWORD",
+          "vulnerabilities": [
+            "CWE-259"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-522\\author_1.py",
+          "line": "9:57",
+          "snippet": "passwd=\"\""
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-595\\author_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-595-COMPARISON-OF-OBJECT-REFERENCES"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-595"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-595-COMPARISON-OF-OBJECT-REFERENCES",
+          "vulnerabilities": [
+            "CWE-595"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-595\\author_1.py",
+          "line": "5:17",
+          "snippet": "account1 is account2",
+          "operand_types": [
+            null,
+            null
+          ]
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-605\\author_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-1327-UNRESTRICTED-BIND-ADDRESS"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-1327"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-1327-UNRESTRICTED-BIND-ADDRESS",
+          "vulnerabilities": [
+            "CWE-1327"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-605\\author_1.py",
+          "line": "9:5",
+          "snippet": "s.bind(('0.0.0.0', port))"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-611\\author_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-400-UNCONTROLLED-RESOURCE-CONSUMPTION",
+        "CWE-611-XXE-TAINT",
+        "CWE-770-UNCONTROLLED-RESOURCE-ALLOCATION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-400",
+        "CWE-611",
+        "CWE-770"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "CWE-400-UNCONTROLLED-RESOURCE-CONSUMPTION",
+          "vulnerabilities": [
+            "CWE-400"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-611\\author_1.py",
+          "line": "17:5",
+          "snippet": "root = lxml.etree.fromstring(xml.read())",
+          "tainted_variable": "xml"
+        },
+        {
+          "rule_id": "CWE-611-XXE-TAINT",
+          "vulnerabilities": [
+            "CWE-611"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-611\\author_1.py",
+          "line": "17:5",
+          "snippet": "root = lxml.etree.fromstring(xml.read())",
+          "tainted_variable": "xml"
+        },
+        {
+          "rule_id": "CWE-770-UNCONTROLLED-RESOURCE-ALLOCATION",
+          "vulnerabilities": [
+            "CWE-770"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-611\\author_1.py",
+          "line": "17:5",
+          "snippet": "root = lxml.etree.fromstring(xml.read())",
+          "tainted_variable": "xml"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-703\\author_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-703-IMPROPER-EXCEPTION-HANDLING"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-703"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-703-IMPROPER-EXCEPTION-HANDLING",
+          "vulnerabilities": [
+            "CWE-703"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-703\\author_1.py",
+          "line": "8:5",
+          "snippet": "except ValueError: pass"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-080\\author_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-79-CROSS-SITE-SCRIPTING"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-79"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-080\\author_1.py",
+          "line": "12:5",
+          "snippet": "response = make_response('<h1>Hello '+name+'</h1>')",
+          "tainted_variable": "name"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-730\\author_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-1333-REGEX-DOS"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-1333"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-1333-REGEX-DOS",
+          "vulnerabilities": [
+            "CWE-1333"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-730\\author_1.py",
+          "line": "9:8",
+          "snippet": "re.match(pattern, number)",
+          "tainted_variable": "number"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-732\\author_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-732-INCORRECT-PERMISSION-ASSIGNMENT"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-732"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-732-INCORRECT-PERMISSION-ASSIGNMENT",
+          "vulnerabilities": [
+            "CWE-732"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-732\\author_1.py",
+          "line": "10:5",
+          "snippet": "os.chmod(\"test.bin\", 0o755)"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-798\\author_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-259-HARDCODED-PASSWORD"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-259"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-259-HARDCODED-PASSWORD",
+          "vulnerabilities": [
+            "CWE-259"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-798\\author_1.py",
+          "line": "7:49",
+          "snippet": "password='password'"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-835\\author_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-835-LOOP-WITH-UNREACHABLE-EXIT"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-835"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-835-LOOP-WITH-UNREACHABLE-EXIT",
+          "vulnerabilities": [
+            "CWE-835"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-835\\author_1.py",
+          "line": "7:5",
+          "snippet": "while i < n: a, b = b, a + b"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-089\\author_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-259-HARDCODED-PASSWORD",
+        "CWE-89-SQLI"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-259",
+        "CWE-89"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-89-SQLI",
+          "vulnerabilities": [
+            "CWE-89"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-089\\author_1.py",
+          "line": "16:5",
+          "snippet": "cursor.execute(\"DELETE FROM users WHERE username = '%s'\" % username)",
+          "tainted_variable": "username"
+        },
+        {
+          "rule_id": "CWE-259-HARDCODED-PASSWORD",
+          "vulnerabilities": [
+            "CWE-259"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-089\\author_1.py",
+          "line": "8:63",
+          "snippet": "passwd=\"\""
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-094\\author_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "EVAL-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-94",
+        "CWE-95"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "EVAL-INJECTION",
+          "vulnerabilities": [
+            "CWE-95",
+            "CWE-94"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-094\\author_1.py",
+          "line": "11:5",
+          "snippet": "compile(input, 'input', 'exec')",
+          "tainted_variable": "input"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-095\\author_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "EVAL-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-94",
+        "CWE-95"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "EVAL-INJECTION",
+          "vulnerabilities": [
+            "CWE-95",
+            "CWE-94"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-095\\author_1.py",
+          "line": "5:5",
+          "snippet": "output = eval(inputStr)",
+          "tainted_variable": "inputStr"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-116\\author_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-78-OS-CMD-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-78"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-78-OS-CMD-INJECTION",
+          "vulnerabilities": [
+            "CWE-78"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-116\\author_1.py",
+          "line": "15:5",
+          "snippet": "os.system(f\"cd /home/{username} && ls -l > /tmp/files.txt\")",
+          "tainted_variable": "username"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-117\\author_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-117-LOG-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-117"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-117-LOG-INJECTION",
+          "vulnerabilities": [
+            "CWE-117"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-117\\author_1.py",
+          "line": "14:9",
+          "snippet": "logging.error(\"The input was not a number: \" + userInput)",
+          "tainted_variable": "userInput"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-193\\author_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-193-OFF-BY-ONE-ERROR"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-193"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-193-OFF-BY-ONE-ERROR",
+          "vulnerabilities": [
+            "CWE-193"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-193\\author_1.py",
+          "line": "6:13",
+          "snippet": "<="
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-020\\author_2.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-611-XXE"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-611"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-611-XXE",
+          "vulnerabilities": [
+            "CWE-611"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-020\\author_2.py",
+          "line": "8:12",
+          "snippet": "ET.fromstring(xml_string)"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-022\\author_2.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-22-PATH-TRAVERSAL",
+        "CWE-918-SSRF"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-22",
+        "CWE-918"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-022\\author_2.py",
+          "line": "8:5",
+          "snippet": "response = request.urlopen(url)",
+          "tainted_variable": "url"
+        },
+        {
+          "rule_id": "CWE-918-SSRF",
+          "vulnerabilities": [
+            "CWE-918"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-022\\author_2.py",
+          "line": "8:5",
+          "snippet": "response = request.urlopen(url)",
+          "tainted_variable": "url"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-259\\author_2.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-259-HARDCODED-PASSWORD"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-259"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-259-HARDCODED-PASSWORD",
+          "vulnerabilities": [
+            "CWE-259"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-259\\author_2.py",
+          "line": "8:49",
+          "snippet": "password='password'"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-295\\author_2.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-295-IMPROPER-CERTIFICATE-VALIDATION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-295"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-295-IMPROPER-CERTIFICATE-VALIDATION",
+          "vulnerabilities": [
+            "CWE-295"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-295\\author_2.py",
+          "line": "7:11",
+          "snippet": "SSL.Context(SSL.TLSv1_2_METHOD)"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-319\\author_2.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-22-PATH-TRAVERSAL",
+        "CWE-319-CLEARTEXT-TRANSMISSION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-22",
+        "CWE-319"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-319-CLEARTEXT-TRANSMISSION",
+          "vulnerabilities": [
+            "CWE-319"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-319\\author_2.py",
+          "line": "11:11",
+          "snippet": "ftplib.FTP(hostname)"
+        },
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-319\\author_2.py",
+          "line": "13:15",
+          "snippet": "sensitive_file.split",
+          "tainted_variable": "sensitive_file"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-321\\author_2.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-321-HARDCODED-CRYPTO-KEY",
+        "CWE-798-HARDCODED-CREDENTIALS"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-321",
+        "CWE-798"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-321-HARDCODED-CRYPTO-KEY",
+          "vulnerabilities": [
+            "CWE-321"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-321\\author_2.py",
+          "line": "10:5",
+          "snippet": "openai.api_key = \"sk-Hn0VpJ4aM2X7aAyT3mNr37tMMWgJj17zjrxlpbjKgMHe54PV\""
+        },
+        {
+          "rule_id": "CWE-798-HARDCODED-CREDENTIALS",
+          "vulnerabilities": [
+            "CWE-798"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-321\\author_2.py",
+          "line": "10:5",
+          "snippet": "openai.api_key = \"sk-Hn0VpJ4aM2X7aAyT3mNr37tMMWgJj17zjrxlpbjKgMHe54PV\""
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-326\\author_2.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-326-INADEQUATE-ENCRYPTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-326"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-326-INADEQUATE-ENCRYPTION",
+          "vulnerabilities": [
+            "CWE-326"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-326\\author_2.py",
+          "line": "9:12",
+          "snippet": "DSA.generate(1024)"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-703\\author_2.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-703-IMPROPER-EXCEPTION-HANDLING"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-703"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-703-IMPROPER-EXCEPTION-HANDLING",
+          "vulnerabilities": [
+            "CWE-703"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-703\\author_2.py",
+          "line": "9:9",
+          "snippet": "except ValueError: continue"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-703\\author_3.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-617-REACHABLE-ASSERTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-617"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-617-REACHABLE-ASSERTION",
+          "vulnerabilities": [
+            "CWE-617"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-703\\author_3.py",
+          "line": "6:12",
+          "snippet": "type(userInput) == int",
+          "tainted_variable": "userInput"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-020\\codeql_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-79-CROSS-SITE-SCRIPTING"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-79"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-020\\codeql_1.py",
+          "line": "10:5",
+          "snippet": "response = make_response(username)",
+          "tainted_variable": "username"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-022\\codeql_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-22-PATH-TRAVERSAL"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-22"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-022\\codeql_1.py",
+          "line": "13:5",
+          "snippet": "data = open(filename, 'rb').read()",
+          "tainted_variable": "filename"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-215\\codeql_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-489-ACTIVE-DEBUG"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-489"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-489-ACTIVE-DEBUG",
+          "vulnerabilities": [
+            "CWE-489"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-215\\codeql_1.py",
+          "line": "12:1",
+          "snippet": "app.run(debug=True)"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-285\\codeql_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-295\\codeql_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-295-IMPROPER-CERTIFICATE-VALIDATION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-295"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-295-IMPROPER-CERTIFICATE-VALIDATION",
+          "vulnerabilities": [
+            "CWE-295"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-295\\codeql_1.py",
+          "line": "4:1",
+          "snippet": "requests.get('https://semmle.com', verify=False)"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-327\\codeql_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-BROKEN-CRYPTO-ALGORITHM"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-326",
+        "CWE-327"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-BROKEN-CRYPTO-ALGORITHM",
+          "vulnerabilities": [
+            "CWE-327",
+            "CWE-326"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-327\\codeql_1.py",
+          "line": "9:14",
+          "snippet": "DES.new(secret_key)"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-377\\codeql_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-377-INSECURE-TEMP-FILE"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-377"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-377-INSECURE-TEMP-FILE",
+          "vulnerabilities": [
+            "CWE-377"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-377\\codeql_1.py",
+          "line": "8:16",
+          "snippet": "mktemp()"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-502\\codeql_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-502-DESERIALIZATION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-502"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-502-DESERIALIZATION",
+          "vulnerabilities": [
+            "CWE-502"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-502\\codeql_1.py",
+          "line": "9:12",
+          "snippet": "pickle.loads(pickled)"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-601\\codeql_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-601-OPEN-REDIRECT"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-601"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-601-OPEN-REDIRECT",
+          "vulnerabilities": [
+            "CWE-601"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-601\\codeql_1.py",
+          "line": "12:5",
+          "snippet": "return redirect(target, code=302)",
+          "tainted_variable": "target"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-611\\codeql_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-611-XXE-TAINT"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-611"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-611-XXE-TAINT",
+          "vulnerabilities": [
+            "CWE-611"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-611\\codeql_1.py",
+          "line": "13:5",
+          "snippet": "doc = lxml.etree.fromstring(xml_src)",
+          "tainted_variable": "xml_src"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-643\\codeql_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-611-XXE-TAINT",
+        "CWE-643-XPATH-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-611",
+        "CWE-643"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-611-XXE-TAINT",
+          "vulnerabilities": [
+            "CWE-611"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-643\\codeql_1.py",
+          "line": "16:5",
+          "snippet": "tree = etree.parse(f)",
+          "tainted_variable": "f"
+        },
+        {
+          "rule_id": "CWE-643-XPATH-INJECTION",
+          "vulnerabilities": [
+            "CWE-643"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-643\\codeql_1.py",
+          "line": "17:5",
+          "snippet": "return tree.xpath(\"/tag[@id='%s']\" % value)",
+          "tainted_variable": "value"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-730\\codeql_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-1333-REGEX-DOS",
+        "CWE-252-UNCHECKED-RETURN-VALUE"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-1333",
+        "CWE-252"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-252-UNCHECKED-RETURN-VALUE",
+          "vulnerabilities": [
+            "CWE-252"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-730\\codeql_1.py",
+          "line": "13:5",
+          "snippet": "re.search(pattern, request.args[\"text\"])"
+        },
+        {
+          "rule_id": "CWE-1333-REGEX-DOS",
+          "vulnerabilities": [
+            "CWE-1333"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-730\\codeql_1.py",
+          "line": "13:5",
+          "snippet": "re.search(pattern, request.args[\"text\"])",
+          "tainted_variable": "pattern"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-078\\codeql_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-78-OS-CMD-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-78"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-78-OS-CMD-INJECTION",
+          "vulnerabilities": [
+            "CWE-78"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-078\\codeql_1.py",
+          "line": "13:9",
+          "snippet": "os.system(action)",
+          "tainted_variable": "action"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-776\\codeql_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-611-XXE"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-611"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-611-XXE",
+          "vulnerabilities": [
+            "CWE-611"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-776\\codeql_1.py",
+          "line": "14:11",
+          "snippet": "ET.fromstring(xml_src)"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-798\\codeql_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-259-HARDCODED-PASSWORD"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-259"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-259-HARDCODED-PASSWORD",
+          "vulnerabilities": [
+            "CWE-259"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-798\\codeql_1.py",
+          "line": "12:8",
+          "snippet": "password == \"myPa55word\""
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-918\\codeql_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-918-SSRF"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-918"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-918-SSRF",
+          "vulnerabilities": [
+            "CWE-918"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-918\\codeql_1.py",
+          "line": "13:5",
+          "snippet": "response = requests.get(url)",
+          "tainted_variable": "url"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-079\\codeql_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-79-CROSS-SITE-SCRIPTING"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-79"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-079\\codeql_1.py",
+          "line": "15:5",
+          "snippet": "return template.render(name=name)",
+          "tainted_variable": "name"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-089\\codeql_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-259-HARDCODED-PASSWORD",
+        "CWE-89-SQLI"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-259",
+        "CWE-89"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-89-SQLI",
+          "vulnerabilities": [
+            "CWE-89"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-089\\codeql_1.py",
+          "line": "16:5",
+          "snippet": "cursor.execute(\"SELECT * FROM users WHERE username = '%s'\" % username)",
+          "tainted_variable": "username"
+        },
+        {
+          "rule_id": "CWE-259-HARDCODED-PASSWORD",
+          "vulnerabilities": [
+            "CWE-259"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-089\\codeql_1.py",
+          "line": "7:66",
+          "snippet": "passwd = \"\""
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-090\\codeql_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-90-LDAP-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-90"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-90-LDAP-INJECTION",
+          "vulnerabilities": [
+            "CWE-90"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-090\\codeql_1.py",
+          "line": "21:5",
+          "snippet": "user = ldap_connection.search_s( dn, ldap.SCOPE_SUBTREE, search_filter)",
+          "tainted_variable": "dn"
+        },
+        {
+          "rule_id": "CWE-90-LDAP-INJECTION",
+          "vulnerabilities": [
+            "CWE-90"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-090\\codeql_1.py",
+          "line": "21:5",
+          "snippet": "user = ldap_connection.search_s( dn, ldap.SCOPE_SUBTREE, search_filter)",
+          "tainted_variable": "search_filter"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-094\\codeql_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "EVAL-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-94",
+        "CWE-95"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "EVAL-INJECTION",
+          "vulnerabilities": [
+            "CWE-95",
+            "CWE-94"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-094\\codeql_1.py",
+          "line": "13:9",
+          "snippet": "exec(\"setname('%s')\" % first_name)",
+          "tainted_variable": "first_name"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-116\\codeql_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-1333-REGEX-DOS"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-1333"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-1333-REGEX-DOS",
+          "vulnerabilities": [
+            "CWE-1333"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-116\\codeql_1.py",
+          "line": "11:9",
+          "snippet": "content = re.sub(r'<script.*?>.*?</script>', '', content, flags=re.DOTALL | re.IGNORECASE)",
+          "tainted_variable": "content"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-117\\codeql_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-117-LOG-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-117"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-117-LOG-INJECTION",
+          "vulnerabilities": [
+            "CWE-117"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-117\\codeql_1.py",
+          "line": "15:5",
+          "snippet": "app.logger.info('User name: ' + name)",
+          "tainted_variable": "name"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-209\\codeql_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-020\\codeql_2.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-502-DESERIALIZATION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-502"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-502-DESERIALIZATION",
+          "vulnerabilities": [
+            "CWE-502"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-020\\codeql_2.py",
+          "line": "15:11",
+          "snippet": "pickle.loads(data)"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-022\\codeql_2.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-22-PATH-TRAVERSAL"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-22"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-022\\codeql_2.py",
+          "line": "9:23",
+          "snippet": "file_name",
+          "tainted_variable": "file_name"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-079\\codeql_2.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-79-CROSS-SITE-SCRIPTING"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-79"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-079\\codeql_2.py",
+          "line": "12:5",
+          "snippet": "response = make_response('Your name is '+name)",
+          "tainted_variable": "name"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-090\\codeql_2.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-90-LDAP-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-90"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-90-LDAP-INJECTION",
+          "vulnerabilities": [
+            "CWE-90"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-090\\codeql_2.py",
+          "line": "22:5",
+          "snippet": "return conn.search(dn, search_filter)",
+          "tainted_variable": "dn"
+        },
+        {
+          "rule_id": "CWE-90-LDAP-INJECTION",
+          "vulnerabilities": [
+            "CWE-90"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-090\\codeql_2.py",
+          "line": "22:5",
+          "snippet": "return conn.search(dn, search_filter)",
+          "tainted_variable": "search_filter"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-327\\codeql_2.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-295-IMPROPER-CERTIFICATE-VALIDATION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-295"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-295-IMPROPER-CERTIFICATE-VALIDATION",
+          "vulnerabilities": [
+            "CWE-295"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-327\\codeql_2.py",
+          "line": "11:16",
+          "snippet": "ssl.wrap_socket(socket.socket(socket.AF_INET, socket.SOCK_STREAM))"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-730\\codeql_2.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-1333-REGEX-DOS"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-1333"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-1333-REGEX-DOS",
+          "vulnerabilities": [
+            "CWE-1333"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-730\\codeql_2.py",
+          "line": "12:5",
+          "snippet": "compiled_pattern = re.compile(pattern)",
+          "tainted_variable": "pattern"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-918\\codeql_2.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-918-SSRF"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-918"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-918-SSRF",
+          "vulnerabilities": [
+            "CWE-918"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-918\\codeql_2.py",
+          "line": "16:5",
+          "snippet": "response = requests.get(url)",
+          "tainted_variable": "url"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-020\\codeql_3.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-601-OPEN-REDIRECT"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-601"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-601-OPEN-REDIRECT",
+          "vulnerabilities": [
+            "CWE-601"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-020\\codeql_3.py",
+          "line": "17:9",
+          "snippet": "return redirect(target)",
+          "tainted_variable": "target"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-327\\codeql_3.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-328-WEAK-HASH-FUNCTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-328"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-328-WEAK-HASH-FUNCTION",
+          "vulnerabilities": [
+            "CWE-328"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-327\\codeql_3.py",
+          "line": "8:12",
+          "snippet": "hashlib.md5(certificate)"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-020\\codeql_4.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-601-OPEN-REDIRECT"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-601"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-601-OPEN-REDIRECT",
+          "vulnerabilities": [
+            "CWE-601"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-020\\codeql_4.py",
+          "line": "13:9",
+          "snippet": "return redirect(target)",
+          "tainted_variable": "target"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-327\\codeql_4.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-916-WEAK-PASSWORD-HASH"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-916"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-916-WEAK-PASSWORD-HASH",
+          "vulnerabilities": [
+            "CWE-916"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-327\\codeql_4.py",
+          "line": "7:12",
+          "snippet": "hashlib.sha256(password + salt)"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-250\\mitre_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-269\\mitre_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-941\\mitre_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-283\\mitre_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-339\\mitre_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-338-WEAK-PRNG"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-338"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "CWE-338-WEAK-PRNG",
+          "vulnerabilities": [
+            "CWE-338"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-339\\mitre_1.py",
+          "line": "9:12",
+          "snippet": "os.urandom(2)"
+        },
+        {
+          "rule_id": "CWE-338-WEAK-PRNG",
+          "vulnerabilities": [
+            "CWE-338"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-339\\mitre_1.py",
+          "line": "10:5",
+          "snippet": "random.seed(a=seed)"
+        },
+        {
+          "rule_id": "CWE-338-WEAK-PRNG",
+          "vulnerabilities": [
+            "CWE-338"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-339\\mitre_1.py",
+          "line": "11:11",
+          "snippet": "random.getrandbits(128)"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-385\\mitre_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-406\\mitre_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-462\\mitre_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-502\\mitre_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-502-DESERIALIZATION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-502"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-502-DESERIALIZATION",
+          "vulnerabilities": [
+            "CWE-502"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-502\\mitre_1.py",
+          "line": "11:17",
+          "snippet": "cPickle.loads(base64.b64decode(headers['AuthToken']))"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-759\\mitre_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-328-WEAK-HASH-FUNCTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-328"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-328-WEAK-HASH-FUNCTION",
+          "vulnerabilities": [
+            "CWE-328"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-759\\mitre_1.py",
+          "line": "8:14",
+          "snippet": "hashlib.new('md5')"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-841\\mitre_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-306\\pearce_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-259-HARDCODED-PASSWORD"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-259"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-259-HARDCODED-PASSWORD",
+          "vulnerabilities": [
+            "CWE-259"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-306\\pearce_1.py",
+          "line": "28:8",
+          "snippet": "request.form['username'] == 'admin' and request.form['password'] == 'password'"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-434\\pearce_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-400-UNCONTROLLED-RESOURCE-CONSUMPTION",
+        "CWE-434-UNRESTRICTED-FILE-UPLOAD",
+        "CWE-770-UNCONTROLLED-RESOURCE-ALLOCATION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-400",
+        "CWE-434",
+        "CWE-770"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "CWE-400-UNCONTROLLED-RESOURCE-CONSUMPTION",
+          "vulnerabilities": [
+            "CWE-400"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-434\\pearce_1.py",
+          "line": "12:5",
+          "snippet": "p.save('./uploads/' + p.filename)",
+          "tainted_variable": "p"
+        },
+        {
+          "rule_id": "CWE-434-UNRESTRICTED-FILE-UPLOAD",
+          "vulnerabilities": [
+            "CWE-434"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-434\\pearce_1.py",
+          "line": "12:5",
+          "snippet": "p.save('./uploads/' + p.filename)",
+          "tainted_variable": "p"
+        },
+        {
+          "rule_id": "CWE-770-UNCONTROLLED-RESOURCE-ALLOCATION",
+          "vulnerabilities": [
+            "CWE-770"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-434\\pearce_1.py",
+          "line": "12:5",
+          "snippet": "p.save('./uploads/' + p.filename)",
+          "tainted_variable": "p"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-522\\pearce_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-259-HARDCODED-PASSWORD",
+        "CWE-328-WEAK-HASH-FUNCTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-259",
+        "CWE-328"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-328-WEAK-HASH-FUNCTION",
+          "vulnerabilities": [
+            "CWE-328"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-522\\pearce_1.py",
+          "line": "17:23",
+          "snippet": "hashlib.md5(password.encode())"
+        },
+        {
+          "rule_id": "CWE-259-HARDCODED-PASSWORD",
+          "vulnerabilities": [
+            "CWE-259"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-522\\pearce_1.py",
+          "line": "18:57",
+          "snippet": "passwd=\"\""
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-434\\pearce_2.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-22-PATH-TRAVERSAL",
+        "CWE-400-UNCONTROLLED-RESOURCE-CONSUMPTION",
+        "CWE-434-UNRESTRICTED-FILE-UPLOAD",
+        "CWE-770-UNCONTROLLED-RESOURCE-ALLOCATION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-22",
+        "CWE-400",
+        "CWE-434",
+        "CWE-770"
+      ],
+      "findings_count": 4,
+      "findings": [
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-434\\pearce_2.py",
+          "line": "15:15",
+          "snippet": "'./pictures/' + img_name",
+          "tainted_variable": "img_name"
+        },
+        {
+          "rule_id": "CWE-400-UNCONTROLLED-RESOURCE-CONSUMPTION",
+          "vulnerabilities": [
+            "CWE-400"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-434\\pearce_2.py",
+          "line": "13:5",
+          "snippet": "img_data = img.read()",
+          "tainted_variable": "img"
+        },
+        {
+          "rule_id": "CWE-434-UNRESTRICTED-FILE-UPLOAD",
+          "vulnerabilities": [
+            "CWE-434"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-434\\pearce_2.py",
+          "line": "16:9",
+          "snippet": "f.write(img_encoded)",
+          "tainted_variable": "img_encoded"
+        },
+        {
+          "rule_id": "CWE-770-UNCONTROLLED-RESOURCE-ALLOCATION",
+          "vulnerabilities": [
+            "CWE-770"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-434\\pearce_2.py",
+          "line": "13:5",
+          "snippet": "img_data = img.read()",
+          "tainted_variable": "img"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-079\\sonar_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-79-CROSS-SITE-SCRIPTING"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-79"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-079\\sonar_1.py",
+          "line": "14:5",
+          "snippet": "response = make_response(html.replace('{{ name }}', param))",
+          "tainted_variable": "param"
+        },
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-079\\sonar_1.py",
+          "line": "14:5",
+          "snippet": "response = make_response(html.replace('{{ name }}', param))",
+          "tainted_variable": "html"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-094\\sonar_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "EVAL-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-94",
+        "CWE-95"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "EVAL-INJECTION",
+          "vulnerabilities": [
+            "CWE-95",
+            "CWE-94"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-094\\sonar_1.py",
+          "line": "12:5",
+          "snippet": "exec(\"import urllib%s as urllib\" % module)",
+          "tainted_variable": "module"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-502\\sonar_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-502-DESERIALIZATION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-502"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-502-DESERIALIZATION",
+          "vulnerabilities": [
+            "CWE-502"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-502\\sonar_1.py",
+          "line": "11:12",
+          "snippet": "yaml.load(data)"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-521\\sonar_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-601\\sonar_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-601-OPEN-REDIRECT"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-601"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-601-OPEN-REDIRECT",
+          "vulnerabilities": [
+            "CWE-601"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-601\\sonar_1.py",
+          "line": "8:5",
+          "snippet": "return HttpResponseRedirect(target)",
+          "tainted_variable": "target"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-611\\sonar_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-611-XXE"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-611"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-611-XXE",
+          "vulnerabilities": [
+            "CWE-611"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-611\\sonar_1.py",
+          "line": "7:14",
+          "snippet": "etree.XMLParser(resolve_entities=True)"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-641\\sonar_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-22-PATH-TRAVERSAL",
+        "CWE-99-RESOURCE-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-22",
+        "CWE-99"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-641\\sonar_1.py",
+          "line": "13:5",
+          "snippet": "return send_file(filepath, as_attachment=True)",
+          "tainted_variable": "filepath"
+        },
+        {
+          "rule_id": "CWE-99-RESOURCE-INJECTION",
+          "vulnerabilities": [
+            "CWE-99"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-641\\sonar_1.py",
+          "line": "13:5",
+          "snippet": "return send_file(filepath, as_attachment=True)",
+          "tainted_variable": "filepath"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-643\\sonar_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-611-XXE",
+        "CWE-643-XPATH-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-611",
+        "CWE-643"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-611-XXE",
+          "vulnerabilities": [
+            "CWE-611"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-643\\sonar_1.py",
+          "line": "4:8",
+          "snippet": "ET.parse('users.xml')"
+        },
+        {
+          "rule_id": "CWE-643-XPATH-INJECTION",
+          "vulnerabilities": [
+            "CWE-643"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-643\\sonar_1.py",
+          "line": "17:5",
+          "snippet": "elements = root.findall(query)",
+          "tainted_variable": "query"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-760\\sonar_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-827\\sonar_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-611-XXE"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-611"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-611-XXE",
+          "vulnerabilities": [
+            "CWE-611"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-827\\sonar_1.py",
+          "line": "8:14",
+          "snippet": "etree.XMLParser()"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-943\\sonar_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-099\\sonar_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-22-PATH-TRAVERSAL",
+        "CWE-99-RESOURCE-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-22",
+        "CWE-99"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-099\\sonar_1.py",
+          "line": "12:5",
+          "snippet": "return send_file(\"static/%s\" % file, as_attachment=True)",
+          "tainted_variable": "file"
+        },
+        {
+          "rule_id": "CWE-99-RESOURCE-INJECTION",
+          "vulnerabilities": [
+            "CWE-99"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-099\\sonar_1.py",
+          "line": "12:5",
+          "snippet": "return send_file(\"static/%s\" % file, as_attachment=True)",
+          "tainted_variable": "file"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-113\\sonar_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-113-HTTP-RESPONSE-SPLITTING",
+        "CWE-601-OPEN-REDIRECT"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-113",
+        "CWE-601"
+      ],
+      "findings_count": 3,
+      "findings": [
+        {
+          "rule_id": "CWE-113-HTTP-RESPONSE-SPLITTING",
+          "vulnerabilities": [
+            "CWE-113"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-113\\sonar_1.py",
+          "line": "16:5",
+          "snippet": "headers.add(\"Content-Type\", content_type)",
+          "tainted_variable": "content_type"
+        },
+        {
+          "rule_id": "CWE-113-HTTP-RESPONSE-SPLITTING",
+          "vulnerabilities": [
+            "CWE-113"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-113\\sonar_1.py",
+          "line": "17:5",
+          "snippet": "response.headers = headers",
+          "tainted_variable": "headers"
+        },
+        {
+          "rule_id": "CWE-601-OPEN-REDIRECT",
+          "vulnerabilities": [
+            "CWE-601"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-113\\sonar_1.py",
+          "line": "17:5",
+          "snippet": "response.headers = headers",
+          "tainted_variable": "headers"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-117\\sonar_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-117-LOG-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-117"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-117-LOG-INJECTION",
+          "vulnerabilities": [
+            "CWE-117"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-117\\sonar_1.py",
+          "line": "10:5",
+          "snippet": "current_app.logger.error(\"%s\", input)",
+          "tainted_variable": "input"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-1204\\sonar_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-329\\sonar_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-BROKEN-CRYPTO-ALGORITHM"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-326",
+        "CWE-327"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-BROKEN-CRYPTO-ALGORITHM",
+          "vulnerabilities": [
+            "CWE-327",
+            "CWE-326"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-329\\sonar_1.py",
+          "line": "10:42",
+          "snippet": "modes.CBC(static_vector)"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-347\\sonar_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-347-JWT-NO-VERIFY"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-347"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-347-JWT-NO-VERIFY",
+          "vulnerabilities": [
+            "CWE-347"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-347\\sonar_1.py",
+          "line": "8:12",
+          "snippet": "jwt.decode(token, verify=False)"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-379\\sonar_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-377-INSECURE-TEMP-FILE"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-377"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-377-INSECURE-TEMP-FILE",
+          "vulnerabilities": [
+            "CWE-377"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-379\\sonar_1.py",
+          "line": "10:16",
+          "snippet": "tempfile.mktemp()"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-400\\sonar_1.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-1333-REGEX-DOS",
+        "CWE-252-UNCHECKED-RETURN-VALUE"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-1333",
+        "CWE-252"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-252-UNCHECKED-RETURN-VALUE",
+          "vulnerabilities": [
+            "CWE-252"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-400\\sonar_1.py",
+          "line": "18:5",
+          "snippet": "re.search(username, filename)"
+        },
+        {
+          "rule_id": "CWE-1333-REGEX-DOS",
+          "vulnerabilities": [
+            "CWE-1333"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-400\\sonar_1.py",
+          "line": "18:5",
+          "snippet": "re.search(username, filename)",
+          "tainted_variable": "username"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-113\\sonar_2.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-113-HTTP-RESPONSE-SPLITTING",
+        "CWE-601-OPEN-REDIRECT"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-113",
+        "CWE-601"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-113-HTTP-RESPONSE-SPLITTING",
+          "vulnerabilities": [
+            "CWE-113"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-113\\sonar_2.py",
+          "line": "13:5",
+          "snippet": "response.headers['content-type'] = content_type",
+          "tainted_variable": "content_type"
+        },
+        {
+          "rule_id": "CWE-601-OPEN-REDIRECT",
+          "vulnerabilities": [
+            "CWE-601"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-113\\sonar_2.py",
+          "line": "13:5",
+          "snippet": "response.headers['content-type'] = content_type",
+          "tainted_variable": "content_type"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-347\\sonar_2.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-347-JWT-NO-VERIFY"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-347"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-347-JWT-NO-VERIFY",
+          "vulnerabilities": [
+            "CWE-347"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-347\\sonar_2.py",
+          "line": "8:12",
+          "snippet": "jwt.decode(token, key, options={\"verify_signature\": False})"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-521\\sonar_2.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-601\\sonar_2.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-601-OPEN-REDIRECT"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-601"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-601-OPEN-REDIRECT",
+          "vulnerabilities": [
+            "CWE-601"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-601\\sonar_2.py",
+          "line": "12:5",
+          "snippet": "return redirect(url)",
+          "tainted_variable": "url"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-611\\sonar_2.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-611-XXE"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-611"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-611-XXE",
+          "vulnerabilities": [
+            "CWE-611"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-611\\sonar_2.py",
+          "line": "8:14",
+          "snippet": "etree.XMLParser(resolve_entities=True)"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-347\\sonar_3.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-601\\sonar_3.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-113-HTTP-RESPONSE-SPLITTING",
+        "CWE-601-OPEN-REDIRECT"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-113",
+        "CWE-601"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-113-HTTP-RESPONSE-SPLITTING",
+          "vulnerabilities": [
+            "CWE-113"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-601\\sonar_3.py",
+          "line": "13:5",
+          "snippet": "response.headers['Location'] = url",
+          "tainted_variable": "url"
+        },
+        {
+          "rule_id": "CWE-601-OPEN-REDIRECT",
+          "vulnerabilities": [
+            "CWE-601"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-601\\sonar_3.py",
+          "line": "13:5",
+          "snippet": "response.headers['Location'] = url",
+          "tainted_variable": "url"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-611\\sonar_3.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-611-XXE",
+        "CWE-918-XSLT-SSRF"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-611",
+        "CWE-918"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-611-XXE",
+          "vulnerabilities": [
+            "CWE-611"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-611\\sonar_3.py",
+          "line": "9:14",
+          "snippet": "etree.XMLParser(resolve_entities=True)"
+        },
+        {
+          "rule_id": "CWE-918-XSLT-SSRF",
+          "vulnerabilities": [
+            "CWE-918"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-611\\sonar_3.py",
+          "line": "12:10",
+          "snippet": "etree.XSLTAccessControl(read_network=True, write_network=False)"
+        }
+      ]
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-601\\sonar_4.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-611\\sonar_4.py",
+      "xml_source": "Security_Eval.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-611-XXE"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-611"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-611-XXE",
+          "vulnerabilities": [
+            "CWE-611"
+          ],
+          "source_file": "SecurityEval-main\\Testcases_Insecure_Code\\CWE-611\\sonar_4.py",
+          "line": "7:14",
+          "snippet": "xml.sax.make_parser()"
+        }
+      ]
+    }
+  ],
+  "rules_skipped": {
+    "python": [
+      {
+        "rule_id": "CWE-120-BUFFER-OVERFLOW",
+        "reason": "non applicabile a 'python' (languages=['c'])"
+      },
+      {
+        "rule_id": "CWE-129-IMPROPER-ARRAY-INDEX-VALIDATION",
+        "reason": "non applicabile a 'python' (languages=['c', 'java'])"
+      },
+      {
+        "rule_id": "CWE-129-ARRAY-SIZE-VALIDATION",
+        "reason": "non applicabile a 'python' (languages=['c', 'java'])"
+      },
+      {
+        "rule_id": "Numeric Truncation Error",
+        "reason": "non applicabile a 'python' (languages=['java'])"
+      },
+      {
+        "rule_id": "CWE-400-UNCONTROLLED-SLEEP-C",
+        "reason": "non applicabile a 'python' (languages=['c'])"
+      },
+      {
+        "rule_id": "CWE-415-416-MEMORY-MISUSE-AFTER-FREE",
+        "reason": "non applicabile a 'python' (languages=['c'])"
+      },
+      {
+        "rule_id": "CWE-476-NULL-POINTER-DEREFERENCE",
+        "reason": "non applicabile a 'python' (languages=['c', 'java'])"
+      },
+      {
+        "rule_id": "CWE-502-JACKSON-UNSAFE-DESERIALIZATION",
+        "reason": "non applicabile a 'python' (languages=['java'])"
+      },
+      {
+        "rule_id": "CWE-611-XXE-KWARGS",
+        "reason": "non applicabile a 'python' (languages=['javascript'])"
+      },
+      {
+        "rule_id": "UNCHECKED-CAST",
+        "reason": "non applicabile a 'python' (languages=['java'])"
+      },
+      {
+        "rule_id": "CWE-943-NOSQL-INJECTION",
+        "reason": "non applicabile a 'python' (languages=['javascript'])"
+      }
+    ]
+  }
+}

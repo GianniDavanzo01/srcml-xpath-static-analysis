@@ -1,0 +1,2013 @@
+{
+  "summary": {
+    "units_analyzed": 100,
+    "units_failed": 0,
+    "files_failed": 0,
+    "vulnerable_files": 54,
+    "total_findings": 76,
+    "categories_count": {
+      "CWE-614": 10,
+      "CWE-113": 1,
+      "CWE-129": 2,
+      "CWE-476": 11,
+      "CWE-134": 1,
+      "CWE-200": 1,
+      "CWE-209": 1,
+      "CWE-22": 8,
+      "CWE-319": 1,
+      "CWE-259": 1,
+      "CWE-321": 3,
+      "CWE-326": 7,
+      "CWE-327": 2,
+      "CWE-328": 1,
+      "CWE-338": 2,
+      "CWE-1071": 1,
+      "CWE-400": 3,
+      "CWE-477": 1,
+      "CWE-481": 2,
+      "CWE-595": 2,
+      "CWE-601": 5,
+      "CWE-78": 2,
+      "CWE-789": 2,
+      "CWE-79": 4,
+      "CWE-835": 1,
+      "CWE-89": 2,
+      "CWE-90": 2
+    }
+  },
+  "errors": [],
+  "details": [
+    {
+      "source_file": "juliet_java/CWE113_1_bad.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-113-HTTP-RESPONSE-SPLITTING",
+        "CWE-614-SENSITIVE-COOKIE-INSECURE"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-113",
+        "CWE-614"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-614-SENSITIVE-COOKIE-INSECURE",
+          "vulnerabilities": [
+            "CWE-614"
+          ],
+          "source_file": "juliet_java/CWE113_1_bad.java",
+          "line": "85:17",
+          "snippet": "response.addCookie(cookieSink)"
+        },
+        {
+          "rule_id": "CWE-113-HTTP-RESPONSE-SPLITTING",
+          "vulnerabilities": [
+            "CWE-113"
+          ],
+          "source_file": "juliet_java/CWE113_1_bad.java",
+          "line": "85:17",
+          "snippet": "response.addCookie(cookieSink);",
+          "tainted_variable": "cookieSink"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_java/CWE113_1_good.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-614-SENSITIVE-COOKIE-INSECURE"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-614"
+      ],
+      "findings_count": 4,
+      "findings": [
+        {
+          "rule_id": "CWE-614-SENSITIVE-COOKIE-INSECURE",
+          "vulnerabilities": [
+            "CWE-614"
+          ],
+          "source_file": "juliet_java/CWE113_1_good.java",
+          "line": "60:17",
+          "snippet": "response.addCookie(cookieSink)"
+        },
+        {
+          "rule_id": "CWE-614-SENSITIVE-COOKIE-INSECURE",
+          "vulnerabilities": [
+            "CWE-614"
+          ],
+          "source_file": "juliet_java/CWE113_1_good.java",
+          "line": "87:17",
+          "snippet": "response.addCookie(cookieSink)"
+        },
+        {
+          "rule_id": "CWE-614-SENSITIVE-COOKIE-INSECURE",
+          "vulnerabilities": [
+            "CWE-614"
+          ],
+          "source_file": "juliet_java/CWE113_1_good.java",
+          "line": "150:17",
+          "snippet": "response.addCookie(cookieSink)"
+        },
+        {
+          "rule_id": "CWE-614-SENSITIVE-COOKIE-INSECURE",
+          "vulnerabilities": [
+            "CWE-614"
+          ],
+          "source_file": "juliet_java/CWE113_1_good.java",
+          "line": "208:17",
+          "snippet": "response.addCookie(cookieSink)"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_java/CWE113_2_bad.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-614-SENSITIVE-COOKIE-INSECURE"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-614"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-614-SENSITIVE-COOKIE-INSECURE",
+          "vulnerabilities": [
+            "CWE-614"
+          ],
+          "source_file": "juliet_java/CWE113_2_bad.java",
+          "line": "46:13",
+          "snippet": "response.addCookie(cookieSink)"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_java/CWE113_2_good.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-614-SENSITIVE-COOKIE-INSECURE"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-614"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-614-SENSITIVE-COOKIE-INSECURE",
+          "vulnerabilities": [
+            "CWE-614"
+          ],
+          "source_file": "juliet_java/CWE113_2_good.java",
+          "line": "56:13",
+          "snippet": "response.addCookie(cookieSink)"
+        },
+        {
+          "rule_id": "CWE-614-SENSITIVE-COOKIE-INSECURE",
+          "vulnerabilities": [
+            "CWE-614"
+          ],
+          "source_file": "juliet_java/CWE113_2_good.java",
+          "line": "81:13",
+          "snippet": "response.addCookie(cookieSink)"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_java/CWE129_1_bad.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-129-IMPROPER-ARRAY-INDEX-VALIDATION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-129"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-129-IMPROPER-ARRAY-INDEX-VALIDATION",
+          "vulnerabilities": [
+            "CWE-129"
+          ],
+          "source_file": "juliet_java/CWE129_1_bad.java",
+          "line": "52:9",
+          "snippet": "IO.writeLine(array[data]);",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_java/CWE129_1_good.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "juliet_java/CWE129_2_bad.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-129-ARRAY-SIZE-VALIDATION",
+        "CWE-476-NULL-POINTER-DEREFERENCE"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-129",
+        "CWE-476"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-129-ARRAY-SIZE-VALIDATION",
+          "vulnerabilities": [
+            "CWE-129"
+          ],
+          "source_file": "juliet_java/CWE129_2_bad.java",
+          "line": "60:17",
+          "snippet": "array = new int[data];",
+          "tainted_variable": "data"
+        },
+        {
+          "rule_id": "CWE-476-NULL-POINTER-DEREFERENCE",
+          "vulnerabilities": [
+            "CWE-476"
+          ],
+          "source_file": "juliet_java/CWE129_2_bad.java",
+          "line": "67:13",
+          "snippet": "array[0] = 5;",
+          "tainted_variable": "array"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_java/CWE129_2_good.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-476-NULL-POINTER-DEREFERENCE"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-476"
+      ],
+      "findings_count": 4,
+      "findings": [
+        {
+          "rule_id": "CWE-476-NULL-POINTER-DEREFERENCE",
+          "vulnerabilities": [
+            "CWE-476"
+          ],
+          "source_file": "juliet_java/CWE129_2_good.java",
+          "line": "61:13",
+          "snippet": "array[0] = 5;",
+          "tainted_variable": "array"
+        },
+        {
+          "rule_id": "CWE-476-NULL-POINTER-DEREFERENCE",
+          "vulnerabilities": [
+            "CWE-476"
+          ],
+          "source_file": "juliet_java/CWE129_2_good.java",
+          "line": "95:13",
+          "snippet": "array[0] = 5;",
+          "tainted_variable": "array"
+        },
+        {
+          "rule_id": "CWE-476-NULL-POINTER-DEREFERENCE",
+          "vulnerabilities": [
+            "CWE-476"
+          ],
+          "source_file": "juliet_java/CWE129_2_good.java",
+          "line": "149:13",
+          "snippet": "array[0] = 5;",
+          "tainted_variable": "array"
+        },
+        {
+          "rule_id": "CWE-476-NULL-POINTER-DEREFERENCE",
+          "vulnerabilities": [
+            "CWE-476"
+          ],
+          "source_file": "juliet_java/CWE129_2_good.java",
+          "line": "196:13",
+          "snippet": "array[0] = 5;",
+          "tainted_variable": "array"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_java/CWE134_1_bad.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-134-FORMAT-STRING-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-134"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-134-FORMAT-STRING-INJECTION",
+          "vulnerabilities": [
+            "CWE-134"
+          ],
+          "source_file": "juliet_java/CWE134_1_bad.java",
+          "line": "34:13",
+          "snippet": "System.out.format(data);",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_java/CWE134_1_good.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "juliet_java/CWE209_1_bad.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "juliet_java/CWE209_1_good.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "juliet_java/CWE209_2_bad.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-ERROR-DETAILS-TO-CLIENT"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-200",
+        "CWE-209"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-ERROR-DETAILS-TO-CLIENT",
+          "vulnerabilities": [
+            "CWE-200",
+            "CWE-209"
+          ],
+          "source_file": "juliet_java/CWE209_2_bad.java",
+          "line": "34:17",
+          "snippet": "exceptUnsupportedOperation.printStackTrace(response.getWriter());",
+          "tainted_variable": "exceptUnsupportedOperation"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_java/CWE209_2_good.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "juliet_java/CWE23_2_bad.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-22-PATH-TRAVERSAL"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-22"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "juliet_java/CWE23_2_bad.java",
+          "line": "60:13",
+          "snippet": "File file = new File(root + data);",
+          "tainted_variable": "data"
+        },
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "juliet_java/CWE23_2_bad.java",
+          "line": "68:21",
+          "snippet": "streamFileInputSink = new FileInputStream(file);",
+          "tainted_variable": "file"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_java/CWE23_2_good.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "juliet_java/CWE23_bad.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-22-PATH-TRAVERSAL"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-22"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "juliet_java/CWE23_bad.java",
+          "line": "51:13",
+          "snippet": "File file = new File(root + data);",
+          "tainted_variable": "data"
+        },
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "juliet_java/CWE23_bad.java",
+          "line": "59:21",
+          "snippet": "streamFileInputSink = new FileInputStream(file);",
+          "tainted_variable": "file"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_java/CWE23_good.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "juliet_java/CWE253_bad.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "juliet_java/CWE253_good.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "juliet_java/CWE319_bad.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-319-CLEARTEXT-SOCKET-TRANSMISSION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-319"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-319-CLEARTEXT-SOCKET-TRANSMISSION",
+          "vulnerabilities": [
+            "CWE-319"
+          ],
+          "source_file": "juliet_java/CWE319_bad.java",
+          "line": "100:13",
+          "snippet": "connection = DriverManager.getConnection(\"data-url\", \"root\", password);",
+          "tainted_variable": "password"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_java/CWE319_good.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-259-HARDCODED-PASSWORD"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-259"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-259-HARDCODED-PASSWORD",
+          "vulnerabilities": [
+            "CWE-259"
+          ],
+          "source_file": "juliet_java/CWE319_good.java",
+          "line": "54:9",
+          "snippet": "password = \"Password1234!\";"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_java/CWE321_1_bad.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-321-HARDCODED-KEY-TAINT"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-321"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-321-HARDCODED-KEY-TAINT",
+          "vulnerabilities": [
+            "CWE-321"
+          ],
+          "source_file": "juliet_java/CWE321_1_bad.java",
+          "line": "52:13",
+          "snippet": "SecretKeySpec secretKeySpec = new SecretKeySpec(data.getBytes(\"UTF-8\"), \"AES\");",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_java/CWE321_1_good.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-321-HARDCODED-KEY-TAINT"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-321"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-321-HARDCODED-KEY-TAINT",
+          "vulnerabilities": [
+            "CWE-321"
+          ],
+          "source_file": "juliet_java/CWE321_1_good.java",
+          "line": "71:13",
+          "snippet": "SecretKeySpec secretKeySpec = new SecretKeySpec(data.getBytes(\"UTF-8\"), \"AES\");",
+          "tainted_variable": "data"
+        },
+        {
+          "rule_id": "CWE-321-HARDCODED-KEY-TAINT",
+          "vulnerabilities": [
+            "CWE-321"
+          ],
+          "source_file": "juliet_java/CWE321_1_good.java",
+          "line": "113:13",
+          "snippet": "SecretKeySpec secretKeySpec = new SecretKeySpec(data.getBytes(\"UTF-8\"), \"AES\");",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_java/CWE327_1_bad.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-326-INADEQUATE-ENCRYPTION",
+        "CWE-BROKEN-CRYPTO-ALGORITHM"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-326",
+        "CWE-327"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-326-INADEQUATE-ENCRYPTION",
+          "vulnerabilities": [
+            "CWE-326"
+          ],
+          "source_file": "juliet_java/CWE327_1_bad.java",
+          "line": "41:13",
+          "snippet": "keyGenerator.init(112)"
+        },
+        {
+          "rule_id": "CWE-BROKEN-CRYPTO-ALGORITHM",
+          "vulnerabilities": [
+            "CWE-327",
+            "CWE-326"
+          ],
+          "source_file": "juliet_java/CWE327_1_bad.java",
+          "line": "46:38",
+          "snippet": "Cipher.getInstance(\"DESede\")"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_java/CWE327_1_good.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-326-INADEQUATE-ENCRYPTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-326"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-326-INADEQUATE-ENCRYPTION",
+          "vulnerabilities": [
+            "CWE-326"
+          ],
+          "source_file": "juliet_java/CWE327_1_good.java",
+          "line": "52:13",
+          "snippet": "keyGenerator.init(128)"
+        },
+        {
+          "rule_id": "CWE-326-INADEQUATE-ENCRYPTION",
+          "vulnerabilities": [
+            "CWE-326"
+          ],
+          "source_file": "juliet_java/CWE327_1_good.java",
+          "line": "78:13",
+          "snippet": "keyGenerator.init(128)"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_java/CWE327_2_bad.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-326-INADEQUATE-ENCRYPTION",
+        "CWE-BROKEN-CRYPTO-ALGORITHM"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-326",
+        "CWE-327"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-326-INADEQUATE-ENCRYPTION",
+          "vulnerabilities": [
+            "CWE-326"
+          ],
+          "source_file": "juliet_java/CWE327_2_bad.java",
+          "line": "34:13",
+          "snippet": "keyGenerator.init(56)"
+        },
+        {
+          "rule_id": "CWE-BROKEN-CRYPTO-ALGORITHM",
+          "vulnerabilities": [
+            "CWE-327",
+            "CWE-326"
+          ],
+          "source_file": "juliet_java/CWE327_2_bad.java",
+          "line": "39:32",
+          "snippet": "Cipher.getInstance(\"DES\")"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_java/CWE327_2_good.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-326-INADEQUATE-ENCRYPTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-326"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-326-INADEQUATE-ENCRYPTION",
+          "vulnerabilities": [
+            "CWE-326"
+          ],
+          "source_file": "juliet_java/CWE327_2_good.java",
+          "line": "37:13",
+          "snippet": "keyGenerator.init(128)"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_java/CWE328_bad.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-328-WEAK-HASH-FUNCTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-328"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-328-WEAK-HASH-FUNCTION",
+          "vulnerabilities": [
+            "CWE-328"
+          ],
+          "source_file": "juliet_java/CWE328_bad.java",
+          "line": "30:39",
+          "snippet": "MessageDigest.getInstance(\"MD2\")"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_java/CWE328_good.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "juliet_java/CWE338_1_bad.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-338-WEAK-PRNG"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-338"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-338-WEAK-PRNG",
+          "vulnerabilities": [
+            "CWE-338"
+          ],
+          "source_file": "juliet_java/CWE338_1_bad.java",
+          "line": "29:31",
+          "snippet": "Math.random()"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_java/CWE338_1_good.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "juliet_java/CWE338_2_bad.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-338-WEAK-PRNG"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-338"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-338-WEAK-PRNG",
+          "vulnerabilities": [
+            "CWE-338"
+          ],
+          "source_file": "juliet_java/CWE338_2_bad.java",
+          "line": "29:31",
+          "snippet": "Math.random()"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_java/CWE338_2_good.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "juliet_java/CWE36_2_bad.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-22-PATH-TRAVERSAL"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-22"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "juliet_java/CWE36_2_bad.java",
+          "line": "48:13",
+          "snippet": "File file = new File(data);",
+          "tainted_variable": "data"
+        },
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "juliet_java/CWE36_2_bad.java",
+          "line": "56:21",
+          "snippet": "streamFileInputSink = new FileInputStream(file);",
+          "tainted_variable": "file"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_java/CWE36_2_good.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "juliet_java/CWE36_bad.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-22-PATH-TRAVERSAL"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-22"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "juliet_java/CWE36_bad.java",
+          "line": "47:13",
+          "snippet": "File file = new File(data);",
+          "tainted_variable": "data"
+        },
+        {
+          "rule_id": "CWE-22-PATH-TRAVERSAL",
+          "vulnerabilities": [
+            "CWE-22"
+          ],
+          "source_file": "juliet_java/CWE36_bad.java",
+          "line": "55:21",
+          "snippet": "streamFileInputSink = new FileInputStream(file);",
+          "tainted_variable": "file"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_java/CWE36_good.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "juliet_java/CWE390_1_bad.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-1071-EMPTY-CODE-BLOCK",
+        "CWE-476-NULL-POINTER-DEREFERENCE"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-1071",
+        "CWE-476"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-476-NULL-POINTER-DEREFERENCE",
+          "vulnerabilities": [
+            "CWE-476"
+          ],
+          "source_file": "juliet_java/CWE390_1_bad.java",
+          "line": "39:16",
+          "snippet": "(!newDirectory.mkdirs())",
+          "tainted_variable": "newDirectory"
+        },
+        {
+          "rule_id": "CWE-1071-EMPTY-CODE-BLOCK",
+          "vulnerabilities": [
+            "CWE-1071"
+          ],
+          "source_file": "juliet_java/CWE390_1_bad.java",
+          "line": "39:13",
+          "snippet": "if (!newDirectory.mkdirs()) { /* FLAW: do nothing if newDirectory cannot be created */ }"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_java/CWE390_1_good.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-476-NULL-POINTER-DEREFERENCE"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-476"
+      ],
+      "findings_count": 4,
+      "findings": [
+        {
+          "rule_id": "CWE-476-NULL-POINTER-DEREFERENCE",
+          "vulnerabilities": [
+            "CWE-476"
+          ],
+          "source_file": "juliet_java/CWE390_1_good.java",
+          "line": "50:16",
+          "snippet": "(!newDirectory.mkdirs())",
+          "tainted_variable": "newDirectory"
+        },
+        {
+          "rule_id": "CWE-476-NULL-POINTER-DEREFERENCE",
+          "vulnerabilities": [
+            "CWE-476"
+          ],
+          "source_file": "juliet_java/CWE390_1_good.java",
+          "line": "56:17",
+          "snippet": "errorString.append(newDirectory.getAbsolutePath());",
+          "tainted_variable": "newDirectory"
+        },
+        {
+          "rule_id": "CWE-476-NULL-POINTER-DEREFERENCE",
+          "vulnerabilities": [
+            "CWE-476"
+          ],
+          "source_file": "juliet_java/CWE390_1_good.java",
+          "line": "80:16",
+          "snippet": "(!newDirectory.mkdirs())",
+          "tainted_variable": "newDirectory"
+        },
+        {
+          "rule_id": "CWE-476-NULL-POINTER-DEREFERENCE",
+          "vulnerabilities": [
+            "CWE-476"
+          ],
+          "source_file": "juliet_java/CWE390_1_good.java",
+          "line": "86:17",
+          "snippet": "errorString.append(newDirectory.getAbsolutePath());",
+          "tainted_variable": "newDirectory"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_java/CWE400_1_bad.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-400-UNCONTROLLED-LOOP-BOUND"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-400"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-400-UNCONTROLLED-LOOP-BOUND",
+          "vulnerabilities": [
+            "CWE-400"
+          ],
+          "source_file": "juliet_java/CWE400_1_bad.java",
+          "line": "53:21",
+          "snippet": "i < count;",
+          "tainted_variable": "count"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_java/CWE400_1_good.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "juliet_java/CWE476_1_bad.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-476-NULL-POINTER-DEREFERENCE"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-476"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-476-NULL-POINTER-DEREFERENCE",
+          "vulnerabilities": [
+            "CWE-476"
+          ],
+          "source_file": "juliet_java/CWE476_1_bad.java",
+          "line": "42:13",
+          "snippet": "IO.writeLine(\"\" + data.toString());",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_java/CWE476_1_good.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "juliet_java/CWE477_1_bad.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-477-OBSOLETE-FUNCTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-477"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-477-OBSOLETE-FUNCTION",
+          "vulnerabilities": [
+            "CWE-477"
+          ],
+          "source_file": "juliet_java/CWE477_1_bad.java",
+          "line": "33:31",
+          "snippet": "streamDataInput.readLine()"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_java/CWE477_1_good.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "juliet_java/CWE481_2_bad.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-481-ASSIGNMENT-INSTEAD-OF-COMPARISON"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-481"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-481-ASSIGNMENT-INSTEAD-OF-COMPARISON",
+          "vulnerabilities": [
+            "CWE-481"
+          ],
+          "source_file": "juliet_java/CWE481_2_bad.java",
+          "line": "30:16",
+          "snippet": "isZero = true"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_java/CWE481_2_good.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "juliet_java/CWE481_bad.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-481-ASSIGNMENT-INSTEAD-OF-COMPARISON"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-481"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-481-ASSIGNMENT-INSTEAD-OF-COMPARISON",
+          "vulnerabilities": [
+            "CWE-481"
+          ],
+          "source_file": "juliet_java/CWE481_bad.java",
+          "line": "30:16",
+          "snippet": "isZero = true"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_java/CWE481_good.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "juliet_java/CWE597_2_bad.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-595-COMPARISON-OF-OBJECT-REFERENCES"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-595"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-595-COMPARISON-OF-OBJECT-REFERENCES",
+          "vulnerabilities": [
+            "CWE-595"
+          ],
+          "source_file": "juliet_java/CWE597_2_bad.java",
+          "line": "46:33",
+          "snippet": "string1 == string2",
+          "operand_types": [
+            "String",
+            "String"
+          ]
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_java/CWE597_2_good.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "juliet_java/CWE597_bad.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-595-COMPARISON-OF-OBJECT-REFERENCES"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-595"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-595-COMPARISON-OF-OBJECT-REFERENCES",
+          "vulnerabilities": [
+            "CWE-595"
+          ],
+          "source_file": "juliet_java/CWE597_bad.java",
+          "line": "53:33",
+          "snippet": "string1 == string2",
+          "operand_types": [
+            "String",
+            "String"
+          ]
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_java/CWE597_good.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "juliet_java/CWE601_2_bad.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-601-OPEN-REDIRECT"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-601"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-601-OPEN-REDIRECT",
+          "vulnerabilities": [
+            "CWE-601"
+          ],
+          "source_file": "juliet_java/CWE601_2_bad.java",
+          "line": "126:13",
+          "snippet": "response.sendRedirect(data);",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_java/CWE601_2_good.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "juliet_java/CWE601_3_bad.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-601-OPEN-REDIRECT"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-601"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-601-OPEN-REDIRECT",
+          "vulnerabilities": [
+            "CWE-601"
+          ],
+          "source_file": "juliet_java/CWE601_3_bad.java",
+          "line": "62:13",
+          "snippet": "response.sendRedirect(data);",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_java/CWE601_3_good.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-601-OPEN-REDIRECT"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-601"
+      ],
+      "findings_count": 2,
+      "findings": [
+        {
+          "rule_id": "CWE-601-OPEN-REDIRECT",
+          "vulnerabilities": [
+            "CWE-601"
+          ],
+          "source_file": "juliet_java/CWE601_3_good.java",
+          "line": "77:13",
+          "snippet": "response.sendRedirect(data);",
+          "tainted_variable": "data"
+        },
+        {
+          "rule_id": "CWE-601-OPEN-REDIRECT",
+          "vulnerabilities": [
+            "CWE-601"
+          ],
+          "source_file": "juliet_java/CWE601_3_good.java",
+          "line": "128:13",
+          "snippet": "response.sendRedirect(data);",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_java/CWE601_bad.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-601-OPEN-REDIRECT"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-601"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-601-OPEN-REDIRECT",
+          "vulnerabilities": [
+            "CWE-601"
+          ],
+          "source_file": "juliet_java/CWE601_bad.java",
+          "line": "132:13",
+          "snippet": "response.sendRedirect(data);",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_java/CWE601_good.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "juliet_java/CWE606_1_bad.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-400-UNCONTROLLED-LOOP-BOUND"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-400"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-400-UNCONTROLLED-LOOP-BOUND",
+          "vulnerabilities": [
+            "CWE-400"
+          ],
+          "source_file": "juliet_java/CWE606_1_bad.java",
+          "line": "45:23",
+          "snippet": "i < numberOfLoops;",
+          "tainted_variable": "numberOfLoops"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_java/CWE606_1_good.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "juliet_java/CWE606_2_bad.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-400-UNCONTROLLED-LOOP-BOUND"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-400"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-400-UNCONTROLLED-LOOP-BOUND",
+          "vulnerabilities": [
+            "CWE-400"
+          ],
+          "source_file": "juliet_java/CWE606_2_bad.java",
+          "line": "61:27",
+          "snippet": "i < numberOfLoops;",
+          "tainted_variable": "numberOfLoops"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_java/CWE606_2_good.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "juliet_java/CWE614_1_bad.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-614-SENSITIVE-COOKIE-INSECURE"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-614"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-614-SENSITIVE-COOKIE-INSECURE",
+          "vulnerabilities": [
+            "CWE-614"
+          ],
+          "source_file": "juliet_java/CWE614_1_bad.java",
+          "line": "39:17",
+          "snippet": "response.addCookie(cookie)"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_java/CWE614_1_good.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "juliet_java/CWE614_2_bad.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-614-SENSITIVE-COOKIE-INSECURE"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-614"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-614-SENSITIVE-COOKIE-INSECURE",
+          "vulnerabilities": [
+            "CWE-614"
+          ],
+          "source_file": "juliet_java/CWE614_2_bad.java",
+          "line": "33:17",
+          "snippet": "response.addCookie(cookie)"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_java/CWE614_2_good.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "juliet_java/CWE690_bad.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "juliet_java/CWE690_good.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "juliet_java/CWE759_bad.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "juliet_java/CWE759_good.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "juliet_java/CWE78_1_bad.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-78-OS-CMD-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-78"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-78-OS-CMD-INJECTION",
+          "vulnerabilities": [
+            "CWE-78"
+          ],
+          "source_file": "juliet_java/CWE78_1_bad.java",
+          "line": "46:9",
+          "snippet": "Process process = Runtime.getRuntime().exec(osCommand + data);",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_java/CWE78_1_good.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "juliet_java/CWE78_2_bad.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-78-OS-CMD-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-78"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-78-OS-CMD-INJECTION",
+          "vulnerabilities": [
+            "CWE-78"
+          ],
+          "source_file": "juliet_java/CWE78_2_bad.java",
+          "line": "55:9",
+          "snippet": "Process process = Runtime.getRuntime().exec(osCommand + data);",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_java/CWE78_2_good.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "juliet_java/CWE789_2_bad.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-789-UNCONTROLLED-MEMORY-ALLOCATION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-789"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-789-UNCONTROLLED-MEMORY-ALLOCATION",
+          "vulnerabilities": [
+            "CWE-789"
+          ],
+          "source_file": "juliet_java/CWE789_2_bad.java",
+          "line": "90:9",
+          "snippet": "HashSet intHashSet = new HashSet(data);",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_java/CWE789_2_good.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "juliet_java/CWE789_bad.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-789-UNCONTROLLED-MEMORY-ALLOCATION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-789"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-789-UNCONTROLLED-MEMORY-ALLOCATION",
+          "vulnerabilities": [
+            "CWE-789"
+          ],
+          "source_file": "juliet_java/CWE789_bad.java",
+          "line": "65:9",
+          "snippet": "ArrayList intArrayList = new ArrayList(data);",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_java/CWE789_good.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "juliet_java/CWE80_2_bad.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-79-CROSS-SITE-SCRIPTING"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-79"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "juliet_java/CWE80_2_bad.java",
+          "line": "79:13",
+          "snippet": "response.getWriter().println(\"<br>bad(): data = \" + data);",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_java/CWE80_2_good.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "juliet_java/CWE80_bad.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-79-CROSS-SITE-SCRIPTING"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-79"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "juliet_java/CWE80_bad.java",
+          "line": "103:13",
+          "snippet": "response.getWriter().println(\"<br>bad(): data = \" + data.replaceAll(\"(<script>)\", \"\"));",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_java/CWE80_good.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "juliet_java/CWE81_bad.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-79-CROSS-SITE-SCRIPTING"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-79"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "juliet_java/CWE81_bad.java",
+          "line": "119:13",
+          "snippet": "response.sendError(404, \"<br>bad() - Parameter name has value \" + data);",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_java/CWE81_good.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "juliet_java/CWE83_bad.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-79-CROSS-SITE-SCRIPTING"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-79"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-79-CROSS-SITE-SCRIPTING",
+          "vulnerabilities": [
+            "CWE-79"
+          ],
+          "source_file": "juliet_java/CWE83_bad.java",
+          "line": "116:13",
+          "snippet": "response.getWriter().println(\"<br>bad() - <img src=\\\"\" + data + \"\\\">\");",
+          "tainted_variable": "data"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_java/CWE83_good.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "juliet_java/CWE835_2_bad.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-835-LOOP-WITH-UNREACHABLE-EXIT"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-835"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-835-LOOP-WITH-UNREACHABLE-EXIT",
+          "vulnerabilities": [
+            "CWE-835"
+          ],
+          "source_file": "juliet_java/CWE835_2_bad.java",
+          "line": "18:9",
+          "snippet": "while(true) { IO.writeLine(i); i++; }"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_java/CWE835_2_good.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "juliet_java/CWE835_Infinite_Loop__while_01_bad.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "juliet_java/CWE835_Infinite_Loop__while_01_good.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "juliet_java/CWE89_1_bad.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-89-SQLI"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-89"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-89-SQLI",
+          "vulnerabilities": [
+            "CWE-89"
+          ],
+          "source_file": "juliet_java/CWE89_1_bad.java",
+          "line": "50:21",
+          "snippet": "sqlStatement.addBatch(\"update users set hitcount=hitcount+1 where name='\" + names[i] + \"'\");",
+          "tainted_variable": "names"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_java/CWE89_1_good.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "juliet_java/CWE89_2_bad.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-89-SQLI"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-89"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-89-SQLI",
+          "vulnerabilities": [
+            "CWE-89"
+          ],
+          "source_file": "juliet_java/CWE89_2_bad.java",
+          "line": "95:25",
+          "snippet": "sqlStatement.addBatch(\"update users set hitcount=hitcount+1 where name='\" + names[i] + \"'\");",
+          "tainted_variable": "names"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_java/CWE89_2_good.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "juliet_java/CWE90_1_bad.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-90-LDAP-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-90"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-90-LDAP-INJECTION",
+          "vulnerabilities": [
+            "CWE-90"
+          ],
+          "source_file": "juliet_java/CWE90_1_bad.java",
+          "line": "50:13",
+          "snippet": "NamingEnumeration<SearchResult> answer = directoryContext.search(\"\", search, null);",
+          "tainted_variable": "search"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_java/CWE90_1_good.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    },
+    {
+      "source_file": "juliet_java/CWE90_2_bad.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": true,
+      "rules_summary": [
+        "CWE-90-LDAP-INJECTION"
+      ],
+      "vulnerabilities_summary": [
+        "CWE-90"
+      ],
+      "findings_count": 1,
+      "findings": [
+        {
+          "rule_id": "CWE-90-LDAP-INJECTION",
+          "vulnerabilities": [
+            "CWE-90"
+          ],
+          "source_file": "juliet_java/CWE90_2_bad.java",
+          "line": "72:13",
+          "snippet": "NamingEnumeration<SearchResult> answer = directoryContext.search(\"\", search, null);",
+          "tainted_variable": "search"
+        }
+      ]
+    },
+    {
+      "source_file": "juliet_java/CWE90_2_good.java",
+      "xml_source": "good_bad_archive_java.xml",
+      "vulnerable": false,
+      "rules_summary": [],
+      "vulnerabilities_summary": [],
+      "findings_count": 0,
+      "findings": []
+    }
+  ],
+  "rules_skipped": {
+    "java": [
+      {
+        "rule_id": "CWE-120-BUFFER-OVERFLOW",
+        "reason": "non applicabile a 'java' (languages=['c'])"
+      },
+      {
+        "rule_id": "CWE-276-INCORRECT-DEFAULT-PERMISSIONS",
+        "reason": "non applicabile a 'java' (languages=['c', 'python', 'javascript'])"
+      },
+      {
+        "rule_id": "CWE-347-JWT-NO-VERIFY",
+        "reason": "non applicabile a 'java' (languages=['python'])"
+      },
+      {
+        "rule_id": "CWE-400-UNCONTROLLED-SLEEP-C",
+        "reason": "non applicabile a 'java' (languages=['c'])"
+      },
+      {
+        "rule_id": "CWE-415-416-MEMORY-MISUSE-AFTER-FREE",
+        "reason": "non applicabile a 'java' (languages=['c'])"
+      },
+      {
+        "rule_id": "CWE-611-XXE-KWARGS",
+        "reason": "non applicabile a 'java' (languages=['javascript'])"
+      },
+      {
+        "rule_id": "CWE-611-XXE-TAINT",
+        "reason": "non applicabile a 'java' (languages=['javascript', 'python'])"
+      },
+      {
+        "rule_id": "CWE-918-XSLT-SSRF",
+        "reason": "non applicabile a 'java' (languages=['python'])"
+      },
+      {
+        "rule_id": "CWE-943-NOSQL-INJECTION",
+        "reason": "non applicabile a 'java' (languages=['javascript'])"
+      },
+      {
+        "rule_id": "CWE-1327-UNRESTRICTED-BIND-ADDRESS",
+        "reason": "non applicabile a 'java' (languages=['python'])"
+      },
+      {
+        "rule_id": "CWE-1333-REGEX-DOS",
+        "reason": "non applicabile a 'java' (languages=['javascript', 'python'])"
+      }
+    ]
+  }
+}
